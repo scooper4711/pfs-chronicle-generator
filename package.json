@@ -1,0 +1,16 @@
+{
+  "name": "hello-world",
+  "version": "1.0.0",
+  "description": "A simple module to demonstrate Foundry VTT module development.",
+  "main": "scripts/main.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@league-of-foundry-developers/foundry-vtt-types": "^13.346.0-beta.20250812191140"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "ES2020",
+    "outDir": "./dist",
+    "rootDir": "./scripts",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "types": [
+      "@league-of-foundry-developers/foundry-vtt-types"
+    ]
+  },
+  "include": [
+    "scripts/**/*.ts"
+  ]
+}
