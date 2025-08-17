@@ -53,6 +53,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
     const characterNumber = sheet.actor.system.pfs.characterNumber;
     const characterName = sheet.actor.name;
     const currentFaction = sheet.actor.system.pfs.currentFaction;
+    const level = sheet.actor.system.details.level.value;
     console.log("Player Number", playerNumber)
     console.log("Character Number", characterNumber)
     console.log("Character Name", characterName)
@@ -74,7 +75,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
 
     button.addEventListener('click', (event) => {
         event.preventDefault();
-        new PFSChronicleGeneratorApp(playerNumber, characterNumber, characterName, currentFaction).render({force:true});
+        new PFSChronicleGeneratorApp(playerNumber, characterNumber, characterName, currentFaction, level).render({force:true});
     });
 
     // append first the header, then the button, after each other

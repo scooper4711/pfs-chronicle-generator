@@ -1,4 +1,25 @@
+.pfs-chronicle-generator-form .top-section {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
 
-.hello-world-button {
-  color: hotpink;
+.pfs-chronicle-generator-form .character-details,
+.pfs-chronicle-generator-form .event-details {
+    flex: 1;
+}
+
+.pfs-chronicle-generator-form .multi-field {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pfs-chronicle-generator-form .multi-field select,
+.pfs-chronicle-generator-form .multi-field input {
+    flex: 1;
+}
+
+.pfs-chronicle-generator-form .multi-field label {
+    white-space: nowrap;
 }
