@@ -1,6 +1,8 @@
 
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
+import FormDataExtended = foundry.applications.ux.FormDataExtended;
+
 
 
 export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -16,32 +18,42 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     tag: "form",
     window: {
       title: "Pathfinder Society Chronicle Generator",
-      icon: "fas fa-dice-d20",
+      icon: "fas fa-file-pdf",
       contentClasses: ["standard-form"],
     }
   }
 
   static PARTS = {
-    foo: {
-      template: "modules/hello-world/templates/pfs-chronicle-generator.hbs",
+    main: {
+      template: "modules/pfs-chronicle-generator/templates/pfs-chronicle-generator.hbs",
     },
     footer: {
       template: "templates/generic/form-footer.hbs",
     },
   }
 
-  static #onSubmit(event: any, form: any, formData: any) {
-    const settings = foundry.utils.expandObject(formData.object);
-    console.log(settings);
-    console.log(form);
-    console.log(event);
-    console.log(formData);
+  static async #onSubmit(event: SubmitEvent|Event, form: HTMLFormElement, formData: FormDataExtended) {
+    const data : any = foundry.utils.expandObject(formData.object);
+
+    // Log the submitted values to the console
+    console.log("Submitted GM Name:", data.gmName);
+    console.log("Submitted GM PFS Number:", data.gmPfsNumber);
+    console.log("Submitted Event Name:", data.eventName);
+    console.log("Submitted Event Code:", data.eventCode);
+
+    // Here you would continue to process the data, like generating a PDF
   }
 
   async _prepareContext(): Promise<object> {
-    const settingValue = game.settings.get('hello-world', 'someSetting');
+    const gmName = game.settings.get('pfs-chronicle-generator', 'gmName');
+    const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber');
+    const eventName = game.settings.get('pfs-chronicle-generator', 'eventName');
+    const eventCode = game.settings.get('pfs-chronicle-generator', 'eventCode');
     return {
-      settingValue,
+      gmName,
+      gmPfsNumber,
+      eventName,
+      eventCode,
       buttons: [
         { type: "submit", icon: "fa-solid fa-save", label: "SETTINGS.Save" }
       ]
