@@ -13,5 +13,14 @@
   ],
   "styles": [
     "css/style.css"
-  ]
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "pf2e",
+        "type": "system",
+        "compatibility": {}
+      }
+    ]
+  }
 }
