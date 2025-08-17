@@ -1,8 +1,7 @@
-
 {
-  "id": "hello-world",
-  "title": "Hello World",
-  "description": "A simple module to demonstrate Foundry VTT module development.",
+  "id": "pfs-chronicle-generator",
+  "title": "Pathfinder Society Chronicle Generator",
+  "description": "A module to fill-in Pathfinder and Starfinder Society Chronicles.",
   "version": "1.0.0",
   "compatibility": {
     "minimum": "12",

@@ -3,11 +3,11 @@ import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
 
 
-export class HelloWorldApp extends HandlebarsApplicationMixin(ApplicationV2) {
+export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
-    id: "hello-world-app",
+    id: "pfs-chronicle-generator",
     form: {
-      handler: HelloWorldApp.#onSubmit,
+      handler: PFSChronicleGeneratorApp.#onSubmit,
       closeOnSubmit: true,
     },
     position: {
@@ -15,7 +15,7 @@ export class HelloWorldApp extends HandlebarsApplicationMixin(ApplicationV2) {
     },
     tag: "form",
     window: {
-      title: "Hello World",
+      title: "Pathfinder Society Chronicle Generator",
       icon: "fas fa-dice-d20",
       contentClasses: ["standard-form"],
     }
@@ -23,7 +23,7 @@ export class HelloWorldApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static PARTS = {
     foo: {
-      template: "modules/hello-world/templates/hello-world-dialog.hbs",
+      template: "modules/hello-world/templates/pfs-chronicle-generator.hbs",
     },
     footer: {
       template: "templates/generic/form-footer.hbs",

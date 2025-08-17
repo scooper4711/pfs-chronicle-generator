@@ -1,5 +1,4 @@
-
-import { HelloWorldApp } from './HelloWorldApp.js';
+import { PFSChronicleGeneratorApp } from './PFSChronicleGeneratorApp.js';
 
 Hooks.on('init', () => {
   game.settings.register('hello-world', 'someSetting', {
@@ -14,11 +13,11 @@ Hooks.on('init', () => {
 
 Hooks.on('getActorSheetHeaderButtons', (sheet: any, buttons: any) => {
   buttons.unshift({
-    label: 'Hello World',
-    class: 'hello-world-button',
+    label: 'Chronicle Generator',
+    class: 'pfs-chronicle-generator-button',
     icon: 'fas fa-dice-d20',
     onclick: () => {
-      new HelloWorldApp().render({force: true});
+      new PFSChronicleGeneratorApp().render({force: true});
     },
   });
 });

@@ -1,7 +1,7 @@
 {
-  "name": "hello-world",
+  "name": "pfs-chronicle-generator",
   "version": "1.0.0",
-  "description": "A simple module to demonstrate Foundry VTT module development.",
+  "description": "A module to generate Pathfinder Society Chronicles.",
   "main": "scripts/main.js",
   "scripts": {
     "build": "tsc",
