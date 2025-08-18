@@ -33,14 +33,23 @@ Hooks.on('init', () => {
         type: String,
         default: '',
   });
+  game.settings.register('pfs-chronicle-generator', 'blankChroniclePath', {
+    name: 'Blank Adventure Chronicle Path',
+    hint: 'The path to the blank adventure chronicle PDF.',
+    scope: 'world',
+    config: true,
+    type: String,
+    filePicker: 'any',
+    default: '',
+  });
   // Register the settings submenu
-  game.settings.registerMenu('pfs-chronicle-generator', 'pfscgSettings', {
+  /* game.settings.registerMenu('pfs-chronicle-generator', 'pfscgSettings', {
       name: 'PFS Chronicle Generator Settings',
       label: 'PFS Chronicle Generator Settings',
       hint: 'Configure default settings for PFS Chronicle Sheets.',
       icon: 'fas fa-cog',
       restricted: true, // Only GMs can access this
-  });
+  }); */
 
 });
 

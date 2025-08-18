@@ -203,6 +203,7 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     console.log("Submitted GM PFS Number:", data.gmPfsNumber);
     console.log("Submitted Event Name:", data.eventName);
     console.log("Submitted Event Code:", data.eventCode);
+    console.log("Submitted Event Date:", data.eventDate);
     console.log("Submitted XP Earned:", data.xpEarned);
     console.log("Submitted Treasure Bundles:", data.treasureBundles);
     console.log("Submitted Earn Income Status:", data.earnIncomeStatus);
@@ -231,6 +232,7 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       gmPfsNumber: savedData.gmPfsNumber ?? gmPfsNumber,
       eventName: savedData.eventName ?? eventName,
       eventCode: savedData.eventCode ?? eventCode,
+      eventDate: savedData.eventDate ?? new Date().toISOString().slice(0, 10),
       xpEarned: savedData.xpEarned ?? 4,
       goldEarned: savedData.goldEarned ?? 0,
       goldSpent: savedData.goldSpent ?? 0,
