@@ -193,6 +193,38 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
 
     if (this.actor) {
         await this.actor.setFlag('pfs-chronicle-generator', 'chronicleData', data);
+
+        const pdfPath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
+        if (pdfPath && typeof pdfPath === 'string') {
+            try {
+                const response = await fetch(pdfPath);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const reader = new FileReader();
+                    const promise = new Promise<string>((resolve, reject) => {
+                        reader.onload = () => {
+                            if (typeof reader.result === 'string') {
+                                resolve(reader.result.split(',')[1]);
+                            } else {
+                                reject(new Error("Failed to read file as base64"));
+                            }
+                        };
+                        reader.onerror = (error) => {
+                            reject(error);
+                        };
+                    });
+                    reader.readAsDataURL(blob);
+                    const base64String = await promise;
+                    await this.actor.setFlag('pfs-chronicle-generator', 'chroniclePdf', base64String);
+                    ui.notifications.info("Chronicle PDF attached to actor.");
+                } else {
+                    ui.notifications.error("Failed to fetch the blank chronicle PDF. Check the path in the settings.");
+                }
+            } catch (e) {
+                console.error(e);
+                ui.notifications.error("An error occurred while fetching the chronicle PDF.");
+            }
+        }
     }
 
     // Log the submitted values to the console
