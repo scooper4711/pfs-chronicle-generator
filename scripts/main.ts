@@ -61,6 +61,8 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
 
     // --- Generate Chronicle Button (GM only) ---
     if (game.user.isGM) {
+        const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
+
         const header = document.createElement('header');
         header.innerHTML = "PFS Chronicle Generator";
         header.classList.add('pfs-chronicle-generator-header');
@@ -69,6 +71,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
         const generateButton = document.createElement('button');
         generateButton.innerHTML = '<section class="generate-chronicle"><i class="fas fa-file-pdf"></i> Generate Chronicle</section>';
         generateButton.classList.add('pfs-chronicle-generator-button');
+        generateButton.disabled = !blankChroniclePath;
         generateButton.addEventListener('click', (event) => {
             event.preventDefault();
             new PFSChronicleGeneratorApp(sheet.actor).render({force:true});
