@@ -1,0 +1,370 @@
+id: sfs
+description: Starfinder Society Chronicle
+aspectratio: 603:783 # dimensions of chronicle page in original pdf
+
+parameters:
+  "Player Info":
+    player:
+      type: text
+      description: Player name
+      example: Bob
+
+    char:
+      type: text
+      description: Players character name
+      example: Stormageddon
+
+    societyid:
+      type: societyid
+      description: Starfinder Society ID
+      example: 123456-701
+
+    faction:
+      type: text
+      description: Players faction
+      example: Dataphiles
+
+  "Rewards":
+    xp:
+      type: text
+      description: Experience points
+      example: 4
+
+    credits:
+      type: text
+      description: Credits garnered
+      example: 696
+
+    dayjob:
+      type: text
+      description: Earned income
+      example: 123
+
+    fame:
+      type: text
+      description: Fame
+      example: 4
+
+  "Factions":
+    fac1name:
+      type: text
+      description: Faction 1 Name
+      example: Dataphiles
+
+    fac1rep:
+      type: text
+      description: Faction 1 Reputation points
+      example: 4
+
+    fac2name:
+      type: text
+      description: Faction 2 Name
+      example: Wayfinders
+
+    fac2rep:
+      type: text
+      description: Faction 2 Reputation points
+      example: 4
+
+    fac3name:
+      type: text
+      description: Faction 3 Name
+      example: Second Seekers
+
+    fac3rep:
+      type: text
+      description: Faction 3 Reputation points
+      example: 4
+
+    infamy:
+      type: text
+      description: Infamy
+      example: 4
+
+  "Event Info":
+    event:
+      type: text
+      description: Event name
+      example: PaizoCon
+
+    eventcode:
+      type: text
+      description: Event code
+      example: 1234
+
+    date:
+      type: text
+      description: The date on which the game session took place
+      example: 27.06.2020
+
+    gm:
+      type: text
+      description: Gamemasters name
+      example: J. Doe
+
+    gmid:
+      type: text
+      description: Gamemasters PFS ID
+      example: 654321
+
+    gminitials:
+      type: text
+      description: Gamemaster initials
+      example: JD
+
+canvas:
+  page:
+    x:    0.0
+    y:    0.0
+    x2: 100.0
+    y2: 100.0
+
+  main:
+    # this should be a canvas matching the "main" content box,
+    # only excluding the title,and chronicle number.
+    # Having this allows an easy visual check on whether the page is aligned.
+    parent: page
+    x:   6.0
+    y:  12.2
+    x2: 94.2
+    y2: 95.90
+
+  rightbar:
+    parent: main
+    x:   82.2
+    y:    0.0
+    x2: 100.0
+    y2:  92.3
+      
+presets:
+  defaultfont:
+    font: Helvetica
+    fontsize: 14
+
+  topline:
+    presets: [defaultfont]
+    canvas: page
+    y:  16.9
+    align: CB
+
+  rightbar:
+    presets: [defaultfont]
+    canvas: rightbar
+    x:    0.0
+    x2: 100.0
+    align: CM
+
+  rightbargmvalues:
+    presets: [rightbar]
+    x2: 65.0
+    align: CB
+
+  rightbargminits:
+    presets: [rightbar]
+    x: 65.0
+
+  bottomline:
+    presets: [defaultfont]
+    y:  93.8
+    align: CB
+    canvas: page
+
+  factions:
+    presets: [defaultfont]
+    fontsize: 10.0
+    canvas: page
+
+  facnamecol1:
+    presets: [factions]
+    x:  12.5
+    x2: 26.9
+    align: CB
+
+  facnamecol2:
+    presets: [factions]
+    x:  47.1
+    x2: 61.3
+    align: CB
+
+  facrepcol1:
+    presets: [factions]
+    x:  35.1
+    x2: 37.8
+    align: CB
+
+  facrepcol2:
+    presets: [factions]
+    x:  69.6
+    x2: 72.3
+    align: CB
+
+  facline1:
+    presets: [factions]
+    y:  86.0
+
+  facline2:
+    presets: [factions]
+    y:  88.0
+
+content:
+  - value: param:player
+    type: text
+    presets: [topline]
+    x:  7.3
+    x2: 20.7
+
+  - value: param:char
+    type: text
+    presets: [topline]
+    x:  25.8
+    x2: 42.8
+
+  - type: trigger
+    trigger: param:societyid
+    content:
+      - type: rectangle
+        presets: [topline]
+        color: white
+        x:  56.0
+        y:  15.0
+        x2: 59.0
+        y2: 16.5
+      - value: param:societyid.player
+        type: text
+        presets: [topline]
+        x:  44.8
+        x2: 55.9
+        align: RB
+      - value: "-"
+        type: text
+        presets: [topline]
+        x:  56.0
+        x2: 57.4
+        align: CB
+      - value: param:societyid.char
+        type: text
+        presets: [topline]
+        x:  57.5
+        x2: 64.8
+        align: LB
+
+  - value: param:faction
+    type: text
+    presets: [topline]
+    x:  66.9
+    x2: 74.3
+
+  - type: trigger
+    trigger: param:xp
+    content:
+      - value: param:xp
+        type: text
+        presets: [rightbargmvalues]
+        y:  34.0
+        y2: 37.4
+      - value: param:gminitials
+        type: text
+        presets: [rightbargminits]
+        y:  35.6
+        y2: 37.4
+
+  - type: trigger
+    trigger: param:fame
+    content:
+      - value: param:fame
+        type: text
+        presets: [rightbargmvalues]
+        y:  51.9
+        y2: 55.3
+      - value: param:gminitials
+        type: text
+        presets: [rightbargminits]
+        y:  53.6
+        y2: 55.3
+
+  - type: trigger
+    trigger: param:credits
+    content:
+      - value: param:credits
+        type: text
+        presets: [rightbargmvalues]
+        y:  76.1
+        y2: 79.4
+      - value: param:gminitials
+        type: text
+        presets: [rightbargminits]
+        y:  77.7
+        y2: 79.4
+
+  - type: trigger
+    trigger: param:dayjob
+    content:
+      - value: param:dayjob
+        type: text
+        presets: [rightbargmvalues]
+        y:  81.7
+        y2: 85.2
+      - value: param:gminitials
+        type: text
+        presets: [rightbargminits]
+        y:  83.5
+        y2: 85.2
+
+  - value: param:event
+    type: text
+    presets: [bottomline]
+    x:   7.1
+    x2: 23.7
+
+  - value: param:eventcode
+    type: text
+    presets: [bottomline]
+    x:  26.2
+    x2: 35.2
+
+  - value: param:date
+    type: text
+    presets: [bottomline]
+    x:  37.6
+    x2: 50.4
+
+  - value: param:gm
+    type: text
+    presets: [bottomline]
+    x:  52.8
+    x2: 74.0
+
+  - value: param:gmid
+    type: text
+    presets: [bottomline]
+    x:  76.4
+    x2: 93.4
+
+  - value: param:fac1name
+    type: text
+    presets: [facline1, facnamecol1]
+
+  - value: param:fac1rep
+    type: text
+    presets: [facline1, facrepcol1]
+
+  - value: param:fac2name
+    type: text
+    presets: [facline2, facnamecol1]
+
+  - value: param:fac2rep
+    type: text
+    presets: [facline2, facrepcol1]
+
+  - value: param:fac3name
+    type: text
+    presets: [facline1, facnamecol2]
+
+  - value: param:fac3rep
+    type: text
+    presets: [facline1, facrepcol2]
+
+  - value: param:infamy
+    type: text
+    presets: [facline2, facnamecol2]
+

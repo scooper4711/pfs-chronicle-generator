@@ -1,0 +1,14 @@
+id: pfs2.s1-24
+description: "#1-24: Lightning Strikes, Stars Fall"
+parent: pfs2.s1
+
+canvas:
+  rightbar:
+    y: 21.7
+
+presets:
+  boon.1:
+    x:   0.0
+    y:  22.5
+    x2: 79.5
+    y2: 38.5
