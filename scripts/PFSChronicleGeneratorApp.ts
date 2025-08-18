@@ -94,25 +94,29 @@ const PFS_REWARD_DATA: PfsRewardData = {
 
 export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
+  actor: any;
   playerNumber: string | null;
   characterNumber: string | null;
   characterName: string | null;
   currentFaction: string | null;
   level: number | null;
 
-  constructor(playerNumber: string | null, characterNumber: string | null, characterName: string | null, currentFaction: string | null, level: number | null, options: any = {}) {
+  constructor(actor: any, options: any = {}) {
     super(options);
-    this.playerNumber = playerNumber;
-    this.characterNumber = characterNumber;
-    this.characterName = characterName;
-    this.currentFaction = currentFaction;
-    this.level = level;
+    this.actor = actor;
+    this.playerNumber = actor.system.pfs.playerNumber;
+    this.characterNumber = actor.system.pfs.characterNumber;
+    this.characterName = actor.name;
+    this.currentFaction = actor.system.pfs.currentFaction;
+    this.level = actor.system.details.level.value;
+    if (this.options.form)
+      this.options.form.handler = this._onSubmit.bind(this);
   }
 
   static DEFAULT_OPTIONS = {
     id: "pfs-chronicle-generator",
     form: {
-      handler: PFSChronicleGeneratorApp.#onSubmit,
+      handler: (event: SubmitEvent|Event, form: HTMLFormElement, formData: FormDataExtended) => {},
       closeOnSubmit: true,
     },
     position: {
@@ -179,13 +183,22 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     (form.elements.namedItem('goldEarned') as HTMLInputElement).value = calculatedGold.toFixed(2);
   }
 
-  static async #onSubmit(event: SubmitEvent|Event, form: HTMLFormElement, formData: FormDataExtended) {
+  async _onSubmit(event: SubmitEvent|Event, form: HTMLFormElement, formData: FormDataExtended) {
     const data : any = foundry.utils.expandObject(formData.object);
+    
+    delete data.playerNumber;
+    delete data.characterNumber;
+    delete data.characterName;
+    delete data.level;
+
+    if (this.actor) {
+        await this.actor.setFlag('pfs-chronicle-generator', 'chronicleData', data);
+    }
 
     // Log the submitted values to the console
-    console.log("Submitted Player Number", data.playerNumber);
-    console.log("Submitted Character Number", data.characterNumber);
-    console.log("Submitted Character Name", data.characterName);
+    console.log("Submitted Player Number", this.playerNumber);
+    console.log("Submitted Character Number", this.characterNumber);
+    console.log("Submitted Character Name", this.characterName);
     console.log("Submitted GM Name:", data.gmName);
     console.log("Submitted GM PFS Number:", data.gmPfsNumber);
     console.log("Submitted Event Name:", data.eventName);
@@ -203,6 +216,8 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
   }
 
   async _prepareContext(): Promise<object> {
+    const savedData = this.actor.getFlag('pfs-chronicle-generator', 'chronicleData') || {};
+
     const gmName = game.settings.get('pfs-chronicle-generator', 'gmName');
     const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber');
     const eventName = game.settings.get('pfs-chronicle-generator', 'eventName');
@@ -212,18 +227,18 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       characterNumber: this.characterNumber,
       characterName: this.characterName,
       level: this.level,
-      gmName,
-      gmPfsNumber,
-      eventName,
-      eventCode,
-      xpEarned: 4,
-      goldEarned: 0,
-      goldSpent: 0,
-      treasureBundles: 0,
-      earnIncomeStatus: "none",
-      daysOfDowntime: 1,
-      notes: "",
-      reputation: this.currentFaction ? `${this.currentFaction}: +4` : "",
+      gmName: savedData.gmName ?? gmName,
+      gmPfsNumber: savedData.gmPfsNumber ?? gmPfsNumber,
+      eventName: savedData.eventName ?? eventName,
+      eventCode: savedData.eventCode ?? eventCode,
+      xpEarned: savedData.xpEarned ?? 4,
+      goldEarned: savedData.goldEarned ?? 0,
+      goldSpent: savedData.goldSpent ?? 0,
+      treasureBundles: savedData.treasureBundles ?? 0,
+      earnIncomeStatus: savedData.earnIncomeStatus ?? "none",
+      daysOfDowntime: savedData.daysOfDowntime ?? 1,
+      notes: savedData.notes ?? "",
+      reputation: savedData.reputation ?? (this.currentFaction ? `${this.currentFaction}: +4` : ""),
       buttons: [
         { type: "submit", icon: "fa-solid fa-save", label: "SETTINGS.Save" }
       ]
