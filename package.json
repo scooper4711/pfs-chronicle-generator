@@ -4,13 +4,19 @@
   "description": "A module to generate Pathfinder Society Chronicles.",
   "main": "scripts/main.js",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w"
+    "build": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap",
+    "watch": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap --watch"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "esbuild": "^0.20.2",
     "fvtt-types": "npm:@league-of-foundry-developers/foundry-vtt-types@^13.346.0-beta.20250812191140",
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "pdf-lib": "^1.17.1"
   }
 }
