@@ -1,6 +1,10 @@
 import { PFSChronicleGeneratorApp } from './PFSChronicleGeneratorApp.js';
+import { layoutStore } from './LayoutStore.js';
 
-Hooks.on('init', () => {
+Hooks.on('init', async () => {
+  await layoutStore.initialize();
+  const layoutChoices = layoutStore.getLayoutChoices();
+
   game.settings.register('pfs-chronicle-generator','gmName', {
         name: 'GM Name',
         hint: 'The name of the Game Master.',
@@ -42,15 +46,16 @@ Hooks.on('init', () => {
     filePicker: 'any',
     default: '',
   });
-  // Register the settings submenu
-  /* game.settings.registerMenu('pfs-chronicle-generator', 'pfscgSettings', {
-      name: 'PFS Chronicle Generator Settings',
-      label: 'PFS Chronicle Generator Settings',
-      hint: 'Configure default settings for PFS Chronicle Sheets.',
-      icon: 'fas fa-cog',
-      restricted: true, // Only GMs can access this
-  }); */
 
+  game.settings.register('pfs-chronicle-generator', 'layout', {
+    name: 'Chronicle Layout',
+    hint: 'The layout to use when generating the chronicle.',
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: layoutChoices,
+    default: Object.keys(layoutChoices)[0] || '',
+  });
 });
 
 Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) => {
