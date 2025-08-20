@@ -20,15 +20,16 @@ describe('PdfGenerator', () => {
             id: 'test-layout',
             description: 'A test layout',
             canvas: {},
-            presets: {},
+            parameters: {},
+            presets: { "defaultfont": { font: "Helvetica" , fontsize: 18 }
+            },
             content: [
                 {
                     type: 'text',
                     value: 'param:characterName',
+                    presets: ['defaultfont'],
                     x: 10, y: 10, x2: 90, y2: 20,
                     align: 'C',
-                    font: 'helvetica',
-                    fontsize: 18,
                     color: 'red',
                 }
             ]
@@ -57,6 +58,7 @@ describe('PdfGenerator', () => {
             id: 'preset-test',
             description: 'A test for presets',
             canvas: {},
+            parameters: {},
             presets: {
                 'title': {
                     font: 'times',
@@ -93,18 +95,18 @@ describe('PdfGenerator', () => {
             id: 'nested-preset-test',
             description: 'A test for nested presets',
             canvas: {},
+            parameters: {},
             presets: {
                 'base-style': {
                     font: 'courier',
                     fontsize: 10
                 },
                 'header': {
-                    presets: ['base-style'],
                     fontsize: 16, // This should override the fontsize from 'base-style'
                 }
             },
             content: [
-                { type: 'text', presets: ['header'], value: 'Nested Preset Text', x: 0, y: 0, x2: 100, y2: 10 }
+                { type: 'text', presets: ['base-style', 'header'], value: 'Nested Preset Text', x: 0, y: 0, x2: 100, y2: 10 }
             ]
         };
 
@@ -115,6 +117,63 @@ describe('PdfGenerator', () => {
         expect(drawTextSpy).toHaveBeenCalledWith('Nested Preset Text', expect.objectContaining({
             font: expect.objectContaining({ name: StandardFonts.Courier }),
             size: 16, // The overridden value should be used
+        }));
+    });
+
+    it('should handle aspect ratio correctly', async () => {
+        const layout: Layout = {
+            id: 'aspect-ratio-test',
+            description: 'A test for aspect ratio',
+            aspectratio: '603:783',
+            canvas: {
+                'fullpage': {
+                    x: 0,
+                    y: 0,
+                    x2: 100,
+                    y2: 100,
+                }
+            },
+            parameters: {},
+            presets: {
+                'centered': {
+                    align: 'CM',
+                    font: 'helvetica',
+                    fontsize: 12
+                }
+            },
+            content: [
+                {
+                    type: 'text',
+                    canvas: 'fullpage',
+                    presets: ['centered'],
+                    value: 'Hello World',
+                    x: 0, y: 0, x2: 100, y2: 100,
+                }
+            ]
+        };
+
+        const generator = new PdfGenerator(pdfDoc, layout, {});
+
+        await generator.generate();
+
+        const { width, height } = page.getSize();
+        const expectedAspectRatio = 603 / 783;
+        const actualAspectRatio = width / height;
+
+        // Check if the page has the correct aspect ratio
+        expect(actualAspectRatio).toBeCloseTo(expectedAspectRatio, 2);
+
+        // Check if the text is placed correctly
+        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+        const textWidth = font.widthOfTextAtSize('Hello World', 12);
+        const textHeight = font.heightAtSize(12);
+
+        const expectedX = (width - textWidth) / 2;
+        const expectedY = (height - textHeight) / 2;
+
+        expect(drawTextSpy).toHaveBeenCalledWith('Hello World', expect.objectContaining({
+            x: expect.closeTo(expectedX, 2),
+            y: expect.closeTo(expectedY, 2),
         }));
     });
 });

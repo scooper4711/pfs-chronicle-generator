@@ -1,3 +1,6 @@
+import { layoutStore } from './LayoutStore.js';
+import { PdfGenerator } from './PdfGenerator.js';
+import { PDFDocument } from 'pdf-lib';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
 import FormDataExtended = foundry.applications.ux.FormDataExtended;
@@ -194,36 +197,34 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     if (this.actor) {
         await this.actor.setFlag('pfs-chronicle-generator', 'chronicleData', data);
 
-        const pdfPath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
-        if (pdfPath && typeof pdfPath === 'string') {
-            try {
+        try {
+            const layoutId = game.settings.get('pfs-chronicle-generator', 'layout');
+            const layout = await layoutStore.getLayout(layoutId as string);
+
+            const pdfPath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
+            if (pdfPath && typeof pdfPath === 'string') {
                 const response = await fetch(pdfPath);
                 if (response.ok) {
-                    const blob = await response.blob();
-                    const reader = new FileReader();
-                    const promise = new Promise<string>((resolve, reject) => {
-                        reader.onload = () => {
-                            if (typeof reader.result === 'string') {
-                                resolve(reader.result.split(',')[1]);
-                            } else {
-                                reject(new Error("Failed to read file as base64"));
-                            }
-                        };
-                        reader.onerror = (error) => {
-                            reject(error);
-                        };
-                    });
-                    reader.readAsDataURL(blob);
-                    const base64String = await promise;
+                    const pdfBytes = await response.arrayBuffer();
+                    const pdfDoc = await PDFDocument.load(pdfBytes);
+
+                    const generator = new PdfGenerator(pdfDoc, layout, data);
+                    await generator.generate();
+
+                    const modifiedPdfBytes = await pdfDoc.save();
+                    const base64String = btoa(String.fromCharCode(...new Uint8Array(modifiedPdfBytes)));
+
                     await this.actor.setFlag('pfs-chronicle-generator', 'chroniclePdf', base64String);
-                    ui.notifications?.info("Chronicle PDF attached to actor.");
+                    ui.notifications?.info("Chronicle PDF generated and attached to actor.");
                 } else {
                     ui.notifications?.error("Failed to fetch the blank chronicle PDF. Check the path in the settings.");
                 }
-            } catch (e) {
-                console.error(e);
-                ui.notifications?.error("An error occurred while fetching the chronicle PDF.");
+            } else {
+                ui.notifications?.error("Blank chronicle PDF path is not set in the settings.");
             }
+        } catch (e) {
+            console.error(e);
+            ui.notifications?.error("An error occurred during chronicle generation.");
         }
     }
 

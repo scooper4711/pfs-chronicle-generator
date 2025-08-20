@@ -17,6 +17,13 @@ export class PdfGenerator {
     }
 
     public async generate() {
+        if (this.layout.aspectratio) {
+            const [ratioWidth, ratioHeight] = this.layout.aspectratio.split(':').map(Number);
+            const { height } = this.page.getSize();
+            const newWidth = (height * ratioWidth) / ratioHeight;
+            this.page.setSize(newWidth, height);
+        }
+
         for (const element of this.layout.content) {
             await this.drawElement(element);
         }
@@ -42,13 +49,14 @@ export class PdfGenerator {
             for (const presetName of element.presets) {
                 const preset = this.layout.presets[presetName];
                 if (preset) {
-                    const parentPresets = this.resolvePresets({ presets: preset.presets } as ContentElement); // Recursive call
-                    resolved = { ...parentPresets, ...preset, ...resolved };
+                    const parentPresets = this.resolvePresets({ presets: preset.presets } as ContentElement);
+                    resolved = { ...resolved, ...parentPresets, ...preset };
                 }
             }
         }
         return { ...resolved, ...element };
     }
+
     private getCanvasRect(canvasName: string): { x: number, y: number, width: number, height: number } {
         const canvas = this.layout.canvas[canvasName];
         if (!canvas) {
@@ -113,7 +121,7 @@ export class PdfGenerator {
             return;
         }
 
-        const { canvas, x, y, x2, y2, align, font, fontsize, color } = props;
+        const { canvas, x = 0, y = 0, x2 = 0, y2 = 0, align, font, fontsize, color } = props;
         
         let canvasRect;
         if (canvas) {
@@ -164,7 +172,7 @@ export class PdfGenerator {
             return;
         }
 
-        const { canvas, x, y, x2, y2, align, font, fontsize, color, lines } = props;
+        const { canvas, x = 0, y = 0, x2 = 0, y2 = 0, align, font, fontsize, color, lines } = props;
         
         let canvasRect;
         if (canvas) {
