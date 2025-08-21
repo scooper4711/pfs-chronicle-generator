@@ -5,3 +5,4 @@ dist
 .DS_Store
 foundryconfig.json
 chronicles
+grid-output.pdf

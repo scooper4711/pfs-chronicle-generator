@@ -6,7 +6,8 @@
   "scripts": {
     "build": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap",
     "watch": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap --watch",
-    "test": "jest"
+    "test": "jest",
+    "draw-grid": "esbuild scripts/draw_grid.ts --bundle --outfile=dist/draw_grid.js --platform=node && node dist/draw_grid.js"
   },
   "author": "",
   "license": "ISC",

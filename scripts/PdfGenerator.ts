@@ -29,6 +29,65 @@ export class PdfGenerator {
         }
     }
 
+    public async drawGrid(canvasName: string) {
+        const canvasRect = this.getCanvasRect(canvasName);
+        const { x, y, width, height } = canvasRect;
+
+        let spacing = 1;
+        if (width < 200 || height < 200) {
+            spacing = 5;
+        }
+        if (width < 100 || height < 100) {
+            spacing = 10;
+        }
+        if (width < 50 || height < 50) {
+            spacing = 20;
+        }
+
+        const pageHeight = this.page.getHeight();
+        const font = await this.getFont('helvetica');
+
+        // Draw vertical lines
+        for (let i = spacing; i < 100; i += spacing) {
+            const lineX = x + (i / 100) * width;
+            this.page.drawLine({
+                start: { x: lineX, y: pageHeight - y },
+                end: { x: lineX, y: pageHeight - (y + height) },
+                thickness: 0.5,
+                color: rgb(0, 0, 1),
+            });
+            if (spacing <= 10) {
+                this.page.drawText(String(i), {
+                    x: lineX + 2,
+                    y: pageHeight - y - 6,
+                    font,
+                    size: 6,
+                    color: rgb(0, 0, 1),
+                });
+            }
+        }
+
+        // Draw horizontal lines
+        for (let i = spacing; i < 100; i += spacing) {
+            const lineY = y + (i / 100) * height;
+            this.page.drawLine({
+                start: { x, y: pageHeight - lineY },
+                end: { x: x + width, y: pageHeight - lineY },
+                thickness: 0.5,
+                color: rgb(0, 0, 1),
+            });
+            if (spacing <= 10) {
+                this.page.drawText(String(i), {
+                    x: x + 2,
+                    y: pageHeight - lineY - 6,
+                    font,
+                    size: 6,
+                    color: rgb(0, 0, 1),
+                });
+            }
+        }
+    }
+
     private async drawElement(element: ContentElement) {
         const props: ResolvedElement = this.resolvePresets(element);
 
