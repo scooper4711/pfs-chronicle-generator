@@ -29,7 +29,7 @@ export class PdfGenerator {
         }
     }
 
-    public async drawGrid(canvasName: string) {
+    public async drawGrid(canvasName: string, contentName?: string) {
         const canvasRect = this.getCanvasRect(canvasName);
         const { x, y, width, height } = canvasRect;
 
@@ -86,6 +86,56 @@ export class PdfGenerator {
                 });
             }
         }
+
+        if (contentName) {
+            const element = this.findContentElement(this.layout.content, contentName);
+            if (element) {
+                const props = this.resolvePresets(element);
+                const elementCanvasRect = this.getCanvasRect(props.canvas!);
+                const x = props.x || 0;
+                const y = props.y || 0;
+                const x2 = props.x2 || 0;
+                const y2 = props.y2 || 0;
+
+                const boxX = elementCanvasRect.x + (x / 100) * elementCanvasRect.width;
+                const boxY = elementCanvasRect.y + (y / 100) * elementCanvasRect.height;
+                const boxWidth = ((x2 - x) / 100) * elementCanvasRect.width;
+                const boxHeight = ((y2 - y) / 100) * elementCanvasRect.height;
+
+                this.page.drawRectangle({
+                    x: boxX,
+                    y: pageHeight - boxY - boxHeight,
+                    width: boxWidth,
+                    height: boxHeight,
+                    color: rgb(0.8, 0.8, 0.8),
+                    opacity: 0.5,
+                });
+
+                const textWidth = font.widthOfTextAtSize(contentName, 8);
+                this.page.drawText(contentName, {
+                    x: boxX + (boxWidth - textWidth) / 2,
+                    y: pageHeight - boxY - boxHeight + (boxHeight - 8) / 2,
+                    font,
+                    size: 8,
+                    color: rgb(0, 0, 0),
+                });
+            }
+        }
+    }
+
+    private findContentElement(elements: ContentElement[], name: string): ContentElement | undefined {
+        for (const element of elements) {
+            if (element.value === name) {
+                return element;
+            }
+            if (element.content) {
+                const found = this.findContentElement(element.content, name);
+                if (found) {
+                    return found;
+                }
+            }
+        }
+        return undefined;
     }
 
     private async drawElement(element: ContentElement) {
@@ -97,6 +147,13 @@ export class PdfGenerator {
                 break;
             case 'multiline':
                 await this.drawMultilineText(props);
+                break;
+            case 'trigger':
+                if (props.trigger && this.data[props.trigger.substring(6)]) {
+                    for (const contentElement of props.content || []) {
+                        await this.drawElement(contentElement);
+                    }
+                }
                 break;
             // TODO: Handle other element types
         }
