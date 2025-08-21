@@ -30,6 +30,8 @@ export interface Preset {
     presets?: string[];
     canvas?: string;
     font?: string;
+    fontweight?: 'normal' | 'bold';
+    fontstyle?: 'normal' | 'italic';
     fontsize?: number;
     align?: string;
     x?: number;
@@ -58,4 +60,6 @@ export interface ContentElement {
     color?: string;
     linewidth?: number;
     canvas?: string;
+    fontweight?: 'normal' | 'bold';
+    fontstyle?: 'normal' | 'italic';
 }

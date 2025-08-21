@@ -154,7 +154,7 @@ canvas:
     x:   0.2
     y:  85.1
     x2: 99.8
-    y2: 93.1
+    y2: 93.2
 
 presets:
   defaultfont:
@@ -164,8 +164,9 @@ presets:
   player.infoline:
     presets: [defaultfont]
     canvas: main
-    y:  4.0
-    align: CB
+    y:  1.0
+    y2:  4.0
+    align: CM
 
   rightbar:
     presets: [defaultfont]
@@ -178,7 +179,8 @@ presets:
   event.infoline:
     presets: [defaultfont]
     canvas: main
-    y:  98.2
+    y:   94.8
+    y2:  98.2
     align: CB
 
   max_area:
@@ -267,6 +269,9 @@ content:
   - value: param:char
     type: text
     presets: [player.infoline]
+    font: Tauri
+    fontweight: bold
+    align: LB
     x:   1.5
     x2: 63.5
 
@@ -282,25 +287,28 @@ content:
       #  y2:  5.2
       - value: param:societyid.player
         type: text
+        fontsize: 9
+        fontweight: bold
         presets: [player.infoline]
         x:  67.2
         x2: 87.3
-        align: RB
+        align: RM
       - value: "-"
         type: text
+        fontsize: 9
+        fontweight: bold
         presets: [player.infoline]
         x:  87.3
         x2: 89.2
-        align: CB
+        align: CM
       - value: param:societyid.char_without_first_digit
         type: text
         presets: [player.infoline]
         fontsize: 9
+        fontweight: bold
         x:  90.8
-        y: 3.4
-        #x:  90.5
         x2: 97.8
-        align: LB
+        align: LM
   
   - value: param:starting_xp
     type: text

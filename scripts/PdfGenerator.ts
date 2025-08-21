@@ -1,5 +1,7 @@
-import { PDFDocument, PDFPage, rgb, StandardFonts, PDFFont, RGB } from 'pdf-lib';
+import { PDFDocument, PDFPage, rgb, StandardFonts, PDFFont, RGB, degrees } from 'pdf-lib';
 import { Layout, ContentElement, Preset, Canvas } from './model/layout';
+import * as fs from 'fs/promises';
+import * as fontkit from 'fontkit';
 
 type ResolvedElement = Partial<Preset> & ContentElement;
 
@@ -11,6 +13,7 @@ export class PdfGenerator {
 
     constructor(pdfDoc: PDFDocument, layout: Layout, data: any) {
         this.pdfDoc = pdfDoc;
+        this.pdfDoc.registerFontkit(fontkit);
         this.layout = layout;
         this.data = data;
         this.page = this.pdfDoc.getPages()[0];
@@ -29,7 +32,7 @@ export class PdfGenerator {
         }
     }
 
-    public async drawGrid(canvasName: string, contentName?: string) {
+    public async drawGrid(canvasName: string, contentToHighlight?: string | ContentElement[]) {
         const canvasRect = this.getCanvasRect(canvasName);
         const { x, y, width, height } = canvasRect;
 
@@ -46,6 +49,7 @@ export class PdfGenerator {
 
         const pageHeight = this.page.getHeight();
         const font = await this.getFont('helvetica');
+        const fontSize = 5;
 
         // Draw vertical lines
         for (let i = spacing; i < 100; i += spacing) {
@@ -57,12 +61,15 @@ export class PdfGenerator {
                 color: rgb(0, 0, 1),
             });
             if (spacing <= 10) {
-                this.page.drawText(String(i), {
-                    x: lineX + 2,
-                    y: pageHeight - y - 6,
+                const text = String(i);
+                const textWidth = font.widthOfTextAtSize(text, fontSize);
+                this.page.drawText(text, {
+                    x: lineX - textWidth / 2,
+                    y: pageHeight - y - 8,
                     font,
-                    size: 6,
+                    size: fontSize,
                     color: rgb(0, 0, 1),
+                    rotate: degrees(-90),
                 });
             }
         }
@@ -77,59 +84,104 @@ export class PdfGenerator {
                 color: rgb(0, 0, 1),
             });
             if (spacing <= 10) {
-                this.page.drawText(String(i), {
+                const text = String(i);
+                this.page.drawText(text, {
                     x: x + 2,
-                    y: pageHeight - lineY - 6,
+                    y: pageHeight - lineY - (fontSize / 2),
                     font,
-                    size: 6,
+                    size: fontSize,
                     color: rgb(0, 0, 1),
                 });
             }
         }
 
-        if (contentName) {
-            const element = this.findContentElement(this.layout.content, contentName);
-            if (element) {
-                const props = this.resolvePresets(element);
-                const elementCanvasRect = this.getCanvasRect(props.canvas!);
-                const x = props.x || 0;
-                const y = props.y || 0;
-                const x2 = props.x2 || 0;
-                const y2 = props.y2 || 0;
-
-                const boxX = elementCanvasRect.x + (x / 100) * elementCanvasRect.width;
-                const boxY = elementCanvasRect.y + (y / 100) * elementCanvasRect.height;
-                const boxWidth = ((x2 - x) / 100) * elementCanvasRect.width;
-                const boxHeight = ((y2 - y) / 100) * elementCanvasRect.height;
-
-                this.page.drawRectangle({
-                    x: boxX,
-                    y: pageHeight - boxY - boxHeight,
-                    width: boxWidth,
-                    height: boxHeight,
-                    color: rgb(0.8, 0.8, 0.8),
-                    opacity: 0.5,
-                });
-
-                const textWidth = font.widthOfTextAtSize(contentName, 8);
-                this.page.drawText(contentName, {
-                    x: boxX + (boxWidth - textWidth) / 2,
-                    y: pageHeight - boxY - boxHeight + (boxHeight - 8) / 2,
-                    font,
-                    size: 8,
-                    color: rgb(0, 0, 0),
-                });
+        if (contentToHighlight) {
+            if (typeof contentToHighlight === 'string') {
+                const element = this.findContentElement(this.layout.content, contentToHighlight);
+                if (element) {
+                    await this.highlightContentElement(element);
+                }
+            } else {
+                const allElements = this.getAllContentElements(contentToHighlight);
+                for (const element of allElements) {
+                    await this.highlightContentElement(element);
+                }
             }
         }
     }
 
-    private findContentElement(elements: ContentElement[], name: string): ContentElement | undefined {
-        for (const element of elements) {
-            if (element.value === name) {
-                return element;
+    private async highlightContentElement(element: ContentElement) {
+        const pageHeight = this.page.getHeight();
+        const font = await this.getFont('helvetica');
+        const props = this.resolvePresets(element);
+        if (!props.canvas) return;
+
+        const elementCanvasRect = this.getCanvasRect(props.canvas);
+        const x = props.x || 0;
+        const y = props.y || 0;
+        const x2 = props.x2 || 0;
+        const y2 = props.y2 || 0;
+
+        const boxX = elementCanvasRect.x + (x / 100) * elementCanvasRect.width;
+        const boxY = elementCanvasRect.y + (y / 100) * elementCanvasRect.height;
+        const boxWidth = ((x2 - x) / 100) * elementCanvasRect.width;
+        const boxHeight = ((y2 - y) / 100) * elementCanvasRect.height;
+
+        this.page.drawRectangle({
+            x: boxX,
+            y: pageHeight - boxY - boxHeight,
+            width: boxWidth,
+            height: boxHeight,
+            color: rgb(0.8, 0.8, 0.8),
+            opacity: 0.5,
+        });
+
+        const text = element.value || '';
+        const textWidth = font.widthOfTextAtSize(text, 8);
+        this.page.drawText(text, {
+            x: boxX + (boxWidth - textWidth) / 2,
+            y: pageHeight - boxY - boxHeight + (boxHeight - 8) / 2,
+            font,
+            size: 8,
+            color: rgb(0, 0, 0),
+        });
+    }
+
+    private getAllContentElements(elements: ContentElement[] | Record<string, ContentElement[]>): ContentElement[] {
+        let allElements: ContentElement[] = [];
+        if (Array.isArray(elements)) {
+            for (const element of elements) {
+                if (element.value) {
+                    allElements.push(element);
+                }
+                if (element.content) {
+                    allElements = allElements.concat(this.getAllContentElements(element.content));
+                }
             }
-            if (element.content) {
-                const found = this.findContentElement(element.content, name);
+        } else if (typeof elements === 'object') {
+            for (const key in elements) {
+                allElements = allElements.concat(this.getAllContentElements(elements[key]));
+            }
+        }
+        return allElements;
+    }
+
+    private findContentElement(elements: ContentElement[] | Record<string, ContentElement[]>, name: string): ContentElement | undefined {
+        if (Array.isArray(elements)) {
+            for (const element of elements) {
+                if (element.value === name) {
+                    return element;
+                }
+                if (element.content) {
+                    const found = this.findContentElement(element.content, name);
+                    if (found) {
+                        return found;
+                    }
+                }
+            }
+        } else if (typeof elements === 'object') {
+            for (const key in elements) {
+                const found = this.findContentElement(elements[key], name);
                 if (found) {
                     return found;
                 }
@@ -150,8 +202,30 @@ export class PdfGenerator {
                 break;
             case 'trigger':
                 if (props.trigger && this.data[props.trigger.substring(6)]) {
-                    for (const contentElement of props.content || []) {
-                        await this.drawElement(contentElement);
+                    if (Array.isArray(props.content)) {
+                        for (const contentElement of props.content) {
+                            await this.drawElement(contentElement);
+                        }
+                    } else if (typeof props.content === 'object') {
+                        for (const key in props.content) {
+                            const contentElements = (props.content as Record<string, ContentElement[]>)[key];
+                            for (const contentElement of contentElements) {
+                                await this.drawElement(contentElement);
+                            }
+                        }
+                    }
+                }
+                break;
+            case 'choice':
+                if (props.choices && props.content && typeof props.content === 'object' && !Array.isArray(props.content)) {
+                    const choices = this.resolveValue(props.choices as string)?.split(',') || [];
+                    for (const choice of choices) {
+                        const contentElements = (props.content as Record<string, ContentElement[]>)[choice];
+                        if (contentElements) {
+                            for (const contentElement of contentElements) {
+                                await this.drawElement(contentElement);
+                            }
+                        }
                     }
                 }
                 break;
@@ -197,20 +271,69 @@ export class PdfGenerator {
         }
     }
 
-    private async getFont(fontName: string | undefined): Promise<PDFFont> {
-        if (!fontName) {
+    private async getFont(fontName: string | undefined, fontWeight: 'normal' | 'bold' = 'normal', fontStyle: 'normal' | 'italic' = 'normal'): Promise<PDFFont> {
+        const font = fontName?.toLowerCase() || 'helvetica';
+        
+        const standardFonts = ['helvetica', 'times', 'courier'];
+        if (standardFonts.includes(font)) {
+            let finalFont: string = StandardFonts.Helvetica;
+            if (font === 'helvetica') {
+                if (fontWeight === 'bold' && fontStyle === 'italic') {
+                    finalFont = StandardFonts.HelveticaBoldOblique;
+                } else if (fontWeight === 'bold') {
+                    finalFont = StandardFonts.HelveticaBold;
+                } else if (fontStyle === 'italic') {
+                    finalFont = StandardFonts.HelveticaOblique;
+                }
+            } else if (font === 'times') {
+                if (fontWeight === 'bold' && fontStyle === 'italic') {
+                    finalFont = StandardFonts.TimesRomanBoldItalic;
+                } else if (fontWeight === 'bold') {
+                    finalFont = StandardFonts.TimesRomanBold;
+                } else if (fontStyle === 'italic') {
+                    finalFont = StandardFonts.TimesRomanItalic;
+                } else {
+                    finalFont = StandardFonts.TimesRoman;
+                }
+            } else if (font === 'courier') {
+                if (fontWeight === 'bold' && fontStyle === 'italic') {
+                    finalFont = StandardFonts.CourierBoldOblique;
+                } else if (fontWeight === 'bold') {
+                    finalFont = StandardFonts.CourierBold;
+                } else if (fontStyle === 'italic') {
+                    finalFont = StandardFonts.CourierOblique;
+                } else {
+                    finalFont = StandardFonts.Courier;
+                }
+            }
+            return this.pdfDoc.embedFont(finalFont);
+        }
+
+        // Custom font
+        let variant = 'Regular';
+        if (fontWeight === 'bold' && fontStyle === 'italic') {
+            variant = 'BoldItalic';
+        } else if (fontWeight === 'bold') {
+            variant = 'Bold';
+        } else if (fontStyle === 'italic') {
+            variant = 'Italic';
+        }
+        
+        let fontPath = `fonts/${fontName}/${fontName}-${variant}.ttf`;
+        try {
+            await fs.access(fontPath);
+        } catch (e) {
+            console.warn(`Font variant not found: ${fontPath}. Falling back to Regular.`);
+            fontPath = `fonts/${fontName}/${fontName}-Regular.ttf`;
+        }
+
+        try {
+            const fontBytes = await fs.readFile(fontPath);
+            return this.pdfDoc.embedFont(fontBytes);
+        } catch (e) {
+            console.error(`Failed to load font: ${fontPath}`);
             return this.pdfDoc.embedFont(StandardFonts.Helvetica);
         }
-        const fontMap: { [key: string]: string } = {
-            "helvetica": StandardFonts.Helvetica,
-            "times": StandardFonts.TimesRoman,
-            "courier": StandardFonts.Courier,
-        };
-        const font = fontMap[fontName.toLowerCase()];
-        if (font) {
-            return this.pdfDoc.embedFont(font);
-        }
-        return this.pdfDoc.embedFont(StandardFonts.Helvetica);
     }
 
     private getColor(colorName: string | undefined): RGB {
@@ -237,7 +360,7 @@ export class PdfGenerator {
             return;
         }
 
-        const { canvas, x = 0, y = 0, x2 = 0, y2 = 0, align, font, fontsize, color } = props;
+        const { canvas, x = 0, y = 0, x2 = 0, y2, align, font, fontweight, fontstyle, fontsize, color } = props;
         
         let canvasRect;
         if (canvas) {
@@ -248,14 +371,11 @@ export class PdfGenerator {
         }
 
         const boxX = canvasRect.x + (x / 100) * canvasRect.width;
-        const boxYFromTop = (y / 100) * canvasRect.height;
         const boxWidth = ((x2 - x) / 100) * canvasRect.width;
-        const boxHeight = ((y2 - y) / 100) * canvasRect.height;
 
-        const pdfFont = await this.getFont(font);
+        const pdfFont = await this.getFont(font, fontweight, fontstyle);
         const textSize = fontsize || 12;
         const textWidth = pdfFont.widthOfTextAtSize(value, textSize);
-        const textHeight = pdfFont.heightAtSize(textSize);
 
         let textX = boxX;
         if (align && align.includes('C')) {
@@ -264,14 +384,22 @@ export class PdfGenerator {
             textX = boxX + boxWidth - textWidth;
         }
 
-        let textYFromTop = boxYFromTop + textHeight;
-        if (align && align.includes('M')) {
-            textYFromTop = boxYFromTop + (boxHeight + textHeight) / 2;
-        } else if (align && align.includes('B')) {
-            textYFromTop = boxYFromTop + boxHeight;
+        let finalY;
+        if (y2 !== undefined) { // y2 is defined, so we have a box
+            const boxYFromTop = (y / 100) * canvasRect.height;
+            const boxHeight = ((y2 - y) / 100) * canvasRect.height;
+            const textHeight = pdfFont.heightAtSize(textSize);
+            let textYFromBaselineFromTop = boxYFromTop + textHeight; // Default to top alignment
+            if (align && align.includes('M')) {
+                textYFromBaselineFromTop = boxYFromTop + boxHeight / 2 + textHeight / 2;
+            } else if (align && align.includes('B')) {
+                textYFromBaselineFromTop = boxYFromTop + boxHeight;
+            }
+            finalY = this.page.getHeight() - (canvasRect.y + textYFromBaselineFromTop);
+        } else { // y2 is not defined, y is the baseline
+            const textYFromTop = (y / 100) * canvasRect.height;
+            finalY = this.page.getHeight() - (canvasRect.y + textYFromTop);
         }
-
-        const finalY = this.page.getHeight() - (canvasRect.y + textYFromTop);
 
         this.page.drawText(value, {
             x: textX,
@@ -288,7 +416,7 @@ export class PdfGenerator {
             return;
         }
 
-        const { canvas, x = 0, y = 0, x2 = 0, y2 = 0, align, font, fontsize, color, lines } = props;
+        const { canvas, x = 0, y = 0, x2 = 0, y2 = 0, align, font, fontweight, fontstyle, fontsize, color, lines } = props;
         
         let canvasRect;
         if (canvas) {
@@ -303,7 +431,7 @@ export class PdfGenerator {
         const boxWidth = ((x2 - x) / 100) * canvasRect.width;
         const boxHeight = ((y2 - y) / 100) * canvasRect.height;
 
-        const pdfFont = await this.getFont(font);
+        const pdfFont = await this.getFont(font, fontweight, fontstyle);
         const textSize = fontsize || 12;
         const textHeight = pdfFont.heightAtSize(textSize);
         const lineHeight = boxHeight / (lines || 1);
