@@ -183,18 +183,29 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
 
     calculatedGold += earnIncomeGold * daysOfDowntime;
 
-    (form.elements.namedItem('goldEarned') as HTMLInputElement).value = calculatedGold.toFixed(2);
+    (form.elements.namedItem('gp_gained') as HTMLInputElement).value = calculatedGold.toFixed(2);
   }
 
   async _onSubmit(event: SubmitEvent|Event, form: HTMLFormElement, formData: FormDataExtended) {
     const data : any = foundry.utils.expandObject(formData.object);
     
-    delete data.playerNumber;
-    delete data.characterNumber;
-    delete data.characterName;
-    delete data.level;
-
     if (this.actor) {
+        // Pre-process parameters
+        if (data.pfsNumber) {
+            const parts = data.pfsNumber.split('-');
+            if (parts.length === 2) {
+                data['societyid.player'] = parts[0];
+                data['societyid.char_without_first_digit'] = parts[1].substring(1);
+            }
+            data.societyid = data.pfsNumber;
+            delete data.pfsNumber;
+        }
+        if (data.characterName) {
+            data.char = data.characterName;
+            delete data.characterName;
+        }
+
+
         await this.actor.setFlag('pfs-chronicle-generator', 'chronicleData', data);
 
         try {
@@ -227,26 +238,6 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
             ui.notifications?.error("An error occurred during chronicle generation.");
         }
     }
-
-    // Log the submitted values to the console
-    console.log("Submitted Player Number", this.playerNumber);
-    console.log("Submitted Character Number", this.characterNumber);
-    console.log("Submitted Character Name", this.characterName);
-    console.log("Submitted GM Name:", data.gmName);
-    console.log("Submitted GM PFS Number:", data.gmPfsNumber);
-    console.log("Submitted Event Name:", data.eventName);
-    console.log("Submitted Event Code:", data.eventCode);
-    console.log("Submitted Event Date:", data.eventDate);
-    console.log("Submitted XP Earned:", data.xpEarned);
-    console.log("Submitted Treasure Bundles:", data.treasureBundles);
-    console.log("Submitted Earn Income Status:", data.earnIncomeStatus);
-    console.log("Submitted Days of Downtime:", data.daysOfDowntime);
-    console.log("Submitted Gold Earned:", data.goldEarned);
-    console.log("Submitted Gold Spent:", data.goldSpent);
-    console.log("Submitted Notes:", data.notes);
-    console.log("Submitted Reputation:", data.reputation);
-
-    // Here you would continue to process the data, like generating a PDF
   }
 
   async _prepareContext(): Promise<object> {
@@ -259,16 +250,15 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     return {
       playerNumber: this.playerNumber,
       characterNumber: this.characterNumber,
-      characterName: this.characterName,
+      char: this.characterName,
       level: this.level,
-      gmName: savedData.gmName ?? gmName,
-      gmPfsNumber: savedData.gmPfsNumber ?? gmPfsNumber,
-      eventName: savedData.eventName ?? eventName,
-      eventCode: savedData.eventCode ?? eventCode,
-      eventDate: savedData.eventDate ?? new Date().toISOString().slice(0, 10),
-      xpEarned: savedData.xpEarned ?? 4,
-      goldEarned: savedData.goldEarned ?? 0,
-      goldSpent: savedData.goldSpent ?? 0,
+      gmid: savedData.gmid ?? gmPfsNumber,
+      event: savedData.event ?? eventName,
+      eventcode: savedData.eventcode ?? eventCode,
+      date: savedData.date ?? new Date().toISOString().slice(0, 10),
+      xp_gained: savedData.xp_gained ?? 4,
+      gp_gained: savedData.gp_gained ?? 0,
+      gp_spent: savedData.gp_spent ?? 0,
       treasureBundles: savedData.treasureBundles ?? 0,
       earnIncomeStatus: savedData.earnIncomeStatus ?? "none",
       daysOfDowntime: savedData.daysOfDowntime ?? 1,
