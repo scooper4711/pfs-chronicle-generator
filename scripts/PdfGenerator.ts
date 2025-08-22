@@ -1,7 +1,5 @@
 import { PDFDocument, PDFPage, rgb, StandardFonts, PDFFont, RGB, degrees } from 'pdf-lib';
 import { Layout, ContentElement, Preset, Canvas } from './model/layout';
-import * as fs from 'fs/promises';
-import * as fontkit from 'fontkit';
 
 type ResolvedElement = Partial<Preset> & ContentElement;
 
@@ -13,7 +11,6 @@ export class PdfGenerator {
 
     constructor(pdfDoc: PDFDocument, layout: Layout, data: any) {
         this.pdfDoc = pdfDoc;
-        this.pdfDoc.registerFontkit(fontkit);
         this.layout = layout;
         this.data = data;
         this.page = this.pdfDoc.getPages()[0];
@@ -273,67 +270,39 @@ export class PdfGenerator {
 
     private async getFont(fontName: string | undefined, fontWeight: 'normal' | 'bold' = 'normal', fontStyle: 'normal' | 'italic' = 'normal'): Promise<PDFFont> {
         const font = fontName?.toLowerCase() || 'helvetica';
-        
-        const standardFonts = ['helvetica', 'times', 'courier'];
-        if (standardFonts.includes(font)) {
-            let finalFont: string = StandardFonts.Helvetica;
-            if (font === 'helvetica') {
-                if (fontWeight === 'bold' && fontStyle === 'italic') {
-                    finalFont = StandardFonts.HelveticaBoldOblique;
-                } else if (fontWeight === 'bold') {
-                    finalFont = StandardFonts.HelveticaBold;
-                } else if (fontStyle === 'italic') {
-                    finalFont = StandardFonts.HelveticaOblique;
-                }
-            } else if (font === 'times') {
-                if (fontWeight === 'bold' && fontStyle === 'italic') {
-                    finalFont = StandardFonts.TimesRomanBoldItalic;
-                } else if (fontWeight === 'bold') {
-                    finalFont = StandardFonts.TimesRomanBold;
-                } else if (fontStyle === 'italic') {
-                    finalFont = StandardFonts.TimesRomanItalic;
-                } else {
-                    finalFont = StandardFonts.TimesRoman;
-                }
-            } else if (font === 'courier') {
-                if (fontWeight === 'bold' && fontStyle === 'italic') {
-                    finalFont = StandardFonts.CourierBoldOblique;
-                } else if (fontWeight === 'bold') {
-                    finalFont = StandardFonts.CourierBold;
-                } else if (fontStyle === 'italic') {
-                    finalFont = StandardFonts.CourierOblique;
-                } else {
-                    finalFont = StandardFonts.Courier;
-                }
+        let finalFont: string = StandardFonts.Helvetica;
+
+        if (font === 'helvetica') {
+            if (fontWeight === 'bold' && fontStyle === 'italic') {
+                finalFont = StandardFonts.HelveticaBoldOblique;
+            } else if (fontWeight === 'bold') {
+                finalFont = StandardFonts.HelveticaBold;
+            } else if (fontStyle === 'italic') {
+                finalFont = StandardFonts.HelveticaOblique;
             }
-            return this.pdfDoc.embedFont(finalFont);
+        } else if (font === 'times') {
+            if (fontWeight === 'bold' && fontStyle === 'italic') {
+                finalFont = StandardFonts.TimesRomanBoldItalic;
+            } else if (fontWeight === 'bold') {
+                finalFont = StandardFonts.TimesRomanBold;
+            } else if (fontStyle === 'italic') {
+                finalFont = StandardFonts.TimesRomanItalic;
+            } else {
+                finalFont = StandardFonts.TimesRoman;
+            }
+        } else if (font === 'courier') {
+            if (fontWeight === 'bold' && fontStyle === 'italic') {
+                finalFont = StandardFonts.CourierBoldOblique;
+            } else if (fontWeight === 'bold') {
+                finalFont = StandardFonts.CourierBold;
+            } else if (fontStyle === 'italic') {
+                finalFont = StandardFonts.CourierOblique;
+            } else {
+                finalFont = StandardFonts.Courier;
+            }
         }
 
-        // Custom font
-        let variant = 'Regular';
-        if (fontWeight === 'bold' && fontStyle === 'italic') {
-            variant = 'BoldItalic';
-        } else if (fontWeight === 'bold') {
-            variant = 'Bold';
-        } else if (fontStyle === 'italic') {
-            variant = 'Italic';
-        }
-        
-        let fontPath = `fonts/${fontName}/${fontName}-${variant}.ttf`;
-        try {
-            await fs.access(fontPath);
-        } catch (e) {
-            console.warn(`Font variant not found: ${fontPath}. Falling back to Regular.`);
-            fontPath = `fonts/${fontName}/${fontName}-Regular.ttf`;
-        }
-
-        try {
-            const fontBytes = await fs.readFile(fontPath);
-            return this.pdfDoc.embedFont(fontBytes);
-        } catch (e) {
-            console.error(`Failed to load font: ${fontPath}`);
-            return this.pdfDoc.embedFont(StandardFonts.Helvetica);
-        }
+        return this.pdfDoc.embedFont(finalFont);
     }
 
     private getColor(colorName: string | undefined): RGB {
@@ -357,6 +326,7 @@ export class PdfGenerator {
     private async drawText(props: ResolvedElement) {
         const value = this.resolveValue(props.value);
         if (!value) {
+            console.log("Value is undefined:", props.value, this.data);
             return;
         }
 
@@ -469,7 +439,10 @@ export class PdfGenerator {
         }
         if (value.startsWith('param:')) {
             const paramName = value.substring(6);
-            return this.data[paramName];
+            console.log("paramName:", paramName);
+            console.log("this.data:", this.data);
+            console.log("this.data[paramName]:", this.data[paramName]);
+            return this.data.object[paramName];
         }
         return value;
     }
