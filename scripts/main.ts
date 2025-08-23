@@ -2,7 +2,8 @@ import { PFSChronicleGeneratorApp } from './PFSChronicleGeneratorApp.js';
 import { layoutStore } from './LayoutStore.js';
 
 Hooks.on('init', async () => {
-  await layoutStore.initialize();
+if (game.isGM)
+    await layoutStore.initialize();
   const layoutChoices = layoutStore.getLayoutChoices();
 
   game.settings.register('pfs-chronicle-generator','gmName', {
@@ -106,7 +107,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
         
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${sheet.actor.name}_chronicle.pdf`;
+            a.download = `${sheet.actor.name}_${sheet.actor.system.pfs.playerNumber}-${sheet.actor.system.pfs.characterNumber}.pdf`;
             a.target = '_blank';
             document.body.appendChild(a);
             a.click();
