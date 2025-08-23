@@ -44,25 +44,12 @@
             <input type="number" id="treasureBundles" name="treasureBundles" value="{{treasureBundles}}">
         </div>
         <div class="form-group">
-            <label for="earnIncomeStatus">Earn Income</label>
-            <div class="multi-field">
-                <select id="earnIncomeStatus" name="earnIncomeStatus">
-                    <option value="none" {{#if (eq earnIncomeStatus "none")}}selected{{/if}}>None</option>
-                    <option value="failure" {{#if (eq earnIncomeStatus "failure")}}selected{{/if}}>Failure</option>
-                    <option value="success-trained" {{#if (eq earnIncomeStatus "success-trained")}}selected{{/if}}>Success (Trained)</option>
-                    <option value="success-expert" {{#if (eq earnIncomeStatus "success-expert")}}selected{{/if}}>Success (Expert)</option>
-                    <option value="success-master" {{#if (eq earnIncomeStatus "success-master")}}selected{{/if}}>Success (Master)</option>
-                    <option value="critical-success-trained" {{#if (eq earnIncomeStatus "critical-success-trained")}}selected{{/if}}>Critical Success (Trained)</option>
-                    <option value="critical-success-expert" {{#if (eq earnIncomeStatus "critical-success-expert")}}selected{{/if}}>Critical Success (Expert)</option>
-                    <option value="critical-success-master" {{#if (eq earnIncomeStatus "critical-s_master")}}selected{{/if}}>Critical Success (Master)</option>
-                </select>
-                <label for="daysOfDowntime">Days of Downtime</label>
-                <input type="number" id="daysOfDowntime" name="daysOfDowntime" value="{{daysOfDowntime}}">
-            </div>
+            <label for="incomeEarned">Income Earned</label>
+            <input type="number" id="incomeEarned" name="incomeEarned" value="{{incomeEarned}}" step="0.01">
         </div>
         <div class="form-group">
             <strong>Gold Earned:</strong>
-            <span>{{gp_gained}}</span>
+            <span id="gp_gained_display">{{gp_gained}}</span>
         </div>
         <div class="form-group">
             <label for="gp_spent">Gold Spent</label>

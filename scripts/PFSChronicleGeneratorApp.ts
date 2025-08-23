@@ -10,11 +10,6 @@ type PfsRewardData = {
   treasureBundleValue: {
     [level: number]: number;
   };
-  earnIncomeValue: {
-    [level: number]: {
-      [status: string]: number;
-    };
-  };
 };
 
 const PFS_REWARD_DATA: PfsRewardData = {
@@ -25,73 +20,6 @@ const PFS_REWARD_DATA: PfsRewardData = {
         9: 44, 10: 60, 11: 86, 12: 124,
         13: 188, 14: 274, 15: 408, 16: 620, 
         17: 960, 18: 1560, 19: 2660, 20: 3680
-    },
-    // Earn Income gold value per level and success level
-    earnIncomeValue: {
-        1: { 
-            'failure': 0.08, 
-            'success-trained': 0.4, 
-            'success-expert': 0.4, 
-        },
-        2: { 
-            'failure': 0.08, 
-            'success-trained': 0.4, 
-            'success-expert': 0.4,
-        },
-        3: {
-            'failure': 0.16, 
-            'success-trained': 1.6,
-            'success-expert': 1.6,
-        },
-        4: {
-            'failure': 0.32, 
-            'success-trained': 2.4,
-            'success-expert': 2.4,
-        },
-        5: {
-            'failure': 0.64, 
-            'success-trained': 4,
-            'success-expert': 4,
-        },
-        6: {
-            'failure': 0.8, 
-            'success-trained': 5.6,
-            'success-expert': 6.4,
-        },
-        7: {
-            'failure': 1.6, 
-            'success-trained': 7.2,
-            'success-expert': 8,
-        },
-        8: {
-            'failure': 2.4, 
-            'success-trained': 12,
-            'success-expert': 16,
-        },
-        9: {
-            'failure': 3.2, 
-            'success-trained': 16,
-            'success-expert': 20,
-            'success-master': 20,
-        },
-        10: {
-            'failure': 4, 
-            'success-trained': 20,
-            'success-expert': 24,
-            'success-master': 24,
-        },
-        11: {
-            'failure': 4.8, 
-            'success-trained': 24,
-            'success-expert': 32,
-            'success-master': 32,
-        },
-        12: {
-            'failure': 5.6, 
-            'success-trained': 32,
-            'success-expert': 40,
-            'success-master': 48,
-        },
     }
 };
 
@@ -186,7 +114,7 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
 
   async _onRender(context: any, options: any) : Promise<void>{
     const html = $(this.element)
-    html.find('[name="treasureBundles"], [name="earnIncomeStatus"], [name="daysOfDowntime"]').on('change', this._onRewardsChanged.bind(this));
+    html.find('[name="treasureBundles"], [name="incomeEarned"]').on('change', this._onRewardsChanged.bind(this));
   }
 
   _onRewardsChanged(event: any) {
@@ -194,39 +122,20 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     if (!form) return;
 
     const treasureBundles = parseInt((form.elements.namedItem('treasureBundles') as HTMLInputElement).value) || 0;
-    const earnIncomeStatus = (form.elements.namedItem('earnIncomeStatus') as HTMLSelectElement).value;
-    const daysOfDowntime = parseInt((form.elements.namedItem('daysOfDowntime') as HTMLInputElement).value) || 0;
+    const incomeEarned = parseFloat((form.elements.namedItem('incomeEarned') as HTMLInputElement).value) || 0;
 
     let calculatedGold = 0;
-    let earnIncomeGold = 0;
 
     if (this.level && PFS_REWARD_DATA.treasureBundleValue[this.level]) {
         calculatedGold += treasureBundles * PFS_REWARD_DATA.treasureBundleValue[this.level];
     }
 
-    if (this.level && earnIncomeStatus && earnIncomeStatus !== 'none') {
-      if (earnIncomeStatus.startsWith('critical-success')) {
-        const proficiency = earnIncomeStatus.substring('critical-success-'.length);
-        const successStatus = `success-${proficiency}`;
-        let effectiveLevel = this.level + 1;
-        if (this.level <= 2) {
-          effectiveLevel = 3;
-        }
-        
-        if (PFS_REWARD_DATA.earnIncomeValue[effectiveLevel] && PFS_REWARD_DATA.earnIncomeValue[effectiveLevel][successStatus]) {
-          earnIncomeGold = PFS_REWARD_DATA.earnIncomeValue[effectiveLevel][successStatus];
-        }
+    calculatedGold += incomeEarned;
 
-      } else {
-        if (PFS_REWARD_DATA.earnIncomeValue[this.level] && PFS_REWARD_DATA.earnIncomeValue[this.level][earnIncomeStatus]) {
-            earnIncomeGold = PFS_REWARD_DATA.earnIncomeValue[this.level][earnIncomeStatus];
-        }
-      }
+    const goldDisplay = this.form?.querySelector('#gp_gained_display') as HTMLSpanElement;
+    if (goldDisplay) {
+        goldDisplay.innerText = calculatedGold.toFixed(2);
     }
-
-    calculatedGold += earnIncomeGold * daysOfDowntime;
-
-    (form.elements.namedItem('gp_gained') as HTMLInputElement).value = calculatedGold.toFixed(2);
   }
 
   
@@ -250,8 +159,7 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       total_xp: (savedData.total_xp ?? "-"),
       starting_gp: (savedData.starting_gp ?? "-"),
       treasureBundles: savedData.treasureBundles ?? 0,
-      earnIncomeStatus: savedData.earnIncomeStatus ?? "none",
-      daysOfDowntime: savedData.daysOfDowntime ?? 8,
+      incomeEarned: savedData.incomeEarned ?? 0,
       gp_gained: (savedData.gp_gained ?? "0"),
       gp_spent: (savedData.gp_spent ?? "-"),
       total_gp: (savedData.total_gp ?? "-"),
