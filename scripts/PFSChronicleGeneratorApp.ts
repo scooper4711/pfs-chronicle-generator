@@ -112,14 +112,12 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     this.characterName = actor.name;
     this.currentFaction = actor.system.pfs.currentFaction;
     this.level = actor.system.details.level.value;
-    if (this.options.form)
-      this.options.form.handler = this._onSubmit.bind(this);
   }
 
   static DEFAULT_OPTIONS = {
     id: "pfs-chronicle-generator",
     form: {
-      handler: (event: SubmitEvent|Event, form: HTMLFormElement, formData: FormDataExtended) => {},
+      handler: PFSChronicleGeneratorApp.#generatePDF,
       closeOnSubmit: true,
     },
     position: {
@@ -129,6 +127,51 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       title: "Pathfinder Society Chronicle Generator",
       icon: "fas fa-file-pdf",
       contentClasses: ["standard-form"],
+    }
+  }
+
+  static async #generatePDF(this: PFSChronicleGeneratorApp, event: SubmitEvent|Event, form: HTMLFormElement, formData: FormDataExtended) : Promise<void> {
+    const data : any = foundry.utils.expandObject(formData.object);
+    
+    if (this.actor) {
+        
+
+        await this.actor.setFlag('pfs-chronicle-generator', 'chronicleData', data);
+
+        try {
+            const layoutId = game.settings.get('pfs-chronicle-generator', 'layout');
+            const layout = await layoutStore.getLayout(layoutId as string);
+
+            const pdfPath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
+            if (pdfPath && typeof pdfPath === 'string') {
+                const response = await fetch(pdfPath);
+                if (response.ok) {
+                    const pdfBytes = await response.arrayBuffer();
+                    const pdfDoc = await PDFDocument.load(pdfBytes);
+
+                    const generator = new PdfGenerator(pdfDoc, layout, data);
+                    await generator.generate();
+
+                    const modifiedPdfBytes = await pdfDoc.save();
+                    let binary = '';
+                    const len = modifiedPdfBytes.byteLength;
+                    for (let i = 0; i < len; i++) {
+                        binary += String.fromCharCode(modifiedPdfBytes[i]);
+                    }
+                    const base64String = btoa(binary);
+
+                    await this.actor.setFlag('pfs-chronicle-generator', 'chroniclePdf', base64String);
+                    ui.notifications?.info("Chronicle PDF generated and attached to actor.");
+                } else {
+                    ui.notifications?.error("Failed to fetch the blank chronicle PDF. Check the path in the settings.");
+                }
+            } else {
+                ui.notifications?.error("Blank chronicle PDF path is not set in the settings.");
+            }
+        } catch (e) {
+            console.error(e);
+            ui.notifications?.error("An error occurred during chronicle generation.");
+        }
     }
   }
 
@@ -186,84 +229,34 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     (form.elements.namedItem('gp_gained') as HTMLInputElement).value = calculatedGold.toFixed(2);
   }
 
-  async _onSubmit(event: SubmitEvent|Event, form: HTMLFormElement, formData: FormDataExtended) {
-    const data : any = foundry.utils.expandObject(formData.object);
-    
-    if (this.actor) {
-        // Pre-process parameters
-        if (data.pfsNumber) {
-            const parts = data.pfsNumber.split('-');
-            if (parts.length === 2) {
-                data['societyid.player'] = parts[0];
-                data['societyid.char_without_first_digit'] = parts[1].substring(1);
-            }
-            data.societyid = data.pfsNumber;
-            delete data.pfsNumber;
-        }
-        if (data.characterName) {
-            data.char = data.characterName;
-            delete data.characterName;
-        }
-
-
-        await this.actor.setFlag('pfs-chronicle-generator', 'chronicleData', data);
-
-        try {
-            const layoutId = game.settings.get('pfs-chronicle-generator', 'layout');
-            const layout = await layoutStore.getLayout(layoutId as string);
-
-            const pdfPath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
-            if (pdfPath && typeof pdfPath === 'string') {
-                const response = await fetch(pdfPath);
-                if (response.ok) {
-                    const pdfBytes = await response.arrayBuffer();
-                    const pdfDoc = await PDFDocument.load(pdfBytes);
-
-                    const generator = new PdfGenerator(pdfDoc, layout, data);
-                    await generator.generate();
-
-                    const modifiedPdfBytes = await pdfDoc.save();
-                    const base64String = btoa(String.fromCharCode(...new Uint8Array(modifiedPdfBytes)));
-
-                    await this.actor.setFlag('pfs-chronicle-generator', 'chroniclePdf', base64String);
-                    ui.notifications?.info("Chronicle PDF generated and attached to actor.");
-                } else {
-                    ui.notifications?.error("Failed to fetch the blank chronicle PDF. Check the path in the settings.");
-                }
-            } else {
-                ui.notifications?.error("Blank chronicle PDF path is not set in the settings.");
-            }
-        } catch (e) {
-            console.error(e);
-            ui.notifications?.error("An error occurred during chronicle generation.");
-        }
-    }
-  }
+  
 
   async _prepareContext(): Promise<object> {
     const savedData = this.actor.getFlag('pfs-chronicle-generator', 'chronicleData') || {};
 
-    const gmName = game.settings.get('pfs-chronicle-generator', 'gmName');
     const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber');
     const eventName = game.settings.get('pfs-chronicle-generator', 'eventName');
-    const eventCode = game.settings.get('pfs-chronicle-generator', 'eventCode');
+    const eventcode = game.settings.get('pfs-chronicle-generator', 'eventcode');
     return {
-      playerNumber: this.playerNumber,
-      characterNumber: this.characterNumber,
-      char: this.characterName,
-      level: this.level,
-      gmid: savedData.gmid ?? gmPfsNumber,
-      event: savedData.event ?? eventName,
-      eventcode: savedData.eventcode ?? eventCode,
+      event: eventName,
+      eventcode: eventcode,
       date: savedData.date ?? new Date().toISOString().slice(0, 10),
-      xp_gained: savedData.xp_gained ?? 4,
-      gp_gained: savedData.gp_gained ?? 0,
-      gp_spent: savedData.gp_spent ?? 0,
+      gmid: gmPfsNumber,
+      char: this.actor.name,
+      level: this.actor.system.details.level.value ?? 1,
+      societyid: this.playerNumber+'-'+this.characterNumber,
+      starting_xp: (savedData.starting_xp ?? "-"),
+      xp_gained: (savedData.xp_gained ?? "4"),
+      total_xp: (savedData.total_xp ?? "-"),
+      starting_gp: (savedData.starting_gp ?? "-"),
       treasureBundles: savedData.treasureBundles ?? 0,
       earnIncomeStatus: savedData.earnIncomeStatus ?? "none",
-      daysOfDowntime: savedData.daysOfDowntime ?? 1,
-      notes: savedData.notes ?? "",
+      daysOfDowntime: savedData.daysOfDowntime ?? 8,
+      gp_gained: (savedData.gp_gained ?? "0"),
+      gp_spent: (savedData.gp_spent ?? "-"),
+      total_gp: (savedData.total_gp ?? "-"),
       reputation: savedData.reputation ?? (this.currentFaction ? `${this.currentFaction}: +4` : ""),
+      notes: savedData.notes ?? "",
       buttons: [
         { type: "submit", icon: "fa-solid fa-save", label: "SETTINGS.Save" }
       ]

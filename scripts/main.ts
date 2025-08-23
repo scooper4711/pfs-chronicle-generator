@@ -29,7 +29,7 @@ Hooks.on('init', async () => {
         type: String,
         default: '',
   });
-  game.settings.register('pfs-chronicle-generator','eventCode', {
+  game.settings.register('pfs-chronicle-generator','eventcode', {
         name: 'Event Code',
         hint: 'The event code.',
         scope: 'world',

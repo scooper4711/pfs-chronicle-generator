@@ -345,7 +345,7 @@ export class PdfGenerator {
 
         const pdfFont = await this.getFont(font, fontweight, fontstyle);
         const textSize = fontsize || 12;
-        const textWidth = pdfFont.widthOfTextAtSize(value, textSize);
+        const textWidth = pdfFont.widthOfTextAtSize(String(value), textSize);
 
         let textX = boxX;
         if (align && align.includes('C')) {
@@ -371,7 +371,7 @@ export class PdfGenerator {
             finalY = this.page.getHeight() - (canvasRect.y + textYFromTop);
         }
 
-        this.page.drawText(value, {
+        this.page.drawText(String(value), {
             x: textX,
             y: finalY,
             font: pdfFont,
@@ -439,10 +439,27 @@ export class PdfGenerator {
         }
         if (value.startsWith('param:')) {
             const paramName = value.substring(6);
-            console.log("paramName:", paramName);
-            console.log("this.data:", this.data);
-            console.log("this.data[paramName]:", this.data[paramName]);
-            return this.data.object[paramName];
+            if (paramName === 'societyid.player') {
+                const societyid = this.data['societyid'];
+                if (societyid && typeof societyid === 'string') {
+                    const parts = societyid.split('-');
+                    if (parts.length === 2) {
+                        return parts[0];
+                    }
+                }
+                return '';
+            }
+            if (paramName === 'societyid.char_without_first_digit') {
+                const societyid = this.data['societyid'];
+                if (societyid && typeof societyid === 'string') {
+                    const parts = societyid.split('-');
+                    if (parts.length === 2) {
+                        return parts[1].substring(1);
+                    }
+                }
+                return '';
+            }
+            return this.data[paramName];
         }
         return value;
     }
