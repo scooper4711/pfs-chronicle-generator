@@ -19,15 +19,15 @@ The grid lines are drawn at 2%, 5%, or 10% increments, depending on the size of 
 To use the tool, run the following command from the root of the project:
 
 ```bash
-npm run draw-grid -- --pdf path/to/your/chronicle.pdf --layout-dir layouts --layout-name <layout_name> --canvas <canvas_name> [--content <content_name> | --all-content]
+npm run draw-grid -- --pdf path/to/your/chronicle.pdf --layout-dir layouts --layout-name <layout_name> [--canvas <canvas_name>] [--content <content_name> | --boxes]
 ```
 
 -   `--pdf`: The path to the blank chronicle PDF.
 -   `--layout-dir`: The directory where your layouts are stored.
 -   `--layout-name`: The `id` of the layout you want to use.
--   `--canvas`: The name of the canvas you want to draw the grid on.
+-   `--canvas`: (Optional) The name of the canvas you want to draw the grid on.
 -   `--content`: (Optional) The name of a content element to highlight with a grey box.
--   `--all-content`: (Optional) Highlight all content elements with a grey box.
+-   `--boxes`: (Optional) Highlight all content elements with a grey box.
 
 After running the command, a new file named `grid-output.pdf` will be created in the project root. Open this file to see the grid and find the coordinates for your layout elements.
 

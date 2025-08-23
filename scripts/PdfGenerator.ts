@@ -29,7 +29,7 @@ export class PdfGenerator {
         }
     }
 
-    public async drawGrid(canvasName: string, contentToHighlight?: string | ContentElement[]) {
+    public async drawGrid(canvasName: string) {
         const canvasRect = this.getCanvasRect(canvasName);
         const { x, y, width, height } = canvasRect;
 
@@ -91,7 +91,9 @@ export class PdfGenerator {
                 });
             }
         }
+    }
 
+    public async drawBoxes(contentToHighlight?: string | ContentElement[]) {
         if (contentToHighlight) {
             if (typeof contentToHighlight === 'string') {
                 const element = this.findContentElement(this.layout.content, contentToHighlight);
@@ -129,8 +131,10 @@ export class PdfGenerator {
             y: pageHeight - boxY - boxHeight,
             width: boxWidth,
             height: boxHeight,
-            color: rgb(0.8, 0.8, 0.8),
+            color: rgb(1, 0.71, 0.76),
             opacity: 0.5,
+            borderColor: rgb(0, 0, 0),
+            borderWidth: 1,
         });
 
         const text = element.value || '';
