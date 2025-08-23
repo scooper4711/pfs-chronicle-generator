@@ -3,32 +3,28 @@
         <fieldset class="character-details">
             <legend>Character Details</legend>
             <div class="form-group">
-                <label for="char">Character Name</label>
-                <input type="text" id="char" name="char" value="{{char}}" readonly>
+                <strong>Character Name:</strong>
+                <span>{{char}}</span>
             </div>
             <div class="form-group">
-                <label for="societyid">Society ID</label>
-                <input type="text" id="societyid" name="societyid" value="{{societyid}}" readonly>
+                <strong>Society ID:</strong>
+                <span>{{societyid}}</span>
             </div>
             <div class="form-group">
-                <label for="level">Level</label>
-                <input type="text" id="level" name="level" value="{{level}}" readonly>
+                <strong>Level:</strong>
+                <span>{{level}}</span>
             </div>
         </fieldset>
 
         <fieldset class="event-details">
             <legend>Event Details</legend>
             <div class="form-group">
-                <label for="gmid">GM PFS Number</label>
-                <input type="text" id="gmid" name="gmid" value="{{gmid}}" readonly>
+                <strong>GM PFS Number:</strong>
+                <span>{{gmid}}</span>
             </div>
             <div class="form-group">
-                <label for="event">Event Name</label>
-                <input type="text" id="event" name="event" value="{{event}}" readonly>
-            </div>
-            <div class="form-group">
-                <label for="eventcode">Event Code</label>
-                <input type="text" id="eventcode" name="eventcode" value="{{eventcode}}" readonly>
+                <strong>Event:</strong>
+                <span>{{event}} - {{eventcode}}</span>
             </div>
             <div class="form-group">
                 <label for="date">Event Date</label>
@@ -65,8 +61,8 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="gp_gained">Gold Earned</label>
-            <input type="number" id="gp_gained" name="gp_gained" value="{{gp_gained}}" step="0.01" readonly>
+            <strong>Gold Earned:</strong>
+            <span>{{gp_gained}}</span>
         </div>
         <div class="form-group">
             <label for="gp_spent">Gold Spent</label>
