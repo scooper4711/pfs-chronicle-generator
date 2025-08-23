@@ -269,7 +269,6 @@ content:
   - value: param:char
     type: text
     presets: [player.infoline]
-    font: Tauri
     fontweight: bold
     align: LB
     x:   1.5
