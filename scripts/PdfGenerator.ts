@@ -110,21 +110,32 @@ export class PdfGenerator {
     }
 
     private async highlightContentElement(element: ContentElement) {
+        const props = this.resolvePresets(element);
         const pageHeight = this.page.getHeight();
         const font = await this.getFont('helvetica');
-        const props = this.resolvePresets(element);
         if (!props.canvas) return;
 
         const elementCanvasRect = this.getCanvasRect(props.canvas);
         const x = props.x || 0;
         const y = props.y || 0;
-        const x2 = props.x2 || 0;
-        const y2 = props.y2 || 0;
 
-        const boxX = elementCanvasRect.x + (x / 100) * elementCanvasRect.width;
-        const boxY = elementCanvasRect.y + (y / 100) * elementCanvasRect.height;
-        const boxWidth = ((x2 - x) / 100) * elementCanvasRect.width;
-        const boxHeight = ((y2 - y) / 100) * elementCanvasRect.height;
+        let boxX, boxY, boxWidth, boxHeight;
+
+        if (props.type === 'choice') {
+            const size = props.size || 0;
+            const linewidth = props.linewidth || 1;
+            boxX = elementCanvasRect.x + (x / 100) * elementCanvasRect.width;
+            boxY = elementCanvasRect.y + (y / 100) * elementCanvasRect.height;
+            boxWidth = (size / 100) * elementCanvasRect.width;
+            boxHeight = linewidth;
+        } else {
+            const x2 = props.x2 || 0;
+            const y2 = props.y2 || 0;
+            boxX = elementCanvasRect.x + (x / 100) * elementCanvasRect.width;
+            boxY = elementCanvasRect.y + (y / 100) * elementCanvasRect.height;
+            boxWidth = ((x2 - x) / 100) * elementCanvasRect.width;
+            boxHeight = ((y2 - y) / 100) * elementCanvasRect.height;
+        }
 
         this.page.drawRectangle({
             x: boxX,
@@ -152,7 +163,7 @@ export class PdfGenerator {
         let allElements: ContentElement[] = [];
         if (Array.isArray(elements)) {
             for (const element of elements) {
-                if (element.value) {
+                if (element.value || element.type) {
                     allElements.push(element);
                 }
                 if (element.content) {
@@ -230,8 +241,65 @@ export class PdfGenerator {
                     }
                 }
                 break;
+            case 'strikeout':
+                await this.drawStrikeout(props);
+                break;
+            case 'line':
+                await this.drawLineElement(props);
+                break;
             // TODO: Handle other element types
         }
+    }
+
+    private async drawLineElement(props: ResolvedElement) {
+        const { canvas, x = 0, y = 0, x2 = 0, linewidth = 1, color } = props;
+
+        let canvasRect;
+        if (canvas) {
+            canvasRect = this.getCanvasRect(canvas);
+        } else {
+            const { width, height } = this.page.getSize();
+            canvasRect = { x: 0, y: 0, width, height };
+        }
+
+        const startX = canvasRect.x + (x / 100) * canvasRect.width;
+        const endX = canvasRect.x + (x2 / 100) * canvasRect.width;
+        let startY = this.page.getHeight() - (canvasRect.y + (y / 100) * canvasRect.height);
+
+        startY -= linewidth / 2;
+
+        this.page.drawLine({
+            start: { x: startX, y: startY },
+            end: { x: endX, y: startY },
+            thickness: linewidth,
+            color: this.getColor(color),
+        });
+    }
+
+    private async drawStrikeout(props: ResolvedElement) {
+        const { canvas, x = 0, y = 0, size = 0, linewidth = 1, color } = props;
+
+        let canvasRect;
+        if (canvas) {
+            canvasRect = this.getCanvasRect(canvas);
+        } else {
+            const { width, height } = this.page.getSize();
+            canvasRect = { x: 0, y: 0, width, height };
+        }
+
+        const startX = canvasRect.x + (x / 100) * canvasRect.width;
+        let startY = this.page.getHeight() - (canvasRect.y + (y / 100) * canvasRect.height);
+        const lineLength = (size / 100) * canvasRect.width;
+        const endX = startX + lineLength;
+
+        startY -= linewidth / 2;
+
+        this.page.drawLine({
+            start: { x: startX, y: startY },
+            end: { x: endX, y: startY },
+            thickness: linewidth,
+            color: this.getColor(color),
+        });
     }
 
     private resolvePresets(element: ContentElement): ResolvedElement {
