@@ -28,6 +28,7 @@
       }
     ]
   },
-  "manifest": "https://raw.githubusercontent.com/scooper4711/pfs-chronicle-generator/main/pfs-chronicle-generator/module.json",
-  "download": "https://github.com/scooper4711/pfs-chronicle-generator/releases/latest/download/pfs-chronicle-generator.zip"
+  "url": "#{URL}#",
+  "manifest": "#{MANIFEST}#",
+  "download": "#{DOWNLOAD}#"
 }
