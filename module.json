@@ -2,12 +2,17 @@
   "id": "pfs-chronicle-generator",
   "title": "Pathfinder Society Chronicle Generator",
   "description": "A module to fill-in Pathfinder and Starfinder Society Chronicles.",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
   },
-  "authors": [],
+  "authors": [
+    {
+      "name": "Stephen Cooper",
+      "url": "https://github.com/scooper4711"
+    }
+  ],
   "esmodules": [
     "dist/main.js"
   ],
@@ -23,6 +28,6 @@
       }
     ]
   },
-  "manifest": "https://raw.githubusercontent.com/<your-username>/<your-repo>/main/pfs-chronicle-generator/module.json",
-  "download": "https://github.com/<your-username>/<your-repo>/releases/latest/download/pfs-chronicle-generator.zip"
+  "manifest": "https://raw.githubusercontent.com/scooper4711/pfs-chronicle-generator/main/pfs-chronicle-generator/module.json",
+  "download": "https://github.com/scooper4711/pfs-chronicle-generator/releases/latest/download/pfs-chronicle-generator.zip"
 }

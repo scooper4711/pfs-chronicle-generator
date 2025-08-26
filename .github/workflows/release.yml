@@ -25,14 +25,42 @@ jobs:
       run: npm run build
       working-directory: ./pfs-chronicle-generator
 
+    on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./pfs-chronicle-generator
+
+    - name: Build
+      run: npm run build
+      working-directory: ./pfs-chronicle-generator
+
     - name: Package
       run: |
-        sed -i "s|https://github.com/<your-username>/<your-repo>/releases/latest/download/pfs-chronicle-generator.zip|https://github.com/${{ github.repository }}/releases/download/${{ github.ref }}/pfs-chronicle-generator.zip|" pfs-chronicle-generator/module.json
-        sed -i "s|<your-username>/<your-repo>|${{ github.repository }}|" pfs-chronicle-generator/module.json
         mkdir -p release
         zip -r release/pfs-chronicle-generator.zip pfs-chronicle-generator -x "pfs-chronicle-generator/node_modules/*" "pfs-chronicle-generator/scripts/*" "pfs-chronicle-generator/dist/draw_grid.js" "pfs-chronicle-generator/dist/fill_fields.js" "pfs-chronicle-generator/.git/*" "pfs-chronicle-generator/chronicles/*"
-      
-    - name: Create Release
+
+    - name: Semantic Release
+      uses: cycjimmy/semantic-release-action@v2
+      with:
+        working_directory: ./pfs-chronicle-generator
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       id: create_release
       uses: actions/create-release@v1
       env:

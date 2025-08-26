@@ -6,21 +6,45 @@
   "scripts": {
     "build": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap",
     "watch": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap --watch",
-    "test": "jest"
+    "test": "jest",
+    "semantic-release": "semantic-release"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^8.1.0",
     "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",
     "esbuild": "^0.25.9",
     "fvtt-types": "npm:@league-of-foundry-developers/foundry-vtt-types@^13.346.0-beta.20250812191140",
     "jest": "^29.7.0",
+    "semantic-release": "^21.0.7",
     "ts-jest": "^29.4.1",
     "typescript": "^5.0.0"
   },
   "dependencies": {
     "js-yaml": "^4.1.0",
     "pdf-lib": "^1.17.1"
+  },
+  "release": {
+    "branches": ["main"],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      ["@semantic-release/npm", {
+        "npmPublish": false
+      }],
+      ["@semantic-release/git", {
+        "assets": ["package.json", "package-lock.json", "CHANGELOG.md"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }],
+      ["@semantic-release/github", {
+        "assets": "release/*.zip"
+      }]
+    ]
   }
 }
+
