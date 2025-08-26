@@ -2,7 +2,7 @@
   "id": "pfs-chronicle-generator",
   "title": "Pathfinder Society Chronicle Generator",
   "description": "A module to fill-in Pathfinder and Starfinder Society Chronicles.",
-  "version": "0.0.1",
+  "version": "#{VERSION}#",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
