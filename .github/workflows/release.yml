@@ -19,11 +19,9 @@ jobs:
 
     - name: Install dependencies
       run: npm install
-      working-directory: ./pfs-chronicle-generator
 
     - name: Build
       run: npm run build
-      working-directory: ./pfs-chronicle-generator
 
     - name: Package
       run: |
@@ -34,7 +32,5 @@ jobs:
 
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v2
-      with:
-        package_path: ./pfs-chronicle-generator
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
