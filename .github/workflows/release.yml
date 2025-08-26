@@ -35,6 +35,6 @@ jobs:
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v2
       with:
-        working_directory: ./pfs-chronicle-generator
+        package_path: ./pfs-chronicle-generator
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
