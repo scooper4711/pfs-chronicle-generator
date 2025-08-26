@@ -46,7 +46,7 @@ export class PdfGenerator {
 
         const pageHeight = this.page.getHeight();
         const font = await this.getFont('helvetica');
-        const fontSize = 5;
+        const fontSize = 3;
 
         // Draw vertical lines
         for (let i = spacing; i < 100; i += spacing) {
@@ -54,10 +54,10 @@ export class PdfGenerator {
             this.page.drawLine({
                 start: { x: lineX, y: pageHeight - y },
                 end: { x: lineX, y: pageHeight - (y + height) },
-                thickness: 0.5,
+                thickness: 0.1,
                 color: rgb(0, 0, 1),
             });
-            if (spacing <= 10) {
+            if (i % 10 === 0) {
                 const text = String(i);
                 const textWidth = font.widthOfTextAtSize(text, fontSize);
                 this.page.drawText(text, {
@@ -77,10 +77,10 @@ export class PdfGenerator {
             this.page.drawLine({
                 start: { x, y: pageHeight - lineY },
                 end: { x: x + width, y: pageHeight - lineY },
-                thickness: 0.5,
+                thickness: 0.1,
                 color: rgb(0, 0, 1),
             });
-            if (spacing <= 10) {
+            if (i % 10 === 0) {
                 const text = String(i);
                 this.page.drawText(text, {
                     x: x + 2,
