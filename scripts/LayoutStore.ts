@@ -6,7 +6,8 @@ class LayoutStore {
     private layoutInfo: Map<string, { path: string, description: string }> = new Map();
 
     public async initialize() {
-        await this.findAllLayouts({ source: "data", target: "modules/pfs-chronicle-generator/layouts/" });
+        const layoutPath = game.settings.get('pfs-chronicle-generator', 'layoutPath');
+        await this.findAllLayouts({ source: "data", target: layoutPath });
     }
 
     public async getLayout(id: string): Promise<Layout> {
@@ -42,9 +43,19 @@ class LayoutStore {
         return choices;
     }
 
+    public getLayouts(): { id: string, description: string }[] {
+        const layouts: { id: string, description: string }[] = [];
+        for (const [id, info] of this.layoutInfo.entries()) {
+            layouts.push({ id: id, description: info.description });
+        }
+        return layouts;
+    }
+
     private async findAllLayouts(source: { source: string, target: string }) {
         try {
-            const browseResult = await FilePicker.browse(source.source, source.target);
+            console.log(`PFS Chronicle Generator | Browsing for layouts in ${source.target}`);
+            const browseResult = await foundry.applications.apps.FilePicker.browse(source.source, source.target);
+            console.log(`PFS Chronicle Generator | Found ${browseResult.files.length} files and ${browseResult.dirs.length} directories.`);
             for (const file of browseResult.files) {
                 if (!file.endsWith(".yml")) {
                     continue;
@@ -66,7 +77,10 @@ class LayoutStore {
                 await this.findAllLayouts({ source: source.source, target: dir });
             }
         } catch (e) {
-            console.error(`PFS Chronicle Generator | Failed to load layouts from ${source.target}`, e);
+            if (game.isGM())
+                console.error(`PFS Chronicle Generator | Failed to load layouts from ${source.target}`, e);
+            else
+                console.error(`PFS Chronicle Generator | Non-GM user shouldn't initialize the LayoutStore`);
         }
     }
 

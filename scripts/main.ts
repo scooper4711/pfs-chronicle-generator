@@ -1,11 +1,8 @@
 import { PFSChronicleGeneratorApp } from './PFSChronicleGeneratorApp.js';
 import { layoutStore } from './LayoutStore.js';
+import { LayoutDesignerApp } from './LayoutDesignerApp.js';
 
 Hooks.on('init', async () => {
-if (game.isGM)
-    await layoutStore.initialize();
-  const layoutChoices = layoutStore.getLayoutChoices();
-
   game.settings.register('pfs-chronicle-generator','gmName', {
         name: 'GM Name',
         hint: 'The name of the Game Master.',
@@ -48,15 +45,42 @@ if (game.isGM)
     default: '',
   });
 
-  game.settings.register('pfs-chronicle-generator', 'layout', {
-    name: 'Chronicle Layout',
-    hint: 'The layout to use when generating the chronicle.',
+  game.settings.register('pfs-chronicle-generator', 'layoutPath', {
+    name: 'Layouts Directory',
+    hint: 'The directory where the chronicle layouts are stored.',
     scope: 'world',
     config: true,
     type: String,
-    choices: layoutChoices,
-    default: Object.keys(layoutChoices)[0] || '',
+    filePicker: 'folder',
+    default: 'modules/pfs-chronicle-generator/layouts/',
   });
+
+  game.settings.registerMenu("pfs-chronicle-generator", "layoutDesigner", {
+    name: "Layout Designer",
+    label: "Open Layout Designer",
+    hint: "Open the layout designer to create and edit chronicle layouts.",
+    icon: "fas fa-ruler-combined",
+    type: LayoutDesignerApp,
+    restricted: true,
+  });
+
+  game.modules.get('pfs-chronicle-generator').api = {
+    LayoutDesignerApp
+  };
+});
+
+Hooks.on('ready', async () => {
+    await layoutStore.initialize();
+    const layoutChoices = layoutStore.getLayoutChoices();
+    game.settings.register('pfs-chronicle-generator', 'layout', {
+        name: 'Chronicle Layout',
+        hint: 'The layout to use when generating the chronicle.',
+        scope: 'world',
+        config: true,
+        type: String,
+        choices: layoutChoices,
+        default: Object.keys(layoutChoices)[0] || '',
+    });
 });
 
 Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) => {
