@@ -1,4 +1,13 @@
 <div class="pfs-chronicle-generator-form">
+    <input type="hidden" name="char" value="{{char}}">
+    <input type="hidden" name="societyid" value="{{societyid}}">
+    <input type="hidden" name="level" value="{{level}}">
+    <input type="hidden" name="gmid" value="{{gmid}}">
+    <input type="hidden" name="event" value="{{event}}">
+    <input type="hidden" name="eventcode" value="{{eventcode}}">
+    <input type="hidden" name="treasure_bundles_gp" value="{{treasure_bundles_gp}}">
+    <input type="hidden" name="gp_gained" value="{{gp_gained}}">
+
     <div class="top-section">
         <fieldset class="character-details">
             <legend>Character Details</legend>
@@ -44,8 +53,8 @@
             <input type="number" id="treasureBundles" name="treasureBundles" value="{{treasureBundles}}">
         </div>
         <div class="form-group">
-            <label for="incomeEarned">Income Earned</label>
-            <input type="number" id="incomeEarned" name="incomeEarned" value="{{incomeEarned}}" step="0.01">
+            <label for="income_earned">Income Earned</label>
+            <input type="number" id="income_earned" name="income_earned" value="{{income_earned}}" step="0.01">
         </div>
         <div class="form-group">
             <strong>Gold Earned:</strong>

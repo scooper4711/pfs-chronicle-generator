@@ -116,7 +116,8 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
 
   async _onRender(context: any, options: any) : Promise<void>{
     const html = $(this.element)
-    html.find('[name="treasureBundles"], [name="incomeEarned"]').on('change', this._onRewardsChanged.bind(this));
+    html.find('[name="treasureBundles"], [name="income_earned"]').on('change', this._onRewardsChanged.bind(this));
+    this._onRewardsChanged(null);
   }
 
   _onRewardsChanged(event: any) {
@@ -124,19 +125,28 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     if (!form) return;
 
     const treasureBundles = parseInt((form.elements.namedItem('treasureBundles') as HTMLInputElement).value) || 0;
-    const incomeEarned = parseFloat((form.elements.namedItem('incomeEarned') as HTMLInputElement).value) || 0;
+    const incomeEarned = parseFloat((form.elements.namedItem('income_earned') as HTMLInputElement).value) || 0;
 
-    let calculatedGold = 0;
-
+    let treasureBundlesGold = 0;
     if (this.level && PFS_REWARD_DATA.treasureBundleValue[this.level]) {
-        calculatedGold += treasureBundles * PFS_REWARD_DATA.treasureBundleValue[this.level];
+        treasureBundlesGold = treasureBundles * PFS_REWARD_DATA.treasureBundleValue[this.level];
     }
 
-    calculatedGold += incomeEarned;
+    const calculatedGold = treasureBundlesGold + incomeEarned;
 
     const goldDisplay = this.form?.querySelector('#gp_gained_display') as HTMLSpanElement;
     if (goldDisplay) {
         goldDisplay.innerText = calculatedGold.toFixed(2);
+    }
+
+    const treasureBundlesGpInput = this.form?.querySelector('[name="treasure_bundles_gp"]') as HTMLInputElement;
+    if (treasureBundlesGpInput) {
+        treasureBundlesGpInput.value = treasureBundlesGold.toFixed(2);
+    }
+
+    const gpGainedInput = this.form?.querySelector('[name="gp_gained"]') as HTMLInputElement;
+    if (gpGainedInput) {
+        gpGainedInput.value = calculatedGold.toFixed(2);
     }
   }
 
@@ -156,15 +166,16 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       char: this.actor.name,
       level: this.actor.system.details.level.value ?? 1,
       societyid: this.playerNumber+'-'+this.characterNumber,
-      starting_xp: (savedData.starting_xp ?? "-"),
+      starting_xp: (savedData.starting_xp ?? ""),
       xp_gained: (savedData.xp_gained ?? "4"),
-      total_xp: (savedData.total_xp ?? "-"),
-      starting_gp: (savedData.starting_gp ?? "-"),
+      total_xp: (savedData.total_xp ?? ""),
+      starting_gp: (savedData.starting_gp ?? ""),
       treasureBundles: savedData.treasureBundles ?? 0,
-      incomeEarned: savedData.incomeEarned ?? 0,
-      gp_gained: (savedData.gp_gained ?? "0"),
-      gp_spent: (savedData.gp_spent ?? "-"),
-      total_gp: (savedData.total_gp ?? "-"),
+      income_earned: (savedData.income_earned ?? 0).toFixed(2),
+      treasure_bundles_gp: (savedData.treasure_bundles_gp ?? ""),
+      gp_gained: (savedData.gp_gained ?? ""),
+      gp_spent: (savedData.gp_spent ?? 0).toFixed(2),
+      total_gp: (savedData.total_gp ?? ""),
       reputation: savedData.reputation ?? (this.currentFaction ? `${this.currentFaction}: +4` : ""),
       notes: savedData.notes ?? "",
       buttons: [
