@@ -89,6 +89,10 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
         return;
     }
 
+    function sanitizeFilename(name: string) {
+        return name.replace(/[^a-zA-Z0-9_.-]/g, '_');
+    }
+
     // --- Generate Chronicle Button (GM only) ---
     if (game.user.isGM) {
         const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
@@ -128,15 +132,20 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
             const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], {type: 'application/pdf'});
             const url = URL.createObjectURL(blob);
-        
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${sheet.actor.name}_${sheet.actor.system.pfs.playerNumber}-${sheet.actor.system.pfs.characterNumber}.pdf`;
-            a.target = '_blank';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            try {
+                const a = document.createElement('a');
+                a.href = url;
+                const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
+                const chronicleFileName = blankChroniclePath.split('/').pop() || 'chronicle.pdf';
+                const sanitizedActorName = sanitizeFilename(sheet.actor.name);
+                const sanitizedChronicleFileName = sanitizeFilename(chronicleFileName);
+                a.download = `${sanitizedActorName}_${sanitizedChronicleFileName}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } finally {
+                URL.revokeObjectURL(url);
+            }
         }
     });
 
