@@ -131,21 +131,12 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
             }
             const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], {type: 'application/pdf'});
-            const url = URL.createObjectURL(blob);
-            try {
-                const a = document.createElement('a');
-                a.href = url;
-                const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
-                const chronicleFileName = blankChroniclePath.split('/').pop() || 'chronicle.pdf';
-                const sanitizedActorName = sanitizeFilename(sheet.actor.name);
-                const sanitizedChronicleFileName = sanitizeFilename(chronicleFileName);
-                a.download = `${sanitizedActorName}_${sanitizedChronicleFileName}`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            } finally {
-                URL.revokeObjectURL(url);
-            }
+            const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
+            const chronicleFileName = blankChroniclePath.split('/').pop() || 'chronicle.pdf';
+            const sanitizedActorName = sanitizeFilename(sheet.actor.name);
+            const sanitizedChronicleFileName = sanitizeFilename(chronicleFileName);
+            var FileSaver = require('file-saver');
+            FileSaver.saveAs(blob, `${sanitizedActorName}_${sanitizedChronicleFileName}`);
         }
     });
 
