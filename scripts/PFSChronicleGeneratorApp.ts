@@ -1,6 +1,7 @@
 import { layoutStore } from './LayoutStore.js';
 import { PdfGenerator } from './PdfGenerator.js';
 import { PDFDocument } from 'pdf-lib';
+import fontkit from '@pdf-lib/fontkit';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
 import FormDataExtended = foundry.applications.ux.FormDataExtended;
@@ -76,6 +77,7 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
                 if (response.ok) {
                     const pdfBytes = await response.arrayBuffer();
                     const pdfDoc = await PDFDocument.load(pdfBytes);
+                    pdfDoc.registerFontkit(fontkit);
 
                     const generator = new PdfGenerator(pdfDoc, layout, data);
                     await generator.generate();

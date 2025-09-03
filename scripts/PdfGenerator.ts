@@ -46,7 +46,7 @@ export class PdfGenerator {
 
         const pageHeight = this.page.getHeight();
         const font = await this.getFont('helvetica');
-        const fontSize = 3;
+        const fontSize = 5;
 
         // Draw vertical lines
         for (let i = spacing; i < 100; i += spacing) {
@@ -57,7 +57,7 @@ export class PdfGenerator {
                 thickness: 0.1,
                 color: rgb(0, 0, 1),
             });
-            if (i % 10 === 0) {
+            if (i % 5 === 0) {
                 const text = String(i);
                 const textWidth = font.widthOfTextAtSize(text, fontSize);
                 this.page.drawText(text, {
@@ -80,7 +80,7 @@ export class PdfGenerator {
                 thickness: 0.1,
                 color: rgb(0, 0, 1),
             });
-            if (i % 10 === 0) {
+            if (i % 5 === 0) {
                 const text = String(i);
                 this.page.drawText(text, {
                     x: x + 2,
@@ -342,6 +342,32 @@ export class PdfGenerator {
 
     private async getFont(fontName: string | undefined, fontWeight: 'normal' | 'bold' = 'normal', fontStyle: 'normal' | 'italic' = 'normal'): Promise<PDFFont> {
         const font = fontName?.toLowerCase() || 'helvetica';
+        
+        if (font.startsWith('noto') || font.startsWith('eczar') || font.startsWith('gelasio') || font.startsWith('roboto') || font.startsWith('tauri')) {
+            let fontUrl = '';
+            switch (font) {
+                case 'noto sans':
+                case 'noto':
+                    fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff`;
+                    break;
+                case 'eczar':
+                    fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/eczar/files/eczar-latin-400-normal.woff`;
+                    break;
+                case 'gelasio':
+                    fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/gelasio/files/gelasio-latin-400-normal.woff`;
+                    break;
+                case 'roboto condensed':
+                case 'roboto':
+                    fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/roboto-condensed/files/roboto-condensed-latin-400-normal.woff`;
+                    break;
+                case 'tauri':
+                    fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/tauri/files/tauri-latin-400-normal.woff`;
+                    break;
+            }
+            const fontBytes = await fetch(fontUrl).then(res => res.arrayBuffer());
+            return this.pdfDoc.embedFont(fontBytes);
+        }
+
         let finalFont: string = StandardFonts.Helvetica;
 
         if (font === 'helvetica') {
