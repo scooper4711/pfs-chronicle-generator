@@ -54,7 +54,7 @@ export class PdfGenerator {
             this.page.drawLine({
                 start: { x: lineX, y: pageHeight - y },
                 end: { x: lineX, y: pageHeight - (y + height) },
-                thickness: 0.1,
+                thickness: i % 5 === 0 ? 0.5 : 0.1,
                 color: rgb(0, 0, 1),
             });
             if (i % 5 === 0) {
@@ -77,7 +77,7 @@ export class PdfGenerator {
             this.page.drawLine({
                 start: { x, y: pageHeight - lineY },
                 end: { x: x + width, y: pageHeight - lineY },
-                thickness: 0.1,
+                thickness: i % 5 === 0 ? 0.5 : 0.1,
                 color: rgb(0, 0, 1),
             });
             if (i % 5 === 0) {
@@ -242,7 +242,7 @@ export class PdfGenerator {
                 }
                 break;
             case 'strikeout':
-                await this.drawStrikeout(props);
+                await this.drawRedaction(props);
                 break;
             case 'line':
                 await this.drawLineElement(props);
@@ -276,8 +276,8 @@ export class PdfGenerator {
         });
     }
 
-    private async drawStrikeout(props: ResolvedElement) {
-        const { canvas, x = 0, y = 0, size = 0, linewidth = 1, color } = props;
+    private async drawRedaction(props: ResolvedElement) {
+        const { canvas, x = 0, y = 0, x2 = 0, y2 = 0, color } = props;
 
         let canvasRect;
         if (canvas) {
@@ -287,19 +287,37 @@ export class PdfGenerator {
             canvasRect = { x: 0, y: 0, width, height };
         }
 
-        const startX = canvasRect.x + (x / 100) * canvasRect.width;
-        let startY = this.page.getHeight() - (canvasRect.y + (y / 100) * canvasRect.height);
-        const lineLength = (size / 100) * canvasRect.width;
-        const endX = startX + lineLength;
+        const rectX = canvasRect.x + (x / 100) * canvasRect.width;
+        const rectY = this.page.getHeight() - (canvasRect.y + (y2 / 100) * canvasRect.height);
+        const rectWidth = ((x2 - x) / 100) * canvasRect.width;
+        const rectHeight = ((y2 - y) / 100) * canvasRect.height;
 
-        startY -= linewidth / 2;
-
-        this.page.drawLine({
-            start: { x: startX, y: startY },
-            end: { x: endX, y: startY },
-            thickness: linewidth,
+        this.page.drawRectangle({
+            x: rectX,
+            y: rectY,
+            width: rectWidth,
+            height: rectHeight,
             color: this.getColor(color),
         });
+
+        const xSize = Math.min(rectWidth, rectHeight);
+        const numX = Math.ceil(rectWidth / xSize);
+
+        for (let i = 0; i < numX; i++) {
+            const currentX = rectX + i * xSize;
+            this.page.drawLine({
+                start: { x: currentX, y: rectY },
+                end: { x: currentX + xSize, y: rectY + rectHeight },
+                thickness: 1,
+                color: rgb(1, 1, 1),
+            });
+            this.page.drawLine({
+                start: { x: currentX, y: rectY + rectHeight },
+                end: { x: currentX + xSize, y: rectY },
+                thickness: 1,
+                color: rgb(1, 1, 1),
+            });
+        }
     }
 
     private resolvePresets(element: ContentElement): ResolvedElement {
