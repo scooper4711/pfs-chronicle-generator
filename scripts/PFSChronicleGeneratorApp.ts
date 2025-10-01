@@ -5,6 +5,7 @@ import fontkit from '@pdf-lib/fontkit';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
 import FormDataExtended = foundry.applications.ux.FormDataExtended;
+import { ContentElement, Layout } from './model/layout.js';
 
 // Placeholder data structure for level-based rewards
 type PfsRewardData = {
@@ -64,6 +65,8 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     
     if (this.actor) {
         
+        const strikeoutItems = Object.entries(data.strikeoutItems || {}).filter(([, value]) => value).map(([key]) => Number(key) + 1);
+        data.strikeout_item_lines = strikeoutItems.join(',');
 
         await this.actor.setFlag('pfs-chronicle-generator', 'chronicleData', data);
 
@@ -150,7 +153,25 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     }
   }
 
-  
+  private findStrikeoutItems(content: ContentElement[]): string[] {
+    let items: string[] = [];
+    for (const element of content) {
+        if (element.type === 'strikeout') {
+            items.push(element.value || '');
+        }
+        if (element.content) {
+            if (Array.isArray(element.content)) {
+                items = items.concat(this.findStrikeoutItems(element.content));
+            } else {
+                for (const key in element.content) {
+                    console.log(key);
+                    items = items.concat(this.findStrikeoutItems(element.content[key]));
+                }
+            }
+        }
+    }
+    return items;
+  }
 
   async _prepareContext(): Promise<object> {
     const savedData = this.actor.getFlag('pfs-chronicle-generator', 'chronicleData') || {};
@@ -158,6 +179,11 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber');
     const eventName = game.settings.get('pfs-chronicle-generator', 'eventName');
     const eventcode = game.settings.get('pfs-chronicle-generator', 'eventcode');
+    
+    const layoutId = game.settings.get('pfs-chronicle-generator', 'layout');
+    const layout = await layoutStore.getLayout(layoutId as string);
+    const strikeoutItems = this.findStrikeoutItems(layout.content);
+
     return {
       event: eventName,
       eventcode: eventcode,
@@ -178,6 +204,7 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       total_gp: (savedData.total_gp ?? ""),
       reputation: savedData.reputation ?? (this.currentFaction ? `${this.currentFaction}: +4` : ""),
       notes: savedData.notes ?? "",
+      strikeoutItems: strikeoutItems,
       buttons: [
         { type: "submit", icon: "fa-solid fa-save", label: "SETTINGS.Save" }
       ]

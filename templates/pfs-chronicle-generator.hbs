@@ -73,4 +73,16 @@
             <textarea id="reputation" name="reputation" rows="3" cols="80">{{reputation}}</textarea>
         </div>
     </fieldset>
+
+    {{#if strikeoutItems}}
+    <fieldset class="strikeout-items">
+        <legend>Items</legend>
+        <div class="form-group">
+        {{#each strikeoutItems}}
+            <label for="strikeoutItems.{{@index}}">{{this}}</label>
+            <input type="checkbox" id="strikeoutItems.{{@index}}" name="strikeoutItems.{{@index}}">
+        {{/each}}
+        </div>
+    </fieldset>
+    {{/if}}
 </div>

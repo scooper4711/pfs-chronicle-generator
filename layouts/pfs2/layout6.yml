@@ -440,19 +440,19 @@ content:
     choices: param:summary_checkbox
     content:
       1:
-        - type: strikeout
+        - type: line
           presets: [checkbox, checkbox.1]
       2:
-        - type: strikeout
+        - type: line
           presets: [checkbox, checkbox.2]
       3:
-        - type: strikeout
+        - type: line
           presets: [checkbox, checkbox.3]
       4:
-        - type: strikeout
+        - type: line
           presets: [checkbox, checkbox.4]
       5:
-        - type: strikeout
+        - type: line
           presets: [checkbox, checkbox.5]
 
   - value: param:reputation
