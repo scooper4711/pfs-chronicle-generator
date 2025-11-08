@@ -1,0 +1,5 @@
+{
+    "id": "pfs2.quests",
+    "description": "PFS2 Quests",
+    "parent": "pfs2.layout1"
+}

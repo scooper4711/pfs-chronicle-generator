@@ -1,0 +1,37 @@
+{
+    "id": "pfs2.s1-04",
+    "description": "#1-04: Bandits of Immenwood",
+    "parent": "pfs2.s1",
+    "canvas": {
+        "rightbar": {
+            "y": 18.8
+        }
+    },
+    "content": [
+        {
+            "type": "rectangle",
+            "presets": [
+                "rightbar"
+            ],
+            "color": "white",
+            "x": 0.0,
+            "y": 0.0,
+            "x2": 99.0,
+            "y2": 5.4
+        }
+    ],
+    "presets": {
+        "boon.1": {
+            "x": 1.0,
+            "y": 23.2,
+            "x2": 79.5,
+            "y2": 30.5
+        },
+        "boon.2": {
+            "x": 1.0,
+            "y": 30.5,
+            "x2": 79.5,
+            "y2": 36.0
+        }
+    }
+}

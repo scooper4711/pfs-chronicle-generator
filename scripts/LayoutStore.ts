@@ -1,9 +1,9 @@
 import { Layout } from './model/layout';
-import * as yaml from 'js-yaml';
 
 class LayoutStore {
     private layouts: Map<string, Layout> = new Map();
     private layoutInfo: Map<string, { path: string, description: string }> = new Map();
+    private seasonDirectories: Map<string, string> = new Map(); // key: directory name, value: display name
 
     public async initialize() {
         const layoutPath = game.settings.get('pfs-chronicle-generator', 'layoutPath');
@@ -21,7 +21,7 @@ class LayoutStore {
         }
 
         const fileContent = await fetch(layoutInfo.path).then(r => r.text());
-        const layoutData = yaml.load(fileContent) as any;
+        const layoutData = JSON.parse(fileContent);
 
         let finalLayout: Layout;
         if (layoutData.parent) {
@@ -44,10 +44,65 @@ class LayoutStore {
     }
 
     public getLayouts(): { id: string, description: string }[] {
-        const layouts: { id: string, description: string }[] = [];
-        for (const [id, info] of this.layoutInfo.entries()) {
-            layouts.push({ id: id, description: info.description });
+        return Array.from(this.layoutInfo.entries()).map(([id, info]) => ({
+            id,
+            description: info.description
+        }));
+    }
+
+    private getDisplayNameForDirectory(dirName: string): string {
+        // Handle sN format (e.g., s1 -> Season 1)
+        if (dirName.toLowerCase().match(/^s\d+$/)) {
+            const num = dirName.substring(1);
+            return `Season ${num}`;
         }
+
+        // Handle other directories with title case
+        return dirName.split('_')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    }
+
+    public getSeasons(): Array<{ id: string, name: string }> {
+        return Array.from(this.seasonDirectories.entries())
+            .map(([id, name]) => ({ id, name }))
+            .sort((a, b) => {
+                // Put numbered seasons first
+                const aNum = parseInt(a.id);
+                const bNum = parseInt(b.id);
+                if (!isNaN(aNum) && !isNaN(bNum)) {
+                    return aNum - bNum;
+                }
+                if (!isNaN(aNum)) return -1;
+                if (!isNaN(bNum)) return 1;
+                return a.name.localeCompare(b.name);
+            });
+    }
+
+    public getLayoutsByParent(parent: string | null | undefined): Array<{ id: string, description: string }> {
+        if (!parent) return [];
+
+        // Convert display name back to directory format if needed
+        let dirFormat = parent;
+        if (typeof parent === 'string') {
+            // Handle Season N -> sN conversion
+            dirFormat = parent.replace(/^Season (\d+)$/i, 's$1');
+            // Handle spaces -> underscores for other names
+            dirFormat = dirFormat.toLowerCase().replace(/ /g, '_');
+        }
+
+        console.log('Looking for layouts with dirFormat:', dirFormat);
+        
+        const layouts = Array.from(this.layoutInfo.entries())
+            .filter(([id, info]) => {
+                const idParts = id.split('.');
+                return idParts.length > 1 && idParts[1].startsWith(dirFormat);
+            })
+            .map(([id, info]) => ({
+                id,
+                description: info.description
+            }))
+            .sort((a, b) => a.description.localeCompare(b.description));
         return layouts;
     }
 
@@ -56,41 +111,63 @@ class LayoutStore {
             console.log(`PFS Chronicle Generator | Browsing for layouts in ${source.target}`);
             const browseResult = await foundry.applications.apps.FilePicker.browse(source.source, source.target);
             console.log(`PFS Chronicle Generator | Found ${browseResult.files.length} files and ${browseResult.dirs.length} directories.`);
+            
+            // Store directory as a season if it contains layouts
+            const dirName = source.target.split('/').pop();
+            if (dirName && source.target.includes('/pfs2/')) {
+                const parentDir = source.target.split('/').slice(-2)[0];
+                if (parentDir === 'pfs2' && dirName !== 'pfs2') {
+                    const displayName = this.getDisplayNameForDirectory(dirName);
+                    this.seasonDirectories.set(dirName, displayName);
+                }
+            }
+            
             for (const file of browseResult.files) {
-                if (!file.endsWith(".yml")) {
+                if (!file.endsWith(".json")) {
                     continue;
                 }
-                const fileContent = await fetch(file).then(r => r.text());
-                const idMatch = fileContent.match(/id:\s*(.*)/);
-                const descriptionMatch = fileContent.match(/description:\s*(".*"|.*)/);
-                if (idMatch && descriptionMatch) {
-                    const id = idMatch[1].trim();
-                    let description = descriptionMatch[1].trim();
-                    if (description.startsWith('"') && description.endsWith('"')) {
-                        description = description.substring(1, description.length - 1);
+                
+                try {
+                    const fileContent = await fetch(file).then(r => r.text());
+                    const jsonData = JSON.parse(fileContent);
+                    const id = jsonData.id;
+                    const description = jsonData.description;
+
+                    if (!id || !description) {
+                        console.warn(`Layout file ${file} missing required fields (id or description)`);
+                        continue;
                     }
+                    
                     this.layoutInfo.set(id, { path: file, description: description });
+                } catch (error) {
+                    console.warn(`Failed to parse JSON layout file ${file}:`, error);
+                    continue;
                 }
             }
 
-            for (const dir of browseResult.dirs) {
-                await this.findAllLayouts({ source: source.source, target: dir });
-            }
-        } catch (e) {
+            // Process subdirectories
+            await Promise.all(browseResult.dirs.map(dir => 
+                this.findAllLayouts({ source: source.source, target: dir })
+            ));
+        } catch (error) {
             if (game.isGM())
-                console.error(`PFS Chronicle Generator | Failed to load layouts from ${source.target}`, e);
+                console.error(`PFS Chronicle Generator | Failed to load layouts from ${source.target}`, error);
             else
                 console.error(`PFS Chronicle Generator | Non-GM user shouldn't initialize the LayoutStore`);
+            throw error;
         }
     }
 
-    private mergeLayouts(parent: Layout, child: any): Layout {
-        const merged = { ...parent, ...child };
-        merged.presets = { ...(parent.presets || {}), ...(child.presets || {}) };
-        merged.canvas = { ...(parent.canvas || {}), ...(child.canvas || {}) };
-        merged.parameters = { ...(parent.parameters || {}), ...(child.parameters || {}) };
-        merged.content = [ ...(parent.content || []), ...(child.content || []) ];
-        return merged as Layout;
+    private mergeLayouts(parent: Layout, child: Layout): Layout {
+        const merged: Layout = {
+            ...parent,
+            ...child,
+            presets: { ...(parent.presets || {}), ...(child.presets || {}) },
+            canvas: { ...(parent.canvas || {}), ...(child.canvas || {}) },
+            parameters: { ...(parent.parameters || {}), ...(child.parameters || {}) },
+            content: [...(parent.content || []), ...(child.content || [])]
+        };
+        return merged;
     }
 }
 

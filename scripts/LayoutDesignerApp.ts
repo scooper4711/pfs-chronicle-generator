@@ -30,16 +30,36 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
     }
 
     async _prepareContext(): Promise<object> {
-        const layouts = layoutStore.getLayouts();
-        const selectedLayoutId = layouts.length > 0 ? layouts[0].id : undefined;
-        const selectedLayout = selectedLayoutId ? await layoutStore.getLayout(selectedLayoutId) : undefined;
-        const canvases = selectedLayout ? Object.keys(selectedLayout.canvas) : [];
+        const seasons = layoutStore.getSeasons();
+        
+        // Get the currently selected layout from settings
+        const currentLayoutId = game.settings.get('pfs-chronicle-generator', 'layout') as string;
+        
+        // Find which season contains the current layout
+        const selectedLayoutId = currentLayoutId || '';
+        const selectedSeasonId = seasons.find(season => 
+            layoutStore.getLayoutsByParent(season.id).some(layout => layout.id === selectedLayoutId)
+        )?.id || (seasons.length > 0 ? seasons[0].id : '');
+        
+        // Get layouts for the selected season
+        const layoutsInSeason = layoutStore.getLayoutsByParent(selectedSeasonId);
+        
+        // If current layout isn't in the season, select first layout in season
+        const effectiveLayoutId = layoutsInSeason.some(l => l.id === selectedLayoutId) 
+            ? selectedLayoutId 
+            : (layoutsInSeason.length > 0 ? layoutsInSeason[0].id : undefined);
+            
+        const selectedLayout = effectiveLayoutId ? await layoutStore.getLayout(effectiveLayoutId) : undefined;
+        const canvases = selectedLayout?.canvas ? Object.keys(selectedLayout.canvas) : [];
         const pdfPath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
 
         return {
-            layouts: layouts,
-            canvases: canvases,
-            pdfPath: pdfPath,
+            seasons,
+            selectedSeasonId,
+            layoutsInSeason,
+            selectedLayoutId: effectiveLayoutId,
+            canvases,
+            pdfPath,
             buttons: [
                 { type: "submit", icon: "fas fa-cogs", label: "Generate" }
             ]
@@ -49,8 +69,33 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
     async _onRender(context: any, options: any) : Promise<void>{
         super._onRender(context, options);
         const html = this.element;
+        html.querySelector('#season')?.addEventListener('change', this._onSeasonChanged.bind(this));
         html.querySelector('#layout')?.addEventListener('change', this._onLayoutChanged.bind(this));
         html.querySelector('.file-picker-button')?.addEventListener('click', this._onFilePicker.bind(this));
+    }
+
+    async _onSeasonChanged(event: any) {
+        const seasonId = event.target.value;
+        const layouts = layoutStore.getLayoutsByParent(seasonId);
+
+        const layoutDropdown = this.element.querySelector('#layout') as HTMLSelectElement;
+        layoutDropdown.innerHTML = '';
+        for (const layout of layouts) {
+            const option = document.createElement('option');
+            option.value = layout.id;
+            option.innerText = layout.description;
+            layoutDropdown.appendChild(option);
+        }
+
+        if (layouts.length > 0) {
+            // Trigger layout changed event with first layout
+            layoutDropdown.value = layouts[0].id;
+            this._onLayoutChanged({ target: layoutDropdown });
+        } else {
+            // Clear canvas dropdown if no layouts
+            const canvasDropdown = this.element.querySelector('#canvas') as HTMLSelectElement;
+            canvasDropdown.innerHTML = '';
+        }
     }
 
     async _onFilePicker(event: any) {
@@ -66,7 +111,7 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
     async _onLayoutChanged(event: any) {
         const layoutId = event.target.value;
         const layout = await layoutStore.getLayout(layoutId);
-        const canvases = layout ? Object.keys(layout.canvas) : [];
+        const canvases = layout?.canvas ? Object.keys(layout.canvas) : [];
         
         const canvasDropdown = this.element.querySelector('#canvas') as HTMLSelectElement;
         canvasDropdown.innerHTML = '';

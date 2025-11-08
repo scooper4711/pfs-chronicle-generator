@@ -7,3 +7,8 @@ foundryconfig.json
 chronicles
 grid-output.pdf
 filled-output.pdf
+__pycache__
+*.pyc
+.vscode
+.env
+out_debug*

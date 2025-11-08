@@ -1,0 +1,18 @@
+{
+    "id": "pfs2.s1-20",
+    "description": "#1-20: The Lost Legend",
+    "parent": "pfs2.s1",
+    "canvas": {
+        "rightbar": {
+            "y": 20.7
+        }
+    },
+    "presets": {
+        "boon.1": {
+            "x": 0.0,
+            "y": 21.5,
+            "x2": 79.5,
+            "y2": 30.5
+        }
+    }
+}

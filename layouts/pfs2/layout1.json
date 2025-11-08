@@ -1,0 +1,1314 @@
+{
+    "id": "pfs2.layout1",
+    "description": "PFS2 Chronicle Sheet Format v1: Used in Season 01",
+    "parent": "pfs2",
+    "flags": [
+        "hidden"
+    ],
+    "aspectratio": "603:783",
+    "parameters": {
+        "Event Info": {
+            "event": {
+                "type": "text",
+                "description": "Event name",
+                "example": "PaizoCon"
+            },
+            "eventcode": {
+                "type": "text",
+                "description": "Event code",
+                "example": 1234
+            },
+            "date": {
+                "type": "text",
+                "description": "The date on which the game session took place",
+                "example": "27.06.2020"
+            },
+            "gm": {
+                "type": "text",
+                "description": "Gamemasters name",
+                "example": "J. Doe"
+            },
+            "gmid": {
+                "type": "text",
+                "description": "Gamemasters PFS ID",
+                "example": 654321
+            }
+        },
+        "Player Info": {
+            "player": {
+                "type": "text",
+                "description": "Player name",
+                "example": "Bob"
+            },
+            "char": {
+                "type": "text",
+                "description": "Players character name",
+                "example": "Stormageddon"
+            },
+            "societyid": {
+                "type": "societyid",
+                "description": "Pathfinder Society ID",
+                "example": "123456-2001"
+            },
+            "chronicle_nr": {
+                "type": "text",
+                "description": "Character chronicle number",
+                "example": 5
+            }
+        },
+        "Factions": {
+            "fac1_name": {
+                "type": "text",
+                "description": "Faction 1: Name",
+                "example": "Grand Archive"
+            },
+            "fac1_rep_gained": {
+                "type": "text",
+                "description": "Faction 1: Gained reputation points",
+                "example": 4
+            },
+            "fac1_rep_total": {
+                "type": "text",
+                "description": "Faction 1: Total reputation points",
+                "example": 16
+            },
+            "fac2_name": {
+                "type": "text",
+                "description": "Faction 2: Name",
+                "example": "Envoys' Alliance"
+            },
+            "fac2_rep_gained": {
+                "type": "text",
+                "description": "Faction 2: Gained reputation points",
+                "example": 4
+            },
+            "fac2_rep_total": {
+                "type": "text",
+                "description": "Faction 2: Total reputation points",
+                "example": 12
+            },
+            "fac3_name": {
+                "type": "text",
+                "description": "Faction 3: Name",
+                "example": "Horizon Hunters"
+            },
+            "fac3_rep_gained": {
+                "type": "text",
+                "description": "Faction 3: Gained reputation points",
+                "example": 4
+            },
+            "fac3_rep_total": {
+                "type": "text",
+                "description": "Faction 3: Total reputation points",
+                "example": 8
+            }
+        },
+        "Boons, Items and Selections": {
+            "tier": {
+                "type": "choice",
+                "description": "Players' tier",
+                "choices": [
+                    "low",
+                    "high"
+                ],
+                "example": "low,high"
+            },
+            "summary_checkbox": {
+                "type": "choice",
+                "description": "Checkboxes in the adventure summary that should be selected",
+                "choices": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "example": "1,2,3,4,5"
+            },
+            "strikeout_boons": {
+                "type": "choice",
+                "description": "Boons that should be striked out",
+                "choices": [
+                    1,
+                    2,
+                    3
+                ],
+                "example": "1,2,3"
+            },
+            "strikeout_item_lines": {
+                "type": "choice",
+                "description": "Item lines in the chosen subtier that should be striked out",
+                "choices": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12
+                ],
+                "example": "1,2,3,4,5,6,7,8,9,10,11,12"
+            }
+        },
+        "Rewards": {
+            "starting_xp": {
+                "type": "text",
+                "description": "Starting XP",
+                "example": 12
+            },
+            "xp": {
+                "type": "text",
+                "description": "XP Gained",
+                "example": 4
+            },
+            "final_xp": {
+                "type": "text",
+                "description": "Final XP",
+                "example": 16
+            },
+            "starting_gp": {
+                "type": "text",
+                "description": "Starting GP",
+                "example": "23gp 4sp"
+            },
+            "gp": {
+                "type": "text",
+                "description": "GP Gained",
+                "example": "4gp 2sp"
+            },
+            "income": {
+                "type": "text",
+                "description": "Earn income",
+                "example": "8cp"
+            },
+            "items_sold": {
+                "type": "text",
+                "description": "Items sold",
+                "example": "2gp"
+            },
+            "gp_spent": {
+                "type": "text",
+                "description": "GP Spent",
+                "example": "17sp"
+            },
+            "total_gp": {
+                "type": "text",
+                "description": "Total GP",
+                "example": "27gp 9sp 8cp"
+            },
+            "starting_fame": {
+                "type": "text",
+                "description": "Starting Fame",
+                "example": 12
+            },
+            "fame": {
+                "type": "text",
+                "description": "Fame",
+                "example": 4
+            },
+            "total_fame": {
+                "type": "text",
+                "description": "Total Fame",
+                "example": 16
+            }
+        },
+        "Items Sold / Conditions Gained": {
+            "list_items_sold": {
+                "type": "multiline",
+                "description": "Items Sold / Conditions Gained",
+                "example": "Rusty armor, smells a little bit",
+                "lines": 7
+            },
+            "list_items_sold_price": {
+                "type": "multiline",
+                "description": "Price for sold items",
+                "example": "3cp",
+                "lines": 7
+            },
+            "items_sold_total_value": {
+                "type": "text",
+                "description": "Total value of items sold",
+                "example": "21cp"
+            }
+        },
+        "Items Bought / Conditions Cleared": {
+            "list_items_bought": {
+                "type": "multiline",
+                "description": "Items Bought / Conditions Cleared",
+                "example": "Shiny armor, only used once",
+                "lines": 7
+            },
+            "list_items_bought_price": {
+                "type": "multiline",
+                "description": "Price for bought items",
+                "example": "2gp",
+                "lines": 7
+            },
+            "items_bought_total_cost": {
+                "type": "text",
+                "description": "Total cost of items bought",
+                "example": "14gp"
+            }
+        },
+        "Notes": {
+            "notes": {
+                "type": "multiline",
+                "description": "Notes on the chronicle sheet",
+                "example": "Player was caught stealing a purse",
+                "lines": 6
+            }
+        },
+        "Downtime": {
+            "downtime": {
+                "type": "multiline",
+                "description": "Downtime Activities",
+                "example": "All work and no play makes Jack a dull boy",
+                "lines": 6
+            }
+        }
+    },
+    "canvas": {
+        "page": {
+            "x": 0.0,
+            "y": 0.0,
+            "x2": 100.0,
+            "y2": 100.0
+        },
+        "main": {
+            "parent": "page",
+            "x": 6.2,
+            "y": 11.4,
+            "x2": 94.0,
+            "y2": 95.4
+        },
+        "rightbar": {
+            "parent": "main",
+            "x": 82.2,
+            "y": 28.1,
+            "x2": 100.0,
+            "y2": 94.45
+        },
+        "middlebox": {
+            "parent": "main",
+            "x": 2.3,
+            "y": 44.2,
+            "x2": 79.8,
+            "y2": 82.9
+        },
+        "items": {
+            "parent": "middlebox",
+            "x": 0.0,
+            "y": 0.0,
+            "x2": 38.2,
+            "y2": 100.0
+        },
+        "items_sold": {
+            "parent": "middlebox",
+            "x": 38.4,
+            "y": 0.0,
+            "x2": 100.0,
+            "y2": 49.9
+        },
+        "items_bought": {
+            "parent": "middlebox",
+            "x": 38.4,
+            "y": 50.1,
+            "x2": 100.0,
+            "y2": 100.0
+        },
+        "commentbox": {
+            "parent": "main",
+            "x": 0.4,
+            "y": 84.8,
+            "x2": 79.5,
+            "y2": 94.6
+        }
+    },
+    "presets": {
+        "defaultfont": {
+            "font": "Helvetica",
+            "fontsize": 14
+        },
+        "player.infoline": {
+            "presets": [
+                "defaultfont"
+            ],
+            "canvas": "main",
+            "y": 5.5,
+            "align": "CB"
+        },
+        "rightbar": {
+            "presets": [
+                "defaultfont"
+            ],
+            "canvas": "rightbar",
+            "x": 0.0,
+            "x2": 100.0,
+            "align": "CM"
+        },
+        "event.infoline": {
+            "presets": [
+                "defaultfont"
+            ],
+            "canvas": "main",
+            "y": 98.0,
+            "align": "CB"
+        },
+        "factions": {
+            "presets": [
+                "defaultfont"
+            ],
+            "canvas": "main",
+            "fontsize": 8
+        },
+        "faccol_name": {
+            "presets": [
+                "factions"
+            ],
+            "x": 74.4,
+            "x2": 85.5,
+            "align": "CB"
+        },
+        "faccol_rep_gained": {
+            "presets": [
+                "factions"
+            ],
+            "x": 93.1,
+            "x2": 96.2,
+            "align": "CB"
+        },
+        "faccol_rep_total": {
+            "presets": [
+                "factions"
+            ],
+            "x": 96.3,
+            "x2": 99.3,
+            "align": "CB"
+        },
+        "facline1": {
+            "presets": [
+                "factions"
+            ],
+            "y": 2.85
+        },
+        "facline2": {
+            "presets": [
+                "factions"
+            ],
+            "y": 5.95
+        },
+        "facline3": {
+            "presets": [
+                "factions"
+            ],
+            "y": 9.0
+        },
+        "max_area": {
+            "x": 0.0,
+            "y": 0.0,
+            "x2": 100.0,
+            "y2": 100.0
+        },
+        "checkbox": {
+            "canvas": "main",
+            "linewidth": 0.5,
+            "size": 5.0
+        },
+        "checkbox.1": {
+            "dummy": 0
+        },
+        "checkbox.2": {
+            "dummy": 0
+        },
+        "checkbox.3": {
+            "dummy": 0
+        },
+        "checkbox.4": {
+            "dummy": 0
+        },
+        "checkbox.5": {
+            "dummy": 0
+        },
+        "strikeout_boon": {
+            "canvas": "main",
+            "color": "black",
+            "linewidth": 2.0
+        },
+        "boon.1": {
+            "dummy": 0
+        },
+        "boon.1.2": {
+            "dummy": 0
+        },
+        "boon.2": {
+            "dummy": 0
+        },
+        "boon.2.2": {
+            "dummy": 0
+        },
+        "boon.3": {
+            "dummy": 0
+        },
+        "boon.3.2": {
+            "dummy": 0
+        },
+        "strikeout_items_area": {
+            "canvas": "items",
+            "x": 0.0,
+            "x2": 100.0,
+            "linewidth": 2.0
+        },
+        "items.low.area": {
+            "y": 0.0,
+            "y2": 49.9
+        },
+        "items.high.area": {
+            "y": 50.1,
+            "y2": 100.0
+        },
+        "strikeout_item": {
+            "canvas": "main",
+            "color": "black",
+            "linewidth": 2.0,
+            "x": 2.5,
+            "x2": 31.5
+        },
+        "item.low.1": {
+            "y": 46.2,
+            "y2": 46.2
+        },
+        "item.low.2": {
+            "y": 48.1,
+            "y2": 48.1
+        },
+        "item.low.3": {
+            "y": 49.8,
+            "y2": 49.8
+        },
+        "item.low.4": {
+            "y": 51.7,
+            "y2": 51.7
+        },
+        "item.low.5": {
+            "y": 53.5,
+            "y2": 53.5
+        },
+        "item.low.6": {
+            "y": 55.4,
+            "y2": 55.4
+        },
+        "item.low.7": {
+            "y": 57.2,
+            "y2": 57.2
+        },
+        "item.low.8": {
+            "y": 59.1,
+            "y2": 59.1
+        },
+        "item.low.9": {
+            "y": 61.0,
+            "y2": 61.0
+        },
+        "item.low.10": {
+            "y": 61.0,
+            "y2": 61.0
+        },
+        "item.low.11": {
+            "y": 61.0,
+            "y2": 61.0
+        },
+        "item.low.12": {
+            "y": 61.0,
+            "y2": 61.0
+        },
+        "item.high.1": {
+            "y": 66.3,
+            "y2": 66.3
+        },
+        "item.high.2": {
+            "y": 68.2,
+            "y2": 68.2
+        },
+        "item.high.3": {
+            "y": 69.9,
+            "y2": 69.9
+        },
+        "item.high.4": {
+            "y": 71.7,
+            "y2": 71.7
+        },
+        "item.high.5": {
+            "y": 73.5,
+            "y2": 73.5
+        },
+        "item.high.6": {
+            "y": 75.5,
+            "y2": 75.5
+        },
+        "item.high.7": {
+            "y": 77.3,
+            "y2": 77.3
+        },
+        "item.high.8": {
+            "y": 79.0,
+            "y2": 79.0
+        },
+        "item.high.9": {
+            "y": 80.9,
+            "y2": 80.9
+        },
+        "commentbox": {
+            "presets": [
+                "defaultfont",
+                "max_area"
+            ],
+            "canvas": "commentbox",
+            "align": "LM",
+            "lines": 6
+        },
+        "items_purchased_left_col": {
+            "presets": [
+                "defaultfont"
+            ],
+            "x": 3.0,
+            "x2": 69.5,
+            "align": "LM"
+        },
+        "items_purchased_right_col": {
+            "presets": [
+                "defaultfont"
+            ],
+            "x": 73.0,
+            "x2": 97.0,
+            "align": "CM"
+        },
+        "items_sold_line": {
+            "presets": [
+                "defaultfont"
+            ],
+            "canvas": "items_sold",
+            "lines": 7,
+            "y": 12.0,
+            "y2": 78.0
+        },
+        "items_bought_line": {
+            "presets": [
+                "defaultfont"
+            ],
+            "canvas": "items_bought",
+            "lines": 7,
+            "y": 11.8,
+            "y2": 78.0
+        }
+    },
+    "content": [
+        {
+            "value": "param:player",
+            "type": "text",
+            "presets": [
+                "player.infoline"
+            ],
+            "x": 0.8,
+            "x2": 19.7
+        },
+        {
+            "value": "param:char",
+            "type": "text",
+            "presets": [
+                "player.infoline"
+            ],
+            "x": 24.5,
+            "x2": 43.9
+        },
+        {
+            "type": "trigger",
+            "trigger": "param:societyid",
+            "content": [
+                {
+                    "type": "rectangle",
+                    "presets": [
+                        "player.infoline"
+                    ],
+                    "color": "white",
+                    "x": 57.5,
+                    "y": 3.4,
+                    "x2": 60.5,
+                    "y2": 5.2
+                },
+                {
+                    "value": "param:societyid.player",
+                    "type": "text",
+                    "presets": [
+                        "player.infoline"
+                    ],
+                    "x": 45.1,
+                    "x2": 57.6,
+                    "align": "RB"
+                },
+                {
+                    "value": "-",
+                    "type": "text",
+                    "presets": [
+                        "player.infoline"
+                    ],
+                    "x": 57.6,
+                    "x2": 59.5,
+                    "align": "CB"
+                },
+                {
+                    "value": "param:societyid.char",
+                    "type": "text",
+                    "presets": [
+                        "player.infoline"
+                    ],
+                    "x": 59.5,
+                    "x2": 67.8,
+                    "align": "LB"
+                }
+            ]
+        },
+        {
+            "value": "param:chronicle_nr",
+            "type": "text",
+            "presets": [
+                "defaultfont"
+            ],
+            "canvas": "page",
+            "x": 80.0,
+            "y": 4.6,
+            "x2": 93.8,
+            "y2": 6.7,
+            "align": "CM"
+        },
+        {
+            "value": "param:starting_xp",
+            "type": "text",
+            "presets": [
+                "rightbar"
+            ],
+            "y": 0.1,
+            "y2": 5.6
+        },
+        {
+            "value": "param:xp",
+            "type": "text",
+            "presets": [
+                "rightbar"
+            ],
+            "y": 8.4,
+            "y2": 13.9
+        },
+        {
+            "value": "param:final_xp",
+            "type": "text",
+            "presets": [
+                "rightbar"
+            ],
+            "y": 16.8,
+            "y2": 22.3
+        },
+        {
+            "value": "param:starting_gp",
+            "type": "text",
+            "presets": [
+                "rightbar"
+            ],
+            "y": 25.3,
+            "y2": 30.6
+        },
+        {
+            "value": "param:gp",
+            "type": "text",
+            "presets": [
+                "rightbar"
+            ],
+            "y": 33.5,
+            "y2": 38.9
+        },
+        {
+            "value": "param:income",
+            "type": "text",
+            "presets": [
+                "rightbar"
+            ],
+            "y": 41.8,
+            "y2": 47.3
+        },
+        {
+            "value": "param:items_sold",
+            "type": "text",
+            "presets": [
+                "rightbar"
+            ],
+            "y": 50.1,
+            "y2": 55.7
+        },
+        {
+            "value": "param:gp_spent",
+            "type": "text",
+            "presets": [
+                "rightbar"
+            ],
+            "y": 58.5,
+            "y2": 64.0
+        },
+        {
+            "value": "param:total_gp",
+            "type": "text",
+            "presets": [
+                "rightbar"
+            ],
+            "y": 66.9,
+            "y2": 72.4
+        },
+        {
+            "value": "param:starting_fame",
+            "type": "text",
+            "presets": [
+                "rightbar"
+            ],
+            "y": 75.4,
+            "y2": 80.8
+        },
+        {
+            "value": "param:fame",
+            "type": "text",
+            "presets": [
+                "rightbar"
+            ],
+            "y": 83.6,
+            "y2": 89.0
+        },
+        {
+            "value": "param:total_fame",
+            "type": "text",
+            "presets": [
+                "rightbar"
+            ],
+            "y": 92.0,
+            "y2": 97.6
+        },
+        {
+            "value": "param:event",
+            "type": "text",
+            "presets": [
+                "event.infoline"
+            ],
+            "x": 1.1,
+            "x2": 20.0
+        },
+        {
+            "value": "param:eventcode",
+            "type": "text",
+            "presets": [
+                "event.infoline"
+            ],
+            "x": 22.7,
+            "x2": 33.0
+        },
+        {
+            "value": "param:date",
+            "type": "text",
+            "presets": [
+                "event.infoline"
+            ],
+            "x": 35.8,
+            "x2": 50.3
+        },
+        {
+            "value": "param:gm",
+            "type": "text",
+            "presets": [
+                "event.infoline"
+            ],
+            "x": 53.1,
+            "x2": 77.2
+        },
+        {
+            "value": "param:gmid",
+            "type": "text",
+            "presets": [
+                "event.infoline"
+            ],
+            "x": 79.9,
+            "x2": 99.3
+        },
+        {
+            "value": "param:fac1_name",
+            "type": "text",
+            "presets": [
+                "faccol_name",
+                "facline1"
+            ]
+        },
+        {
+            "value": "param:fac1_rep_gained",
+            "type": "text",
+            "presets": [
+                "faccol_rep_gained",
+                "facline1"
+            ]
+        },
+        {
+            "value": "param:fac1_rep_total",
+            "type": "text",
+            "presets": [
+                "faccol_rep_total",
+                "facline1"
+            ]
+        },
+        {
+            "value": "param:fac2_name",
+            "type": "text",
+            "presets": [
+                "faccol_name",
+                "facline2"
+            ]
+        },
+        {
+            "value": "param:fac2_rep_gained",
+            "type": "text",
+            "presets": [
+                "faccol_rep_gained",
+                "facline2"
+            ]
+        },
+        {
+            "value": "param:fac2_rep_total",
+            "type": "text",
+            "presets": [
+                "faccol_rep_total",
+                "facline2"
+            ]
+        },
+        {
+            "value": "param:fac3_name",
+            "type": "text",
+            "presets": [
+                "faccol_name",
+                "facline3"
+            ]
+        },
+        {
+            "value": "param:fac3_rep_gained",
+            "type": "text",
+            "presets": [
+                "faccol_rep_gained",
+                "facline3"
+            ]
+        },
+        {
+            "value": "param:fac3_rep_total",
+            "type": "text",
+            "presets": [
+                "faccol_rep_total",
+                "facline3"
+            ]
+        },
+        {
+            "type": "choice",
+            "choices": "param:summary_checkbox",
+            "content": {
+                "1": [
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "checkbox",
+                            "checkbox.1"
+                        ]
+                    }
+                ],
+                "2": [
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "checkbox",
+                            "checkbox.2"
+                        ]
+                    }
+                ],
+                "3": [
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "checkbox",
+                            "checkbox.3"
+                        ]
+                    }
+                ],
+                "4": [
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "checkbox",
+                            "checkbox.4"
+                        ]
+                    }
+                ],
+                "5": [
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "checkbox",
+                            "checkbox.5"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "type": "choice",
+            "choices": "param:strikeout_boons",
+            "content": {
+                "1": [
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "strikeout_boon",
+                            "boon.1"
+                        ]
+                    },
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "strikeout_boon",
+                            "boon.1.2"
+                        ]
+                    }
+                ],
+                "2": [
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "strikeout_boon",
+                            "boon.2"
+                        ]
+                    },
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "strikeout_boon",
+                            "boon.2.2"
+                        ]
+                    }
+                ],
+                "3": [
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "strikeout_boon",
+                            "boon.3"
+                        ]
+                    },
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "strikeout_boon",
+                            "boon.3.2"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "choices": "param:tier",
+            "type": "choice",
+            "content": {
+                "low": [
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "strikeout_items_area",
+                            "items.high.area"
+                        ]
+                    },
+                    {
+                        "choices": "param:strikeout_item_lines",
+                        "type": "choice",
+                        "content": {
+                            "1": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.low.1"
+                                    ]
+                                }
+                            ],
+                            "2": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.low.2"
+                                    ]
+                                }
+                            ],
+                            "3": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.low.3"
+                                    ]
+                                }
+                            ],
+                            "4": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.low.4"
+                                    ]
+                                }
+                            ],
+                            "5": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.low.5"
+                                    ]
+                                }
+                            ],
+                            "6": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.low.6"
+                                    ]
+                                }
+                            ],
+                            "7": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.low.7"
+                                    ]
+                                }
+                            ],
+                            "8": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.low.8"
+                                    ]
+                                }
+                            ],
+                            "9": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.low.9"
+                                    ]
+                                }
+                            ],
+                            "10": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.low.10"
+                                    ]
+                                }
+                            ],
+                            "11": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.low.11"
+                                    ]
+                                }
+                            ],
+                            "12": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.low.12"
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "high": [
+                    {
+                        "type": "strikeout",
+                        "presets": [
+                            "strikeout_items_area",
+                            "items.low.area"
+                        ]
+                    },
+                    {
+                        "choices": "param:strikeout_item_lines",
+                        "type": "choice",
+                        "content": {
+                            "1": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.high.1"
+                                    ]
+                                }
+                            ],
+                            "2": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.high.2"
+                                    ]
+                                }
+                            ],
+                            "3": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.high.3"
+                                    ]
+                                }
+                            ],
+                            "4": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.high.4"
+                                    ]
+                                }
+                            ],
+                            "5": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.high.5"
+                                    ]
+                                }
+                            ],
+                            "6": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.high.6"
+                                    ]
+                                }
+                            ],
+                            "7": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.high.7"
+                                    ]
+                                }
+                            ],
+                            "8": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.high.8"
+                                    ]
+                                }
+                            ],
+                            "9": [
+                                {
+                                    "type": "line",
+                                    "presets": [
+                                        "strikeout_item",
+                                        "item.high.9"
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "value": "param:list_items_sold",
+            "type": "multiline",
+            "presets": [
+                "items_purchased_left_col",
+                "items_sold_line"
+            ]
+        },
+        {
+            "value": "param:list_items_sold_price",
+            "type": "multiline",
+            "presets": [
+                "items_purchased_right_col",
+                "items_sold_line"
+            ]
+        },
+        {
+            "value": "param:items_sold_total_value",
+            "type": "text",
+            "presets": [
+                "items_purchased_right_col",
+                "items_sold_line"
+            ],
+            "y": 80.4,
+            "y2": 96.0,
+            "align": "CM"
+        },
+        {
+            "value": "param:list_items_bought",
+            "type": "multiline",
+            "presets": [
+                "items_purchased_left_col",
+                "items_bought_line"
+            ]
+        },
+        {
+            "value": "param:list_items_bought_price",
+            "type": "multiline",
+            "presets": [
+                "items_purchased_right_col",
+                "items_bought_line"
+            ]
+        },
+        {
+            "value": "param:items_bought_total_cost",
+            "type": "text",
+            "presets": [
+                "items_purchased_right_col",
+                "items_bought_line"
+            ],
+            "y": 80.4,
+            "y2": 96.0,
+            "align": "CM"
+        },
+        {
+            "value": "param:notes",
+            "type": "multiline",
+            "presets": [
+                "commentbox"
+            ],
+            "x2": 49.3
+        },
+        {
+            "value": "param:downtime",
+            "type": "multiline",
+            "presets": [
+                "commentbox"
+            ],
+            "x": 50.2
+        }
+    ]
+}

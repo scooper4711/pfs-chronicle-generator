@@ -4,10 +4,24 @@ export interface Layout {
     parent?: string;
     flags?: string[];
     aspectratio?: string;
-    parameters: { [group: string]: { [name: string]: Parameter } };
-    canvas: { [name: string]: Canvas };
-    presets: { [name: string]: Preset };
-    content: ContentElement[];
+    parameters?: { [group: string]: { [name: string]: Parameter } };
+    canvas?: { [name: string]: Canvas };
+    presets?: { [name: string]: Preset };
+    content?: ContentElement[];
+    // New format fields
+    regions?: { [name: string]: number[] };  // [x, y, width, height] in percentages
+    checkboxes?: Array<{
+        x_pct: number;
+        y_pct: number;
+        bbox_pct: number[];  // [width, height] in percentages
+        fill_ratio: number;
+    }>;
+    item_lines?: Array<{
+        text: string;
+        top_left_pct: number[];  // [x, y] in percentages
+        bottom_right_pct: number[];  // [x, y] in percentages
+    }>;
+    notes?: string;  // Optional documentation
 }
 
 export interface Parameter {

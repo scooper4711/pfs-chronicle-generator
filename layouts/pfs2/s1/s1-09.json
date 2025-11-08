@@ -1,0 +1,19 @@
+{
+    "id": "pfs2.s1-09",
+    "description": "#1-09: Star-Crossed Voyages",
+    "parent": "pfs2.s1",
+    "presets": {
+        "boon.1": {
+            "x": 0.0,
+            "y": 28.5,
+            "x2": 79.5,
+            "y2": 33.0
+        },
+        "boon.2": {
+            "x": 0.0,
+            "y": 34.0,
+            "x2": 79.5,
+            "y2": 38.0
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "id": "pfs2.littleTrouble",
+    "description": "Little Trouble in Big Absalom",
+    "parent": "pfs2.specials",
+    "canvas": {
+        "rightbar": {
+            "y": 21.3
+        },
+        "middlebox": {
+            "y": 48.3
+        }
+    }
+}

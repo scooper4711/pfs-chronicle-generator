@@ -1,0 +1,25 @@
+{
+    "id": "pfs2.s1-14",
+    "description": "#1-14: Lions of Katapesh",
+    "parent": "pfs2.s1",
+    "presets": {
+        "checkbox.1": {
+            "x": 68.0,
+            "y": 17.0
+        },
+        "checkbox.2": {
+            "x": 80.3,
+            "y": 17.0
+        },
+        "checkbox.3": {
+            "x": 93.5,
+            "y": 17.0
+        },
+        "boon.1": {
+            "x": 0.0,
+            "y": 28.5,
+            "x2": 79.5,
+            "y2": 36.0
+        }
+    }
+}
