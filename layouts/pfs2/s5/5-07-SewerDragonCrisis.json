@@ -1,50 +1,113 @@
 {
-    "id": "pfs2.s5-07",
-    "description": "5-07 Sewer Dragon Crisis",
-    "parent": "pfs2.season5",
-    "parameters": {
-        "Items": {
-            "strikeout_item_lines": {
-                "type": "choice",
-                "description": "Item line numbers that should be struck out",
-                "choices": [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                "example": "1,2,3,4,5,6,7,8,9"
-            }
-        }
+  "id": "pfs2.s5-07",
+  "description": "5-07 Sewer Dragon Crisis",
+  "parent": "pfs2.season5",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "dragon\u2019s crest\u2019 (Item 1, 10 gp, Pathfinder Lost Omens Grand Bazaar 104)",
+          "vexing vapor (lesser)\" (Item 1, 4 gp, Pathfinder Lost Omens Grand Bazaar 27)",
+          "vexing vapor (moderate). (Item 3, 12 gp, Pathfinder Lost Omens Grand Bazaar 27)"
+        ],
+        "example": "dragon\u2019s crest\u2019 (Item 1, 10 gp, Pathfinder Lost Omens Grand Bazaar 104)"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "linewidth": 11,
+      "x": 0.5,
+      "x2": 95
     },
-    "presets": {
-        "strikeout_item": {
-            "canvas": "items",
-            "color": "black",
-            "linewidth": 11,
-            "x": 0.5,
-            "x2": 95
-        },
-        "item.line.1": { "y": 4, "y2": 9.5 },
-        "item.line.2": { "y": 10.5, "y2": 15 },
-        "item.line.3": { "y": 16, "y2": 21 },
-        "item.line.4": { "y": 22, "y2": 26.5 },
-        "item.line.5": { "y": 27.5, "y2": 32 },
-        "item.line.6": { "y": 33.5, "y2": 38 },
-        "item.line.7": { "y": 39, "y2": 44 },
-        "item.line.8": { "y": 44.8, "y2": 49 },
-        "item.line.9": { "y": 50, "y2": 55 }
+    "item.line.dragon\u2019s_crest\u2019_Item_1_10_gp_Pathfinder_Lost_Om": {
+      "y": 8.1,
+      "y2": 17.7
     },
-    "content": [
-        {
-            "type": "choice",
-            "choices": "param:strikeout_item_lines",
-            "content": {
-                "1": [{ "type": "line", "presets": ["strikeout_item", "item.line.1"] }],
-                "2": [{ "type": "line", "presets": ["strikeout_item", "item.line.2"] }],
-                "3": [{ "type": "line", "presets": ["strikeout_item", "item.line.3"] }],
-                "4": [{ "type": "line", "presets": ["strikeout_item", "item.line.4"] }],
-                "5": [{ "type": "line", "presets": ["strikeout_item", "item.line.5"] }],
-                "6": [{ "type": "line", "presets": ["strikeout_item", "item.line.6"] }],
-                "7": [{ "type": "line", "presets": ["strikeout_item", "item.line.7"] }],
-                "8": [{ "type": "line", "presets": ["strikeout_item", "item.line.8"] }],
-                "9": [{ "type": "line", "presets": ["strikeout_item", "item.line.9"] }]
-            }
-        }
-    ]
+    "item.line.vexing_vapor_lesser_Item_1_4_gp_Pathfinder_L": {
+      "y": 19.3,
+      "y2": 28.9
+    },
+    "item.line.vexing_vapor_moderate_Item_3_12_gp_Pathfinde": {
+      "y": 30.5,
+      "y2": 40.3
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "dragon\u2019s crest\u2019 (Item 1, 10 gp, Pathfinder Lost Omens Grand Bazaar 104)": [
+          {
+            "type": "line",
+            "presets": [
+              "strikeout_item",
+              "item.line.dragon\u2019s_crest\u2019_Item_1_10_gp_Pathfinder_Lost_Om"
+            ]
+          }
+        ],
+        "vexing vapor (lesser)\" (Item 1, 4 gp, Pathfinder Lost Omens Grand Bazaar 27)": [
+          {
+            "type": "line",
+            "presets": [
+              "strikeout_item",
+              "item.line.vexing_vapor_lesser_Item_1_4_gp_Pathfinder_L"
+            ]
+          }
+        ],
+        "vexing vapor (moderate). (Item 3, 12 gp, Pathfinder Lost Omens Grand Bazaar 27)": [
+          {
+            "type": "line",
+            "presets": [
+              "strikeout_item",
+              "item.line.vexing_vapor_moderate_Item_3_12_gp_Pathfinde"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "checkboxes": [
+    {
+      "x": 13.82,
+      "y": 28.31,
+      "x2": 14.815,
+      "y2": 29.076
+    },
+    {
+      "x": 27.032,
+      "y": 28.31,
+      "x2": 28.027,
+      "y2": 29.076
+    },
+    {
+      "x": 51.244,
+      "y": 26.777,
+      "x2": 52.294,
+      "y2": 27.544
+    },
+    {
+      "x": 67.275,
+      "y": 28.31,
+      "x2": 68.27,
+      "y2": 29.076
+    },
+    {
+      "x": 79.768,
+      "y": 26.777,
+      "x2": 80.818,
+      "y2": 27.544
+    },
+    {
+      "x": 79.934,
+      "y": 28.31,
+      "x2": 80.984,
+      "y2": 29.076
+    }
+  ]
 }

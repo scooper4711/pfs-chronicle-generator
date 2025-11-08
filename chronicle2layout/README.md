@@ -19,7 +19,7 @@ pip install -r requirements.txt
 Usage
 
 ```bash
-python -m src.chronical2layout /path/to/single_page.pdf
+python -m src.chronicle2layout /path/to/single_page.pdf
 ```
 
 The script prints JSON to stdout with a list of checkboxes. Each checkbox entry contains:

@@ -11,4 +11,4 @@ __pycache__
 *.pyc
 .vscode
 .env
-out_debug*
+*debug*

@@ -74,13 +74,15 @@
         </div>
     </fieldset>
 
-    {{#if strikeoutItems}}
+    {{#if strikeoutChoices}}
     <fieldset class="strikeout-items">
-        <legend>Items</legend>
-        <div class="form-group">
-        {{#each strikeoutItems}}
-            <label for="strikeoutItems.{{@index}}">{{this}}</label>
-            <input type="checkbox" id="strikeoutItems.{{@index}}" name="strikeoutItems.{{@index}}">
+        <legend>Items to Strike Out</legend>
+        <div class="form-group strikeout-choices">
+        {{#each strikeoutChoices}}
+            <div class="item-choice">
+                <label for="strikeoutItems.{{@index}}">{{this}}</label>
+                <input type="checkbox" id="strikeoutItems.{{@index}}" name="strikeout_item_lines" value="{{this}}" {{#if (lookup ../selectedStrikeouts this)}}checked{{/if}}>
+            </div>
         {{/each}}
         </div>
     </fieldset>

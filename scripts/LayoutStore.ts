@@ -91,7 +91,7 @@ class LayoutStore {
             dirFormat = dirFormat.toLowerCase().replace(/ /g, '_');
         }
 
-        console.log('Looking for layouts with dirFormat:', dirFormat);
+        console.log('[PFS Chronicle] Looking for layouts with dirFormat:', dirFormat);
         
         const layouts = Array.from(this.layoutInfo.entries())
             .filter(([id, info]) => {
@@ -108,9 +108,9 @@ class LayoutStore {
 
     private async findAllLayouts(source: { source: string, target: string }) {
         try {
-            console.log(`PFS Chronicle Generator | Browsing for layouts in ${source.target}`);
+            console.log(`[PFS Chronicle] Browsing for layouts in ${source.target}`);
             const browseResult = await foundry.applications.apps.FilePicker.browse(source.source, source.target);
-            console.log(`PFS Chronicle Generator | Found ${browseResult.files.length} files and ${browseResult.dirs.length} directories.`);
+            console.log(`[PFS Chronicle] Found ${browseResult.files.length} files and ${browseResult.dirs.length} directories.`);
             
             // Store directory as a season if it contains layouts
             const dirName = source.target.split('/').pop();

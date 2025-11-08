@@ -62,11 +62,14 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
 
   static async #generatePDF(this: PFSChronicleGeneratorApp, event: SubmitEvent|Event, form: HTMLFormElement, formData: FormDataExtended) : Promise<void> {
     const data : any = foundry.utils.expandObject(formData.object);
+    console.log('[PFS Chronicle] Raw form data:', formData);
+    console.log('[PFS Chronicle] Expanded form data:', data);
     
     if (this.actor) {
-        
-        const strikeoutItems = Object.entries(data.strikeoutItems || {}).filter(([, value]) => value).map(([key]) => Number(key) + 1);
-        data.strikeout_item_lines = strikeoutItems.join(',');
+        // Convert form data array into strikeout_item_lines array
+        data.strikeout_item_lines = Array.isArray(data.strikeout_item_lines) ? data.strikeout_item_lines : 
+            (data.strikeout_item_lines ? [data.strikeout_item_lines] : []);
+        console.log('[PFS Chronicle] Processed strikeout lines:', data.strikeout_item_lines);
 
         await this.actor.setFlag('pfs-chronicle-generator', 'chronicleData', data);
 
@@ -153,28 +156,17 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     }
   }
 
-  private findStrikeoutItems(content: ContentElement[]): string[] {
-    let items: string[] = [];
-    for (const element of content) {
-        if (element.type === 'strikeout') {
-            items.push(element.value || '');
-        }
-        if (element.content) {
-            if (Array.isArray(element.content)) {
-                items = items.concat(this.findStrikeoutItems(element.content));
-            } else {
-                for (const key in element.content) {
-                    console.log(key);
-                    items = items.concat(this.findStrikeoutItems(element.content[key]));
-                }
-            }
-        }
+  private findStrikeoutChoices(layout: Layout): string[] {
+    const params = layout.parameters?.Items?.strikeout_item_lines;
+    if (params && params.choices && Array.isArray(params.choices)) {
+      return params.choices as string[];
     }
-    return items;
+    return [];
   }
 
   async _prepareContext(): Promise<object> {
     const savedData = this.actor.getFlag('pfs-chronicle-generator', 'chronicleData') || {};
+    console.log('[PFS Chronicle] Saved chronicle data:', savedData);
 
     const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber');
     const eventName = game.settings.get('pfs-chronicle-generator', 'eventName');
@@ -182,7 +174,14 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     
     const layoutId = game.settings.get('pfs-chronicle-generator', 'layout');
     const layout = await layoutStore.getLayout(layoutId as string);
-    const strikeoutItems = this.findStrikeoutItems(layout.content);
+    const strikeoutChoices = this.findStrikeoutChoices(layout);
+    
+    // Convert saved data into a map of selected items
+    const savedStrikeouts = savedData.strikeout_item_lines || [];
+    const selectedStrikeouts = savedStrikeouts.reduce((acc: Record<string, boolean>, item: string) => {
+        acc[item] = true;
+        return acc;
+    }, {});
 
     return {
       event: eventName,
@@ -204,7 +203,8 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       total_gp: (savedData.total_gp ?? ""),
       reputation: savedData.reputation ?? (this.currentFaction ? `${this.currentFaction}: +4` : ""),
       notes: savedData.notes ?? "",
-      strikeoutItems: strikeoutItems,
+      strikeoutChoices: strikeoutChoices,
+      selectedStrikeouts: selectedStrikeouts,
       buttons: [
         { type: "submit", icon: "fa-solid fa-save", label: "SETTINGS.Save" }
       ]

@@ -204,6 +204,7 @@ export class PdfGenerator {
 
     private async drawElement(element: ContentElement) {
         const props: ResolvedElement = this.resolvePresets(element);
+        console.log('[PFS Chronicle] Drawing element:', { type: props.type, choices: props.choices });
 
         switch (props.type) {
             case 'text':
@@ -230,7 +231,15 @@ export class PdfGenerator {
                 break;
             case 'choice':
                 if (props.choices && props.content && typeof props.content === 'object' && !Array.isArray(props.content)) {
-                    const choices = this.resolveValue(props.choices as string)?.split(',') || [];
+                    const value = this.resolveValue(props.choices as string);
+                    const choices = value?.includes('|||') ? value.split('|||') : (value?.split(',') || []);
+                    console.log('[PFS Chronicle] Split choices:', { value, choices });
+                    console.log('[PFS Chronicle] Processing choices:', { 
+                        paramValue: this.resolveValue(props.choices as string),
+                        choices, 
+                        content: props.content,
+                        data: this.data
+                    });
                     for (const choice of choices) {
                         const contentElements = (props.content as Record<string, ContentElement[]>)[choice];
                         if (contentElements) {
@@ -442,7 +451,11 @@ export class PdfGenerator {
     private async drawText(props: ResolvedElement) {
         const value = this.resolveValue(props.value);
         if (!value) {
-            console.log("Value is undefined:", props.value, this.data);
+            console.log("[PFS Chronicle] Value is undefined:", { 
+                requestedValue: props.value,
+                resolvedValue: this.resolveValue(props.value),
+                allData: this.data
+            });
             return;
         }
 
@@ -555,6 +568,11 @@ export class PdfGenerator {
         }
         if (value.startsWith('param:')) {
             const paramName = value.substring(6);
+            console.log('[PFS Chronicle] Resolving param:', { 
+                paramName, 
+                value: this.data[paramName],
+                isArray: Array.isArray(this.data[paramName])
+            });
             if (paramName === 'societyid.player') {
                 const societyid = this.data['societyid'];
                 if (societyid && typeof societyid === 'string') {
@@ -575,7 +593,13 @@ export class PdfGenerator {
                 }
                 return '';
             }
-            return this.data[paramName];
+            const paramValue = this.data[paramName];
+            // Handle arrays (like our new strikeout_item_lines format)
+            if (Array.isArray(paramValue)) {
+                // Use a special delimiter that won't appear in the text
+                return paramValue.join('|||');
+            }
+            return paramValue;
         }
         return value;
     }
