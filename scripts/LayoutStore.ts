@@ -1,13 +1,14 @@
 import { Layout } from './model/layout';
 
+const LAYOUT_PATH = 'modules/pfs-chronicle-generator/layouts/';
+
 class LayoutStore {
     private layouts: Map<string, Layout> = new Map();
     private layoutInfo: Map<string, { path: string, description: string }> = new Map();
     private seasonDirectories: Map<string, string> = new Map(); // key: directory name, value: display name
 
     public async initialize() {
-        const layoutPath = game.settings.get('pfs-chronicle-generator', 'layoutPath');
-        await this.findAllLayouts({ source: "data", target: layoutPath });
+        await this.findAllLayouts({ source: "data", target: LAYOUT_PATH });
     }
 
     public async getLayout(id: string): Promise<Layout> {

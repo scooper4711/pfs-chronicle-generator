@@ -45,16 +45,6 @@ Hooks.on('init', async () => {
     default: '',
   });
 
-  game.settings.register('pfs-chronicle-generator', 'layoutPath', {
-    name: 'Layouts Directory',
-    hint: 'The directory where the chronicle layouts are stored.',
-    scope: 'world',
-    config: true,
-    type: String,
-    filePicker: 'folder',
-    default: 'modules/pfs-chronicle-generator/layouts/',
-  });
-
   game.settings.registerMenu("pfs-chronicle-generator", "layoutDesigner", {
     name: "Layout Designer",
     label: "Open Layout Designer",
