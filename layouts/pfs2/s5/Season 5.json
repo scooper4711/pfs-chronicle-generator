@@ -89,18 +89,6 @@
             }
         },
         "Checkboxes, Reputation and Items": {
-            "summary_checkbox": {
-                "type": "choice",
-                "description": "Checkboxes in the adventure summary that should be selected",
-                "choices": [
-                    1,
-                    2,
-                    3,
-                    4,
-                    5
-                ],
-                "example": "1,2,3,4,5"
-            },
             "reputation": {
                 "type": "multiline",
                 "description": "Reputation Gained",
@@ -207,27 +195,6 @@
             "x2": 100.0,
             "y2": 100.0
         },
-        "checkbox": {
-            "canvas": "summary",
-            "linewidth": 6,
-            "size": 1
-        },
-        "checkbox.1": {
-            "dummy": 0
-        },
-        "checkbox.2": {
-            "dummy": 0
-        },
-        "checkbox.3": {
-            "dummy": 0
-        },
-        "checkbox.4": {
-            "dummy": 0
-        },
-        "checkbox.5": {
-            "dummy": 0
-        },
-
         "reputation": {
             "presets": [
                 "defaultfont",
@@ -475,58 +442,6 @@
             "x": 80.1,
             "x2": 99.4
         },
-        {
-            "type": "choice",
-            "choices": "param:summary_checkbox",
-            "content": {
-                "1": [
-                    {
-                        "type": "strikeout",
-                        "presets": [
-                            "checkbox",
-                            "checkbox.1"
-                        ]
-                    }
-                ],
-                "2": [
-                    {
-                        "type": "strikeout",
-                        "presets": [
-                            "checkbox",
-                            "checkbox.2"
-                        ]
-                    }
-                ],
-                "3": [
-                    {
-                        "type": "strikeout",
-                        "presets": [
-                            "checkbox",
-                            "checkbox.3"
-                        ]
-                    }
-                ],
-                "4": [
-                    {
-                        "type": "strikeout",
-                        "presets": [
-                            "checkbox",
-                            "checkbox.4"
-                        ]
-                    }
-                ],
-                "5": [
-                    {
-                        "type": "strikeout",
-                        "presets": [
-                            "checkbox",
-                            "checkbox.5"
-                        ]
-                    }
-                ]
-            }
-        },
-
         {
             "value": "param:reputation",
             "type": "multiline",
