@@ -1,0 +1,63 @@
+{
+  "id": "pfs2.s6-18",
+  "description": "6-18 Symposium On A Fallen God",
+  "parent": "pfs2.season6",
+  "parameters": {
+    "Checkboxes": {
+      "summary_checkbox": {
+        "type": "choice",
+        "description": "Checkboxes in the adventure summary that should be selected",
+        "choices": [
+          "captured",
+          "killed the Aspis agent involved"
+        ],
+        "example": "captured"
+      }
+    }
+  },
+  "presets": {
+    "checkbox": {
+      "canvas": "summary",
+      "color": "black",
+      "size": 1
+    },
+    "checkbox.captured": {
+      "x": 1.796,
+      "y": 53.611,
+      "x2": 3.156,
+      "y2": 59.765
+    },
+    "checkbox.killed_the_Aspis_agent_involved": {
+      "x": 10.524,
+      "y": 53.611,
+      "x2": 11.884,
+      "y2": 59.765
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:summary_checkbox",
+      "content": {
+        "captured": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.captured"
+            ]
+          }
+        ],
+        "killed the Aspis agent involved": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.killed_the_Aspis_agent_involved"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

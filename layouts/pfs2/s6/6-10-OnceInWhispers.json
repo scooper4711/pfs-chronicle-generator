@@ -1,0 +1,60 @@
+{
+  "id": "pfs2.s6-10",
+  "description": "6-10 Once In Whispers",
+  "parent": "pfs2.season6",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "+1 chain sword (level 2, 41 gp; Pathfinder Treasure Vault 26)",
+          "+1 striking chain sword (level 4, 71 gp; Pathfinder Treasure Vault 26)"
+        ],
+        "example": "+1 chain sword (level 2, 41 gp; Pathfinder Treasure Vault 26)"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "item.line.+1_chain_sword_level_2_41_gp;_Pathfinder_Treasur": {
+      "y": 7.3,
+      "y2": 17.8
+    },
+    "item.line.+1_striking_chain_sword_level_4_71_gp;_Pathfinde": {
+      "y": 18.5,
+      "y2": 29.0
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "+1 chain sword (level 2, 41 gp; Pathfinder Treasure Vault 26)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.+1_chain_sword_level_2_41_gp;_Pathfinder_Treasur"
+            ]
+          }
+        ],
+        "+1 striking chain sword (level 4, 71 gp; Pathfinder Treasure Vault 26)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.+1_striking_chain_sword_level_4_71_gp;_Pathfinde"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

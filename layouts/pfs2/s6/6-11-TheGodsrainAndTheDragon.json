@@ -1,0 +1,63 @@
+{
+  "id": "pfs2.s6-11",
+  "description": "6-11 The Godsrain And The Dragon",
+  "parent": "pfs2.season6",
+  "parameters": {
+    "Checkboxes": {
+      "summary_checkbox": {
+        "type": "choice",
+        "description": "Checkboxes in the adventure summary that should be selected",
+        "choices": [
+          "talked the imugi down",
+          "fought and defeated the imugi"
+        ],
+        "example": "talked the imugi down"
+      }
+    }
+  },
+  "presets": {
+    "checkbox": {
+      "canvas": "summary",
+      "color": "black",
+      "size": 1
+    },
+    "checkbox.talked_the_imugi_down": {
+      "x": 32.759,
+      "y": 50.983,
+      "x2": 34.459,
+      "y2": 61.069
+    },
+    "checkbox.fought_and_defeated_the_imugi": {
+      "x": 51.873,
+      "y": 50.983,
+      "x2": 53.573,
+      "y2": 61.069
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:summary_checkbox",
+      "content": {
+        "talked the imugi down": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.talked_the_imugi_down"
+            ]
+          }
+        ],
+        "fought and defeated the imugi": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.fought_and_defeated_the_imugi"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

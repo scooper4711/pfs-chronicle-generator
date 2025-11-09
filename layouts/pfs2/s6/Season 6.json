@@ -1,6 +1,6 @@
 {
-    "id": "pfs2.layout7",
-    "description": "PFS2 Chronicle Sheet Format v3: Used from within Season 07 onwards",
+    "id": "pfs2.season6",
+    "description": "PFS2 Chronicle Sheet Format v3: Used from within Season 03 onwards",
     "parent": "pfs2",
     "flags": [
         "hidden"

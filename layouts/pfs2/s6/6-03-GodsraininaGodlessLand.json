@@ -1,0 +1,95 @@
+{
+  "id": "pfs2.s6-03",
+  "description": "6-03 Godsrainina Godless Land",
+  "parent": "pfs2.season6",
+  "parameters": {
+    "Checkboxes": {
+      "summary_checkbox": {
+        "type": "choice",
+        "description": "Checkboxes in the adventure summary that should be selected",
+        "choices": [
+          "convinced Kassi\u2019s students to revive him",
+          "couldn\u2019t convince them to perform their ritual again and left the rainblessed remaining in Rahadoum to an uncertain future",
+          "managed to convince her of the Regiment\u2019s impending threat to",
+          "failed to convince her"
+        ],
+        "example": "convinced Kassi\u2019s students to revive him"
+      }
+    }
+  },
+  "presets": {
+    "checkbox": {
+      "canvas": "summary",
+      "color": "black",
+      "size": 1
+    },
+    "checkbox.convinced_Kassi\u2019s_students_to_revive_him": {
+      "x": 82.77,
+      "y": 50.103,
+      "x2": 84.47,
+      "y2": 60.86
+    },
+    "checkbox.couldn\u2019t_convince_them_to_perform_their_ritual_aga": {
+      "x": 20.728,
+      "y": 58.308,
+      "x2": 22.428,
+      "y2": 69.065
+    },
+    "checkbox.managed_to_convince_her_of_the_Regiment\u2019s_impendin": {
+      "x": 72.364,
+      "y": 66.513,
+      "x2": 74.064,
+      "y2": 77.27
+    },
+    "checkbox.failed_to_convince_her": {
+      "x": 27.617,
+      "y": 74.719,
+      "x2": 29.317,
+      "y2": 85.476
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:summary_checkbox",
+      "content": {
+        "convinced Kassi\u2019s students to revive him": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.convinced_Kassi\u2019s_students_to_revive_him"
+            ]
+          }
+        ],
+        "couldn\u2019t convince them to perform their ritual again and left the rainblessed remaining in Rahadoum to an uncertain future": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.couldn\u2019t_convince_them_to_perform_their_ritual_aga"
+            ]
+          }
+        ],
+        "managed to convince her of the Regiment\u2019s impending threat to": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.managed_to_convince_her_of_the_Regiment\u2019s_impendin"
+            ]
+          }
+        ],
+        "failed to convince her": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.failed_to_convince_her"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

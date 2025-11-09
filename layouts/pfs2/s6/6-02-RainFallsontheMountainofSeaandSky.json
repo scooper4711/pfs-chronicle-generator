@@ -1,0 +1,46 @@
+{
+  "id": "pfs2.s6-02",
+  "description": "6-02 Rain Fallsonthe Mountainof Seaand Sky",
+  "parent": "pfs2.season6",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "Cold iron chunk (item 2, 10 gp, Pathfinder GM Core 253)"
+        ],
+        "example": "Cold iron chunk (item 2, 10 gp, Pathfinder GM Core 253)"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "item.line.Cold_iron_chunk_item_2_10_gp_Pathfinder_GM_Core": {
+      "y": 7.3,
+      "y2": 17.8
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "Cold iron chunk (item 2, 10 gp, Pathfinder GM Core 253)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.Cold_iron_chunk_item_2_10_gp_Pathfinder_GM_Core"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

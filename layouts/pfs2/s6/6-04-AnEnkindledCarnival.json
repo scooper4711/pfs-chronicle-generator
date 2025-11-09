@@ -1,0 +1,60 @@
+{
+  "id": "pfs2.s6-04",
+  "description": "6-04 An Enkindled Carnival",
+  "parent": "pfs2.season6",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "minor Core gp; Player healing 320, GM Core potion Core 320, (level 262) GM 1, Core 4 gp) 262)",
+          "lesser 3rd-rank +1 dagger healing scroll (level potion of 2, cleanse 35 (level gp) affliction 3, 12 gp) (level 5, 30 effervescent +1 striking dagger ampoule (level (level 4, 100 2, 7 gp) gp) oil of mending (level 3, 9 gp) potion of water breathing (level 3, 11 gp) dancing scarf (level 3, 60 gp) diplomat\u2019s badge (level 5, 125 gp) everlight crystal (level 1, 15 gp) pendant of the occult (level 3, 60 gp) scroll of cleanse affliction (level 3, 12 gp; Player"
+        ],
+        "example": "minor Core gp; Player healing 320, GM Core potion Core 320, (level 262) GM 1, Core 4 gp) 262)"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "item.line.minor_Core_gp;_Player_healing_320_GM_Core_potion_": {
+      "y": 4.4,
+      "y2": 69.8
+    },
+    "item.line.lesser_3rd-rank_+1_dagger_healing_scroll_level_po": {
+      "y": 9.4,
+      "y2": 79.9
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "minor Core gp; Player healing 320, GM Core potion Core 320, (level 262) GM 1, Core 4 gp) 262)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.minor_Core_gp;_Player_healing_320_GM_Core_potion_"
+            ]
+          }
+        ],
+        "lesser 3rd-rank +1 dagger healing scroll (level potion of 2, cleanse 35 (level gp) affliction 3, 12 gp) (level 5, 30 effervescent +1 striking dagger ampoule (level (level 4, 100 2, 7 gp) gp) oil of mending (level 3, 9 gp) potion of water breathing (level 3, 11 gp) dancing scarf (level 3, 60 gp) diplomat\u2019s badge (level 5, 125 gp) everlight crystal (level 1, 15 gp) pendant of the occult (level 3, 60 gp) scroll of cleanse affliction (level 3, 12 gp; Player": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.lesser_3rd-rank_+1_dagger_healing_scroll_level_po"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

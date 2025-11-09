@@ -1,0 +1,60 @@
+{
+  "id": "pfs2.s6-15",
+  "description": "6-15 Lost And Forgotten",
+  "parent": "pfs2.season6",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "spectacles Guide 283) pg. pg. 153) pg. 282) pg. 284) 284) 284) 284) pg. of 117) understanding (level 5, 130 gp; PFS",
+          "wand aeon aeon ethersight aeon wand aeon stone stone stone stone of of continuation shardstorm ring (envisioning) (preserving) (smoothing) (sprouting) (level (level (level 7, (level 325 (level (level (level 5, 7, gp; 160 360 6, 5, 7, 8, Treasure 220 310 150 425 gp; gp; gp; gp; gp; GM GM gp; Vault GM GM GM GM Core Core Core Core Core Core pg. pg. pg."
+        ],
+        "example": "spectacles Guide 283) pg. pg. 153) pg. 282) pg. 284) 284) 284) 284) pg. of 117) understanding (level 5, 130 gp; PFS"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "item.line.spectacles_Guide_283_pg_pg_153_pg_282_pg_28": {
+      "y": 7.5,
+      "y2": 96.2
+    },
+    "item.line.wand_aeon_aeon_ethersight_aeon_wand_aeon_stone_sto": {
+      "y": 18.7,
+      "y2": 90.6
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "spectacles Guide 283) pg. pg. 153) pg. 282) pg. 284) 284) 284) 284) pg. of 117) understanding (level 5, 130 gp; PFS": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.spectacles_Guide_283_pg_pg_153_pg_282_pg_28"
+            ]
+          }
+        ],
+        "wand aeon aeon ethersight aeon wand aeon stone stone stone stone of of continuation shardstorm ring (envisioning) (preserving) (smoothing) (sprouting) (level (level (level 7, (level 325 (level (level (level 5, 7, gp; 160 360 6, 5, 7, 8, Treasure 220 310 150 425 gp; gp; gp; gp; gp; GM GM gp; Vault GM GM GM GM Core Core Core Core Core Core pg. pg. pg.": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.wand_aeon_aeon_ethersight_aeon_wand_aeon_stone_sto"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
