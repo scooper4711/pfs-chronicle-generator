@@ -24,8 +24,10 @@ export class PdfGenerator {
             this.page.setSize(newWidth, height);
         }
 
-        for (const element of this.layout.content) {
-            await this.drawElement(element);
+        if (this.layout.content) {
+            for (const element of this.layout.content) {
+                await this.drawElement(element);
+            }
         }
     }
 
@@ -96,9 +98,11 @@ export class PdfGenerator {
     public async drawBoxes(contentToHighlight?: string | ContentElement[]) {
         if (contentToHighlight) {
             if (typeof contentToHighlight === 'string') {
-                const element = this.findContentElement(this.layout.content, contentToHighlight);
-                if (element) {
-                    await this.highlightContentElement(element);
+                if (this.layout.content) {
+                    const element = this.findContentElement(this.layout.content, contentToHighlight);
+                    if (element) {
+                        await this.highlightContentElement(element);
+                    }
                 }
             } else {
                 const allElements = this.getAllContentElements(contentToHighlight);
@@ -301,6 +305,7 @@ export class PdfGenerator {
         const rectWidth = ((x2 - x) / 100) * canvasRect.width;
         const rectHeight = ((y2 - y) / 100) * canvasRect.height;
 
+        // Draw a filled rectangle (for strikeouts, this fills the entire bounding box)
         this.page.drawRectangle({
             x: rectX,
             y: rectY,
@@ -308,30 +313,11 @@ export class PdfGenerator {
             height: rectHeight,
             color: this.getColor(color),
         });
-
-        const xSize = Math.min(rectWidth, rectHeight);
-        const numX = Math.ceil(rectWidth / xSize);
-
-        for (let i = 0; i < numX; i++) {
-            const currentX = rectX + i * xSize;
-            this.page.drawLine({
-                start: { x: currentX, y: rectY },
-                end: { x: currentX + xSize, y: rectY + rectHeight },
-                thickness: 1,
-                color: rgb(1, 1, 1),
-            });
-            this.page.drawLine({
-                start: { x: currentX, y: rectY + rectHeight },
-                end: { x: currentX + xSize, y: rectY },
-                thickness: 1,
-                color: rgb(1, 1, 1),
-            });
-        }
     }
 
     private resolvePresets(element: ContentElement): ResolvedElement {
         let resolved: Partial<Preset & ContentElement> = {};
-        if (element.presets) {
+        if (element.presets && this.layout.presets) {
             for (const presetName of element.presets) {
                 const preset = this.layout.presets[presetName];
                 if (preset) {
@@ -344,6 +330,9 @@ export class PdfGenerator {
     }
 
     private getCanvasRect(canvasName: string): { x: number, y: number, width: number, height: number } {
+        if (!this.layout.canvas) {
+            throw new Error(`Canvas configuration not found in layout.`);
+        }
         const canvas = this.layout.canvas[canvasName];
         if (!canvas) {
             throw new Error(`Canvas with name ${canvasName} not found.`);

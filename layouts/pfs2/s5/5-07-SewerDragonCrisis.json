@@ -20,7 +20,6 @@
     "strikeout_item": {
       "canvas": "items",
       "color": "black",
-      "linewidth": 11,
       "x": 0.5,
       "x2": 95
     },
@@ -44,7 +43,7 @@
       "content": {
         "dragon\u2019s crest\u2019 (Item 1, 10 gp, Pathfinder Lost Omens Grand Bazaar 104)": [
           {
-            "type": "line",
+            "type": "strikeout",
             "presets": [
               "strikeout_item",
               "item.line.dragon\u2019s_crest\u2019_Item_1_10_gp_Pathfinder_Lost_Om"
@@ -53,7 +52,7 @@
         ],
         "vexing vapor (lesser)\" (Item 1, 4 gp, Pathfinder Lost Omens Grand Bazaar 27)": [
           {
-            "type": "line",
+            "type": "strikeout",
             "presets": [
               "strikeout_item",
               "item.line.vexing_vapor_lesser_Item_1_4_gp_Pathfinder_L"
@@ -62,7 +61,7 @@
         ],
         "vexing vapor (moderate). (Item 3, 12 gp, Pathfinder Lost Omens Grand Bazaar 27)": [
           {
-            "type": "line",
+            "type": "strikeout",
             "presets": [
               "strikeout_item",
               "item.line.vexing_vapor_moderate_Item_3_12_gp_Pathfinde"
