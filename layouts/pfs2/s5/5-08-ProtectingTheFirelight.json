@@ -30,7 +30,7 @@
           "hunting for herbs for the bonfire",
           "enjoying the local hot spring",
           "assisting with talismans",
-          "proved yourself to him or perhaps",
+          "proved yourself to him",
           "failed to convince him of your good intentions",
           "vicious",
           "hateful",
@@ -90,7 +90,7 @@
       "x2": 14.287,
       "y2": 36.454
     },
-    "checkbox.proved_yourself_to_him_or_perhaps": {
+    "checkbox.proved_yourself_to_him": {
       "x": 82.138,
       "y": 26.367,
       "x2": 83.838,
@@ -329,12 +329,12 @@
             ]
           }
         ],
-        "proved yourself to him or perhaps": [
+        "proved yourself to him": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.proved_yourself_to_him_or_perhaps"
+              "checkbox.proved_yourself_to_him"
             ]
           }
         ],

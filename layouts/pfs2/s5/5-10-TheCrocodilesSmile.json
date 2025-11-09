@@ -28,15 +28,15 @@
         "type": "choice",
         "description": "Checkboxes in the adventure summary that should be selected",
         "choices": [
-          "good or perhaps a",
+          "good",
           "bad impression",
-          "avoided notice or perhaps",
+          "avoided notice",
           "caught the attention of some temporary workers",
           "talked her down peacefully",
-          "convincing her to speak against Faqhir or perhaps",
+          "convincing her to speak against Faqhir",
           "you had to fight her for the return of the Shory Diamond"
         ],
-        "example": "good or perhaps a"
+        "example": "good"
       }
     }
   },
@@ -52,7 +52,7 @@
       "color": "black",
       "size": 1
     },
-    "checkbox.good_or_perhaps_a": {
+    "checkbox.good": {
       "x": 89.475,
       "y": 18.157,
       "x2": 91.175,
@@ -64,7 +64,7 @@
       "x2": 10.973,
       "y2": 36.447
     },
-    "checkbox.avoided_notice_or_perhaps": {
+    "checkbox.avoided_notice": {
       "x": 96.193,
       "y": 34.564,
       "x2": 97.893,
@@ -82,7 +82,7 @@
       "x2": 6.893,
       "y2": 69.259
     },
-    "checkbox.convincing_her_to_speak_against_Faqhir_or_perhaps": {
+    "checkbox.convincing_her_to_speak_against_Faqhir": {
       "x": 36.813,
       "y": 59.173,
       "x2": 38.513,
@@ -249,12 +249,12 @@
       "type": "choice",
       "choices": "param:summary_checkbox",
       "content": {
-        "good or perhaps a": [
+        "good": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.good_or_perhaps_a"
+              "checkbox.good"
             ]
           }
         ],
@@ -267,12 +267,12 @@
             ]
           }
         ],
-        "avoided notice or perhaps": [
+        "avoided notice": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.avoided_notice_or_perhaps"
+              "checkbox.avoided_notice"
             ]
           }
         ],
@@ -294,12 +294,12 @@
             ]
           }
         ],
-        "convincing her to speak against Faqhir or perhaps": [
+        "convincing her to speak against Faqhir": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.convincing_her_to_speak_against_Faqhir_or_perhaps"
+              "checkbox.convincing_her_to_speak_against_Faqhir"
             ]
           }
         ],

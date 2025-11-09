@@ -26,10 +26,10 @@
         "type": "choice",
         "description": "Checkboxes in the adventure summary that should be selected",
         "choices": [
-          "fought sewer gators or maybe",
+          "fought sewer gators",
           "disabled a steam trap to get to the underground entrance to the manor"
         ],
-        "example": "fought sewer gators or maybe"
+        "example": "fought sewer gators"
       }
     }
   },
@@ -45,7 +45,7 @@
       "color": "black",
       "size": 1
     },
-    "checkbox.fought_sewer_gators_or_maybe": {
+    "checkbox.fought_sewer_gators": {
       "x": 8.38,
       "y": 27.233,
       "x2": 9.891,
@@ -186,12 +186,12 @@
       "type": "choice",
       "choices": "param:summary_checkbox",
       "content": {
-        "fought sewer gators or maybe": [
+        "fought sewer gators": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.fought_sewer_gators_or_maybe"
+              "checkbox.fought_sewer_gators"
             ]
           }
         ],

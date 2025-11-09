@@ -24,12 +24,12 @@
         "type": "choice",
         "description": "Checkboxes in the adventure summary that should be selected",
         "choices": [
-          "were able to convince the council that you were peaceful or",
+          "were able to convince the council that you were peaceful",
           "the council remained suspicious of your actions",
           "found Lord Rubak\u2019s dagger and/or",
           "instructions from Lord Rubak on how to proceed with a demonic ritual! You presented this evidence to Brun Hornbreaker"
         ],
-        "example": "were able to convince the council that you were peaceful or"
+        "example": "were able to convince the council that you were peaceful"
       }
     }
   },
@@ -172,7 +172,7 @@
       "type": "choice",
       "choices": "param:summary_checkbox",
       "content": {
-        "were able to convince the council that you were peaceful or": [
+        "were able to convince the council that you were peaceful": [
           {
             "type": "checkbox",
             "presets": [

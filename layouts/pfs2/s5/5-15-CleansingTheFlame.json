@@ -28,10 +28,10 @@
         "type": "choice",
         "description": "Checkboxes in the adventure summary that should be selected",
         "choices": [
-          "acquiesced and fought him honorably or",
+          "acquiesced and fought him honorably",
           "you refused this tradition"
         ],
-        "example": "acquiesced and fought him honorably or"
+        "example": "acquiesced and fought him honorably"
       }
     }
   },
@@ -47,7 +47,7 @@
       "color": "black",
       "size": 1
     },
-    "checkbox.acquiesced_and_fought_him_honorably_or": {
+    "checkbox.acquiesced_and_fought_him_honorably": {
       "x": 12.946,
       "y": 54.196,
       "x2": 14.457,
@@ -214,12 +214,12 @@
       "type": "choice",
       "choices": "param:summary_checkbox",
       "content": {
-        "acquiesced and fought him honorably or": [
+        "acquiesced and fought him honorably": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.acquiesced_and_fought_him_honorably_or"
+              "checkbox.acquiesced_and_fought_him_honorably"
             ]
           }
         ],

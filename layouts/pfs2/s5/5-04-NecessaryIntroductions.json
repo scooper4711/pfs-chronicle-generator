@@ -23,14 +23,14 @@
         "type": "choice",
         "description": "Checkboxes in the adventure summary that should be selected",
         "choices": [
-          "assisted them with their cart or perhaps you",
+          "assisted them with their cart",
           "were unable to help",
           "traded the liqueur and/or",
           "participated in the Spicy Death Chicken Challenge",
-          "succeeded at the challenge or perhaps you",
+          "succeeded at the challenge",
           "clucked like a chicken! Ultimately"
         ],
-        "example": "assisted them with their cart or perhaps you"
+        "example": "assisted them with their cart"
       }
     }
   },
@@ -46,7 +46,7 @@
       "color": "black",
       "size": 1
     },
-    "checkbox.assisted_them_with_their_cart_or_perhaps_you": {
+    "checkbox.assisted_them_with_their_cart": {
       "x": 71.839,
       "y": 19.028,
       "x2": 73.35,
@@ -70,7 +70,7 @@
       "x2": 84.008,
       "y2": 69.019
     },
-    "checkbox.succeeded_at_the_challenge_or_perhaps_you": {
+    "checkbox.succeeded_at_the_challenge": {
       "x": 28.782,
       "y": 68.259,
       "x2": 30.293,
@@ -172,12 +172,12 @@
       "type": "choice",
       "choices": "param:summary_checkbox",
       "content": {
-        "assisted them with their cart or perhaps you": [
+        "assisted them with their cart": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.assisted_them_with_their_cart_or_perhaps_you"
+              "checkbox.assisted_them_with_their_cart"
             ]
           }
         ],
@@ -208,12 +208,12 @@
             ]
           }
         ],
-        "succeeded at the challenge or perhaps you": [
+        "succeeded at the challenge": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.succeeded_at_the_challenge_or_perhaps_you"
+              "checkbox.succeeded_at_the_challenge"
             ]
           }
         ],

@@ -18,10 +18,10 @@
         "type": "choice",
         "description": "Checkboxes in the adventure summary that should be selected",
         "choices": [
-          "was grateful for their help and promised to work with the Pathfinders in the future or",
+          "was grateful for their help and promised to work with the Pathfinders in the future",
           "was kidnapped by the gang and perished while in captivity"
         ],
-        "example": "was grateful for their help and promised to work with the Pathfinders in the future or"
+        "example": "was grateful for their help and promised to work with the Pathfinders in the future"
       }
     }
   },
@@ -74,7 +74,7 @@
       "type": "choice",
       "choices": "param:summary_checkbox",
       "content": {
-        "was grateful for their help and promised to work with the Pathfinders in the future or": [
+        "was grateful for their help and promised to work with the Pathfinders in the future": [
           {
             "type": "checkbox",
             "presets": [
