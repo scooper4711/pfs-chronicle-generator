@@ -129,6 +129,34 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     const html = $(this.element)
     html.find('[name="treasureBundles"], [name="income_earned"]').on('change', this._onRewardsChanged.bind(this));
     this._onRewardsChanged(null);
+    
+    // Add click handler for blank chronicle button
+    html.find('#view-blank-chronicle').on('click', this._onViewBlankChronicle.bind(this));
+  }
+
+  async _onViewBlankChronicle(event: any) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const pdfPath = button.dataset.path;
+    
+    if (pdfPath && typeof pdfPath === 'string') {
+      try {
+        const response = await fetch(pdfPath);
+        if (response.ok) {
+          const pdfBytes = await response.arrayBuffer();
+          const blob = new Blob([pdfBytes], {type: 'application/pdf'});
+          const chronicleFileName = pdfPath.split('/').pop() || 'chronicle.pdf';
+          
+          var FileSaver = require('file-saver');
+          FileSaver.saveAs(blob, chronicleFileName);
+        } else {
+          ui.notifications?.error(`Failed to load blank chronicle: ${response.statusText}`);
+        }
+      } catch (error) {
+        ui.notifications?.error(`Error loading blank chronicle: ${error}`);
+        console.error('[PFS Chronicle] Error loading blank chronicle:', error);
+      }
+    }
   }
 
   _onRewardsChanged(event: any) {
@@ -184,6 +212,8 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber');
     const eventName = game.settings.get('pfs-chronicle-generator', 'eventName');
     const eventcode = game.settings.get('pfs-chronicle-generator', 'eventcode');
+    const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
+    const chronicleFileName = blankChroniclePath ? blankChroniclePath.split('/').pop() || 'chronicle.pdf' : 'chronicle.pdf';
     
     const layoutId = game.settings.get('pfs-chronicle-generator', 'layout');
     const layout = await layoutStore.getLayout(layoutId as string);
@@ -228,6 +258,8 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       selectedCheckboxes: selectedCheckboxes,
       strikeoutChoices: strikeoutChoices,
       selectedStrikeouts: selectedStrikeouts,
+      blankChroniclePath: blankChroniclePath,
+      chronicleFileName: chronicleFileName,
       buttons: [
         { type: "submit", icon: "fa-solid fa-save", label: "SETTINGS.Save" }
       ]

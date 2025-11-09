@@ -39,40 +39,51 @@
                 <label for="date">Event Date</label>
                 <input type="date" id="date" name="date" value="{{date}}">
             </div>
+            <div class="form-group">
+                <button type="button" id="view-blank-chronicle" data-path="{{blankChroniclePath}}">
+                    <i class="fas fa-file-pdf"></i> {{chronicleFileName}}
+                </button>
+            </div>
         </fieldset>
     </div>
 
-    <fieldset class="rewards-notes">
-        <legend>Rewards & Notes</legend>
-        <div class="form-group">
-            <label for="xp_gained">XP Earned</label>
-            <input type="number" id="xp_gained" name="xp_gained" value="{{xp_gained}}">
-        </div>
-        <div class="form-group">
-            <label for="treasureBundles">Treasure Bundles</label>
-            <input type="number" id="treasureBundles" name="treasureBundles" value="{{treasureBundles}}">
-        </div>
-        <div class="form-group">
-            <label for="income_earned">Income Earned</label>
-            <input type="number" id="income_earned" name="income_earned" value="{{income_earned}}" step="0.01">
-        </div>
-        <div class="form-group">
-            <strong>Gold Earned:</strong>
-            <span id="gp_gained_display">{{gp_gained}}</span>
-        </div>
-        <div class="form-group">
-            <label for="gp_spent">Gold Spent</label>
-            <input type="number" id="gp_spent" name="gp_spent" value="{{gp_spent}}" step="0.01">
-        </div>
-        <div class="form-group">
-            <label for="notes">Notes</label>
-            <textarea id="notes" name="notes" rows="12" cols="40">{{notes}}</textarea>
-        </div>
-        <div class="form-group">
-            <label for="reputation">Reputation</label>
-            <textarea id="reputation" name="reputation" rows="3" cols="80">{{reputation}}</textarea>
-        </div>
-    </fieldset>
+    <div class="rewards-section">
+        <fieldset class="rewards">
+            <legend>Rewards</legend>
+            <div class="form-group">
+                <label for="xp_gained">XP Earned</label>
+                <input type="number" id="xp_gained" name="xp_gained" value="{{xp_gained}}">
+            </div>
+            <div class="form-group">
+                <label for="treasureBundles">Treasure Bundles</label>
+                <input type="number" id="treasureBundles" name="treasureBundles" value="{{treasureBundles}}">
+            </div>
+            <div class="form-group">
+                <label for="income_earned">Income Earned</label>
+                <input type="number" id="income_earned" name="income_earned" value="{{income_earned}}" step="0.01">
+            </div>
+            <div class="form-group">
+                <strong>Gold Earned:</strong>
+                <span id="gp_gained_display">{{gp_gained}}</span>
+            </div>
+            <div class="form-group">
+                <label for="gp_spent">Gold Spent</label>
+                <input type="number" id="gp_spent" name="gp_spent" value="{{gp_spent}}" step="0.01">
+            </div>
+        </fieldset>
+
+        <fieldset class="notes-reputation">
+            <legend>Notes & Reputation</legend>
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea id="notes" name="notes" rows="12" cols="40">{{notes}}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="reputation">Reputation</label>
+                <textarea id="reputation" name="reputation" rows="3" cols="40">{{reputation}}</textarea>
+            </div>
+        </fieldset>
+    </div>
 
     {{#if checkboxChoices}}
     <div class="selections-container">

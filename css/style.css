@@ -9,6 +9,22 @@
     flex: 1;
 }
 
+.pfs-chronicle-generator-form .rewards-section {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.pfs-chronicle-generator-form .rewards-section > fieldset {
+    flex: 1;
+}
+
+.pfs-chronicle-generator-form .rewards-section textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .pfs-chronicle-generator-form .multi-field {
     display: flex;
     align-items: center;
@@ -35,15 +51,28 @@
     flex: 1;
 }
 
+.pfs-chronicle-generator-form .checkbox-choices,
+.pfs-chronicle-generator-form .strikeout-choices {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    max-height: 400px;
+    gap: 0.25rem;
+    align-items: flex-start;
+}
+
 .pfs-chronicle-generator-form .checkbox-choice {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
+    width: fit-content;
+    text-align: left;
 }
 
 .pfs-chronicle-generator-form .checkbox-choice input[type="checkbox"] {
     margin: 0;
+    margin-top: 2px;
     flex-shrink: 0;
 }
 
@@ -54,13 +83,16 @@
 
 .pfs-chronicle-generator-form .item-choice {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
+    width: fit-content;
+    text-align: left;
 }
 
 .pfs-chronicle-generator-form .item-choice input[type="checkbox"] {
     margin: 0;
+    margin-top: 2px;
     flex-shrink: 0;
 }
 
