@@ -1,5 +1,146 @@
 {
-    "id": "pfs2.s5-18",
-    "description": "5-18 Tapestry Of The Mind",
-    "parent": "pfs2.season5"
+  "id": "pfs2.s5-18",
+  "description": "Tapestry Of The Mind",
+  "parent": "pfs2.season5",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "scroll of haste, 7th level (level 13, 600 gp; Core Rulebook 565) +2 striking frost starknife (level 10, 1502 gp; Core Rulebook 584) +2 greater striking frost starknife (level 12, 2502 gp; Core Rulebook 584) compass of transpositional awareness (level 10, 950 gp; Dark Archive 154)"
+        ],
+        "example": "scroll of haste, 7th level (level 13, 600 gp; Core Rulebook 565) +2 striking frost starknife (level 10, 1502 gp; Core Rulebook 584) +2 greater striking frost starknife (level 12, 2502 gp; Core Rulebook 584) compass of transpositional awareness (level 10, 950 gp; Dark Archive 154)"
+      }
+    },
+    "Checkboxes": {
+      "summary_checkbox": {
+        "type": "choice",
+        "description": "Checkboxes in the adventure summary that should be selected",
+        "choices": [
+          "you had to kill",
+          "willingly stood down",
+          "the Vigilant Seal keep it sealed away",
+          "the Dark Archive study it",
+          "nothing"
+        ],
+        "example": "you had to kill"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "checkbox": {
+      "canvas": "summary",
+      "color": "black",
+      "size": 1
+    },
+    "checkbox.you_had_to_kill": {
+      "x": 26.067,
+      "y": 19.028,
+      "x2": 27.578,
+      "y2": 27.993
+    },
+    "checkbox.willingly_stood_down": {
+      "x": 40.459,
+      "y": 19.028,
+      "x2": 41.97,
+      "y2": 27.993
+    },
+    "checkbox.the_Vigilant_Seal_keep_it_sealed_away": {
+      "x": 73.521,
+      "y": 35.438,
+      "x2": 75.032,
+      "y2": 44.404
+    },
+    "checkbox.the_Dark_Archive_study_it": {
+      "x": 6.125,
+      "y": 43.643,
+      "x2": 7.636,
+      "y2": 52.609
+    },
+    "checkbox.nothing": {
+      "x": 27.139,
+      "y": 43.643,
+      "x2": 28.65,
+      "y2": 52.609
+    },
+    "item.line.scroll_of_haste_7th_level_level_13_600_gp;_Core": {
+      "y": 5.5,
+      "y2": 57.5
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "scroll of haste, 7th level (level 13, 600 gp; Core Rulebook 565) +2 striking frost starknife (level 10, 1502 gp; Core Rulebook 584) +2 greater striking frost starknife (level 12, 2502 gp; Core Rulebook 584) compass of transpositional awareness (level 10, 950 gp; Dark Archive 154)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.scroll_of_haste_7th_level_level_13_600_gp;_Core"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "choice",
+      "choices": "param:summary_checkbox",
+      "content": {
+        "you had to kill": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.you_had_to_kill"
+            ]
+          }
+        ],
+        "willingly stood down": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.willingly_stood_down"
+            ]
+          }
+        ],
+        "the Vigilant Seal keep it sealed away": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.the_Vigilant_Seal_keep_it_sealed_away"
+            ]
+          }
+        ],
+        "the Dark Archive study it": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.the_Dark_Archive_study_it"
+            ]
+          }
+        ],
+        "nothing": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.nothing"
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

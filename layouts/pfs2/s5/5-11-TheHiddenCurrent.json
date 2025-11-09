@@ -1,5 +1,46 @@
 {
-    "id": "pfs2.s5-11",
-    "description": "5-11 The Hidden Current",
-    "parent": "pfs2.season5"
+  "id": "pfs2.s5-11",
+  "description": "The Hidden Current",
+  "parent": "pfs2.season5",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "+1 striking battleaxe (level 4, 100 gp) lesser retaliation rune (level 6, 250 gp; Path- finder Treasure Vault 144) wine of the blood\u00ae (level 5, 30 gp; Pathfinder Dark Archive 114) ghost oil (level 4, 18 gp; Pathfinder Lost Omens Knights of Lastwall 90)"
+        ],
+        "example": "+1 striking battleaxe (level 4, 100 gp) lesser retaliation rune (level 6, 250 gp; Path- finder Treasure Vault 144) wine of the blood\u00ae (level 5, 30 gp; Pathfinder Dark Archive 114) ghost oil (level 4, 18 gp; Pathfinder Lost Omens Knights of Lastwall 90)"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "item.line.+1_striking_battleaxe_level_4_100_gp_lesser_ret": {
+      "y": 5.1,
+      "y2": 43.1
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "+1 striking battleaxe (level 4, 100 gp) lesser retaliation rune (level 6, 250 gp; Path- finder Treasure Vault 144) wine of the blood\u00ae (level 5, 30 gp; Pathfinder Dark Archive 114) ghost oil (level 4, 18 gp; Pathfinder Lost Omens Knights of Lastwall 90)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.+1_striking_battleaxe_level_4_100_gp_lesser_ret"
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

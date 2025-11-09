@@ -1,5 +1,46 @@
 {
-    "id": "pfs2.s5-13",
-    "description": "5-13 Thick As Thieves",
-    "parent": "pfs2.season5"
+  "id": "pfs2.s5-13",
+  "description": "Thick As Thieves",
+  "parent": "pfs2.season5",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "brazier of harmony (level 5, 150 gp; Rage of Elements 122) messenger\u2019s ring (level 9, 700 gp) broadleaf shield (level 6, 225 gp; Rage of Elements 200) brightbloom posy (level 8, 450 gp; Treasure Vault 125) conduit shot, lesser (level 6, 50 gp; Treasure Vault 80) meteor shot (level 7, 70 gp; Gun & Gears 171) obsidian edge (level 6, 250 gp; Rage of Elements 123)"
+        ],
+        "example": "brazier of harmony (level 5, 150 gp; Rage of Elements 122) messenger\u2019s ring (level 9, 700 gp) broadleaf shield (level 6, 225 gp; Rage of Elements 200) brightbloom posy (level 8, 450 gp; Treasure Vault 125) conduit shot, lesser (level 6, 50 gp; Treasure Vault 80) meteor shot (level 7, 70 gp; Gun & Gears 171) obsidian edge (level 6, 250 gp; Rage of Elements 123)"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "item.line.brazier_of_harmony_level_5_150_gp;_Rage_of_Eleme": {
+      "y": 5.5,
+      "y2": 91.0
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "brazier of harmony (level 5, 150 gp; Rage of Elements 122) messenger\u2019s ring (level 9, 700 gp) broadleaf shield (level 6, 225 gp; Rage of Elements 200) brightbloom posy (level 8, 450 gp; Treasure Vault 125) conduit shot, lesser (level 6, 50 gp; Treasure Vault 80) meteor shot (level 7, 70 gp; Gun & Gears 171) obsidian edge (level 6, 250 gp; Rage of Elements 123)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.brazier_of_harmony_level_5_150_gp;_Rage_of_Eleme"
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

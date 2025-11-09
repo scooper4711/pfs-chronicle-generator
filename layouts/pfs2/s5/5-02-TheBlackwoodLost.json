@@ -1,5 +1,82 @@
 {
-    "id": "pfs2.s5-02",
-    "description": "5-02 The Blackwood Lost",
-    "parent": "pfs2.season5"
+  "id": "pfs2.s5-02",
+  "description": "The Blackwood Lost",
+  "parent": "pfs2.season5",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [],
+        "example": ""
+      }
+    },
+    "Checkboxes": {
+      "summary_checkbox": {
+        "type": "choice",
+        "description": "Checkboxes in the adventure summary that should be selected",
+        "choices": [
+          "repaired the nexus and saved the survivors",
+          "ran out of time"
+        ],
+        "example": "repaired the nexus and saved the survivors"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "checkbox": {
+      "canvas": "summary",
+      "color": "black",
+      "size": 1
+    },
+    "checkbox.repaired_the_nexus_and_saved_the_survivors": {
+      "x": 78.747,
+      "y": 42.778,
+      "x2": 80.447,
+      "y2": 52.864
+    },
+    "checkbox.ran_out_of_time": {
+      "x": 18.737,
+      "y": 50.983,
+      "x2": 20.437,
+      "y2": 61.069
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {}
+    },
+    {
+      "type": "choice",
+      "choices": "param:summary_checkbox",
+      "content": {
+        "repaired the nexus and saved the survivors": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.repaired_the_nexus_and_saved_the_survivors"
+            ]
+          }
+        ],
+        "ran out of time": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.ran_out_of_time"
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

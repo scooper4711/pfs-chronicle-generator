@@ -1,5 +1,130 @@
 {
-    "id": "pfs2.s5-06",
-    "description": "5-06 Ukuja The First Wall",
-    "parent": "pfs2.season5"
+  "id": "pfs2.s5-06",
+  "description": "Ukuja The First Wall",
+  "parent": "pfs2.season5",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "scroll of weapon storm (level 7, 70 gp) scroll of heal (4th level; level 7, 70 gp) +1 striking glaive (level 4, 101 gp) 3rd-level scroll of harm (level 5, 300 gp) grievous rune (level 9, 700 gp) scroll of blink (level 7, 70 gp) +2 striking mace (level 10, 1,001 gp)"
+        ],
+        "example": "scroll of weapon storm (level 7, 70 gp) scroll of heal (4th level; level 7, 70 gp) +1 striking glaive (level 4, 101 gp) 3rd-level scroll of harm (level 5, 300 gp) grievous rune (level 9, 700 gp) scroll of blink (level 7, 70 gp) +2 striking mace (level 10, 1,001 gp)"
+      }
+    },
+    "Checkboxes": {
+      "summary_checkbox": {
+        "type": "choice",
+        "description": "Checkboxes in the adventure summary that should be selected",
+        "choices": [
+          "were able to convince the council that you were peaceful or",
+          "the council remained suspicious of your actions",
+          "found Lord Rubak\u2019s dagger and/or",
+          "instructions from Lord Rubak on how to proceed with a demonic ritual! You presented this evidence to Brun Hornbreaker"
+        ],
+        "example": "were able to convince the council that you were peaceful or"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "checkbox": {
+      "canvas": "summary",
+      "color": "black",
+      "size": 1
+    },
+    "checkbox.were_able_to_convince_the_council_that_you_were_pe": {
+      "x": 79.471,
+      "y": 18.157,
+      "x2": 81.171,
+      "y2": 28.243
+    },
+    "checkbox.the_council_remained_suspicious_of_your_actions": {
+      "x": 31.583,
+      "y": 26.36,
+      "x2": 33.283,
+      "y2": 36.447
+    },
+    "checkbox.found_Lord_Rubak\u2019s_dagger_and/or": {
+      "x": 96.193,
+      "y": 42.767,
+      "x2": 97.893,
+      "y2": 52.853
+    },
+    "checkbox.instructions_from_Lord_Rubak_on_how_to_proceed_wit": {
+      "x": 27.979,
+      "y": 50.97,
+      "x2": 29.679,
+      "y2": 61.056
+    },
+    "item.line.scroll_of_weapon_storm_level_7_70_gp_scroll_of_": {
+      "y": 8.1,
+      "y2": 45.9
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "scroll of weapon storm (level 7, 70 gp) scroll of heal (4th level; level 7, 70 gp) +1 striking glaive (level 4, 101 gp) 3rd-level scroll of harm (level 5, 300 gp) grievous rune (level 9, 700 gp) scroll of blink (level 7, 70 gp) +2 striking mace (level 10, 1,001 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.scroll_of_weapon_storm_level_7_70_gp_scroll_of_"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "choice",
+      "choices": "param:summary_checkbox",
+      "content": {
+        "were able to convince the council that you were peaceful or": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.were_able_to_convince_the_council_that_you_were_pe"
+            ]
+          }
+        ],
+        "the council remained suspicious of your actions": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.the_council_remained_suspicious_of_your_actions"
+            ]
+          }
+        ],
+        "found Lord Rubak\u2019s dagger and/or": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.found_Lord_Rubak\u2019s_dagger_and/or"
+            ]
+          }
+        ],
+        "instructions from Lord Rubak on how to proceed with a demonic ritual! You presented this evidence to Brun Hornbreaker": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.instructions_from_Lord_Rubak_on_how_to_proceed_wit"
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

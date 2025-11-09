@@ -1,5 +1,46 @@
 {
-    "id": "pfs2.s5-03",
-    "description": "5-03 Heidmarch Heist",
-    "parent": "pfs2.season5"
+  "id": "pfs2.s5-03",
+  "description": "Heidmarch Heist",
+  "parent": "pfs2.season5",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "boarding pike (item 1, 8 sp, Pathfinder Lost Omens Pathfinder Society Guide 81) everyneed pack, greater\u2019 (item 7, discounted to 75 gp, limit 1, Pathfinder Lost Omens Pathfinder Society Guide 85) pearly white spindle\u2019 (item 3, 60 gp, Pathfinder Lost Omens Pathfinder Society Guide 120)"
+        ],
+        "example": "boarding pike (item 1, 8 sp, Pathfinder Lost Omens Pathfinder Society Guide 81) everyneed pack, greater\u2019 (item 7, discounted to 75 gp, limit 1, Pathfinder Lost Omens Pathfinder Society Guide 85) pearly white spindle\u2019 (item 3, 60 gp, Pathfinder Lost Omens Pathfinder Society Guide 120)"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "item.line.boarding_pike_item_1_8_sp_Pathfinder_Lost_Omens": {
+      "y": 8.1,
+      "y2": 45.9
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "boarding pike (item 1, 8 sp, Pathfinder Lost Omens Pathfinder Society Guide 81) everyneed pack, greater\u2019 (item 7, discounted to 75 gp, limit 1, Pathfinder Lost Omens Pathfinder Society Guide 85) pearly white spindle\u2019 (item 3, 60 gp, Pathfinder Lost Omens Pathfinder Society Guide 120)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.boarding_pike_item_1_8_sp_Pathfinder_Lost_Omens"
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

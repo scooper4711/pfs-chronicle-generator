@@ -1,5 +1,98 @@
 {
-    "id": "pfs2.s5-15",
-    "description": "5-15 Cleansing The Flame",
-    "parent": "pfs2.season5"
+  "id": "pfs2.s5-15",
+  "description": "Cleansing The Flame",
+  "parent": "pfs2.season5",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "brazier of harmony (level 5, 150 gp; Pathfinder Rage of Elements 122) messenger 5 ring (level 9, 700 gp) moderate healing potion (level 6, 50 gp) spellstrike ammunition (type IIT) (level 7, 70 gp) crafter\u2019s eyepiece (level 3, 60 gp) +1 mace (level 3, 36 gp) +] striking mace (level 4, 101 gp) +] striking called shears (level 7, 450 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89) +2 striking called shears (level 10, 1,350 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89) Players with this chronicle sheet have access to the shears weapon for all characters"
+        ],
+        "example": "brazier of harmony (level 5, 150 gp; Pathfinder Rage of Elements 122) messenger 5 ring (level 9, 700 gp) moderate healing potion (level 6, 50 gp) spellstrike ammunition (type IIT) (level 7, 70 gp) crafter\u2019s eyepiece (level 3, 60 gp) +1 mace (level 3, 36 gp) +] striking mace (level 4, 101 gp) +] striking called shears (level 7, 450 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89) +2 striking called shears (level 10, 1,350 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89) Players with this chronicle sheet have access to the shears weapon for all characters"
+      }
+    },
+    "Checkboxes": {
+      "summary_checkbox": {
+        "type": "choice",
+        "description": "Checkboxes in the adventure summary that should be selected",
+        "choices": [
+          "acquiesced and fought him honorably or",
+          "you refused this tradition"
+        ],
+        "example": "acquiesced and fought him honorably or"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "checkbox": {
+      "canvas": "summary",
+      "color": "black",
+      "size": 1
+    },
+    "checkbox.acquiesced_and_fought_him_honorably_or": {
+      "x": 12.946,
+      "y": 54.196,
+      "x2": 14.457,
+      "y2": 63.162
+    },
+    "checkbox.you_refused_this_tradition": {
+      "x": 45.822,
+      "y": 54.196,
+      "x2": 47.333,
+      "y2": 63.162
+    },
+    "item.line.brazier_of_harmony_level_5_150_gp;_Pathfinder_Ra": {
+      "y": 5.1,
+      "y2": 93.5
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "brazier of harmony (level 5, 150 gp; Pathfinder Rage of Elements 122) messenger 5 ring (level 9, 700 gp) moderate healing potion (level 6, 50 gp) spellstrike ammunition (type IIT) (level 7, 70 gp) crafter\u2019s eyepiece (level 3, 60 gp) +1 mace (level 3, 36 gp) +] striking mace (level 4, 101 gp) +] striking called shears (level 7, 450 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89) +2 striking called shears (level 10, 1,350 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89) Players with this chronicle sheet have access to the shears weapon for all characters": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.brazier_of_harmony_level_5_150_gp;_Pathfinder_Ra"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "choice",
+      "choices": "param:summary_checkbox",
+      "content": {
+        "acquiesced and fought him honorably or": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.acquiesced_and_fought_him_honorably_or"
+            ]
+          }
+        ],
+        "you refused this tradition": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.you_refused_this_tradition"
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

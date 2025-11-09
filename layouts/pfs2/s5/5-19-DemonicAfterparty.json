@@ -1,5 +1,82 @@
 {
-    "id": "pfs2.s5-19",
-    "description": "5-19 Demonic Afterparty",
-    "parent": "pfs2.season5"
+  "id": "pfs2.s5-19",
+  "description": "Demonic Afterparty",
+  "parent": "pfs2.season5",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [],
+        "example": ""
+      }
+    },
+    "Checkboxes": {
+      "summary_checkbox": {
+        "type": "choice",
+        "description": "Checkboxes in the adventure summary that should be selected",
+        "choices": [
+          "found sufficient evidence of the cult\u2019s ill intentions",
+          "defeated the remnants of the cult but didn\u2019t collect sufficient proof"
+        ],
+        "example": "found sufficient evidence of the cult\u2019s ill intentions"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "checkbox": {
+      "canvas": "summary",
+      "color": "black",
+      "size": 1
+    },
+    "checkbox.found_sufficient_evidence_of_the_cult\u2019s_ill_intent": {
+      "x": 26.03,
+      "y": 36.21,
+      "x2": 27.73,
+      "y2": 43.76
+    },
+    "checkbox.defeated_the_remnants_of_the_cult_but_didn\u2019t_colle": {
+      "x": 64.613,
+      "y": 36.21,
+      "x2": 66.313,
+      "y2": 43.76
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {}
+    },
+    {
+      "type": "choice",
+      "choices": "param:summary_checkbox",
+      "content": {
+        "found sufficient evidence of the cult\u2019s ill intentions": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.found_sufficient_evidence_of_the_cult\u2019s_ill_intent"
+            ]
+          }
+        ],
+        "defeated the remnants of the cult but didn\u2019t collect sufficient proof": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.defeated_the_remnants_of_the_cult_but_didn\u2019t_colle"
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }
