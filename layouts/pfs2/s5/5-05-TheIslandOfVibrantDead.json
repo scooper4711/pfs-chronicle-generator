@@ -1,6 +1,6 @@
 {
   "id": "pfs2.s5-05",
-  "description": "The Island Of Vibrant Dead",
+  "description": "5-05 The Island Of Vibrant Dead",
   "parent": "pfs2.season5",
   "parameters": {
     "Items": {
@@ -8,9 +8,10 @@
         "type": "choice",
         "description": "Item line text to be struck out",
         "choices": [
-          "parchment of direct message (level 3, 50 gp; Pathfinder Lost Omens Firebrands 86) greater hat of disguise (level 7, 340 gp)"
+          "parchment of direct message (level 3, 50 gp; Pathfinder Lost Omens Firebrands 86)",
+          "greater hat of disguise (level 7, 340 gp)"
         ],
-        "example": "parchment of direct message (level 3, 50 gp; Pathfinder Lost Omens Firebrands 86) greater hat of disguise (level 7, 340 gp)"
+        "example": "parchment of direct message (level 3, 50 gp; Pathfinder Lost Omens Firebrands 86)"
       }
     }
   },
@@ -22,7 +23,11 @@
       "x2": 95
     },
     "item.line.parchment_of_direct_message_level_3_50_gp;_Pathf": {
-      "y": 8.1,
+      "y": 7.3,
+      "y2": 17.8
+    },
+    "item.line.greater_hat_of_disguise_level_7_340_gp": {
+      "y": 18.5,
       "y2": 23.4
     }
   },
@@ -31,12 +36,21 @@
       "type": "choice",
       "choices": "param:strikeout_item_lines",
       "content": {
-        "parchment of direct message (level 3, 50 gp; Pathfinder Lost Omens Firebrands 86) greater hat of disguise (level 7, 340 gp)": [
+        "parchment of direct message (level 3, 50 gp; Pathfinder Lost Omens Firebrands 86)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
               "item.line.parchment_of_direct_message_level_3_50_gp;_Pathf"
+            ]
+          }
+        ],
+        "greater hat of disguise (level 7, 340 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.greater_hat_of_disguise_level_7_340_gp"
             ]
           }
         ]

@@ -1,6 +1,6 @@
 {
   "id": "pfs2.s5-16",
-  "description": "A Lie Told To Strangers",
+  "description": "5-16 A Lie Told To Strangers",
   "parent": "pfs2.season5",
   "parameters": {
     "Items": {
@@ -50,7 +50,7 @@
       "y2": 58.383
     },
     "item.line.irondust_stew_item_4_15_gp_Pathfinder_Lost_Omen": {
-      "y": 11.3,
+      "y": 10.5,
       "y2": 20.9
     }
   },

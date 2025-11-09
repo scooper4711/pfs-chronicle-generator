@@ -1,16 +1,8 @@
 {
   "id": "pfs2.s5-02",
-  "description": "The Blackwood Lost",
+  "description": "5-02 The Blackwood Lost",
   "parent": "pfs2.season5",
   "parameters": {
-    "Items": {
-      "strikeout_item_lines": {
-        "type": "choice",
-        "description": "Item line text to be struck out",
-        "choices": [],
-        "example": ""
-      }
-    },
     "Checkboxes": {
       "summary_checkbox": {
         "type": "choice",
@@ -24,12 +16,6 @@
     }
   },
   "presets": {
-    "strikeout_item": {
-      "canvas": "items",
-      "color": "black",
-      "x": 0.5,
-      "x2": 95
-    },
     "checkbox": {
       "canvas": "summary",
       "color": "black",
@@ -49,11 +35,6 @@
     }
   },
   "content": [
-    {
-      "type": "choice",
-      "choices": "param:strikeout_item_lines",
-      "content": {}
-    },
     {
       "type": "choice",
       "choices": "param:summary_checkbox",

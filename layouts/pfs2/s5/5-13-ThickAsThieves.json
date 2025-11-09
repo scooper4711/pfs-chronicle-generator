@@ -1,6 +1,6 @@
 {
   "id": "pfs2.s5-13",
-  "description": "Thick As Thieves",
+  "description": "5-13 Thick As Thieves",
   "parent": "pfs2.season5",
   "parameters": {
     "Items": {
@@ -8,9 +8,15 @@
         "type": "choice",
         "description": "Item line text to be struck out",
         "choices": [
-          "brazier of harmony (level 5, 150 gp; Rage of Elements 122) messenger\u2019s ring (level 9, 700 gp) broadleaf shield (level 6, 225 gp; Rage of Elements 200) brightbloom posy (level 8, 450 gp; Treasure Vault 125) conduit shot, lesser (level 6, 50 gp; Treasure Vault 80) meteor shot (level 7, 70 gp; Gun & Gears 171) obsidian edge (level 6, 250 gp; Rage of Elements 123)"
+          "brazier of harmony (level 5, 150 gp; Rage of Elements 122)",
+          "messenger\u2019s ring (level 9, 700 gp)",
+          "broadleaf shield (level 6, 225 gp; Rage of Elements 200)",
+          "brightbloom posy (level 8, 450 gp; Treasure Vault 125)",
+          "conduit shot, lesser (level 6, 50 gp; Treasure Vault 80)",
+          "meteor shot (level 7, 70 gp; Gun & Gears 171)",
+          "obsidian edge (level 6, 250 gp; Rage of Elements 123)"
         ],
-        "example": "brazier of harmony (level 5, 150 gp; Rage of Elements 122) messenger\u2019s ring (level 9, 700 gp) broadleaf shield (level 6, 225 gp; Rage of Elements 200) brightbloom posy (level 8, 450 gp; Treasure Vault 125) conduit shot, lesser (level 6, 50 gp; Treasure Vault 80) meteor shot (level 7, 70 gp; Gun & Gears 171) obsidian edge (level 6, 250 gp; Rage of Elements 123)"
+        "example": "brazier of harmony (level 5, 150 gp; Rage of Elements 122)"
       }
     }
   },
@@ -22,8 +28,32 @@
       "x2": 95
     },
     "item.line.brazier_of_harmony_level_5_150_gp;_Rage_of_Eleme": {
-      "y": 5.5,
-      "y2": 91.0
+      "y": 3.6,
+      "y2": 17.6
+    },
+    "item.line.messenger\u2019s_ring_level_9_700_gp": {
+      "y": 17.0,
+      "y2": 24.3
+    },
+    "item.line.broadleaf_shield_level_6_225_gp;_Rage_of_Element": {
+      "y": 23.8,
+      "y2": 37.8
+    },
+    "item.line.brightbloom_posy_level_8_450_gp;_Treasure_Vault_": {
+      "y": 37.2,
+      "y2": 51.2
+    },
+    "item.line.conduit_shot_lesser_level_6_50_gp;_Treasure_Vau": {
+      "y": 50.7,
+      "y2": 64.7
+    },
+    "item.line.meteor_shot_level_7_70_gp;_Gun_&_Gears_171": {
+      "y": 64.1,
+      "y2": 78.1
+    },
+    "item.line.obsidian_edge_level_6_250_gp;_Rage_of_Elements_1": {
+      "y": 77.6,
+      "y2": 91.6
     }
   },
   "content": [
@@ -31,12 +61,66 @@
       "type": "choice",
       "choices": "param:strikeout_item_lines",
       "content": {
-        "brazier of harmony (level 5, 150 gp; Rage of Elements 122) messenger\u2019s ring (level 9, 700 gp) broadleaf shield (level 6, 225 gp; Rage of Elements 200) brightbloom posy (level 8, 450 gp; Treasure Vault 125) conduit shot, lesser (level 6, 50 gp; Treasure Vault 80) meteor shot (level 7, 70 gp; Gun & Gears 171) obsidian edge (level 6, 250 gp; Rage of Elements 123)": [
+        "brazier of harmony (level 5, 150 gp; Rage of Elements 122)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
               "item.line.brazier_of_harmony_level_5_150_gp;_Rage_of_Eleme"
+            ]
+          }
+        ],
+        "messenger\u2019s ring (level 9, 700 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.messenger\u2019s_ring_level_9_700_gp"
+            ]
+          }
+        ],
+        "broadleaf shield (level 6, 225 gp; Rage of Elements 200)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.broadleaf_shield_level_6_225_gp;_Rage_of_Element"
+            ]
+          }
+        ],
+        "brightbloom posy (level 8, 450 gp; Treasure Vault 125)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.brightbloom_posy_level_8_450_gp;_Treasure_Vault_"
+            ]
+          }
+        ],
+        "conduit shot, lesser (level 6, 50 gp; Treasure Vault 80)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.conduit_shot_lesser_level_6_50_gp;_Treasure_Vau"
+            ]
+          }
+        ],
+        "meteor shot (level 7, 70 gp; Gun & Gears 171)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.meteor_shot_level_7_70_gp;_Gun_&_Gears_171"
+            ]
+          }
+        ],
+        "obsidian edge (level 6, 250 gp; Rage of Elements 123)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.obsidian_edge_level_6_250_gp;_Rage_of_Elements_1"
             ]
           }
         ]

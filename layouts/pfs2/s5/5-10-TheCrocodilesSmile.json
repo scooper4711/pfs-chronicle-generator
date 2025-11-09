@@ -1,6 +1,6 @@
 {
   "id": "pfs2.s5-10",
-  "description": "The Crocodiles Smile",
+  "description": "5-10 The Crocodiles Smile",
   "parent": "pfs2.season5",
   "parameters": {
     "Items": {
@@ -8,9 +8,19 @@
         "type": "choice",
         "description": "Item line text to be struck out",
         "choices": [
-          "minor healing potion (level 1, 4 gp) lesser silvertongue mutagen (level 1, 4 gp) lesser healing potion (level 3, 12 gp;) moderate silvertongue mutagen (level 3, 12 gp) lesser goo grenade (level 1, 3 gp; Pathfinder Lost Omens Impossible Lands 306) moderate goo grenade (level 3, 10 gp; Pathfinder Lost Omens Impossible Lands 306) lesser healing potion (level 3, 12 gp;) oil of potency (level 2, 7 gp) barkskin potion (level 4, 15 gp) hat of disguise (level 2, 30 gp) cloak of repute (level 4, 90 gp; Pathfinder Lost Omens: Character Guide 90) visap (2 gp; Pathfinder Lost Omens Impossible Lands 306)"
+          "minor healing potion (level 1, 4 gp)",
+          "lesser silvertongue mutagen (level 1, 4 gp)",
+          "lesser healing potion (level 3, 12 gp;)",
+          "moderate silvertongue mutagen (level 3, 12 gp)",
+          "lesser goo grenade (level 1, 3 gp; Pathfinder Lost Omens Impossible Lands 306)",
+          "moderate goo grenade (level 3, 10 gp; Pathfinder Lost Omens Impossible Lands 306)",
+          "oil of potency (level 2, 7 gp)",
+          "barkskin potion (level 4, 15 gp)",
+          "hat of disguise (level 2, 30 gp)",
+          "cloak of repute (level 4, 90 gp; Pathfinder Lost Omens: Character Guide 90)",
+          "visap (2 gp; Pathfinder Lost Omens Impossible Lands 306)"
         ],
-        "example": "minor healing potion (level 1, 4 gp) lesser silvertongue mutagen (level 1, 4 gp) lesser healing potion (level 3, 12 gp;) moderate silvertongue mutagen (level 3, 12 gp) lesser goo grenade (level 1, 3 gp; Pathfinder Lost Omens Impossible Lands 306) moderate goo grenade (level 3, 10 gp; Pathfinder Lost Omens Impossible Lands 306) lesser healing potion (level 3, 12 gp;) oil of potency (level 2, 7 gp) barkskin potion (level 4, 15 gp) hat of disguise (level 2, 30 gp) cloak of repute (level 4, 90 gp; Pathfinder Lost Omens: Character Guide 90) visap (2 gp; Pathfinder Lost Omens Impossible Lands 306)"
+        "example": "minor healing potion (level 1, 4 gp)"
       }
     },
     "Checkboxes": {
@@ -84,9 +94,49 @@
       "x2": 77.603,
       "y2": 69.259
     },
-    "item.line.minor_healing_potion_level_1_4_gp_lesser_silver": {
-      "y": 8.1,
-      "y2": 96.2
+    "item.line.minor_healing_potion_level_1_4_gp": {
+      "y": 7.3,
+      "y2": 12.2
+    },
+    "item.line.lesser_silvertongue_mutagen_level_1_4_gp": {
+      "y": 12.9,
+      "y2": 17.8
+    },
+    "item.line.lesser_healing_potion_level_3_12_gp;": {
+      "y": 52.1,
+      "y2": 57.0
+    },
+    "item.line.moderate_silvertongue_mutagen_level_3_12_gp": {
+      "y": 24.1,
+      "y2": 29.0
+    },
+    "item.line.lesser_goo_grenade_level_1_3_gp;_Pathfinder_Lost": {
+      "y": 29.7,
+      "y2": 40.2
+    },
+    "item.line.moderate_goo_grenade_level_3_10_gp;_Pathfinder_L": {
+      "y": 40.9,
+      "y2": 51.4
+    },
+    "item.line.oil_of_potency_level_2_7_gp": {
+      "y": 57.7,
+      "y2": 62.6
+    },
+    "item.line.barkskin_potion_level_4_15_gp": {
+      "y": 63.3,
+      "y2": 68.3
+    },
+    "item.line.hat_of_disguise_level_2_30_gp": {
+      "y": 68.9,
+      "y2": 73.9
+    },
+    "item.line.cloak_of_repute_level_4_90_gp;_Pathfinder_Lost_O": {
+      "y": 74.5,
+      "y2": 85.1
+    },
+    "item.line.visap_2_gp;_Pathfinder_Lost_Omens_Impossible_Land": {
+      "y": 85.7,
+      "y2": 96.3
     }
   },
   "content": [
@@ -94,12 +144,102 @@
       "type": "choice",
       "choices": "param:strikeout_item_lines",
       "content": {
-        "minor healing potion (level 1, 4 gp) lesser silvertongue mutagen (level 1, 4 gp) lesser healing potion (level 3, 12 gp;) moderate silvertongue mutagen (level 3, 12 gp) lesser goo grenade (level 1, 3 gp; Pathfinder Lost Omens Impossible Lands 306) moderate goo grenade (level 3, 10 gp; Pathfinder Lost Omens Impossible Lands 306) lesser healing potion (level 3, 12 gp;) oil of potency (level 2, 7 gp) barkskin potion (level 4, 15 gp) hat of disguise (level 2, 30 gp) cloak of repute (level 4, 90 gp; Pathfinder Lost Omens: Character Guide 90) visap (2 gp; Pathfinder Lost Omens Impossible Lands 306)": [
+        "minor healing potion (level 1, 4 gp)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.minor_healing_potion_level_1_4_gp_lesser_silver"
+              "item.line.minor_healing_potion_level_1_4_gp"
+            ]
+          }
+        ],
+        "lesser silvertongue mutagen (level 1, 4 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.lesser_silvertongue_mutagen_level_1_4_gp"
+            ]
+          }
+        ],
+        "lesser healing potion (level 3, 12 gp;)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.lesser_healing_potion_level_3_12_gp;"
+            ]
+          }
+        ],
+        "moderate silvertongue mutagen (level 3, 12 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.moderate_silvertongue_mutagen_level_3_12_gp"
+            ]
+          }
+        ],
+        "lesser goo grenade (level 1, 3 gp; Pathfinder Lost Omens Impossible Lands 306)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.lesser_goo_grenade_level_1_3_gp;_Pathfinder_Lost"
+            ]
+          }
+        ],
+        "moderate goo grenade (level 3, 10 gp; Pathfinder Lost Omens Impossible Lands 306)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.moderate_goo_grenade_level_3_10_gp;_Pathfinder_L"
+            ]
+          }
+        ],
+        "oil of potency (level 2, 7 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.oil_of_potency_level_2_7_gp"
+            ]
+          }
+        ],
+        "barkskin potion (level 4, 15 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.barkskin_potion_level_4_15_gp"
+            ]
+          }
+        ],
+        "hat of disguise (level 2, 30 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.hat_of_disguise_level_2_30_gp"
+            ]
+          }
+        ],
+        "cloak of repute (level 4, 90 gp; Pathfinder Lost Omens: Character Guide 90)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.cloak_of_repute_level_4_90_gp;_Pathfinder_Lost_O"
+            ]
+          }
+        ],
+        "visap (2 gp; Pathfinder Lost Omens Impossible Lands 306)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.visap_2_gp;_Pathfinder_Lost_Omens_Impossible_Land"
             ]
           }
         ]

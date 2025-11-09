@@ -1,6 +1,6 @@
 {
   "id": "pfs2.s5-07",
-  "description": "Sewer Dragon Crisis",
+  "description": "5-07 Sewer Dragon Crisis",
   "parent": "pfs2.season5",
   "parameters": {
     "Items": {
@@ -8,11 +8,11 @@
         "type": "choice",
         "description": "Item line text to be struck out",
         "choices": [
-          "dragon\u2019s crest\u2019 (Item 1, 10 gp, Pathfinder Lost Omens Grand Bazaar 104)",
-          "vexing vapor (lesser)\" (Item 1, 4 gp, Pathfinder Lost Omens Grand Bazaar 27)",
-          "vexing vapor (moderate). (Item 3, 12 gp, Pathfinder Lost Omens Grand Bazaar 27)"
+          "dragon\u2019s crest (Item 1, 10 gp, Pathfinder Lost Omens Grand Bazaar 104)",
+          "vexing vapor (lesser) (Item 1, 4 gp, Pathfinder Lost Omens Grand Bazaar 27)",
+          "vexing vapor (moderate) (Item 3, 12 gp, Pathfinder Lost Omens Grand Bazaar 27)"
         ],
-        "example": "dragon\u2019s crest\u2019 (Item 1, 10 gp, Pathfinder Lost Omens Grand Bazaar 104)"
+        "example": "dragon\u2019s crest (Item 1, 10 gp, Pathfinder Lost Omens Grand Bazaar 104)"
       }
     },
     "Checkboxes": {
@@ -79,17 +79,17 @@
       "x2": 89.462,
       "y2": 61.056
     },
-    "item.line.dragon\u2019s_crest\u2019_Item_1_10_gp_Pathfinder_Lost_Om": {
-      "y": 8.1,
-      "y2": 17.7
+    "item.line.dragon\u2019s_crest_Item_1_10_gp_Pathfinder_Lost_Ome": {
+      "y": 7.3,
+      "y2": 17.8
     },
-    "item.line.vexing_vapor_lesser_Item_1_4_gp_Pathfinder_L": {
-      "y": 19.3,
-      "y2": 28.9
+    "item.line.vexing_vapor_lesser_Item_1_4_gp_Pathfinder_Lo": {
+      "y": 18.5,
+      "y2": 29.0
     },
-    "item.line.vexing_vapor_moderate_Item_3_12_gp_Pathfinde": {
-      "y": 30.5,
-      "y2": 40.3
+    "item.line.vexing_vapor_moderate_Item_3_12_gp_Pathfinder": {
+      "y": 29.7,
+      "y2": 40.2
     }
   },
   "content": [
@@ -97,30 +97,30 @@
       "type": "choice",
       "choices": "param:strikeout_item_lines",
       "content": {
-        "dragon\u2019s crest\u2019 (Item 1, 10 gp, Pathfinder Lost Omens Grand Bazaar 104)": [
+        "dragon\u2019s crest (Item 1, 10 gp, Pathfinder Lost Omens Grand Bazaar 104)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.dragon\u2019s_crest\u2019_Item_1_10_gp_Pathfinder_Lost_Om"
+              "item.line.dragon\u2019s_crest_Item_1_10_gp_Pathfinder_Lost_Ome"
             ]
           }
         ],
-        "vexing vapor (lesser)\" (Item 1, 4 gp, Pathfinder Lost Omens Grand Bazaar 27)": [
+        "vexing vapor (lesser) (Item 1, 4 gp, Pathfinder Lost Omens Grand Bazaar 27)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.vexing_vapor_lesser_Item_1_4_gp_Pathfinder_L"
+              "item.line.vexing_vapor_lesser_Item_1_4_gp_Pathfinder_Lo"
             ]
           }
         ],
-        "vexing vapor (moderate). (Item 3, 12 gp, Pathfinder Lost Omens Grand Bazaar 27)": [
+        "vexing vapor (moderate) (Item 3, 12 gp, Pathfinder Lost Omens Grand Bazaar 27)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.vexing_vapor_moderate_Item_3_12_gp_Pathfinde"
+              "item.line.vexing_vapor_moderate_Item_3_12_gp_Pathfinder"
             ]
           }
         ]

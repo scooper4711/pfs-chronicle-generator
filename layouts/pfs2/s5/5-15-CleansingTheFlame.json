@@ -1,6 +1,6 @@
 {
   "id": "pfs2.s5-15",
-  "description": "Cleansing The Flame",
+  "description": "5-15 Cleansing The Flame",
   "parent": "pfs2.season5",
   "parameters": {
     "Items": {
@@ -8,9 +8,19 @@
         "type": "choice",
         "description": "Item line text to be struck out",
         "choices": [
-          "brazier of harmony (level 5, 150 gp; Pathfinder Rage of Elements 122) messenger 5 ring (level 9, 700 gp) moderate healing potion (level 6, 50 gp) spellstrike ammunition (type IIT) (level 7, 70 gp) crafter\u2019s eyepiece (level 3, 60 gp) +1 mace (level 3, 36 gp) +] striking mace (level 4, 101 gp) +] striking called shears (level 7, 450 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89) +2 striking called shears (level 10, 1,350 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89) Players with this chronicle sheet have access to the shears weapon for all characters"
+          "brazier of harmony (level 5, 150 gp; Pathfinder Rage of Elements 122)",
+          "messenger\u2019s ring (level 9, 700 gp)",
+          "moderate healing potion (level 6, 50 gp)",
+          "spellstrike ammunition (type III) (level 7, 70 gp)",
+          "crafter\u2019s eyepiece (level 3, 60 gp)",
+          "+1 mace (level 3, 36 gp)",
+          "+1 striking mace (level 4, 101 gp)",
+          "+1 striking called shears (level 7, 450 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89)",
+          "+2 striking called shears (level 10, 1,350 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89)",
+          "Players with this chronicle sheet have access to",
+          "the shears weapon for all characters"
         ],
-        "example": "brazier of harmony (level 5, 150 gp; Pathfinder Rage of Elements 122) messenger 5 ring (level 9, 700 gp) moderate healing potion (level 6, 50 gp) spellstrike ammunition (type IIT) (level 7, 70 gp) crafter\u2019s eyepiece (level 3, 60 gp) +1 mace (level 3, 36 gp) +] striking mace (level 4, 101 gp) +] striking called shears (level 7, 450 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89) +2 striking called shears (level 10, 1,350 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89) Players with this chronicle sheet have access to the shears weapon for all characters"
+        "example": "brazier of harmony (level 5, 150 gp; Pathfinder Rage of Elements 122)"
       }
     },
     "Checkboxes": {
@@ -50,8 +60,48 @@
       "y2": 63.162
     },
     "item.line.brazier_of_harmony_level_5_150_gp;_Pathfinder_Ra": {
-      "y": 5.1,
-      "y2": 93.5
+      "y": 3.6,
+      "y2": 15.4
+    },
+    "item.line.messenger\u2019s_ring_level_9_700_gp": {
+      "y": 14.8,
+      "y2": 21.0
+    },
+    "item.line.moderate_healing_potion_level_6_50_gp": {
+      "y": 20.4,
+      "y2": 26.6
+    },
+    "item.line.spellstrike_ammunition_type_III_level_7_70_gp": {
+      "y": 26.0,
+      "y2": 32.2
+    },
+    "item.line.crafter\u2019s_eyepiece_level_3_60_gp": {
+      "y": 31.7,
+      "y2": 37.8
+    },
+    "item.line.+1_mace_level_3_36_gp": {
+      "y": 37.2,
+      "y2": 43.4
+    },
+    "item.line.+1_striking_mace_level_4_101_gp": {
+      "y": 42.8,
+      "y2": 49.1
+    },
+    "item.line.+1_striking_called_shears_level_7_450_gp;_Pathfi": {
+      "y": 48.4,
+      "y2": 65.9
+    },
+    "item.line.+2_striking_called_shears_level_10_1350_gp;_Pat": {
+      "y": 65.3,
+      "y2": 82.7
+    },
+    "item.line.Players_with_this_chronicle_sheet_have_access_to": {
+      "y": 82.2,
+      "y2": 88.3
+    },
+    "item.line.the_shears_weapon_for_all_characters": {
+      "y": 87.8,
+      "y2": 93.9
     }
   },
   "content": [
@@ -59,12 +109,102 @@
       "type": "choice",
       "choices": "param:strikeout_item_lines",
       "content": {
-        "brazier of harmony (level 5, 150 gp; Pathfinder Rage of Elements 122) messenger 5 ring (level 9, 700 gp) moderate healing potion (level 6, 50 gp) spellstrike ammunition (type IIT) (level 7, 70 gp) crafter\u2019s eyepiece (level 3, 60 gp) +1 mace (level 3, 36 gp) +] striking mace (level 4, 101 gp) +] striking called shears (level 7, 450 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89) +2 striking called shears (level 10, 1,350 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89) Players with this chronicle sheet have access to the shears weapon for all characters": [
+        "brazier of harmony (level 5, 150 gp; Pathfinder Rage of Elements 122)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
               "item.line.brazier_of_harmony_level_5_150_gp;_Pathfinder_Ra"
+            ]
+          }
+        ],
+        "messenger\u2019s ring (level 9, 700 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.messenger\u2019s_ring_level_9_700_gp"
+            ]
+          }
+        ],
+        "moderate healing potion (level 6, 50 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.moderate_healing_potion_level_6_50_gp"
+            ]
+          }
+        ],
+        "spellstrike ammunition (type III) (level 7, 70 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.spellstrike_ammunition_type_III_level_7_70_gp"
+            ]
+          }
+        ],
+        "crafter\u2019s eyepiece (level 3, 60 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.crafter\u2019s_eyepiece_level_3_60_gp"
+            ]
+          }
+        ],
+        "+1 mace (level 3, 36 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.+1_mace_level_3_36_gp"
+            ]
+          }
+        ],
+        "+1 striking mace (level 4, 101 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.+1_striking_mace_level_4_101_gp"
+            ]
+          }
+        ],
+        "+1 striking called shears (level 7, 450 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.+1_striking_called_shears_level_7_450_gp;_Pathfi"
+            ]
+          }
+        ],
+        "+2 striking called shears (level 10, 1,350 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.+2_striking_called_shears_level_10_1350_gp;_Pat"
+            ]
+          }
+        ],
+        "Players with this chronicle sheet have access to": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.Players_with_this_chronicle_sheet_have_access_to"
+            ]
+          }
+        ],
+        "the shears weapon for all characters": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.the_shears_weapon_for_all_characters"
             ]
           }
         ]

@@ -1,6 +1,6 @@
 {
   "id": "pfs2.s5-08",
-  "description": "Protecting The Firelight",
+  "description": "5-08 Protecting The Firelight",
   "parent": "pfs2.season5",
   "parameters": {
     "Items": {
@@ -8,9 +8,16 @@
         "type": "choice",
         "description": "Item line text to be struck out",
         "choices": [
-          "rhino hide brooch\u201d (level 5, 28 gp; Pathfinder Adventure Path #170: Spoken on the Song Wind 76) swift block cabochon\u2019 (level 7, 70 gp) peachwood talisman\u201d (level 6, 40 gp; Pathfinder Book of the Dead 20) escape fulu (level 7, 70 gp; Pathfinder Treasure Vault 77) bloodseeker beak (level 4, 20 gp) stormfeather (level 8, 100 gp; Pathfinder Secrets of Magic 176) life salt (level 5, 25 gp; Pathfinder Book of the Dead 20) grim trophy (level 7, 55 gp)"
+          "rhino hide brooch (level 5, 28 gp; Pathfinder Adventure Path #170: Spoken on the Song Wind 76)",
+          "swift block cabochon (level 7, 70 gp)",
+          "peachwood talisman (level 6, 40 gp; Pathfinder Book of the Dead 20)",
+          "escape fulu (level 7, 70 gp; Pathfinder Treasure Vault 77)",
+          "bloodseeker beak (level 4, 20 gp)",
+          "stormfeather (level 8, 100 gp; Pathfinder Secrets of Magic 176)",
+          "life salt (level 5, 25 gp; Pathfinder Book of the Dead 20)",
+          "grim trophy (level 7, 55 gp)"
         ],
-        "example": "rhino hide brooch\u201d (level 5, 28 gp; Pathfinder Adventure Path #170: Spoken on the Song Wind 76) swift block cabochon\u2019 (level 7, 70 gp) peachwood talisman\u201d (level 6, 40 gp; Pathfinder Book of the Dead 20) escape fulu (level 7, 70 gp; Pathfinder Treasure Vault 77) bloodseeker beak (level 4, 20 gp) stormfeather (level 8, 100 gp; Pathfinder Secrets of Magic 176) life salt (level 5, 25 gp; Pathfinder Book of the Dead 20) grim trophy (level 7, 55 gp)"
+        "example": "rhino hide brooch (level 5, 28 gp; Pathfinder Adventure Path #170: Spoken on the Song Wind 76)"
       }
     },
     "Checkboxes": {
@@ -161,8 +168,36 @@
       "x2": 79.748,
       "y2": 69.274
     },
-    "item.line.rhino_hide_brooch\u201d_level_5_28_gp;_Pathfinder_Adv": {
-      "y": 8.1,
+    "item.line.rhino_hide_brooch_level_5_28_gp;_Pathfinder_Adve": {
+      "y": 7.3,
+      "y2": 23.4
+    },
+    "item.line.swift_block_cabochon_level_7_70_gp": {
+      "y": 24.1,
+      "y2": 29.0
+    },
+    "item.line.peachwood_talisman_level_6_40_gp;_Pathfinder_Boo": {
+      "y": 29.7,
+      "y2": 40.2
+    },
+    "item.line.escape_fulu_level_7_70_gp;_Pathfinder_Treasure_V": {
+      "y": 40.9,
+      "y2": 51.5
+    },
+    "item.line.bloodseeker_beak_level_4_20_gp": {
+      "y": 52.1,
+      "y2": 57.1
+    },
+    "item.line.stormfeather_level_8_100_gp;_Pathfinder_Secrets_": {
+      "y": 57.7,
+      "y2": 68.3
+    },
+    "item.line.life_salt_level_5_25_gp;_Pathfinder_Book_of_the_": {
+      "y": 68.9,
+      "y2": 79.5
+    },
+    "item.line.grim_trophy_level_7_55_gp": {
+      "y": 80.2,
       "y2": 85.1
     }
   },
@@ -171,12 +206,75 @@
       "type": "choice",
       "choices": "param:strikeout_item_lines",
       "content": {
-        "rhino hide brooch\u201d (level 5, 28 gp; Pathfinder Adventure Path #170: Spoken on the Song Wind 76) swift block cabochon\u2019 (level 7, 70 gp) peachwood talisman\u201d (level 6, 40 gp; Pathfinder Book of the Dead 20) escape fulu (level 7, 70 gp; Pathfinder Treasure Vault 77) bloodseeker beak (level 4, 20 gp) stormfeather (level 8, 100 gp; Pathfinder Secrets of Magic 176) life salt (level 5, 25 gp; Pathfinder Book of the Dead 20) grim trophy (level 7, 55 gp)": [
+        "rhino hide brooch (level 5, 28 gp; Pathfinder Adventure Path #170: Spoken on the Song Wind 76)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.rhino_hide_brooch\u201d_level_5_28_gp;_Pathfinder_Adv"
+              "item.line.rhino_hide_brooch_level_5_28_gp;_Pathfinder_Adve"
+            ]
+          }
+        ],
+        "swift block cabochon (level 7, 70 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.swift_block_cabochon_level_7_70_gp"
+            ]
+          }
+        ],
+        "peachwood talisman (level 6, 40 gp; Pathfinder Book of the Dead 20)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.peachwood_talisman_level_6_40_gp;_Pathfinder_Boo"
+            ]
+          }
+        ],
+        "escape fulu (level 7, 70 gp; Pathfinder Treasure Vault 77)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.escape_fulu_level_7_70_gp;_Pathfinder_Treasure_V"
+            ]
+          }
+        ],
+        "bloodseeker beak (level 4, 20 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.bloodseeker_beak_level_4_20_gp"
+            ]
+          }
+        ],
+        "stormfeather (level 8, 100 gp; Pathfinder Secrets of Magic 176)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.stormfeather_level_8_100_gp;_Pathfinder_Secrets_"
+            ]
+          }
+        ],
+        "life salt (level 5, 25 gp; Pathfinder Book of the Dead 20)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.life_salt_level_5_25_gp;_Pathfinder_Book_of_the_"
+            ]
+          }
+        ],
+        "grim trophy (level 7, 55 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.grim_trophy_level_7_55_gp"
             ]
           }
         ]
