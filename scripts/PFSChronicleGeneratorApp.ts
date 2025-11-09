@@ -71,6 +71,11 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
             (data.strikeout_item_lines ? [data.strikeout_item_lines] : []);
         console.log('[PFS Chronicle] Processed strikeout lines:', data.strikeout_item_lines);
 
+        // Convert form data array into summary_checkbox array
+        data.summary_checkbox = Array.isArray(data.summary_checkbox) ? data.summary_checkbox : 
+            (data.summary_checkbox ? [data.summary_checkbox] : []);
+        console.log('[PFS Chronicle] Processed checkboxes:', data.summary_checkbox);
+
         await this.actor.setFlag('pfs-chronicle-generator', 'chronicleData', data);
 
         try {
@@ -164,6 +169,14 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     return [];
   }
 
+  private findCheckboxChoices(layout: Layout): string[] {
+    const params = layout.parameters?.Checkboxes?.summary_checkbox;
+    if (params && params.choices && Array.isArray(params.choices)) {
+      return params.choices as string[];
+    }
+    return [];
+  }
+
   async _prepareContext(): Promise<object> {
     const savedData = this.actor.getFlag('pfs-chronicle-generator', 'chronicleData') || {};
     console.log('[PFS Chronicle] Saved chronicle data:', savedData);
@@ -175,10 +188,18 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     const layoutId = game.settings.get('pfs-chronicle-generator', 'layout');
     const layout = await layoutStore.getLayout(layoutId as string);
     const strikeoutChoices = this.findStrikeoutChoices(layout);
+    const checkboxChoices = this.findCheckboxChoices(layout);
     
     // Convert saved data into a map of selected items
     const savedStrikeouts = savedData.strikeout_item_lines || [];
     const selectedStrikeouts = savedStrikeouts.reduce((acc: Record<string, boolean>, item: string) => {
+        acc[item] = true;
+        return acc;
+    }, {});
+
+    // Convert saved checkbox data into a map of selected checkboxes
+    const savedCheckboxes = savedData.summary_checkbox || [];
+    const selectedCheckboxes = savedCheckboxes.reduce((acc: Record<string, boolean>, item: string) => {
         acc[item] = true;
         return acc;
     }, {});
@@ -203,6 +224,8 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       total_gp: (savedData.total_gp ?? ""),
       reputation: savedData.reputation ?? (this.currentFaction ? `${this.currentFaction}: +4` : ""),
       notes: savedData.notes ?? "",
+      checkboxChoices: checkboxChoices,
+      selectedCheckboxes: selectedCheckboxes,
       strikeoutChoices: strikeoutChoices,
       selectedStrikeouts: selectedStrikeouts,
       buttons: [

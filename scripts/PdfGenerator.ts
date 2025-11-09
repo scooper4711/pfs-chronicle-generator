@@ -257,6 +257,9 @@ export class PdfGenerator {
             case 'strikeout':
                 await this.drawRedaction(props);
                 break;
+            case 'checkbox':
+                await this.drawCheckbox(props);
+                break;
             case 'line':
                 await this.drawLineElement(props);
                 break;
@@ -311,6 +314,58 @@ export class PdfGenerator {
             y: rectY,
             width: rectWidth,
             height: rectHeight,
+            color: this.getColor(color),
+        });
+    }
+
+    private async drawCheckbox(props: ResolvedElement) {
+        const { canvas, x = 0, y = 0, x2, y2, size = 1, linewidth = 1, color } = props;
+
+        let canvasRect;
+        if (canvas) {
+            canvasRect = this.getCanvasRect(canvas);
+        } else {
+            const { width, height } = this.page.getSize();
+            canvasRect = { x: 0, y: 0, width, height };
+        }
+
+        // Calculate position
+        const checkX = canvasRect.x + (x / 100) * canvasRect.width;
+        const checkY = this.page.getHeight() - (canvasRect.y + (y / 100) * canvasRect.height);
+
+        // Calculate size - if x2/y2 provided, use those for width/height, otherwise use size parameter
+        let checkWidth: number;
+        let checkHeight: number;
+        
+        if (x2 !== undefined && y2 !== undefined) {
+            checkWidth = ((x2 - x) / 100) * canvasRect.width;
+            checkHeight = ((y2 - y) / 100) * canvasRect.height;
+        } else {
+            // Use size parameter as a percentage of canvas width
+            checkWidth = (size / 100) * canvasRect.width;
+            checkHeight = checkWidth; // Square checkbox
+        }
+
+        // Draw checkmark using two lines forming an X
+        const padding = checkWidth * 0.2; // 20% padding
+        const innerX = checkX + padding;
+        const innerY = checkY - padding;
+        const innerWidth = checkWidth - (padding * 2);
+        const innerHeight = checkHeight - (padding * 2);
+
+        // Draw first diagonal (top-left to bottom-right)
+        this.page.drawLine({
+            start: { x: innerX, y: innerY },
+            end: { x: innerX + innerWidth, y: innerY - innerHeight },
+            thickness: linewidth,
+            color: this.getColor(color),
+        });
+
+        // Draw second diagonal (bottom-left to top-right)
+        this.page.drawLine({
+            start: { x: innerX, y: innerY - innerHeight },
+            end: { x: innerX + innerWidth, y: innerY },
+            thickness: linewidth,
             color: this.getColor(color),
         });
     }

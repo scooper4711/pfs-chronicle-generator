@@ -20,14 +20,14 @@
         "type": "choice",
         "description": "Checkboxes in the adventure summary that should be selected",
         "choices": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
+          "succeeded in at least two of those tasks",
+          "succeeded on all three",
+          "did not",
+          "successfully talked Trapmaster Tok down without violence",
+          "defeated Tok",
+          "killed the would- be-Trapmaster Chief"
         ],
-        "example": "1,2,3,4,5,6"
+        "example": "succeeded in at least two of those tasks"
       }
     }
   },
@@ -43,41 +43,41 @@
       "color": "black",
       "size": 1
     },
-    "checkbox.1": {
-      "x": 8.564,
-      "y": 54.11,
-      "x2": 9.95,
-      "y2": 59.132
+    "checkbox.succeeded_in_at_least_two_of_those_tasks": {
+      "x": 51.048,
+      "y": 42.767,
+      "x2": 52.748,
+      "y2": 52.853
     },
-    "checkbox.2": {
-      "x": 23.615,
-      "y": 54.11,
-      "x2": 25.0,
-      "y2": 59.132
+    "checkbox.succeeded_on_all_three": {
+      "x": 83.529,
+      "y": 42.767,
+      "x2": 85.229,
+      "y2": 52.853
     },
-    "checkbox.3": {
-      "x": 51.322,
-      "y": 46.347,
-      "x2": 52.519,
-      "y2": 50.457
+    "checkbox.did_not": {
+      "x": 8.402,
+      "y": 50.97,
+      "x2": 10.102,
+      "y2": 61.056
     },
-    "checkbox.4": {
-      "x": 69.458,
-      "y": 54.11,
-      "x2": 70.844,
-      "y2": 59.132
+    "checkbox.successfully_talked_Trapmaster_Tok_down_without_vi": {
+      "x": 23.452,
+      "y": 50.97,
+      "x2": 25.152,
+      "y2": 61.056
     },
-    "checkbox.5": {
-      "x": 83.816,
-      "y": 46.347,
-      "x2": 85.013,
-      "y2": 50.457
+    "checkbox.defeated_Tok": {
+      "x": 69.268,
+      "y": 50.97,
+      "x2": 70.968,
+      "y2": 61.056
     },
-    "checkbox.6": {
-      "x": 84.005,
-      "y": 54.566,
-      "x2": 85.202,
-      "y2": 58.676
+    "checkbox.killed_the_would-_be-Trapmaster_Chief": {
+      "x": 83.73,
+      "y": 50.97,
+      "x2": 89.462,
+      "y2": 61.056
     },
     "item.line.dragon\u2019s_crest\u2019_Item_1_10_gp_Pathfinder_Lost_Om": {
       "y": 8.1,
@@ -130,57 +130,57 @@
       "type": "choice",
       "choices": "param:summary_checkbox",
       "content": {
-        "1": [
+        "succeeded in at least two of those tasks": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.1"
+              "checkbox.succeeded_in_at_least_two_of_those_tasks"
             ]
           }
         ],
-        "2": [
+        "succeeded on all three": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.2"
+              "checkbox.succeeded_on_all_three"
             ]
           }
         ],
-        "3": [
+        "did not": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.3"
+              "checkbox.did_not"
             ]
           }
         ],
-        "4": [
+        "successfully talked Trapmaster Tok down without violence": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.4"
+              "checkbox.successfully_talked_Trapmaster_Tok_down_without_vi"
             ]
           }
         ],
-        "5": [
+        "defeated Tok": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.5"
+              "checkbox.defeated_Tok"
             ]
           }
         ],
-        "6": [
+        "killed the would- be-Trapmaster Chief": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.6"
+              "checkbox.killed_the_would-_be-Trapmaster_Chief"
             ]
           }
         ]

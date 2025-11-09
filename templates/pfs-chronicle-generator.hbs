@@ -74,17 +74,47 @@
         </div>
     </fieldset>
 
-    {{#if strikeoutChoices}}
-    <fieldset class="strikeout-items">
-        <legend>Items to Strike Out</legend>
-        <div class="form-group strikeout-choices">
-        {{#each strikeoutChoices}}
-            <div class="item-choice">
-                <label for="strikeoutItems.{{@index}}">{{this}}</label>
-                <input type="checkbox" id="strikeoutItems.{{@index}}" name="strikeout_item_lines" value="{{this}}" {{#if (lookup ../selectedStrikeouts this)}}checked{{/if}}>
+    {{#if checkboxChoices}}
+    <div class="selections-container">
+        <fieldset class="checkbox-items">
+            <legend>Adventure Summary Checkboxes</legend>
+            <div class="form-group checkbox-choices">
+            {{#each checkboxChoices}}
+                <div class="checkbox-choice">
+                    <input type="checkbox" id="checkboxItems.{{@index}}" name="summary_checkbox" value="{{this}}" {{#if (lookup ../selectedCheckboxes this)}}checked{{/if}}>
+                    <label for="checkboxItems.{{@index}}">{{this}}</label>
+                </div>
+            {{/each}}
             </div>
-        {{/each}}
-        </div>
-    </fieldset>
+        </fieldset>
+
+        {{#if strikeoutChoices}}
+        <fieldset class="strikeout-items">
+            <legend>Items to Strike Out</legend>
+            <div class="form-group strikeout-choices">
+            {{#each strikeoutChoices}}
+                <div class="item-choice">
+                    <input type="checkbox" id="strikeoutItems.{{@index}}" name="strikeout_item_lines" value="{{this}}" {{#if (lookup ../selectedStrikeouts this)}}checked{{/if}}>
+                    <label for="strikeoutItems.{{@index}}">{{this}}</label>
+                </div>
+            {{/each}}
+            </div>
+        </fieldset>
+        {{/if}}
+    </div>
+    {{else}}
+        {{#if strikeoutChoices}}
+        <fieldset class="strikeout-items">
+            <legend>Items to Strike Out</legend>
+            <div class="form-group strikeout-choices">
+            {{#each strikeoutChoices}}
+                <div class="item-choice">
+                    <input type="checkbox" id="strikeoutItems.{{@index}}" name="strikeout_item_lines" value="{{this}}" {{#if (lookup ../selectedStrikeouts this)}}checked{{/if}}>
+                    <label for="strikeoutItems.{{@index}}">{{this}}</label>
+                </div>
+            {{/each}}
+            </div>
+        </fieldset>
+        {{/if}}
     {{/if}}
 </div>

@@ -23,3 +23,48 @@
 .pfs-chronicle-generator-form .multi-field label {
     white-space: nowrap;
 }
+
+.pfs-chronicle-generator-form .selections-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.pfs-chronicle-generator-form .checkbox-items,
+.pfs-chronicle-generator-form .strikeout-items {
+    flex: 1;
+}
+
+.pfs-chronicle-generator-form .checkbox-choice {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.pfs-chronicle-generator-form .checkbox-choice input[type="checkbox"] {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.pfs-chronicle-generator-form .checkbox-choice label {
+    margin: 0;
+    cursor: pointer;
+}
+
+.pfs-chronicle-generator-form .item-choice {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.pfs-chronicle-generator-form .item-choice input[type="checkbox"] {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.pfs-chronicle-generator-form .item-choice label {
+    margin: 0;
+    cursor: pointer;
+}

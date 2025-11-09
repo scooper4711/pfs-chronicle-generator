@@ -60,7 +60,7 @@ export interface Preset {
 }
 
 export interface ContentElement {
-    type: 'text' | 'rectangle' | 'trigger' | 'choice' | 'line' | 'multiline' | 'strikeout';
+    type: 'text' | 'rectangle' | 'trigger' | 'choice' | 'line' | 'multiline' | 'strikeout' | 'checkbox';
     value?: string;
     presets?: string[];
     content?: ContentElement[] | { [key: string]: ContentElement[] };
