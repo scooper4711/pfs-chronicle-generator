@@ -25,6 +25,15 @@ const PFS_REWARD_DATA: PfsRewardData = {
     }
 };
 
+const FACTION_NAMES: Record<string, string> = {
+    'EA': 'Envoy\'s Alliance',
+    'GA': 'Grand Archive',
+    'HH': 'Horizon Hunters',
+    'VS': 'Vigilant Seal',
+    'RO': 'Radiant Oath',
+    'VW': 'Verdant Wheel'
+};
+
 export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   actor: any;
@@ -234,6 +243,11 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
         return acc;
     }, {});
 
+    // Get full faction name from abbreviation
+    const factionName = this.currentFaction && FACTION_NAMES[this.currentFaction] 
+        ? FACTION_NAMES[this.currentFaction] 
+        : this.currentFaction;
+
     return {
       event: eventName,
       eventcode: eventcode,
@@ -252,7 +266,7 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       gp_gained: (savedData.gp_gained ?? ""),
       gp_spent: (savedData.gp_spent ?? 0).toFixed(2),
       total_gp: (savedData.total_gp ?? ""),
-      reputation: savedData.reputation ?? (this.currentFaction ? `${this.currentFaction}: +4` : ""),
+      reputation: savedData.reputation ?? (factionName ? `${factionName}: +4` : ""),
       notes: savedData.notes ?? "",
       checkboxChoices: checkboxChoices,
       selectedCheckboxes: selectedCheckboxes,
