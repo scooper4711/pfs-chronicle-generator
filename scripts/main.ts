@@ -35,6 +35,14 @@ Hooks.on('init', async () => {
         type: String,
         default: '',
   });
+  game.settings.register('pfs-chronicle-generator','eventDate', {
+        name: 'Event Date',
+        hint: 'The default date for events.',
+        scope: 'world',
+        config: true,
+        type: String,
+        default: '',
+  });
     // Hidden settings are registered on 'ready' (managed via Select Layout menu)
 
     game.settings.registerMenu("pfs-chronicle-generator", "layoutDesigner", {

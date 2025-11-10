@@ -148,6 +148,9 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     
     // Add lock/unlock handler for Event Details
     html.find('#lock-event-details').on('click', this._onToggleLock.bind(this));
+    
+    // Add change handler for date field to update setting
+    html.find('#date').on('change', this._onDateChanged.bind(this));
   }
 
   async _onViewBlankChronicle(event: any) {
@@ -263,6 +266,13 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     }
   }
 
+  async _onDateChanged(event: any) {
+    const date = event.target.value;
+    if (date) {
+      await game.settings.set('pfs-chronicle-generator', 'eventDate', date);
+    }
+  }
+
   _onRewardsChanged(event: any) {
     const form = this.form;
     if (!form) return;
@@ -316,6 +326,7 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber');
     const eventName = game.settings.get('pfs-chronicle-generator', 'eventName');
     const eventcode = game.settings.get('pfs-chronicle-generator', 'eventcode');
+    const eventDate = game.settings.get('pfs-chronicle-generator', 'eventDate') as string;
     const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
     const chronicleFileName = blankChroniclePath ? blankChroniclePath.split('/').pop() || 'chronicle.pdf' : 'chronicle.pdf';
     
@@ -366,10 +377,13 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
         ? FACTION_NAMES[this.currentFaction] 
         : this.currentFaction;
 
+    // Use saved date from actor data, fall back to event date setting, then today's date
+    const defaultDate = savedData.date || eventDate || new Date().toISOString().slice(0, 10);
+
     return {
       event: eventName,
       eventcode: eventcode,
-      date: savedData.date ?? new Date().toISOString().slice(0, 10),
+      date: defaultDate,
       gmid: gmPfsNumber,
       char: this.actor.name,
       level: this.actor.system.details.level.value ?? 1,
