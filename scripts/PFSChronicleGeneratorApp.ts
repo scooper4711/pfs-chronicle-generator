@@ -141,6 +141,10 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     
     // Add click handler for blank chronicle button
     html.find('#view-blank-chronicle').on('click', this._onViewBlankChronicle.bind(this));
+    
+    // Add change handlers for season and layout dropdowns
+    html.find('#season').on('change', this._onSeasonChanged.bind(this));
+    html.find('#layout').on('change', this._onLayoutChanged.bind(this));
   }
 
   async _onViewBlankChronicle(event: any) {
@@ -164,6 +168,59 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       } catch (error) {
         ui.notifications?.error(`Error loading blank chronicle: ${error}`);
         console.error('[PFS Chronicle] Error loading blank chronicle:', error);
+      }
+    }
+  }
+
+  async _onSeasonChanged(event: any) {
+    const seasonId = event.target.value;
+    await game.settings.set('pfs-chronicle-generator', 'season', seasonId);
+    const layouts = layoutStore.getLayoutsByParent(seasonId);
+
+    const layoutDropdown = this.element.querySelector('#layout') as HTMLSelectElement;
+    if (layoutDropdown) {
+      layoutDropdown.innerHTML = '';
+      for (const layout of layouts) {
+        const option = document.createElement('option');
+        option.value = layout.id;
+        option.innerText = layout.description;
+        layoutDropdown.appendChild(option);
+      }
+
+      if (layouts.length > 0) {
+        // Trigger layout changed event with first layout
+        layoutDropdown.value = layouts[0].id;
+        this._onLayoutChanged({ target: layoutDropdown });
+      }
+    }
+  }
+
+  async _onLayoutChanged(event: any) {
+    const layoutId = event.target.value;
+    await game.settings.set('pfs-chronicle-generator', 'layout', layoutId);
+    const layout = await layoutStore.getLayout(layoutId);
+    
+    // Update checkboxes and strikeout items based on new layout
+    await this.render(true);
+    
+    // Auto-populate blank chronicle path if defaultChronicleLocation exists and file is accessible
+    if (layout?.defaultChronicleLocation) {
+      try {
+        const response = await fetch(layout.defaultChronicleLocation, { method: 'HEAD' });
+        if (response.ok) {
+          await game.settings.set('pfs-chronicle-generator', 'blankChroniclePath', layout.defaultChronicleLocation);
+          
+          // Update the button
+          const button = this.element.querySelector('#view-blank-chronicle') as HTMLButtonElement;
+          if (button) {
+            button.dataset.path = layout.defaultChronicleLocation;
+            const fileName = layout.defaultChronicleLocation.split('/').pop() || 'chronicle.pdf';
+            button.innerHTML = `<i class="fas fa-file-pdf"></i> ${fileName}`;
+          }
+        }
+      } catch (error) {
+        // File doesn't exist or isn't accessible, don't update the setting
+        console.log(`Default chronicle location not accessible: ${layout.defaultChronicleLocation}`);
       }
     }
   }
@@ -224,8 +281,31 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
     const chronicleFileName = blankChroniclePath ? blankChroniclePath.split('/').pop() || 'chronicle.pdf' : 'chronicle.pdf';
     
-    const layoutId = game.settings.get('pfs-chronicle-generator', 'layout');
-    const layout = await layoutStore.getLayout(layoutId as string);
+    // Get seasons and determine selected season and layout
+    const seasons = layoutStore.getSeasons();
+    const settingSeasonId = game.settings.get('pfs-chronicle-generator', 'season') as string;
+    const currentLayoutId = game.settings.get('pfs-chronicle-generator', 'layout') as string;
+    
+    let selectedSeasonId = settingSeasonId || (seasons.length > 0 ? seasons[0].id : '');
+    let selectedLayoutId = currentLayoutId || '';
+    
+    // If a layout is set but doesn't belong to the selected season, adjust season accordingly
+    if (selectedLayoutId) {
+      const seasonWithLayout = seasons.find(season => 
+        layoutStore.getLayoutsByParent(season.id).some(layout => layout.id === selectedLayoutId)
+      );
+      if (seasonWithLayout) selectedSeasonId = seasonWithLayout.id;
+    }
+    
+    // Get layouts for the selected season
+    const layoutsInSeason = layoutStore.getLayoutsByParent(selectedSeasonId);
+    
+    // If current layout isn't in the season, select first layout in season
+    const effectiveLayoutId = layoutsInSeason.some(l => l.id === selectedLayoutId) 
+      ? selectedLayoutId 
+      : (layoutsInSeason.length > 0 ? layoutsInSeason[0].id : undefined);
+    
+    const layout = effectiveLayoutId ? await layoutStore.getLayout(effectiveLayoutId) : await layoutStore.getLayout(currentLayoutId);
     const strikeoutChoices = this.findStrikeoutChoices(layout);
     const checkboxChoices = this.findCheckboxChoices(layout);
     
@@ -274,6 +354,10 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       selectedStrikeouts: selectedStrikeouts,
       blankChroniclePath: blankChroniclePath,
       chronicleFileName: chronicleFileName,
+      seasons: seasons,
+      selectedSeasonId: selectedSeasonId,
+      layoutsInSeason: layoutsInSeason,
+      selectedLayoutId: effectiveLayoutId,
       buttons: [
         { type: "submit", icon: "fa-solid fa-save", label: "SETTINGS.Save" }
       ]

@@ -10,7 +10,7 @@
 
     <div class="top-section">
         <fieldset class="character-details">
-            <legend>Character Details</legend>
+            <legend>Details</legend>
             <div class="form-group">
                 <strong>Character Name:</strong>
                 <span>{{char}}</span>
@@ -23,10 +23,6 @@
                 <strong>Level:</strong>
                 <span>{{level}}</span>
             </div>
-        </fieldset>
-
-        <fieldset class="event-details">
-            <legend>Event Details</legend>
             <div class="form-group">
                 <strong>GM PFS Number:</strong>
                 <span>{{gmid}}</span>
@@ -35,9 +31,29 @@
                 <strong>Event:</strong>
                 <span>{{event}} - {{eventcode}}</span>
             </div>
+        </fieldset>
+
+        <fieldset class="event-details">
+            <legend>Event Details</legend>
             <div class="form-group">
                 <label for="date">Event Date</label>
                 <input type="date" id="date" name="date" value="{{date}}">
+            </div>
+            <div class="form-group">
+                <label for="season">Season</label>
+                <select id="season" name="season">
+                    {{#each seasons}}
+                        <option value="{{this.id}}" {{#if (eq this.id ../selectedSeasonId)}}selected{{/if}}>{{this.name}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="layout">Layout</label>
+                <select id="layout" name="layout">
+                    {{#each layoutsInSeason}}
+                        <option value="{{this.id}}" {{#if (eq this.id ../selectedLayoutId)}}selected{{/if}}>{{this.description}}</option>
+                    {{/each}}
+                </select>
             </div>
             <div class="form-group">
                 <button type="button" id="view-blank-chronicle" data-path="{{blankChroniclePath}}">
