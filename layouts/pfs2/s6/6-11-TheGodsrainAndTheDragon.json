@@ -2,6 +2,7 @@
   "id": "pfs2.s6-11",
   "description": "6-11 The Godsrain And The Dragon",
   "parent": "pfs2.season6",
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-2/6-11-TheGodsrainAndTheDragon.pdf",
   "parameters": {
     "Checkboxes": {
       "summary_checkbox": {
@@ -59,6 +60,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-2/6-11-TheGodsrainAndTheDragon.pdf"
+  ]
 }

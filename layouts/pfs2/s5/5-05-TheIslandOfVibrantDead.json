@@ -2,6 +2,7 @@
   "id": "pfs2.s5-05",
   "description": "5-05 The Island Of Vibrant Dead",
   "parent": "pfs2.season5",
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-1/5-05-TheIslandOfVibrantDeadChronicle.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -56,6 +57,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-1/5-05-TheIslandOfVibrantDeadChronicle.pdf"
+  ]
 }

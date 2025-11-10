@@ -2,6 +2,7 @@
   "id": "pfs2.s6-02",
   "description": "6-02 Rain Fallsonthe Mountainof Seaand Sky",
   "parent": "pfs2.season6",
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-02-RainFallsontheMountainofSeaandSky.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -42,6 +43,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-02-RainFallsontheMountainofSeaandSky.pdf"
+  ]
 }

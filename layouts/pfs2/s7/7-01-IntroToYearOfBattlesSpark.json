@@ -2,6 +2,7 @@
   "id": "pfs2.s7-01",
   "description": "7-01 Intro To Year Of Battles Spark",
   "parent": "pfs2.season7",
+  "defaultChronicleLocation": "modules/pf2e-pfs07-year-of-battles-spark/assets/chronicles-1/701-chronicle-IntroToYearOfBattlesSpark.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -126,6 +127,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs07-year-of-battles-spark/assets/chronicles-1/701-chronicle-IntroToYearOfBattlesSpark.pdf"
+  ]
 }

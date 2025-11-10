@@ -2,6 +2,7 @@
   "id": "pfs2.s5-20",
   "description": "5-20 The Rakshasas Court",
   "parent": "pfs2.season5",
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-20-TheRakshasasCourtChronicle.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -10,10 +11,10 @@
         "choices": [
           "decanter of endless water (level 7, 320 gp)",
           "anointed waterskin (level 9, 600 gp; Pathfinder Secrets of Magic 179)",
-          "candle of revealing (level 7, 60 gp; Pathfinder Advanced Player’s Guide 257)",
+          "candle of revealing (level 7, 60 gp; Pathfinder Advanced Player\u2019s Guide 257)",
           "dust of disappearance (level 9, 135 gp)",
           "thawing candle (level 8, 90 gp; Pathfinder Rage of Elements 125)",
-          "lover’s gloves (level 8, 500 gp; Pathfinder Advanced Player’s Guide 261)",
+          "lover\u2019s gloves (level 8, 500 gp; Pathfinder Advanced Player\u2019s Guide 261)",
           "ring of lies (level 10, 850 gp)",
           "potion of fire resistance (lesser) (level 6, 45 gp)",
           "potion of fire resistance (moderate) (level 10, 180 gp)"
@@ -77,7 +78,7 @@
       "y": 40.9,
       "y2": 51.4
     },
-    "item.line.lover’s_gloves_level_8_500_gp;_Pathfinder_Advanc": {
+    "item.line.lover\u2019s_gloves_level_8_500_gp;_Pathfinder_Advanc": {
       "y": 52.1,
       "y2": 62.6
     },
@@ -90,7 +91,7 @@
       "y2": 73.9
     },
     "item.line.potion_of_fire_resistance_moderate_level_10_18": {
-      "y": 74.5,
+      "y": 68.9,
       "y2": 85.1
     }
   },
@@ -117,7 +118,7 @@
             ]
           }
         ],
-        "candle of revealing (level 7, 60 gp; Pathfinder Advanced Player’s Guide 257)": [
+        "candle of revealing (level 7, 60 gp; Pathfinder Advanced Player\u2019s Guide 257)": [
           {
             "type": "strikeout",
             "presets": [
@@ -144,12 +145,12 @@
             ]
           }
         ],
-        "lover’s gloves (level 8, 500 gp; Pathfinder Advanced Player’s Guide 261)": [
+        "lover\u2019s gloves (level 8, 500 gp; Pathfinder Advanced Player\u2019s Guide 261)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.lover’s_gloves_level_8_500_gp;_Pathfinder_Advanc"
+              "item.line.lover\u2019s_gloves_level_8_500_gp;_Pathfinder_Advanc"
             ]
           }
         ],
@@ -206,6 +207,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-20-TheRakshasasCourtChronicle.pdf"
+  ]
 }

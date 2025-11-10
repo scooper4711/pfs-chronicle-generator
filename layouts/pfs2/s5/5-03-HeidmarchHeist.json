@@ -2,6 +2,7 @@
   "id": "pfs2.s5-03",
   "description": "5-03 Heidmarch Heist",
   "parent": "pfs2.season5",
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-1/5-03-HeidmarchHeistChronicle.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -70,6 +71,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-1/5-03-HeidmarchHeistChronicle.pdf"
+  ]
 }

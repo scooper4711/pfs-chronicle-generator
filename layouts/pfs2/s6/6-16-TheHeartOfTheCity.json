@@ -2,6 +2,7 @@
   "id": "pfs2.s6-16",
   "description": "6-16 The Heart Of The City",
   "parent": "pfs2.season6",
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-2/6-16-TheHeartOfTheCity.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -11,7 +12,7 @@
           "eagle-eye elixir, moderate (level 5; 27 gp; Pathfinder Player Core 2 287)",
           "invisibility potion (level 4; 20 gp; Pathfinder GM Core 259)",
           "skeleton key (level 5; 125 gp; Pathfinder GM Core 276)",
-          "traveler’s any-tool (level 6; 200 gp; Pathfinder GM Core 277)"
+          "traveler\u2019s any-tool (level 6; 200 gp; Pathfinder GM Core 277)"
         ],
         "example": "eagle-eye elixir, moderate (level 5; 27 gp; Pathfinder Player Core 2 287)"
       }
@@ -36,7 +37,7 @@
       "y": 29.7,
       "y2": 40.2
     },
-    "item.line.traveler’s_any-tool_level_6;_200_gp;_Pathfinder_G": {
+    "item.line.traveler\u2019s_any-tool_level_6;_200_gp;_Pathfinder_G": {
       "y": 40.9,
       "y2": 51.4
     }
@@ -73,17 +74,16 @@
             ]
           }
         ],
-        "traveler’s any-tool (level 6; 200 gp; Pathfinder GM Core 277)": [
+        "traveler\u2019s any-tool (level 6; 200 gp; Pathfinder GM Core 277)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.traveler’s_any-tool_level_6;_200_gp;_Pathfinder_G"
+              "item.line.traveler\u2019s_any-tool_level_6;_200_gp;_Pathfinder_G"
             ]
           }
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-2/6-16-TheHeartOfTheCity.pdf"
+  ]
 }

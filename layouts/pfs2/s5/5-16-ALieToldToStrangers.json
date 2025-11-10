@@ -2,6 +2,7 @@
   "id": "pfs2.s5-16",
   "description": "5-16 A Lie Told To Strangers",
   "parent": "pfs2.season5",
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-16-ALieToldToStrangersChronicle.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -94,6 +95,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-16-ALieToldToStrangersChronicle.pdf"
+  ]
 }

@@ -2,6 +2,7 @@
   "id": "pfs2.s5-18",
   "description": "5-18 Tapestry Of The Mind",
   "parent": "pfs2.season5",
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-18-TapestryOfTheMindChronicle.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -198,6 +199,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-18-TapestryOfTheMindChronicle.pdf"
+  ]
 }

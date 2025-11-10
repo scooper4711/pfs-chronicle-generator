@@ -2,16 +2,28 @@
   "id": "pfs2.s6-04",
   "description": "6-04 An Enkindled Carnival",
   "parent": "pfs2.season6",
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-04-AnEnkindledCarnival.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
         "type": "choice",
         "description": "Item line text to be struck out",
         "choices": [
-          "minor Core gp; Player healing 320, GM Core potion Core 320, (level 262) GM 1, Core 4 gp) 262)",
-          "lesser 3rd-rank +1 dagger healing scroll (level potion of 2, cleanse 35 (level gp) affliction 3, 12 gp) (level 5, 30 effervescent +1 striking dagger ampoule (level (level 4, 100 2, 7 gp) gp) oil of mending (level 3, 9 gp) potion of water breathing (level 3, 11 gp) dancing scarf (level 3, 60 gp) diplomat’s badge (level 5, 125 gp) everlight crystal (level 1, 15 gp) pendant of the occult (level 3, 60 gp) scroll of cleanse affliction (level 3, 12 gp; Player"
+          "minor healing potion (level 1, 4 gp)",
+          "lesser healing potion (level 3, 12 gp)",
+          "effervescent ampoule (level 2, 7 gp)",
+          "oil of mending (level 3, 9 gp)",
+          "potion of water breathing (level 3, 11 gp)",
+          "dancing scarf (level 3, 60 gp)",
+          "diplomat\u2019s badge (level 5, 125 gp)",
+          "everlight crystal (level 1, 15 gp)",
+          "pendant of the occult (level 3, 60 gp)",
+          "scroll of cleanse affliction (level 3, 12 gp; Player Core 320, GM Core 262)",
+          "3rd-rank scroll of cleanse affliction (level 5, 30 gp; Player Core 320, GM Core 262)",
+          "+1 dagger (level 2, 35 gp)",
+          "+1 striking dagger (level 4, 100 gp)"
         ],
-        "example": "minor Core gp; Player healing 320, GM Core potion Core 320, (level 262) GM 1, Core 4 gp) 262)"
+        "example": "minor healing potion (level 1, 4 gp)"
       }
     }
   },
@@ -22,12 +34,56 @@
       "x": 0.5,
       "x2": 95
     },
-    "item.line.minor_Core_gp;_Player_healing_320_GM_Core_potion_": {
+    "item.line.minor_healing_potion_level_1_4_gp": {
       "y": 4.4,
+      "y2": 9.3
+    },
+    "item.line.lesser_healing_potion_level_3_12_gp": {
+      "y": 9.4,
+      "y2": 14.3
+    },
+    "item.line.effervescent_ampoule_level_2_7_gp": {
+      "y": 14.5,
+      "y2": 19.4
+    },
+    "item.line.oil_of_mending_level_3_9_gp": {
+      "y": 19.5,
+      "y2": 24.4
+    },
+    "item.line.potion_of_water_breathing_level_3_11_gp": {
+      "y": 24.6,
+      "y2": 29.5
+    },
+    "item.line.dancing_scarf_level_3_60_gp": {
+      "y": 29.6,
+      "y2": 34.5
+    },
+    "item.line.diplomat\u2019s_badge_level_5_125_gp": {
+      "y": 34.6,
+      "y2": 39.6
+    },
+    "item.line.everlight_crystal_level_1_15_gp": {
+      "y": 39.7,
+      "y2": 44.6
+    },
+    "item.line.pendant_of_the_occult_level_3_60_gp": {
+      "y": 44.7,
+      "y2": 49.7
+    },
+    "item.line.scroll_of_cleanse_affliction_level_3_12_gp;_Play": {
+      "y": 49.8,
+      "y2": 59.8
+    },
+    "item.line.3rd-rank_scroll_of_cleanse_affliction_level_5_30": {
+      "y": 59.9,
       "y2": 69.8
     },
-    "item.line.lesser_3rd-rank_+1_dagger_healing_scroll_level_po": {
-      "y": 9.4,
+    "item.line.+1_dagger_level_2_35_gp": {
+      "y": 70.0,
+      "y2": 74.9
+    },
+    "item.line.+1_striking_dagger_level_4_100_gp": {
+      "y": 75.0,
       "y2": 79.9
     }
   },
@@ -36,26 +92,124 @@
       "type": "choice",
       "choices": "param:strikeout_item_lines",
       "content": {
-        "minor Core gp; Player healing 320, GM Core potion Core 320, (level 262) GM 1, Core 4 gp) 262)": [
+        "minor healing potion (level 1, 4 gp)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.minor_Core_gp;_Player_healing_320_GM_Core_potion_"
+              "item.line.minor_healing_potion_level_1_4_gp"
             ]
           }
         ],
-        "lesser 3rd-rank +1 dagger healing scroll (level potion of 2, cleanse 35 (level gp) affliction 3, 12 gp) (level 5, 30 effervescent +1 striking dagger ampoule (level (level 4, 100 2, 7 gp) gp) oil of mending (level 3, 9 gp) potion of water breathing (level 3, 11 gp) dancing scarf (level 3, 60 gp) diplomat’s badge (level 5, 125 gp) everlight crystal (level 1, 15 gp) pendant of the occult (level 3, 60 gp) scroll of cleanse affliction (level 3, 12 gp; Player": [
+        "lesser healing potion (level 3, 12 gp)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.lesser_3rd-rank_+1_dagger_healing_scroll_level_po"
+              "item.line.lesser_healing_potion_level_3_12_gp"
+            ]
+          }
+        ],
+        "effervescent ampoule (level 2, 7 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.effervescent_ampoule_level_2_7_gp"
+            ]
+          }
+        ],
+        "oil of mending (level 3, 9 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.oil_of_mending_level_3_9_gp"
+            ]
+          }
+        ],
+        "potion of water breathing (level 3, 11 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.potion_of_water_breathing_level_3_11_gp"
+            ]
+          }
+        ],
+        "dancing scarf (level 3, 60 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.dancing_scarf_level_3_60_gp"
+            ]
+          }
+        ],
+        "diplomat\u2019s badge (level 5, 125 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.diplomat\u2019s_badge_level_5_125_gp"
+            ]
+          }
+        ],
+        "everlight crystal (level 1, 15 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.everlight_crystal_level_1_15_gp"
+            ]
+          }
+        ],
+        "pendant of the occult (level 3, 60 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.pendant_of_the_occult_level_3_60_gp"
+            ]
+          }
+        ],
+        "scroll of cleanse affliction (level 3, 12 gp; Player Core 320, GM Core 262)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.scroll_of_cleanse_affliction_level_3_12_gp;_Play"
+            ]
+          }
+        ],
+        "3rd-rank scroll of cleanse affliction (level 5, 30 gp; Player Core 320, GM Core 262)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.3rd-rank_scroll_of_cleanse_affliction_level_5_30"
+            ]
+          }
+        ],
+        "+1 dagger (level 2, 35 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.+1_dagger_level_2_35_gp"
+            ]
+          }
+        ],
+        "+1 striking dagger (level 4, 100 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.+1_striking_dagger_level_4_100_gp"
             ]
           }
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-04-AnEnkindledCarnival.pdf"
+  ]
 }

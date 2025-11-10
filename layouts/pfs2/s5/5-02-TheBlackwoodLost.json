@@ -2,6 +2,7 @@
   "id": "pfs2.s5-02",
   "description": "5-02 The Blackwood Lost",
   "parent": "pfs2.season5",
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-1/5-02-TheBlackwoodLostChronicle.pdf",
   "parameters": {
     "Checkboxes": {
       "summary_checkbox": {
@@ -59,6 +60,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-1/5-02-TheBlackwoodLostChronicle.pdf"
+  ]
 }

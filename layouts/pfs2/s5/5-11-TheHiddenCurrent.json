@@ -2,6 +2,7 @@
   "id": "pfs2.s5-11",
   "description": "5-11 The Hidden Current",
   "parent": "pfs2.season5",
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-11-TheHiddenCurrentChronicle.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -9,7 +10,7 @@
         "description": "Item line text to be struck out",
         "choices": [
           "+1 striking battleaxe (level 4, 100 gp)",
-          "lesser retaliation rune (level 6, 250 gp; Path­ finder Treasure Vault 144)",
+          "lesser retaliation rune (level 6, 250 gp; Path\u00ad finder Treasure Vault 144)",
           "wine of the bloodR (level 5, 30 gp; Pathfinder Dark Archive 114)",
           "ghost oil (level 4, 18 gp; Pathfinder Lost Omens Knights of Lastwall 90)"
         ],
@@ -28,7 +29,7 @@
       "y": 3.6,
       "y2": 9.8
     },
-    "item.line.lesser_retaliation_rune_level_6_250_gp;_Path­_fi": {
+    "item.line.lesser_retaliation_rune_level_6_250_gp;_Path\u00ad_fi": {
       "y": 9.2,
       "y2": 21.0
     },
@@ -55,12 +56,12 @@
             ]
           }
         ],
-        "lesser retaliation rune (level 6, 250 gp; Path­ finder Treasure Vault 144)": [
+        "lesser retaliation rune (level 6, 250 gp; Path\u00ad finder Treasure Vault 144)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.lesser_retaliation_rune_level_6_250_gp;_Path­_fi"
+              "item.line.lesser_retaliation_rune_level_6_250_gp;_Path\u00ad_fi"
             ]
           }
         ],
@@ -84,6 +85,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-11-TheHiddenCurrentChronicle.pdf"
+  ]
 }

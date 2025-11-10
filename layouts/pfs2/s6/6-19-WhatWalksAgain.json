@@ -2,6 +2,7 @@
   "id": "pfs2.s6-19",
   "description": "6-19 What Walks Again",
   "parent": "pfs2.season6",
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-2/6-19-WhatWalksAgain.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -42,6 +43,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-2/6-19-WhatWalksAgain.pdf"
+  ]
 }

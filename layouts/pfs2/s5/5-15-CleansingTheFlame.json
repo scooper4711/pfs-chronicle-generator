@@ -2,6 +2,7 @@
   "id": "pfs2.s5-15",
   "description": "5-15 Cleansing The Flame",
   "parent": "pfs2.season5",
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-15-CleansingTheFlameChronicle.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -9,10 +10,10 @@
         "description": "Item line text to be struck out",
         "choices": [
           "brazier of harmony (level 5, 150 gp; Pathfinder Rage of Elements 122)",
-          "messenger’s ring (level 9, 700 gp)",
+          "messenger\u2019s ring (level 9, 700 gp)",
           "moderate healing potion (level 6, 50 gp)",
           "spellstrike ammunition (type III) (level 7, 70 gp)",
-          "crafter’s eyepiece (level 3, 60 gp)",
+          "crafter\u2019s eyepiece (level 3, 60 gp)",
           "+1 mace (level 3, 36 gp)",
           "+1 striking mace (level 4, 101 gp)",
           "+1 striking called shears (level 7, 450 gp; Pathfinder Bestiary 2 184, Lost Omens Knights of Lastwall 89)",
@@ -63,7 +64,7 @@
       "y": 3.6,
       "y2": 15.4
     },
-    "item.line.messenger’s_ring_level_9_700_gp": {
+    "item.line.messenger\u2019s_ring_level_9_700_gp": {
       "y": 14.8,
       "y2": 21.0
     },
@@ -75,8 +76,8 @@
       "y": 26.0,
       "y2": 32.2
     },
-    "item.line.crafter’s_eyepiece_level_3_60_gp": {
-      "y": 31.7,
+    "item.line.crafter\u2019s_eyepiece_level_3_60_gp": {
+      "y": 26.0,
       "y2": 37.8
     },
     "item.line.+1_mace_level_3_36_gp": {
@@ -118,12 +119,12 @@
             ]
           }
         ],
-        "messenger’s ring (level 9, 700 gp)": [
+        "messenger\u2019s ring (level 9, 700 gp)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.messenger’s_ring_level_9_700_gp"
+              "item.line.messenger\u2019s_ring_level_9_700_gp"
             ]
           }
         ],
@@ -145,12 +146,12 @@
             ]
           }
         ],
-        "crafter’s eyepiece (level 3, 60 gp)": [
+        "crafter\u2019s eyepiece (level 3, 60 gp)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.crafter’s_eyepiece_level_3_60_gp"
+              "item.line.crafter\u2019s_eyepiece_level_3_60_gp"
             ]
           }
         ],
@@ -234,6 +235,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-15-CleansingTheFlameChronicle.pdf"
+  ]
 }

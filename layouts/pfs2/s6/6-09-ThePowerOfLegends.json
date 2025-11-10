@@ -2,6 +2,7 @@
   "id": "pfs2.s6-09",
   "description": "6-09 The Power Of Legends",
   "parent": "pfs2.season6",
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-09-ThePowerOfLegends.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -20,7 +21,7 @@
         "description": "Checkboxes in the adventure summary that should be selected",
         "choices": [
           "with the aid of some friendly shadow giants",
-          "without any external aid and entered the fortress’s rocky grounds"
+          "without any external aid and entered the fortress\u2019s rocky grounds"
         ],
         "example": "with the aid of some friendly shadow giants"
       }
@@ -44,7 +45,7 @@
       "x2": 57.773,
       "y2": 36.447
     },
-    "checkbox.without_any_external_aid_and_entered_the_fortress’": {
+    "checkbox.without_any_external_aid_and_entered_the_fortress\u2019": {
       "x": 90.04,
       "y": 26.36,
       "x2": 91.74,
@@ -97,17 +98,16 @@
             ]
           }
         ],
-        "without any external aid and entered the fortress’s rocky grounds": [
+        "without any external aid and entered the fortress\u2019s rocky grounds": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.without_any_external_aid_and_entered_the_fortress’"
+              "checkbox.without_any_external_aid_and_entered_the_fortress\u2019"
             ]
           }
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-09-ThePowerOfLegends.pdf"
+  ]
 }

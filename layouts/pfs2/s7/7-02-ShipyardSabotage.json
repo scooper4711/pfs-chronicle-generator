@@ -2,6 +2,7 @@
   "id": "pfs2.s7-02",
   "description": "7-02 Shipyard Sabotage",
   "parent": "pfs2.season7",
+  "defaultChronicleLocation": "modules/pf2e-pfs07-year-of-battles-spark/assets/chronicles-1/702-chronicle-ShipyardSabotage.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -84,6 +85,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs07-year-of-battles-spark/assets/chronicles-1/702-chronicle-ShipyardSabotage.pdf"
+  ]
 }

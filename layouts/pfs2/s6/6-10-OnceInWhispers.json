@@ -2,6 +2,7 @@
   "id": "pfs2.s6-10",
   "description": "6-10 Once In Whispers",
   "parent": "pfs2.season6",
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-10-OnceInWhispers.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -56,6 +57,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-10-OnceInWhispers.pdf"
+  ]
 }

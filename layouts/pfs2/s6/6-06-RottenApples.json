@@ -2,16 +2,22 @@
   "id": "pfs2.s6-06",
   "description": "6-06 Rotten Apples",
   "parent": "pfs2.season6",
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-06-RottenApples.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
         "type": "choice",
         "description": "Item line text to be struck out",
         "choices": [
-          "moderate Core Core Core Firebrands Omens 335, 2 335, 285) Firebrands ghost GM GM 82) Core Core charge 82) 282) 282) (level 3, 10 gp; Player",
-          "wand wand wrist masquerade persona of of grappler mask heal heal scarf (2nd-rank) (1st-rank) (level (level (level 3, 50 2, 2, (level (level gp; 30 25 GM gp; 5, 3, gp; 160 Core GM 60 Lost Core gp; gp; 293) Omens Player Player 292) clockwork wrist grappler (level 3, 40 gp; Lost"
+          "moderate ghost charge (level 3, 10 gp; Player Core 2 285)",
+          "wand of heal (1st-rank) (level 3, 60 gp; Player Core 335, GM Core 282)",
+          "wand of heal (2nd-rank) (level 5, 160 gp; Player Core 335, GM Core 282)",
+          "wrist grappler (level 2, 25 gp; Lost Omens Firebrands 82)",
+          "masquerade scarf (level 2, 30 gp; GM Core 292)",
+          "clockwork wrist grappler (level 3, 40 gp; Lost Omens Firebrands 82)",
+          "persona mask (level 3, 50 gp; GM Core 293)"
         ],
-        "example": "moderate Core Core Core Firebrands Omens 335, 2 335, 285) Firebrands ghost GM GM 82) Core Core charge 82) 282) 282) (level 3, 10 gp; Player"
+        "example": "moderate ghost charge (level 3, 10 gp; Player Core 2 285)"
       }
     },
     "Checkboxes": {
@@ -71,12 +77,32 @@
       "x2": 81.472,
       "y2": 44.659
     },
-    "item.line.moderate_Core_Core_Core_Firebrands_Omens_335_2_33": {
+    "item.line.moderate_ghost_charge_level_3_10_gp;_Player_Core": {
       "y": 7.0,
+      "y2": 17.8
+    },
+    "item.line.wand_of_heal_1st-rank_level_3_60_gp;_Player_Co": {
+      "y": 18.2,
+      "y2": 29.0
+    },
+    "item.line.wand_of_heal_2nd-rank_level_5_160_gp;_Player_C": {
+      "y": 23.8,
+      "y2": 40.3
+    },
+    "item.line.wrist_grappler_level_2_25_gp;_Lost_Omens_Firebra": {
+      "y": 35.1,
+      "y2": 51.5
+    },
+    "item.line.masquerade_scarf_level_2_30_gp;_GM_Core_292": {
+      "y": 51.9,
+      "y2": 57.1
+    },
+    "item.line.clockwork_wrist_grappler_level_3_40_gp;_Lost_Ome": {
+      "y": 57.5,
       "y2": 68.3
     },
-    "item.line.wand_wand_wrist_masquerade_persona_of_of_grappler_": {
-      "y": 18.2,
+    "item.line.persona_mask_level_3_50_gp;_GM_Core_293": {
+      "y": 68.7,
       "y2": 73.9
     }
   },
@@ -85,21 +111,66 @@
       "type": "choice",
       "choices": "param:strikeout_item_lines",
       "content": {
-        "moderate Core Core Core Firebrands Omens 335, 2 335, 285) Firebrands ghost GM GM 82) Core Core charge 82) 282) 282) (level 3, 10 gp; Player": [
+        "moderate ghost charge (level 3, 10 gp; Player Core 2 285)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.moderate_Core_Core_Core_Firebrands_Omens_335_2_33"
+              "item.line.moderate_ghost_charge_level_3_10_gp;_Player_Core"
             ]
           }
         ],
-        "wand wand wrist masquerade persona of of grappler mask heal heal scarf (2nd-rank) (1st-rank) (level (level (level 3, 50 2, 2, (level (level gp; 30 25 GM gp; 5, 3, gp; 160 Core GM 60 Lost Core gp; gp; 293) Omens Player Player 292) clockwork wrist grappler (level 3, 40 gp; Lost": [
+        "wand of heal (1st-rank) (level 3, 60 gp; Player Core 335, GM Core 282)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.wand_wand_wrist_masquerade_persona_of_of_grappler_"
+              "item.line.wand_of_heal_1st-rank_level_3_60_gp;_Player_Co"
+            ]
+          }
+        ],
+        "wand of heal (2nd-rank) (level 5, 160 gp; Player Core 335, GM Core 282)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.wand_of_heal_2nd-rank_level_5_160_gp;_Player_C"
+            ]
+          }
+        ],
+        "wrist grappler (level 2, 25 gp; Lost Omens Firebrands 82)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.wrist_grappler_level_2_25_gp;_Lost_Omens_Firebra"
+            ]
+          }
+        ],
+        "masquerade scarf (level 2, 30 gp; GM Core 292)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.masquerade_scarf_level_2_30_gp;_GM_Core_292"
+            ]
+          }
+        ],
+        "clockwork wrist grappler (level 3, 40 gp; Lost Omens Firebrands 82)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.clockwork_wrist_grappler_level_3_40_gp;_Lost_Ome"
+            ]
+          }
+        ],
+        "persona mask (level 3, 50 gp; GM Core 293)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.persona_mask_level_3_50_gp;_GM_Core_293"
             ]
           }
         ]
@@ -156,6 +227,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-06-RottenApples.pdf"
+  ]
 }

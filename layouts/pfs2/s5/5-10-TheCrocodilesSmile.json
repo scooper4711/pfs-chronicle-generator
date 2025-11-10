@@ -2,6 +2,7 @@
   "id": "pfs2.s5-10",
   "description": "5-10 The Crocodiles Smile",
   "parent": "pfs2.season5",
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-1/5-10-TheCrocodilesSmileChronicle.pdf",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
@@ -314,6 +315,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-1/5-10-TheCrocodilesSmileChronicle.pdf"
+  ]
 }

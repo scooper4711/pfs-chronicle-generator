@@ -2,6 +2,7 @@
   "id": "pfs2.s6-18",
   "description": "6-18 Symposium On A Fallen God",
   "parent": "pfs2.season6",
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-2/6-18-SymposiumOnAFallenGod.pdf",
   "parameters": {
     "Checkboxes": {
       "summary_checkbox": {
@@ -59,6 +60,5 @@
         ]
       }
     }
-  ],
-  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-2/6-18-SymposiumOnAFallenGod.pdf"
+  ]
 }
