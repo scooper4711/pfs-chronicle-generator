@@ -18,3 +18,34 @@
 .item-choice input[type="checkbox"] {
     margin-top: 4px;
 }
+
+/* Lock/Unlock button styling */
+.lock-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    margin-left: 8px;
+    font-size: 14px;
+    color: var(--color-text-dark-primary);
+    transition: color 0.2s;
+    vertical-align: middle;
+}
+
+.lock-toggle:hover {
+    color: var(--color-text-dark-highlight);
+}
+
+.lock-toggle i.fa-lock {
+    color: #d32f2f;
+}
+
+.lock-toggle i.fa-unlock {
+    color: #388e3c;
+}
+
+legend {
+    display: flex;
+    align-items: center;
+}
+

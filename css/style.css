@@ -1,3 +1,10 @@
+.pfs-chronicle-generator-form {
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+}
+
 .pfs-chronicle-generator-form .top-section {
     display: flex;
     flex-direction: row;

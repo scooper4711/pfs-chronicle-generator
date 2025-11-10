@@ -145,6 +145,9 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     // Add change handlers for season and layout dropdowns
     html.find('#season').on('change', this._onSeasonChanged.bind(this));
     html.find('#layout').on('change', this._onLayoutChanged.bind(this));
+    
+    // Add lock/unlock handler for Event Details
+    html.find('#lock-event-details').on('click', this._onToggleLock.bind(this));
   }
 
   async _onViewBlankChronicle(event: any) {
@@ -222,6 +225,41 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
         // File doesn't exist or isn't accessible, don't update the setting
         console.log(`Default chronicle location not accessible: ${layout.defaultChronicleLocation}`);
       }
+    }
+  }
+
+  _onToggleLock(event: any) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const icon = button.querySelector('i');
+    const eventDetails = this.element.querySelector('.event-details');
+    
+    if (!eventDetails) return;
+    
+    const isLocked = icon.classList.contains('fa-lock');
+    
+    if (isLocked) {
+      // Unlock - enable all fields
+      icon.classList.remove('fa-lock');
+      icon.classList.add('fa-unlock');
+      button.title = 'Lock to prevent changes';
+      
+      eventDetails.querySelectorAll('input, select, button').forEach((el: any) => {
+        if (el.id !== 'lock-event-details') {
+          el.disabled = false;
+        }
+      });
+    } else {
+      // Lock - disable all fields
+      icon.classList.remove('fa-unlock');
+      icon.classList.add('fa-lock');
+      button.title = 'Unlock to edit';
+      
+      eventDetails.querySelectorAll('input, select, button').forEach((el: any) => {
+        if (el.id !== 'lock-event-details') {
+          el.disabled = true;
+        }
+      });
     }
   }
 

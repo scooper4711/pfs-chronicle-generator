@@ -166,13 +166,14 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
             event.preventDefault();
             const confirmed = await Dialog.confirm({
                 title: "Delete Chronicle",
-                content: "<p>Are you sure you want to delete this chronicle? This action cannot be undone.</p>",
+                content: "<p>Are you sure you want to delete this chronicle and all saved form data? This action cannot be undone.</p>",
                 yes: () => true,
                 no: () => false,
                 defaultYes: false
             });
             if (confirmed) {
                 await sheet.actor.unsetFlag('pfs-chronicle-generator', 'chroniclePdf');
+                await sheet.actor.unsetFlag('pfs-chronicle-generator', 'chronicleData');
                 sheet.render(true); // Re-render to update button states
             }
         });
