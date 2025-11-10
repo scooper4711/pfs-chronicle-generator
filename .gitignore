@@ -4,7 +4,7 @@ node_modules/*
 dist
 .DS_Store
 foundryconfig.json
-chronicles
+modules
 grid-output.pdf
 filled-output.pdf
 __pycache__

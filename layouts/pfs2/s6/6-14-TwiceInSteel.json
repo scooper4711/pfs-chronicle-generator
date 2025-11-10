@@ -8,10 +8,10 @@
         "type": "choice",
         "description": "Item line text to be struck out",
         "choices": [
-          "cartographer\u2019s Omens Path Vault Vault GM 2 307) Core #199: 117) 115) Pathfinder 296) To kit Bloom (level Society Below 3; Guide 42 the gp; Web 34) Pathfinder 73) Lost",
-          "energizing fortune\u2019s horrid greater urn of ashes figurine symbol coin pill (level (level (level of (level conflict 9; 10; 8; 8; 700 180 450 450 (level gp; gp; gp; gp; Pathfinder 10; Pathfinder Pathfinder Pathfinder 900 gp; Player Pathfinder Adventure Treasure Treasure Core"
+          "cartographer’s Omens Path Vault Vault GM 2 307) Core #199: 117) 115) Pathfinder 296) To kit Bloom (level Society Below 3; Guide 42 the gp; Web 34) Pathfinder 73) Lost",
+          "energizing fortune’s horrid greater urn of ashes figurine symbol coin pill (level (level (level of (level conflict 9; 10; 8; 8; 700 180 450 450 (level gp; gp; gp; gp; Pathfinder 10; Pathfinder Pathfinder Pathfinder 900 gp; Player Pathfinder Adventure Treasure Treasure Core"
         ],
-        "example": "cartographer\u2019s Omens Path Vault Vault GM 2 307) Core #199: 117) 115) Pathfinder 296) To kit Bloom (level Society Below 3; Guide 42 the gp; Web 34) Pathfinder 73) Lost"
+        "example": "cartographer’s Omens Path Vault Vault GM 2 307) Core #199: 117) 115) Pathfinder 296) To kit Bloom (level Society Below 3; Guide 42 the gp; Web 34) Pathfinder 73) Lost"
       }
     }
   },
@@ -22,11 +22,11 @@
       "x": 0.5,
       "x2": 95
     },
-    "item.line.cartographer\u2019s_Omens_Path_Vault_Vault_GM_2_307_Co": {
+    "item.line.cartographer’s_Omens_Path_Vault_Vault_GM_2_307_Co": {
       "y": 7.5,
       "y2": 73.8
     },
-    "item.line.energizing_fortune\u2019s_horrid_greater_urn_of_ashes_f": {
+    "item.line.energizing_fortune’s_horrid_greater_urn_of_ashes_f": {
       "y": 18.7,
       "y2": 68.2
     }
@@ -36,25 +36,26 @@
       "type": "choice",
       "choices": "param:strikeout_item_lines",
       "content": {
-        "cartographer\u2019s Omens Path Vault Vault GM 2 307) Core #199: 117) 115) Pathfinder 296) To kit Bloom (level Society Below 3; Guide 42 the gp; Web 34) Pathfinder 73) Lost": [
+        "cartographer’s Omens Path Vault Vault GM 2 307) Core #199: 117) 115) Pathfinder 296) To kit Bloom (level Society Below 3; Guide 42 the gp; Web 34) Pathfinder 73) Lost": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.cartographer\u2019s_Omens_Path_Vault_Vault_GM_2_307_Co"
+              "item.line.cartographer’s_Omens_Path_Vault_Vault_GM_2_307_Co"
             ]
           }
         ],
-        "energizing fortune\u2019s horrid greater urn of ashes figurine symbol coin pill (level (level (level of (level conflict 9; 10; 8; 8; 700 180 450 450 (level gp; gp; gp; gp; Pathfinder 10; Pathfinder Pathfinder Pathfinder 900 gp; Player Pathfinder Adventure Treasure Treasure Core": [
+        "energizing fortune’s horrid greater urn of ashes figurine symbol coin pill (level (level (level of (level conflict 9; 10; 8; 8; 700 180 450 450 (level gp; gp; gp; gp; Pathfinder 10; Pathfinder Pathfinder Pathfinder 900 gp; Player Pathfinder Adventure Treasure Treasure Core": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.energizing_fortune\u2019s_horrid_greater_urn_of_ashes_f"
+              "item.line.energizing_fortune’s_horrid_greater_urn_of_ashes_f"
             ]
           }
         ]
       }
     }
-  ]
+  ],
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-2/6-14-TwiceInSteel.pdf"
 }

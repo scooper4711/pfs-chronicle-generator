@@ -17,7 +17,7 @@
           "+1 striking dagger (level 4, 100 gp)",
           "+1 striking returning low-grade silver dagger (level 6, 200 gp)",
           "shining symbol (level 3, 55 gp)",
-          "diplomat\u2019s badge (level 5, 125 gp)",
+          "diplomat’s badge (level 5, 125 gp)",
           "authorized rune (level 3, 50 gp; Pathfinder Treasure Vault 32)",
           "wounding rune (level 7, 340 gp)"
         ],
@@ -68,7 +68,7 @@
       "y": 57.9,
       "y2": 62.6
     },
-    "item.line.diplomat\u2019s_badge_level_5_125_gp": {
+    "item.line.diplomat’s_badge_level_5_125_gp": {
       "y": 63.5,
       "y2": 68.2
     },
@@ -167,12 +167,12 @@
             ]
           }
         ],
-        "diplomat\u2019s badge (level 5, 125 gp)": [
+        "diplomat’s badge (level 5, 125 gp)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.diplomat\u2019s_badge_level_5_125_gp"
+              "item.line.diplomat’s_badge_level_5_125_gp"
             ]
           }
         ],
@@ -196,5 +196,6 @@
         ]
       }
     }
-  ]
+  ],
+  "defaultChronicleLocation": "modules/pf2e-pfs07-year-of-battles-spark/assets/chronicles-1/704-chronicle-SulfuricNegotiations.pdf"
 }

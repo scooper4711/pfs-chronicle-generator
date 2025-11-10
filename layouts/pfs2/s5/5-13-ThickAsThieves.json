@@ -9,7 +9,7 @@
         "description": "Item line text to be struck out",
         "choices": [
           "brazier of harmony (level 5, 150 gp; Rage of Elements 122)",
-          "messenger\u2019s ring (level 9, 700 gp)",
+          "messenger’s ring (level 9, 700 gp)",
           "broadleaf shield (level 6, 225 gp; Rage of Elements 200)",
           "brightbloom posy (level 8, 450 gp; Treasure Vault 125)",
           "conduit shot, lesser (level 6, 50 gp; Treasure Vault 80)",
@@ -31,7 +31,7 @@
       "y": 3.6,
       "y2": 17.6
     },
-    "item.line.messenger\u2019s_ring_level_9_700_gp": {
+    "item.line.messenger’s_ring_level_9_700_gp": {
       "y": 17.0,
       "y2": 24.3
     },
@@ -70,12 +70,12 @@
             ]
           }
         ],
-        "messenger\u2019s ring (level 9, 700 gp)": [
+        "messenger’s ring (level 9, 700 gp)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.messenger\u2019s_ring_level_9_700_gp"
+              "item.line.messenger’s_ring_level_9_700_gp"
             ]
           }
         ],
@@ -126,5 +126,6 @@
         ]
       }
     }
-  ]
+  ],
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-13-ThickAsThievesChronicle.pdf"
 }

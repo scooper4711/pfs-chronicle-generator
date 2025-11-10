@@ -1,5 +1,6 @@
 {
   "id": "pfs2.s5-17",
   "description": "5-17 Stranded On Yesterdays Tide",
-  "parent": "pfs2.season5"
+  "parent": "pfs2.season5",
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-17-StrandedOnYesterdaysTideChronicle.pdf"
 }

@@ -24,8 +24,8 @@
           "Teritha for House Madinani",
           "Gnethe Eraseen",
           "Wyles Thall for unknown reasons",
-          "managed to convince the other guests of the Society\u2019s innocence",
-          "failed to convince the other guests of the Society\u2019s innocence"
+          "managed to convince the other guests of the Society’s innocence",
+          "failed to convince the other guests of the Society’s innocence"
         ],
         "example": "stopped"
       }
@@ -170,7 +170,7 @@
             ]
           }
         ],
-        "managed to convince the other guests of the Society\u2019s innocence": [
+        "managed to convince the other guests of the Society’s innocence": [
           {
             "type": "checkbox",
             "presets": [
@@ -179,7 +179,7 @@
             ]
           }
         ],
-        "failed to convince the other guests of the Society\u2019s innocence": [
+        "failed to convince the other guests of the Society’s innocence": [
           {
             "type": "checkbox",
             "presets": [
@@ -190,5 +190,6 @@
         ]
       }
     }
-  ]
+  ],
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-01-IntrototheyearofImmortalInfluence.pdf"
 }

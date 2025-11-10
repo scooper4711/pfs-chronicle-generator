@@ -8,10 +8,10 @@
         "type": "choice",
         "description": "Item line text to be struck out",
         "choices": [
-          "healer\u2019s gloves (level 4, 80 gp; GM Core 290)",
+          "healer’s gloves (level 4, 80 gp; GM Core 290)",
           "cloak of illusions (level 7, 360 gp; GM Core 287)"
         ],
-        "example": "healer\u2019s gloves (level 4, 80 gp; GM Core 290)"
+        "example": "healer’s gloves (level 4, 80 gp; GM Core 290)"
       }
     }
   },
@@ -22,7 +22,7 @@
       "x": 0.5,
       "x2": 95
     },
-    "item.line.healer\u2019s_gloves_level_4_80_gp;_GM_Core_290": {
+    "item.line.healer’s_gloves_level_4_80_gp;_GM_Core_290": {
       "y": 7.5,
       "y2": 12.1
     },
@@ -36,12 +36,12 @@
       "type": "choice",
       "choices": "param:strikeout_item_lines",
       "content": {
-        "healer\u2019s gloves (level 4, 80 gp; GM Core 290)": [
+        "healer’s gloves (level 4, 80 gp; GM Core 290)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.healer\u2019s_gloves_level_4_80_gp;_GM_Core_290"
+              "item.line.healer’s_gloves_level_4_80_gp;_GM_Core_290"
             ]
           }
         ],
@@ -56,5 +56,6 @@
         ]
       }
     }
-  ]
+  ],
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-2/6-12-TheBurningOfGreensteeples.pdf"
 }

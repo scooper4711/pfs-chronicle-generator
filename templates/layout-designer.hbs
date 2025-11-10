@@ -1,6 +1,8 @@
-<div>
+<div class="pfs-layout-designer-content">
+  <fieldset>
+    <legend>Layout Selection</legend>
     <div class="form-group">
-        <label for="pdf-file">PDF File</label>
+        <label for="pdf-file">Blank Chronicle PDF</label>
         <div class="form-fields">
             <input type="text" id="pdf-file" name="pdfFile" value="{{pdfPath}}" readonly>
             <button type="button" class="file-picker-button"><i class="fas fa-folder-open"></i></button>
@@ -26,6 +28,13 @@
     </div>
 
     <div class="form-group">
+      <button id="save-selection" type="button" class="pfscg-btn"><i class="fas fa-save"></i> Save</button>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Layout Design</legend>
+    <div class="form-group">
         <label for="draw-boxes">Draw Boxes</label>
         <input type="checkbox" id="draw-boxes" name="drawBoxes">
     </div>
@@ -44,4 +53,8 @@
         </select>
     </div>
 
+    <div class="form-group">
+      <button type="submit" class="pfscg-btn"><i class="fas fa-cogs"></i> Generate</button>
     </div>
+  </fieldset>
+</div>

@@ -9,7 +9,7 @@
         "description": "Item line text to be struck out",
         "choices": [
           "moderate potion of retaliation (cold) (level 6, 12 gp; Pathfinder Player Core 2 304)",
-          "murderer\u2019s knot (level 7, 66 gp)",
+          "murderer’s knot (level 7, 66 gp)",
           "moderate healing potion (level 6, 12 gp)",
           "lesser energy breath potion (level 7, 70 gp)",
           "+2 striking composite shortbow (level 10, 1,000 gp)",
@@ -31,7 +31,7 @@
       "y": 7.4,
       "y2": 17.7
     },
-    "item.line.murderer\u2019s_knot_level_7_66_gp": {
+    "item.line.murderer’s_knot_level_7_66_gp": {
       "y": 18.7,
       "y2": 23.3
     },
@@ -70,12 +70,12 @@
             ]
           }
         ],
-        "murderer\u2019s knot (level 7, 66 gp)": [
+        "murderer’s knot (level 7, 66 gp)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.murderer\u2019s_knot_level_7_66_gp"
+              "item.line.murderer’s_knot_level_7_66_gp"
             ]
           }
         ],
@@ -126,5 +126,6 @@
         ]
       }
     }
-  ]
+  ],
+  "defaultChronicleLocation": "modules/pf2e-pfs07-year-of-battles-spark/assets/chronicles-1/705-chronicle-BattleOfTheThorns.pdf"
 }

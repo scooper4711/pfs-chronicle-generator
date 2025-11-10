@@ -20,7 +20,7 @@
         "description": "Checkboxes in the adventure summary that should be selected",
         "choices": [
           "with the aid of some friendly shadow giants",
-          "without any external aid and entered the fortress\u2019s rocky grounds"
+          "without any external aid and entered the fortress’s rocky grounds"
         ],
         "example": "with the aid of some friendly shadow giants"
       }
@@ -44,7 +44,7 @@
       "x2": 57.773,
       "y2": 36.447
     },
-    "checkbox.without_any_external_aid_and_entered_the_fortress\u2019": {
+    "checkbox.without_any_external_aid_and_entered_the_fortress’": {
       "x": 90.04,
       "y": 26.36,
       "x2": 91.74,
@@ -97,16 +97,17 @@
             ]
           }
         ],
-        "without any external aid and entered the fortress\u2019s rocky grounds": [
+        "without any external aid and entered the fortress’s rocky grounds": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.without_any_external_aid_and_entered_the_fortress\u2019"
+              "checkbox.without_any_external_aid_and_entered_the_fortress’"
             ]
           }
         ]
       }
     }
-  ]
+  ],
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-09-ThePowerOfLegends.pdf"
 }

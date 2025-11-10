@@ -42,7 +42,7 @@
           "undead horror",
           "cruel fey",
           "vicious giants",
-          "hateful plants! You then presented Mayor Deyahi with the true story of Niishan\u2019s founding in the morning"
+          "hateful plants! You then presented Mayor Deyahi with the true story of Niishan’s founding in the morning"
         ],
         "example": "preparing food"
       }
@@ -437,7 +437,7 @@
             ]
           }
         ],
-        "hateful plants! You then presented Mayor Deyahi with the true story of Niishan\u2019s founding in the morning": [
+        "hateful plants! You then presented Mayor Deyahi with the true story of Niishan’s founding in the morning": [
           {
             "type": "checkbox",
             "presets": [
@@ -448,5 +448,6 @@
         ]
       }
     }
-  ]
+  ],
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-1/5-08-ProtectingTheFirelightChronicle.pdf"
 }

@@ -35,19 +35,11 @@ Hooks.on('init', async () => {
         type: String,
         default: '',
   });
-  game.settings.register('pfs-chronicle-generator', 'blankChroniclePath', {
-    name: 'Blank Adventure Chronicle Path',
-    hint: 'The path to the blank adventure chronicle PDF.',
-    scope: 'world',
-    config: true,
-    type: String,
-    filePicker: 'any',
-    default: '',
-  });
+    // Hidden settings are registered on 'ready' (managed via Select Layout menu)
 
-  game.settings.registerMenu("pfs-chronicle-generator", "layoutDesigner", {
-    name: "Layout Designer",
-    label: "Open Layout Designer",
+    game.settings.registerMenu("pfs-chronicle-generator", "layoutDesigner", {
+        name: "Select Layout",
+        label: "Select Layout",
     hint: "Open the layout designer to create and edit chronicle layouts.",
     icon: "fas fa-ruler-combined",
     type: LayoutDesignerApp,
@@ -59,127 +51,52 @@ Hooks.on('init', async () => {
   };
 });
 
-// Function to update layout choices based on selected season
-async function updateLayoutChoices(seasons: Array<{id: string, name: string}>, seasonValue: any) {
-    console.log('Season changed to:', seasonValue);
-    
-    console.log('[PFS Chronicle] Season changed to:', seasonValue);
-    let seasonId = seasonValue;
-    if (seasonValue === 'Season 5') {
-        // Handle special case for Season 5
-        seasonId = 'pfs2.season5';
-        console.log('[PFS Chronicle] Parsed season ID:', seasonId);
-    }
-    
-    // Update layout choices when season changes
-    const seasonName = seasons.find(s => s.id === seasonId)?.name;
-    if (!seasonName) {
-        console.error('Could not find season name for id:', seasonId);
-        return;
-    }
-    console.log('Looking for layouts with parent:', seasonName);
-    
-    const layouts = layoutStore.getLayoutsByParent(seasonName);
-    console.log('Found layouts:', layouts);
-    
-    if (layouts.length === 0) {
-        console.warn('No layouts found for season:', seasonName);
-        return;
-    }
-    
-    const choices: Record<string, string> = Object.fromEntries(
-        layouts.map(layout => [layout.id, layout.description])
-    );
-    console.log('New choices:', choices);
-    
-    // First, unregister the existing layout setting
-    const settings = game.settings.settings;
-    console.log('[PFS Chronicle] Current settings map:', settings);
-    const oldSetting = settings.get('pfs-chronicle-generator.layout');
-    settings.delete('pfs-chronicle-generator.layout');
-    console.log('[PFS Chronicle] After delete:', settings);
-    
-    // Re-register with new choices
-    game.settings.register('pfs-chronicle-generator', 'layout', {
-        name: 'Chronicle Layout',
-        hint: 'The layout to use when generating the chronicle.',
-        scope: 'world',
-        config: true,
-        type: String,
-        choices: choices,
-        default: Object.keys(choices)[0] || ''
-    });
-    console.log('[PFS Chronicle] Re-registered layout setting');
-    
-    // Keep the previous layout if it's still valid, otherwise use the first available
-    const currentSetting = game.settings.get('pfs-chronicle-generator', 'layout');
-    console.log('[PFS Chronicle] Current layout setting:', currentSetting);
-    
-    let newValue: string;
-    if (Object.keys(choices).includes(currentSetting)) {
-        newValue = currentSetting;
-    } else {
-        newValue = Object.keys(choices)[0] || '';
-    }
-    
-    console.log('[PFS Chronicle] Setting new layout value:', newValue);
-    if (newValue) {
-        await game.settings.set('pfs-chronicle-generator', 'layout', newValue);
-        
-        // Force a settings window refresh if it's open
-        for (const app of Object.values(ui.windows)) {
-            if (app instanceof SettingsConfig) {
-                app.render(true);
-                break;
-            }
-        }
-    }
-}
-
+// Hidden settings registered and initialized on ready
 Hooks.on('ready', async () => {
     await layoutStore.initialize();
     const seasons = layoutStore.getSeasons();
     const seasonChoices: Record<string, string> = Object.fromEntries(
         seasons.map(season => [season.id, season.name])
     );
-    game.settings.register('pfs-chronicle-generator', 'season', {
-        name: 'Season',
-        hint: 'The season to filter chronicle layouts.',
+
+    // Hidden settings managed via Select Layout menu
+    if (!game.settings.settings.has('pfs-chronicle-generator.blankChroniclePath')) {
+      game.settings.register('pfs-chronicle-generator', 'blankChroniclePath', {
+        name: 'Blank Adventure Chronicle Path',
+        hint: 'The path to the blank adventure chronicle PDF.',
         scope: 'world',
-        config: true,
+        config: false,
+        restricted: true,
         type: String,
-        choices: seasonChoices,
-        default: seasons[0]?.id || ''
-    });
+        filePicker: 'any',
+        default: '',
+      });
+    }
 
-    // Register for settings changes
-    Hooks.on('updateSetting', (setting: any, value: any) => {
-        console.log('[PFS Chronicle] Setting updated:', setting, value);
-        if (setting.key === 'pfs-chronicle-generator.season') {
-            console.log('[PFS Chronicle] Season setting changed, updating layouts...');
-            updateLayoutChoices(seasons, value);
-        }
-    });
+    if (!game.settings.settings.has('pfs-chronicle-generator.season')) {
+      game.settings.register('pfs-chronicle-generator', 'season', {
+          name: 'Season',
+          hint: 'The season to filter chronicle layouts.',
+          scope: 'world',
+          config: false,
+          restricted: true,
+          type: String,
+          choices: seasonChoices,
+          default: seasons[0]?.id || ''
+      });
+    }
 
-    // Initial layout registration with current season
-    const initialSeason = game.settings.get('pfs-chronicle-generator', 'season') as string;
-    await updateLayoutChoices(seasons, initialSeason);
-
-    const selectedSeason = game.settings.get('pfs-chronicle-generator', 'season') as string;
-    const selectedSeasonName = seasons.find(s => s.id === selectedSeason)?.name || selectedSeason;
-    const layouts = layoutStore.getLayoutsByParent(selectedSeasonName);
-    const layoutChoices: Record<string, string> = Object.fromEntries(
-        layouts.map(layout => [layout.id, layout.description])
-    );
-    game.settings.register('pfs-chronicle-generator', 'layout', {
-        name: 'Chronicle Layout',
-        hint: 'The layout to use when generating the chronicle.',
-        scope: 'world',
-        config: true,
-        type: String,
-        choices: layoutChoices,
-        default: Object.keys(layoutChoices)[0] || '',
-    });
+    if (!game.settings.settings.has('pfs-chronicle-generator.layout')) {
+      game.settings.register('pfs-chronicle-generator', 'layout', {
+          name: 'Chronicle Layout',
+          hint: 'The layout to use when generating the chronicle.',
+          scope: 'world',
+          config: false,
+          restricted: true,
+          type: String,
+          default: '',
+      });
+    }
 });
 
 Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) => {

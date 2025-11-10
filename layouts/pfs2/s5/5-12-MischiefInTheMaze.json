@@ -1,5 +1,6 @@
 {
   "id": "pfs2.s5-12",
   "description": "5-12 Mischief In The Maze",
-  "parent": "pfs2.season5"
+  "parent": "pfs2.season5",
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-2/5-12-MischiefInTheMazeChronicle.pdf"
 }

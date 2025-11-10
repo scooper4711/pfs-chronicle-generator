@@ -1,5 +1,6 @@
 {
   "id": "pfs2.s6-07",
   "description": "6-07 A God Falls Where Magic Fails",
-  "parent": "pfs2.season6"
+  "parent": "pfs2.season6",
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-1/6-07-AGodFallsWhereMagicFails.pdf"
 }

@@ -8,9 +8,9 @@
         "type": "choice",
         "description": "Item line text to be struck out",
         "choices": [
-          "+2 greater fire-resistant raiment resilient explorer\u2019s",
+          "+2 greater fire-resistant raiment resilient explorer’s",
           "clothing (level 12, 3190 gp; GM Core 266)",
-          "chunk of Riftcarver \u2013 functions as a +2 greater",
+          "chunk of Riftcarver – functions as a +2 greater",
           "striking rune (level 12, 1500 gp; GM Core 236);",
           "limit 1",
           "greater healing potion (level 12, 400 gp; GM Core 259)",
@@ -18,7 +18,7 @@
           "greater symbol of conflict (level 10, 900 gp; GM Core 296)",
           "oil of keen edges (level 10, 900 gp; GM Core 257)"
         ],
-        "example": "+2 greater fire-resistant raiment resilient explorer\u2019s"
+        "example": "+2 greater fire-resistant raiment resilient explorer’s"
       }
     }
   },
@@ -37,7 +37,7 @@
       "y": 9.4,
       "y2": 14.9
     },
-    "item.line.chunk_of_Riftcarver_\u2013_functions_as_a_+2_greater": {
+    "item.line.chunk_of_Riftcarver_–_functions_as_a_+2_greater": {
       "y": 15.0,
       "y2": 20.6
     },
@@ -71,7 +71,7 @@
       "type": "choice",
       "choices": "param:strikeout_item_lines",
       "content": {
-        "+2 greater fire-resistant raiment resilient explorer\u2019s": [
+        "+2 greater fire-resistant raiment resilient explorer’s": [
           {
             "type": "strikeout",
             "presets": [
@@ -89,12 +89,12 @@
             ]
           }
         ],
-        "chunk of Riftcarver \u2013 functions as a +2 greater": [
+        "chunk of Riftcarver – functions as a +2 greater": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.chunk_of_Riftcarver_\u2013_functions_as_a_+2_greater"
+              "item.line.chunk_of_Riftcarver_–_functions_as_a_+2_greater"
             ]
           }
         ],
@@ -154,5 +154,6 @@
         ]
       }
     }
-  ]
+  ],
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-2/6-20-TheOverthrowOfAmbition.pdf"
 }

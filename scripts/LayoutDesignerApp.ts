@@ -15,31 +15,34 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
         },
         tag: "form",
         window: {
-            title: "Layout Designer",
-            contentClasses: ["standard-form"],
+            title: "Select Layout",
+            contentClasses: ["standard-form", "pfs-layout-designer"],
         }
     }
 
     static PARTS = {
         main: {
             template: "modules/pfs-chronicle-generator/templates/layout-designer.hbs",
-        },
-        footer: {
-            template: "templates/generic/form-footer.hbs",
-        },
+        }
     }
 
     async _prepareContext(): Promise<object> {
         const seasons = layoutStore.getSeasons();
         
-        // Get the currently selected layout from settings
+        // Determine selected season and layout from settings
+        const settingSeasonId = game.settings.get('pfs-chronicle-generator', 'season') as string;
         const currentLayoutId = game.settings.get('pfs-chronicle-generator', 'layout') as string;
         
-        // Find which season contains the current layout
-        const selectedLayoutId = currentLayoutId || '';
-        const selectedSeasonId = seasons.find(season => 
-            layoutStore.getLayoutsByParent(season.id).some(layout => layout.id === selectedLayoutId)
-        )?.id || (seasons.length > 0 ? seasons[0].id : '');
+        let selectedSeasonId = settingSeasonId || (seasons.length > 0 ? seasons[0].id : '');
+        let selectedLayoutId = currentLayoutId || '';
+        
+        // If a layout is set but doesn't belong to the selected season, adjust season accordingly
+        if (selectedLayoutId) {
+            const seasonWithLayout = seasons.find(season => 
+                layoutStore.getLayoutsByParent(season.id).some(layout => layout.id === selectedLayoutId)
+            );
+            if (seasonWithLayout) selectedSeasonId = seasonWithLayout.id;
+        }
         
         // Get layouts for the selected season
         const layoutsInSeason = layoutStore.getLayoutsByParent(selectedSeasonId);
@@ -51,7 +54,7 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
             
         const selectedLayout = effectiveLayoutId ? await layoutStore.getLayout(effectiveLayoutId) : undefined;
         const canvases = selectedLayout?.canvas ? Object.keys(selectedLayout.canvas) : [];
-        const pdfPath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
+    const pdfPath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
 
         return {
             seasons,
@@ -60,9 +63,7 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
             selectedLayoutId: effectiveLayoutId,
             canvases,
             pdfPath,
-            buttons: [
-                { type: "submit", icon: "fas fa-cogs", label: "Generate" }
-            ]
+            // Buttons rendered inside template
         };
     }
 
@@ -72,10 +73,12 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
         html.querySelector('#season')?.addEventListener('change', this._onSeasonChanged.bind(this));
         html.querySelector('#layout')?.addEventListener('change', this._onLayoutChanged.bind(this));
         html.querySelector('.file-picker-button')?.addEventListener('click', this._onFilePicker.bind(this));
+        html.querySelector('#save-selection')?.addEventListener('click', this._onSaveSelection.bind(this));
     }
 
     async _onSeasonChanged(event: any) {
         const seasonId = event.target.value;
+        await game.settings.set('pfs-chronicle-generator', 'season', seasonId);
         const layouts = layoutStore.getLayoutsByParent(seasonId);
 
         const layoutDropdown = this.element.querySelector('#layout') as HTMLSelectElement;
@@ -103,6 +106,7 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
             type: 'any',
             callback: (path: string) => {
                 (this.element.querySelector('#pdf-file') as HTMLInputElement).value = path;
+                game.settings.set('pfs-chronicle-generator', 'blankChroniclePath', path);
             }
         });
         await filePicker.browse();
@@ -110,6 +114,7 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
 
     async _onLayoutChanged(event: any) {
         const layoutId = event.target.value;
+        await game.settings.set('pfs-chronicle-generator', 'layout', layoutId);
         const layout = await layoutStore.getLayout(layoutId);
         const canvases = layout?.canvas ? Object.keys(layout.canvas) : [];
         
@@ -121,6 +126,29 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
             option.innerText = canvas;
             canvasDropdown.appendChild(option);
         }
+        
+        // Auto-populate blank chronicle path if defaultChronicleLocation exists and file is accessible
+        if (layout?.defaultChronicleLocation) {
+            try {
+                const response = await fetch(layout.defaultChronicleLocation, { method: 'HEAD' });
+                if (response.ok) {
+                    await game.settings.set('pfs-chronicle-generator', 'blankChroniclePath', layout.defaultChronicleLocation);
+                    const pdfFileInput = this.element.querySelector('#pdf-file') as HTMLInputElement;
+                    if (pdfFileInput) {
+                        pdfFileInput.value = layout.defaultChronicleLocation;
+                    }
+                }
+            } catch (error) {
+                // File doesn't exist or isn't accessible, don't update the setting
+                console.log(`Default chronicle location not accessible: ${layout.defaultChronicleLocation}`);
+            }
+        }
+    }
+
+    async _onSaveSelection(event: Event) {
+        event.preventDefault();
+        // Values have already been persisted on change; just close the window
+        this.close();
     }
 
     static async #handleFormSubmit(event: Event, form: HTMLFormElement, formData: any) : Promise<void> {

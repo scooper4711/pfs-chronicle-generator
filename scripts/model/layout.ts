@@ -4,6 +4,7 @@ export interface Layout {
     parent?: string;
     flags?: string[];
     aspectratio?: string;
+    defaultChronicleLocation?: string;
     parameters?: { [group: string]: { [name: string]: Parameter } };
     canvas?: { [name: string]: Canvas };
     presets?: { [name: string]: Preset };

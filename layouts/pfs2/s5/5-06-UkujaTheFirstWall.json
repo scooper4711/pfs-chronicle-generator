@@ -26,7 +26,7 @@
         "choices": [
           "were able to convince the council that you were peaceful",
           "the council remained suspicious of your actions",
-          "found Lord Rubak\u2019s dagger and/or",
+          "found Lord Rubak’s dagger and/or",
           "instructions from Lord Rubak on how to proceed with a demonic ritual! You presented this evidence to Brun Hornbreaker"
         ],
         "example": "were able to convince the council that you were peaceful"
@@ -57,7 +57,7 @@
       "x2": 33.283,
       "y2": 36.447
     },
-    "checkbox.found_Lord_Rubak\u2019s_dagger_and/or": {
+    "checkbox.found_Lord_Rubak’s_dagger_and/or": {
       "x": 96.193,
       "y": 42.767,
       "x2": 97.893,
@@ -190,12 +190,12 @@
             ]
           }
         ],
-        "found Lord Rubak\u2019s dagger and/or": [
+        "found Lord Rubak’s dagger and/or": [
           {
             "type": "checkbox",
             "presets": [
               "checkbox",
-              "checkbox.found_Lord_Rubak\u2019s_dagger_and/or"
+              "checkbox.found_Lord_Rubak’s_dagger_and/or"
             ]
           }
         ],
@@ -210,5 +210,6 @@
         ]
       }
     }
-  ]
+  ],
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-1/5-06-UkujaTheFirstWallChronicle.pdf"
 }

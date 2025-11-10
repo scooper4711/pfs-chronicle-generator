@@ -1,5 +1,6 @@
 {
   "id": "pfs2.s6-13",
   "description": "6-13 All That Glitters",
-  "parent": "pfs2.season6"
+  "parent": "pfs2.season6",
+  "defaultChronicleLocation": "modules/pf2e-pfs06-year-of-immortal-influence/assets/chronicles-2/6-13-AllThatGlitters.pdf"
 }

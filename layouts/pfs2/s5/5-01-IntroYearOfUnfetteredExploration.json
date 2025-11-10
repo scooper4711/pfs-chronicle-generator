@@ -8,12 +8,12 @@
         "type": "choice",
         "description": "Item line text to be struck out",
         "choices": [
-          "potion of retaliation, lesser (level 3, 12 gp; Pathfinder Advanced Player\u2019s Guide 259)",
+          "potion of retaliation, lesser (level 3, 12 gp; Pathfinder Advanced Player’s Guide 259)",
           "doubling rings (level 3, 50 gp)",
           "dragon turtle scale (level 4, 13 gp)",
-          "hunter\u2019s bane (level 2, 6 gp)"
+          "hunter’s bane (level 2, 6 gp)"
         ],
-        "example": "potion of retaliation, lesser (level 3, 12 gp; Pathfinder Advanced Player\u2019s Guide 259)"
+        "example": "potion of retaliation, lesser (level 3, 12 gp; Pathfinder Advanced Player’s Guide 259)"
       }
     },
     "Checkboxes": {
@@ -78,7 +78,7 @@
       "y": 24.1,
       "y2": 29.0
     },
-    "item.line.hunter\u2019s_bane_level_2_6_gp": {
+    "item.line.hunter’s_bane_level_2_6_gp": {
       "y": 29.7,
       "y2": 34.6
     }
@@ -88,7 +88,7 @@
       "type": "choice",
       "choices": "param:strikeout_item_lines",
       "content": {
-        "potion of retaliation, lesser (level 3, 12 gp; Pathfinder Advanced Player\u2019s Guide 259)": [
+        "potion of retaliation, lesser (level 3, 12 gp; Pathfinder Advanced Player’s Guide 259)": [
           {
             "type": "strikeout",
             "presets": [
@@ -115,12 +115,12 @@
             ]
           }
         ],
-        "hunter\u2019s bane (level 2, 6 gp)": [
+        "hunter’s bane (level 2, 6 gp)": [
           {
             "type": "strikeout",
             "presets": [
               "strikeout_item",
-              "item.line.hunter\u2019s_bane_level_2_6_gp"
+              "item.line.hunter’s_bane_level_2_6_gp"
             ]
           }
         ]
@@ -168,5 +168,6 @@
         ]
       }
     }
-  ]
+  ],
+  "defaultChronicleLocation": "modules/pf2e-pfs05-year-of-unfettered-exploration/assets/chronicles-1/5-01-IntroYearOfUnfetteredExplorationChronicle.pdf"
 }
