@@ -1,0 +1,315 @@
+{
+  "id": "pfs2.s4-11",
+  "description": "4-11 Prisoners Of The Electric Castle",
+  "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles-4/4-11-Prisoners-Of-The-Electric-Castle.pdf",
+  "parent": "pfs2.season4z",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "chameleon suit (level 4, 16 gp; Pathfinder Guns & Gears 67)",
+          "chameleon suit, greater (level 8, 80 gp; Pathfinder Guns & Gears 67)",
+          "electromuscular stimulatorR (level 5, 30 gp; Pathfinder Guns & Gears 68)",
+          "shockguard coilR (level 10, 175 gp; Pathfinder Guns & Gears 83)",
+          "+1 striking backpack ballista (level 4, 100 gp; Pathfinder Guns & Gears 62)"
+        ],
+        "example": "chameleon suit (level 4, 16 gp; Pathfinder Guns & Gears 67)"
+      }
+    },
+    "Checkboxes": {
+      "summary_checkbox": {
+        "type": "choice",
+        "description": "Checkboxes in the adventure summary that should be selected",
+        "choices": [
+          "found a mysterious object",
+          "you were unable to locate it among the strangeness of the castle",
+          "He escaped",
+          "you defeated him in battle! Before leaving",
+          "transformed and you unfortunately had to fight her",
+          "she was able to fight it off",
+          "all the Ardis Scholars",
+          "some of the Ardis Scholars",
+          "on the Gale\u2019s Claw",
+          "through the hallajin key",
+          "made it back with you",
+          "heroically sacrificed themself to get you home"
+        ],
+        "example": "found a mysterious object"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "checkbox": {
+      "canvas": "summary",
+      "color": "black",
+      "size": 1
+    },
+    "checkbox.found_a_mysterious_object": {
+      "x": 81.783,
+      "y": 26.367,
+      "x2": 83.483,
+      "y2": 36.453
+    },
+    "checkbox.you_were_unable_to_locate_it_among_the_strangeness": {
+      "x": 8.505,
+      "y": 34.57,
+      "x2": 10.205,
+      "y2": 44.656
+    },
+    "checkbox.He_escaped": {
+      "x": 37.052,
+      "y": 42.773,
+      "x2": 38.752,
+      "y2": 52.859
+    },
+    "checkbox.you_defeated_him_in_battle!_Before_leaving": {
+      "x": 50.584,
+      "y": 42.773,
+      "x2": 52.284,
+      "y2": 52.859
+    },
+    "checkbox.transformed_and_you_unfortunately_had_to_fight_her": {
+      "x": 30.445,
+      "y": 50.976,
+      "x2": 32.145,
+      "y2": 61.062
+    },
+    "checkbox.she_was_able_to_fight_it_off": {
+      "x": 73.521,
+      "y": 50.976,
+      "x2": 75.221,
+      "y2": 61.062
+    },
+    "checkbox.all_the_Ardis_Scholars": {
+      "x": 86.993,
+      "y": 59.179,
+      "x2": 88.693,
+      "y2": 69.265
+    },
+    "checkbox.some_of_the_Ardis_Scholars": {
+      "x": 9.889,
+      "y": 67.382,
+      "x2": 15.334,
+      "y2": 77.469
+    },
+    "checkbox.on_the_Gale\u2019s_Claw": {
+      "x": 31.993,
+      "y": 67.382,
+      "x2": 33.693,
+      "y2": 77.469
+    },
+    "checkbox.through_the_hallajin_key": {
+      "x": 50.818,
+      "y": 67.382,
+      "x2": 52.518,
+      "y2": 77.469
+    },
+    "checkbox.made_it_back_with_you": {
+      "x": 77.213,
+      "y": 67.382,
+      "x2": 78.913,
+      "y2": 77.469
+    },
+    "checkbox.heroically_sacrificed_themself_to_get_you_home": {
+      "x": 1.158,
+      "y": 75.586,
+      "x2": 2.858,
+      "y2": 85.672
+    },
+    "item.line.chameleon_suit_level_4_16_gp;_Pathfinder_Guns_&_": {
+      "y": 7.4,
+      "y2": 17.7
+    },
+    "item.line.chameleon_suit_greater_level_8_80_gp;_Pathfinde": {
+      "y": 18.7,
+      "y2": 28.9
+    },
+    "item.line.electromuscular_stimulatorR_level_5_30_gp;_Pathf": {
+      "y": 29.9,
+      "y2": 40.2
+    },
+    "item.line.shockguard_coilR_level_10_175_gp;_Pathfinder_Gun": {
+      "y": 41.1,
+      "y2": 51.4
+    },
+    "item.line.+1_striking_backpack_ballista_level_4_100_gp;_Pa": {
+      "y": 52.3,
+      "y2": 62.6
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "chameleon suit (level 4, 16 gp; Pathfinder Guns & Gears 67)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.chameleon_suit_level_4_16_gp;_Pathfinder_Guns_&_"
+            ]
+          }
+        ],
+        "chameleon suit, greater (level 8, 80 gp; Pathfinder Guns & Gears 67)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.chameleon_suit_greater_level_8_80_gp;_Pathfinde"
+            ]
+          }
+        ],
+        "electromuscular stimulatorR (level 5, 30 gp; Pathfinder Guns & Gears 68)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.electromuscular_stimulatorR_level_5_30_gp;_Pathf"
+            ]
+          }
+        ],
+        "shockguard coilR (level 10, 175 gp; Pathfinder Guns & Gears 83)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.shockguard_coilR_level_10_175_gp;_Pathfinder_Gun"
+            ]
+          }
+        ],
+        "+1 striking backpack ballista (level 4, 100 gp; Pathfinder Guns & Gears 62)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.+1_striking_backpack_ballista_level_4_100_gp;_Pa"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "choice",
+      "choices": "param:summary_checkbox",
+      "content": {
+        "found a mysterious object": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.found_a_mysterious_object"
+            ]
+          }
+        ],
+        "you were unable to locate it among the strangeness of the castle": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.you_were_unable_to_locate_it_among_the_strangeness"
+            ]
+          }
+        ],
+        "He escaped": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.He_escaped"
+            ]
+          }
+        ],
+        "you defeated him in battle! Before leaving": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.you_defeated_him_in_battle!_Before_leaving"
+            ]
+          }
+        ],
+        "transformed and you unfortunately had to fight her": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.transformed_and_you_unfortunately_had_to_fight_her"
+            ]
+          }
+        ],
+        "she was able to fight it off": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.she_was_able_to_fight_it_off"
+            ]
+          }
+        ],
+        "all the Ardis Scholars": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.all_the_Ardis_Scholars"
+            ]
+          }
+        ],
+        "some of the Ardis Scholars": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.some_of_the_Ardis_Scholars"
+            ]
+          }
+        ],
+        "on the Gale\u2019s Claw": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.on_the_Gale\u2019s_Claw"
+            ]
+          }
+        ],
+        "through the hallajin key": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.through_the_hallajin_key"
+            ]
+          }
+        ],
+        "made it back with you": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.made_it_back_with_you"
+            ]
+          }
+        ],
+        "heroically sacrificed themself to get you home": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.heroically_sacrificed_themself_to_get_you_home"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
