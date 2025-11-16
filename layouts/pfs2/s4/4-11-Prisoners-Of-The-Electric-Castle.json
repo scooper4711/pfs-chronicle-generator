@@ -2,7 +2,7 @@
   "id": "pfs2.s4-11",
   "description": "4-11 Prisoners Of The Electric Castle",
   "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles-4/4-11-Prisoners-Of-The-Electric-Castle.pdf",
-  "parent": "pfs2.season4z",
+  "parent": "pfs2.season4e",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {

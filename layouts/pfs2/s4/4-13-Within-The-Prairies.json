@@ -2,7 +2,7 @@
   "id": "pfs2.s4-13",
   "description": "4-13 Within The Prairies",
   "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles-4/4-13-Within-The-Prairies.pdf",
-  "parent": "pfs2.season4z",
+  "parent": "pfs2.season4e",
   "parameters": {
     "Checkboxes": {
       "summary_checkbox": {

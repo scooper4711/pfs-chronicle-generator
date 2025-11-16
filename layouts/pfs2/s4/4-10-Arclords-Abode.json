@@ -1,7 +1,7 @@
 {
   "id": "pfs2.s4-10",
   "description": "4-10 Arclords Abode",
-  "parent": "pfs2.season4z",
+  "parent": "pfs2.season4e",
     "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles-4/4-10-Arclords-Abode.pdf",
   "parameters": {
     "Items": {

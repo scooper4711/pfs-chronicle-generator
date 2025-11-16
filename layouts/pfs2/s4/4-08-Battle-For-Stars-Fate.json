@@ -1,0 +1,89 @@
+{
+  "id": "pfs2.s4-08",
+  "description": "4-08 Battle- For- Stars- Fate Chronicle",
+  "parent": "pfs2.season4a",
+  "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles-4/4-08-Battle-For-Stars-FateChronicle.pdf",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "eyepiece (level 3; 60 gp)",
+          "sealing chest (level 11; discounted to 1,125 gp; Pathfinder Pathfinder Society Guide 37)",
+          "of leaping (level 5; 21 gp)",
+          "grasshopper (level 5; 30 gp)"
+        ],
+        "example": "eyepiece (level 3; 60 gp)"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "item.line.eyepiece_level_3;_60_gp": {
+      "y": 1.5,
+      "y2": 6.0
+    },
+    "item.line.sealing_chest_level_11;_discounted_to_1125_gp;_P": {
+      "y": 6.6,
+      "y2": 16.2
+    },
+    "item.line.of_leaping_level_5;_21_gp": {
+      "y": 16.9,
+      "y2": 21.3
+    },
+    "item.line.grasshopper_level_5;_30_gp": {
+      "y": 22.0,
+      "y2": 26.5
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "eyepiece (level 3; 60 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.eyepiece_level_3;_60_gp"
+            ]
+          }
+        ],
+        "sealing chest (level 11; discounted to 1,125 gp; Pathfinder Pathfinder Society Guide 37)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.sealing_chest_level_11;_discounted_to_1125_gp;_P"
+            ]
+          }
+        ],
+        "of leaping (level 5; 21 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.of_leaping_level_5;_21_gp"
+            ]
+          }
+        ],
+        "grasshopper (level 5; 30 gp)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.grasshopper_level_5;_30_gp"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

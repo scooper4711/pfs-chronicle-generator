@@ -2,7 +2,7 @@
   "id": "pfs2.s4-14",
   "description": "4-14 Shattering Golden Chains",
   "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles-4/4-14-Shattering-Golden-Chains.pdf",
-  "parent": "pfs2.season4z",
+  "parent": "pfs2.season4e",
   "parameters": {
     "Items": {
       "strikeout_item_lines": {
