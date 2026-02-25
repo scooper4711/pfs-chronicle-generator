@@ -114,8 +114,7 @@
       "presets": [
         "defaultfont"
       ],
-      "canvas": "main",
-      "align": "CM"
+      "canvas": "main"
     },
     "rightbar": {
       "presets": [
@@ -130,7 +129,9 @@
         "defaultfont"
       ],
       "canvas": "main",
-      "align": "CB"
+      "align": "CB",
+      "y": 94.21,
+      "y2": 95.82
     },
     "max_area": {
     },
@@ -161,10 +162,13 @@
       "presets": [
         "player.infoline"
       ],
+      "canvas": "main",
       "fontweight": "bold",
       "align": "LB",
-      "x": 4.6,
-      "x2": 61.4
+      "x": 6.5,
+      "y": 11.1,
+      "x2": 63.8,
+      "y2": 13.7
     },
     {
       "type": "trigger",
@@ -173,26 +177,32 @@
         {
           "value": "param:societyid.player",
           "type": "text",
-          "fontsize": 9,
-          "fontweight": "bold",
           "presets": [
             "player.infoline"
           ],
-          "x": 61.7,
-          "x2": 81.5,
-          "align": "RM"
+          "canvas": "main",
+          "fontsize": 9,
+          "fontweight": "bold",
+          "align": "RM",
+          "x": 65.5,
+          "y": 11.6,
+          "x2": 83.0,
+          "y2": 13.7
         },
         {
           "value": "-",
           "type": "text",
-          "fontsize": 9,
-          "fontweight": "bold",
           "presets": [
             "player.infoline"
           ],
-          "x": 81.5,
-          "x2": 84.8,
-          "align": "CM"
+          "canvas": "main",
+          "fontsize": 9,
+          "fontweight": "bold",
+          "align": "CM",
+          "x": 83.0,
+          "y": 11.6,
+          "x2": 85.2,
+          "y2": 13.7
         },
         {
           "value": "param:societyid.char_without_first_digit",
@@ -200,11 +210,14 @@
           "presets": [
             "player.infoline"
           ],
+          "canvas": "main",
           "fontsize": 9,
           "fontweight": "bold",
-          "x": 84.8,
-          "x2": 94.8,
-          "align": "LM"
+          "align": "LM",
+          "x": 86.2,
+          "y": 11.6,
+          "x2": 92.7,
+          "y2": 13.7
         }
       ]
     },
@@ -214,8 +227,11 @@
       "presets": [
         "rightbar"
       ],
-      "y": 4.9,
-      "y2": 13.8
+      "canvas": "rightbar",
+      "x": 0.5,
+      "y": 4.4,
+      "x2": 101.1,
+      "y2": 12.3
     },
     {
       "value": "param:xp_gained",
@@ -223,8 +239,11 @@
       "presets": [
         "rightbar"
       ],
-      "y": 19,
-      "y2": 28
+      "canvas": "rightbar",
+      "x": 0.5,
+      "y": 16.9,
+      "x2": 101.1,
+      "y2": 24.7
     },
     {
       "value": "param:total_xp",
@@ -232,8 +251,11 @@
       "presets": [
         "rightbar"
       ],
-      "y": 33.2,
-      "y2": 42
+      "canvas": "rightbar",
+      "x": 0.5,
+      "y": 29.4,
+      "x2": 101.1,
+      "y2": 37.3
     },
     {
       "value": "param:starting_gp",
@@ -241,8 +263,11 @@
       "presets": [
         "rightbar"
       ],
-      "y": 46.9,
-      "y2": 56.7
+      "canvas": "rightbar",
+      "x": 0.5,
+      "y": 42.1,
+      "x2": 101.1,
+      "y2": 49.8
     },
     {
       "value": "Treasure:",
@@ -250,10 +275,13 @@
       "presets": [
         "rightbar"
       ],
+      "canvas": "rightbar",
       "align": "LB",
       "fontsize": 9,
-      "y": 62,
-      "y2": 65
+      "x": 0.0,
+      "y": 54.8,
+      "x2": 100.0,
+      "y2": 56.8
     },
     {
       "value": "param:treasure_bundles_gp",
@@ -261,11 +289,13 @@
       "presets": [
         "rightbar"
       ],
+      "canvas": "rightbar",
       "align": "RB",
       "fontsize": 9,
-      "x": 50,
-      "y": 62,
-      "y2": 65
+      "x": 50.0,
+      "y": 54.8,
+      "x2": 100.0,
+      "y2": 56.8
     },
     {
       "value": "Income:",
@@ -273,10 +303,13 @@
       "presets": [
         "rightbar"
       ],
+      "canvas": "rightbar",
       "align": "LB",
       "fontsize": 9,
-      "y": 65,
-      "y2": 68
+      "x": 0.0,
+      "y": 56.8,
+      "x2": 100.0,
+      "y2": 58.8
     },
     {
       "value": "param:income_earned",
@@ -284,11 +317,13 @@
       "presets": [
         "rightbar"
       ],
+      "canvas": "rightbar",
       "align": "RB",
       "fontsize": 9,
-      "x": 50,
-      "y": 65,
-      "y2": 68
+      "x": 50.0,
+      "y": 56.8,
+      "x2": 100.0,
+      "y2": 58.8
     },
     {
       "value": "GP Gained:",
@@ -296,10 +331,13 @@
       "presets": [
         "rightbar"
       ],
+      "canvas": "rightbar",
       "align": "LB",
       "fontsize": 9,
-      "y": 68,
-      "y2": 71
+      "x": 0.0,
+      "y": 58.8,
+      "x2": 100.0,
+      "y2": 62.6
     },
     {
       "value": "total_line",
@@ -307,11 +345,13 @@
       "presets": [
         "rightbar"
       ],
+      "canvas": "rightbar",
       "color": "black",
       "linewidth": 0.5,
-      "x": 50,
-      "y": 68,
-      "y2": 68.1
+      "x": 50.0,
+      "y": 58.8,
+      "x2": 100.0,
+      "y2": 58.9
     },
     {
       "value": "param:gp_gained",
@@ -319,11 +359,13 @@
       "presets": [
         "rightbar"
       ],
+      "canvas": "rightbar",
       "align": "RB",
       "fontsize": 9,
-      "x": 50,
-      "y": 68,
-      "y2": 71
+      "x": 50.0,
+      "y": 58.8,
+      "x2": 100.0,
+      "y2": 62.6
     },
     {
       "value": "param:gp_spent",
@@ -331,8 +373,11 @@
       "presets": [
         "rightbar"
       ],
-      "y": 77.2,
-      "y2": 86.2
+      "canvas": "rightbar",
+      "x": 0.5,
+      "y": 67.6,
+      "x2": 101.1,
+      "y2": 75.4
     },
     {
       "value": "param:total_gp",
@@ -340,8 +385,11 @@
       "presets": [
         "rightbar"
       ],
-      "y": 92,
-      "y2": 99
+      "canvas": "rightbar",
+      "x": 0.5,
+      "y": 80.4,
+      "x2": 101.1,
+      "y2": 88.2
     },
     {
       "value": "param:event",
@@ -349,9 +397,12 @@
       "presets": [
         "event.infoline"
       ],
+      "canvas": "main",
       "align": "LB",
-      "x": 2,
-      "x2": 45.2
+      "x": 2.0,
+      "x2": 45.2,
+      "y": 94.21,
+      "y2": 94.73
     },
     {
       "value": "param:eventcode",
@@ -359,9 +410,12 @@
       "presets": [
         "event.infoline"
       ],
+      "canvas": "main",
       "align": "LB",
       "x": 47.2,
-      "x2": 62.2
+      "x2": 62.2,
+      "y": 94.73,
+      "y2": 95.11
     },
     {
       "value": "param:date",
@@ -369,8 +423,12 @@
       "presets": [
         "event.infoline"
       ],
+      "canvas": "main",
+      "align": "CB",
       "x": 64.0,
-      "x2": 78.6
+      "x2": 78.6,
+      "y": 95.11,
+      "y2": 95.32
     },
     {
       "value": "param:gmid",
@@ -378,8 +436,12 @@
       "presets": [
         "event.infoline"
       ],
+      "canvas": "main",
+      "align": "CB",
       "x": 80.1,
-      "x2": 99.4
+      "x2": 99.4,
+      "y": 95.32,
+      "y2": 95.82
     },
     {
       "value": "param:reputation",
@@ -389,8 +451,11 @@
       ],
       "canvas": "reputation",
       "align": "LM",
-      "lines": 3,
-      "x": 1
+      "lines": 5,
+      "x": 0.0,
+      "y": 0.0,
+      "x2": 100.0,
+      "y2": 100.0
     },
     {
       "value": "param:notes",
@@ -400,9 +465,12 @@
       ],
       "canvas": "notes",
       "align": "LM",
-      "lines": 12,
-      "x": 1,
-      "y": 3.8
+      "lines": 22,
+      "fontsize": 12,
+      "x": 0.0,
+      "y": 0.0,
+      "x2": 100.0,
+      "y2": 100.0
     }
   ],
   "canvas": {

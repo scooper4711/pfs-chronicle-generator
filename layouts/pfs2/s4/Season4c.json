@@ -130,7 +130,9 @@
         "defaultfont"
       ],
       "canvas": "main",
-      "align": "CB"
+      "align": "CB",
+      "y": 94.21,
+      "y2": 95.82
     },
     "max_area": {
     },
