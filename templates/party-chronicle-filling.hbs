@@ -1,0 +1,150 @@
+{{!-- Sidebar with shared fields --}}
+<aside class="sidebar">
+    <ol class="box-list chronicle-shared">
+        <li class="box summary">
+            <header>Event Details</header>
+            <div class="summary-data">
+                <div class="form-group">
+                    <label for="gmPfsNumber">GM PFS Number</label>
+                    <input type="text" id="gmPfsNumber" name="shared.gmPfsNumber" value="{{shared.gmPfsNumber}}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="season">Season</label>
+                    <select id="season" name="shared.seasonId">
+                        {{#each seasons}}
+                            <option value="{{this.id}}" {{#if (eq this.id ../selectedSeasonId)}}selected{{/if}}>{{this.name}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="layout">Layout</label>
+                    <select id="layout" name="shared.layoutId">
+                        {{#each layoutsInSeason}}
+                            <option value="{{this.id}}" {{#if (eq this.id ../selectedLayoutId)}}selected{{/if}}>{{this.description}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="scenarioName">Scenario Name</label>
+                    <input type="text" id="scenarioName" name="shared.scenarioName" value="{{shared.scenarioName}}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventCode">Event Code</label>
+                    <input type="text" id="eventCode" name="shared.eventCode" value="{{shared.eventCode}}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventDate">Event Date</label>
+                    <input type="date" id="eventDate" name="shared.eventDate" value="{{shared.eventDate}}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="blankChroniclePath">Chronicle Path</label>
+                    <input type="text" id="blankChroniclePath" name="shared.blankChroniclePath" value="{{shared.blankChroniclePath}}" readonly>
+                </div>
+            </div>
+        </li>
+        
+        <li class="box summary">
+            <header>Shared Rewards</header>
+            <div class="summary-data">
+                <div class="form-group">
+                    <label for="xpEarned">XP Earned</label>
+                    <input type="number" id="xpEarned" name="shared.xpEarned" value="{{shared.xpEarned}}" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="treasureBundles">Treasure Bundles</label>
+                    <input type="number" id="treasureBundles" name="shared.treasureBundles" value="{{shared.treasureBundles}}" min="0" max="10">
+                </div>
+            </div>
+        </li>
+        
+        <li class="box summary">
+            <header>Adventure Summary</header>
+            <div class="summary-data" id="adventureSummaryCheckboxes">
+                <div class="checkbox-choices">
+                    {{!-- Will be populated dynamically based on layout --}}
+                </div>
+            </div>
+        </li>
+        
+        <li class="box summary">
+            <header>Items to Strike Out</header>
+            <div class="summary-data" id="strikeoutItems">
+                <div class="strikeout-choices">
+                    {{!-- Will be populated dynamically based on layout --}}
+                </div>
+            </div>
+        </li>
+    </ol>
+</aside>
+
+{{!-- Main content area with character-specific fields --}}
+<section class="content">
+    {{!-- Validation error summary panel --}}
+    <div class="validation-errors" id="validationErrors" style="display: none;">
+        <h4>Please correct the following errors:</h4>
+        <ul id="validationErrorList"></ul>
+    </div>
+    
+    <header class="content-header">
+        <h3>Character-Specific Information</h3>
+        <div class="buttons">
+            <button type="button" id="clearData" class="icon fa-solid fa-trash" data-tooltip aria-label="Clear Data"></button>
+            <button type="submit" id="generateChronicles" class="icon fa-solid fa-file-pdf" data-tooltip aria-label="Generate Chronicles"></button>
+        </div>
+    </header>
+    
+    <div class="activities">
+        {{#each partyMembers}}
+            <section class="member-activity" data-character-id="{{this.id}}">
+                <div class="character-info">
+                    <div class="actor-image">
+                        <img class="actor-link" src="{{this.img}}" alt="{{this.name}}">
+                    </div>
+                    <div class="character-identity">
+                        <div class="character-name">{{this.name}}</div>
+                        <div class="character-society-id">{{#if this.societyId}}{{this.societyId}}{{else}}<em>No Society ID</em>{{/if}}</div>
+                        <div class="character-level">Level {{this.level}}</div>
+                    </div>
+                    {{!-- Hidden fields to preserve data --}}
+                    <input type="hidden" name="characters.{{this.id}}.characterName" value="{{this.name}}">
+                    <input type="hidden" name="characters.{{this.id}}.societyId" value="{{this.societyId}}">
+                    <input type="hidden" name="characters.{{this.id}}.level" value="{{this.level}}">
+                </div>
+                
+                <div class="character-fields">
+                    <div class="form-group">
+                        <label for="incomeEarned-{{this.id}}">Income Earned</label>
+                        <input type="number" id="incomeEarned-{{this.id}}" name="characters.{{this.id}}.incomeEarned" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'incomeEarned'}}{{else}}0{{/if}}" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="goldEarned-{{this.id}}">Gold Earned</label>
+                        <input type="number" id="goldEarned-{{this.id}}" name="characters.{{this.id}}.goldEarned" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'goldEarned'}}{{else}}0{{/if}}" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="goldSpent-{{this.id}}">Gold Spent</label>
+                        <input type="number" id="goldSpent-{{this.id}}" name="characters.{{this.id}}.goldSpent" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'goldSpent'}}{{else}}0{{/if}}" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reputation-{{this.id}}">Reputation</label>
+                        <input type="text" id="reputation-{{this.id}}" name="characters.{{this.id}}.reputation" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'reputation'}}{{/if}}">
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="notes-{{this.id}}">Notes</label>
+                        <textarea id="notes-{{this.id}}" name="characters.{{this.id}}.notes" rows="3">{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'notes'}}{{/if}}</textarea>
+                    </div>
+                </div>
+            </section>
+        {{/each}}
+    </div>
+</section>

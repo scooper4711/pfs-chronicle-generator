@@ -121,3 +121,216 @@
 .pfs-layout-designer .pfscg-btn {
     padding: 0.25rem 0.5rem;
 }
+
+/* Party Chronicle Filling - Society Tab Styling */
+/* Match the exploration tab's member-activity styling */
+.sheet.party [data-tab=pfs] .activities .member-activity {
+    border-image-repeat: repeat;
+    border-image-slice: 11;
+    border-image-source: url(../../../systems/pf2e/assets/sheet/frame-elegant.svg);
+    border-image-width: 14px;
+    border-style: double;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+
+/* Character info section - left column with image and identity */
+.sheet.party [data-tab=pfs] .activities .member-activity .character-info {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 120px;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .actor-image {
+    flex-shrink: 0;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .actor-image img {
+    width: 64px;
+    height: 64px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .character-identity {
+    text-align: center;
+    font-size: var(--font-size-12);
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .character-name {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .character-society-id {
+    color: var(--color-text-dark-secondary, #666);
+    margin-bottom: 0.25rem;
+    font-size: 0.8rem;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .character-level {
+    font-size: 0.8rem;
+}
+
+/* Character fields - right column with editable fields */
+.sheet.party [data-tab=pfs] .activities .member-activity .character-fields {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.25rem;
+    align-items: start;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .form-group {
+    margin-bottom: 0;
+    align-items: baseline;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .form-group label {
+    display: block;
+    font-size: var(--font-size-12);
+    font-weight: 600;
+    margin-bottom: 0.1rem;
+    white-space: nowrap;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .form-group input,
+.sheet.party [data-tab=pfs] .activities .member-activity .form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Sidebar form field styling */
+.sheet.party [data-tab=pfs] .sidebar {
+    min-width: 300px;
+    max-width: 350px;
+    flex-shrink: 0;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .form-group {
+    margin-bottom: 0.5rem;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .form-group label {
+    display: block;
+    font-size: var(--font-size-12);
+    margin-bottom: 0.25rem;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .form-group input,
+.sheet.party [data-tab=pfs] .sidebar .form-group select {
+    width: 55%;
+    max-width: 280px;
+    box-sizing: border-box;
+    font-size: var(--font-size-12);
+    padding: 0.25rem;
+    /* Override Foundry's flex: 3 on form-group children */
+    flex: none;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .summary-data {
+    max-width: 100%;
+    overflow: visible;
+}
+
+/* Checkbox sections styling - checkbox on left, label on right */
+.sheet.party [data-tab=pfs] .sidebar .checkbox-choices,
+.sheet.party [data-tab=pfs] .sidebar .strikeout-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start !important; /* Override center alignment */
+}
+
+.sheet.party [data-tab=pfs] .sidebar .checkbox-choice,
+.sheet.party [data-tab=pfs] .sidebar .item-choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .checkbox-choice input[type="checkbox"],
+.sheet.party [data-tab=pfs] .sidebar .item-choice input[type="checkbox"] {
+    margin: 0;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .checkbox-choice label,
+.sheet.party [data-tab=pfs] .sidebar .item-choice label {
+    margin: 0;
+    cursor: pointer;
+    font-size: var(--font-size-12);
+    flex: 1;
+}
+
+/* Hide checkbox sections when empty */
+.sheet.party [data-tab=pfs] .sidebar #adventureSummaryCheckboxes:empty,
+.sheet.party [data-tab=pfs] .sidebar #strikeoutItems:empty {
+    display: none;
+}
+
+.sheet.party [data-tab=pfs] .sidebar #adventureSummaryCheckboxes .checkbox-choices:empty,
+.sheet.party [data-tab=pfs] .sidebar #strikeoutItems .strikeout-choices:empty {
+    display: none;
+}
+
+/* Hide the parent box.summary when checkbox container is empty */
+.sheet.party [data-tab=pfs] .sidebar li.box.summary:has(#adventureSummaryCheckboxes .checkbox-choices:empty),
+.sheet.party [data-tab=pfs] .sidebar li.box.summary:has(#strikeoutItems .strikeout-choices:empty) {
+    display: none;
+}
+
+/* Validation error styling */
+.sheet.party [data-tab=pfs] .validation-errors {
+    background-color: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    border-radius: 4px;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.sheet.party [data-tab=pfs] .validation-errors h4 {
+    margin: 0 0 0.5rem 0;
+    color: #d32f2f;
+    font-size: var(--font-size-14);
+    font-weight: bold;
+}
+
+.sheet.party [data-tab=pfs] .validation-errors ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    list-style-type: disc;
+}
+
+.sheet.party [data-tab=pfs] .validation-errors li {
+    color: #d32f2f;
+    font-size: var(--font-size-12);
+    margin-bottom: 0.25rem;
+}
+
+/* Invalid field styling */
+.sheet.party [data-tab=pfs] .form-group.has-error input,
+.sheet.party [data-tab=pfs] .form-group.has-error select,
+.sheet.party [data-tab=pfs] .form-group.has-error textarea {
+    border-color: #d32f2f;
+    background-color: rgba(255, 0, 0, 0.05);
+}
+
+.sheet.party [data-tab=pfs] .form-group .field-error {
+    color: #d32f2f;
+    font-size: var(--font-size-10);
+    margin-top: 0.15rem;
+    display: block;
+}

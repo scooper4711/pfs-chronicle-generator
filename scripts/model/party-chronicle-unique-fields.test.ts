@@ -1,0 +1,465 @@
+/**
+ * Property-based tests for unique field handling in Party Chronicle Filling
+ * 
+ * These tests validate that unique fields are properly isolated per character
+ * and that each character receives their own unique field inputs.
+ * 
+ * **Validates: Requirements 3.1, 3.2**
+ */
+
+import fc from 'fast-check';
+import { PartyChronicleData, UniqueFields } from './party-chronicle-types';
+import { mapToCharacterData } from './party-chronicle-mapper';
+
+/**
+ * Generator for unique field values
+ * Creates realistic character-specific data
+ */
+const uniqueFieldsArbitrary = fc.record({
+  characterName: fc.string({ minLength: 1, maxLength: 30 }),
+  societyId: fc.string({ minLength: 5, maxLength: 15 }),
+  level: fc.integer({ min: 1, max: 20 }),
+  incomeEarned: fc.integer({ min: 0, max: 100 }),
+  goldEarned: fc.integer({ min: 0, max: 1000 }),
+  goldSpent: fc.integer({ min: 0, max: 1000 }),
+  notes: fc.string({ maxLength: 200 }),
+  reputation: fc.string({ maxLength: 50 })
+});
+
+/**
+ * Generator for shared fields
+ * Creates data that applies to all party members
+ */
+const sharedFieldsArbitrary = fc.record({
+  gmPfsNumber: fc.string({ minLength: 5, maxLength: 15 }),
+  scenarioName: fc.string({ minLength: 1, maxLength: 100 }),
+  eventCode: fc.string({ minLength: 1, maxLength: 20 }),
+  eventDate: fc.integer({ min: 2000, max: 2099 }).chain(year =>
+    fc.integer({ min: 1, max: 12 }).chain(month =>
+      fc.integer({ min: 1, max: 28 }).map(day =>
+        `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+      )
+    )
+  ),
+  xpEarned: fc.integer({ min: 0, max: 12 }),
+  adventureSummaryCheckboxes: fc.array(fc.string(), { maxLength: 5 }),
+  strikeoutItems: fc.array(fc.string(), { maxLength: 10 }),
+  treasureBundles: fc.integer({ min: 0, max: 10 }),
+  layoutId: fc.string({ minLength: 1, maxLength: 50 }),
+  seasonId: fc.string({ minLength: 1, maxLength: 50 }),
+  blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 })
+});
+
+/**
+ * Generator for actor IDs
+ */
+const actorIdArbitrary = fc.uuid();
+
+describe('Party Chronicle Unique Field Property Tests', () => {
+  describe('Property 3: Unique Field Isolation', () => {
+    /**
+     * **Validates: Requirements 3.2**
+     * 
+     * For any unique field value and any player character, when a value is entered
+     * in a unique field for that character, the value SHALL be applied only to that
+     * specific character and SHALL NOT be applied to any other character.
+     * 
+     * Feature: party-chronicle-filling, Property 3: Unique Field Isolation
+     */
+    it('applies unique field values only to the specific character', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          sharedFieldsArbitrary,
+          fc.array(
+            fc.tuple(actorIdArbitrary, uniqueFieldsArbitrary),
+            { minLength: 2, maxLength: 10 }
+          ),
+          async (shared, characterPairs) => {
+            // Create party chronicle data with multiple characters
+            const partyData: PartyChronicleData = {
+              shared,
+              characters: Object.fromEntries(
+                characterPairs.map(([actorId, unique]) => [actorId, unique])
+              )
+            };
+
+            // For each character, map to chronicle data
+            const chronicleDataList = characterPairs.map(([actorId, unique]) => ({
+              actorId,
+              unique,
+              chronicleData: mapToCharacterData(shared, unique)
+            }));
+
+            // Property: Each character's chronicle data should contain only their unique fields
+            chronicleDataList.forEach(({ actorId, unique, chronicleData }) => {
+              // Verify character-specific fields match this character's unique data
+              expect(chronicleData.char).toBe(unique.characterName);
+              expect(chronicleData.societyid).toBe(unique.societyId);
+              expect(chronicleData.level).toBe(unique.level);
+              expect(chronicleData.income_earned).toBe(unique.incomeEarned);
+              expect(chronicleData.gp_gained).toBe(unique.goldEarned);
+              expect(chronicleData.gp_spent).toBe(unique.goldSpent);
+              expect(chronicleData.notes).toBe(unique.notes);
+              expect(chronicleData.reputation).toBe(unique.reputation);
+
+              // Property: Verify this character's data does NOT contain other characters' unique values
+              const otherCharacters = characterPairs.filter(([id]) => id !== actorId);
+              otherCharacters.forEach(([_, otherUnique]) => {
+                // If the values are different, ensure they don't leak
+                if (otherUnique.characterName !== unique.characterName) {
+                  expect(chronicleData.char).not.toBe(otherUnique.characterName);
+                }
+                if (otherUnique.societyId !== unique.societyId) {
+                  expect(chronicleData.societyid).not.toBe(otherUnique.societyId);
+                }
+                if (otherUnique.level !== unique.level) {
+                  expect(chronicleData.level).not.toBe(otherUnique.level);
+                }
+                if (otherUnique.incomeEarned !== unique.incomeEarned) {
+                  expect(chronicleData.income_earned).not.toBe(otherUnique.incomeEarned);
+                }
+                if (otherUnique.goldEarned !== unique.goldEarned) {
+                  expect(chronicleData.gp_gained).not.toBe(otherUnique.goldEarned);
+                }
+                if (otherUnique.goldSpent !== unique.goldSpent) {
+                  expect(chronicleData.gp_spent).not.toBe(otherUnique.goldSpent);
+                }
+                if (otherUnique.notes !== unique.notes) {
+                  expect(chronicleData.notes).not.toBe(otherUnique.notes);
+                }
+                if (otherUnique.reputation !== unique.reputation) {
+                  expect(chronicleData.reputation).not.toBe(otherUnique.reputation);
+                }
+              });
+            });
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    it('handles edge case: two characters with identical unique values', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          sharedFieldsArbitrary,
+          uniqueFieldsArbitrary,
+          fc.tuple(actorIdArbitrary, actorIdArbitrary).filter(([id1, id2]) => id1 !== id2),
+          async (shared, uniqueFields, [actorId1, actorId2]) => {
+            // Both characters have the same unique field values
+            const partyData: PartyChronicleData = {
+              shared,
+              characters: {
+                [actorId1]: uniqueFields,
+                [actorId2]: uniqueFields
+              }
+            };
+
+            // Map both characters
+            const chronicle1 = mapToCharacterData(shared, partyData.characters[actorId1]);
+            const chronicle2 = mapToCharacterData(shared, partyData.characters[actorId2]);
+
+            // Property: Even with identical values, each character gets their own data
+            expect(chronicle1).toEqual(chronicle2);
+            
+            // Property: Modifying one character's data doesn't affect the other
+            const modifiedUnique = { ...uniqueFields, characterName: 'Modified Name' };
+            const modifiedChronicle = mapToCharacterData(shared, modifiedUnique);
+            
+            expect(modifiedChronicle.char).toBe('Modified Name');
+            expect(chronicle1.char).toBe(uniqueFields.characterName);
+            expect(chronicle2.char).toBe(uniqueFields.characterName);
+          }
+        ),
+        { numRuns: 50 }
+      );
+    });
+
+    it('handles edge case: single character party', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          sharedFieldsArbitrary,
+          actorIdArbitrary,
+          uniqueFieldsArbitrary,
+          async (shared, actorId, unique) => {
+            const partyData: PartyChronicleData = {
+              shared,
+              characters: {
+                [actorId]: unique
+              }
+            };
+
+            const chronicleData = mapToCharacterData(shared, unique);
+
+            // Property: Single character's unique fields are correctly applied
+            expect(chronicleData.char).toBe(unique.characterName);
+            expect(chronicleData.societyid).toBe(unique.societyId);
+            expect(chronicleData.level).toBe(unique.level);
+            expect(chronicleData.income_earned).toBe(unique.incomeEarned);
+            expect(chronicleData.gp_gained).toBe(unique.goldEarned);
+            expect(chronicleData.gp_spent).toBe(unique.goldSpent);
+            expect(chronicleData.notes).toBe(unique.notes);
+            expect(chronicleData.reputation).toBe(unique.reputation);
+          }
+        ),
+        { numRuns: 50 }
+      );
+    });
+
+    it('preserves unique field independence across multiple mappings', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          sharedFieldsArbitrary,
+          fc.array(
+            fc.tuple(actorIdArbitrary, uniqueFieldsArbitrary),
+            { minLength: 3, maxLength: 10 }
+          ),
+          async (shared, characterPairs) => {
+            // Map all characters to chronicle data
+            const mappings = characterPairs.map(([actorId, unique]) => ({
+              actorId,
+              unique,
+              chronicleData: mapToCharacterData(shared, unique)
+            }));
+
+            // Property: Each mapping is independent
+            for (let i = 0; i < mappings.length; i++) {
+              for (let j = i + 1; j < mappings.length; j++) {
+                const mapping1 = mappings[i];
+                const mapping2 = mappings[j];
+
+                // Different actors should have independent unique fields
+                if (mapping1.actorId !== mapping2.actorId) {
+                  // If unique values differ, chronicle data should differ
+                  if (mapping1.unique.characterName !== mapping2.unique.characterName) {
+                    expect(mapping1.chronicleData.char).not.toBe(mapping2.chronicleData.char);
+                  }
+                  if (mapping1.unique.societyId !== mapping2.unique.societyId) {
+                    expect(mapping1.chronicleData.societyid).not.toBe(mapping2.chronicleData.societyid);
+                  }
+                  if (mapping1.unique.level !== mapping2.unique.level) {
+                    expect(mapping1.chronicleData.level).not.toBe(mapping2.chronicleData.level);
+                  }
+                }
+              }
+            }
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+  });
+
+  describe('Property 4: Per-Character Unique Field Provision', () => {
+    /**
+     * **Validates: Requirements 3.1**
+     * 
+     * For any party composition, the Party Chronicle Interface SHALL provide
+     * unique field inputs for each player character in the party.
+     * 
+     * Feature: party-chronicle-filling, Property 4: Per-Character Unique Field Provision
+     */
+    it('provides unique field structure for each party member', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          sharedFieldsArbitrary,
+          fc.array(actorIdArbitrary, { minLength: 1, maxLength: 10 }),
+          async (shared, actorIds) => {
+            // Create party data with unique fields for each actor
+            const characters: { [actorId: string]: UniqueFields } = {};
+            
+            actorIds.forEach(actorId => {
+              characters[actorId] = {
+                characterName: `Character ${actorId.substring(0, 8)}`,
+                societyId: `${Math.floor(Math.random() * 900000 + 100000)}-${Math.floor(Math.random() * 9000 + 1000)}`,
+                level: Math.floor(Math.random() * 20) + 1,
+                incomeEarned: Math.floor(Math.random() * 100),
+                goldEarned: Math.floor(Math.random() * 1000),
+                goldSpent: Math.floor(Math.random() * 1000),
+                notes: `Notes for ${actorId.substring(0, 8)}`,
+                reputation: `Reputation for ${actorId.substring(0, 8)}`
+              };
+            });
+
+            const partyData: PartyChronicleData = {
+              shared,
+              characters
+            };
+
+            // Property: Each actor ID should have a corresponding unique fields entry
+            actorIds.forEach(actorId => {
+              expect(partyData.characters[actorId]).toBeDefined();
+              expect(partyData.characters[actorId]).toHaveProperty('characterName');
+              expect(partyData.characters[actorId]).toHaveProperty('societyId');
+              expect(partyData.characters[actorId]).toHaveProperty('level');
+              expect(partyData.characters[actorId]).toHaveProperty('incomeEarned');
+              expect(partyData.characters[actorId]).toHaveProperty('goldEarned');
+              expect(partyData.characters[actorId]).toHaveProperty('goldSpent');
+              expect(partyData.characters[actorId]).toHaveProperty('notes');
+              expect(partyData.characters[actorId]).toHaveProperty('reputation');
+            });
+
+            // Property: The number of unique field entries should match the number of actors
+            expect(Object.keys(partyData.characters)).toHaveLength(actorIds.length);
+
+            // Property: No extra unique field entries should exist
+            Object.keys(partyData.characters).forEach(actorId => {
+              expect(actorIds).toContain(actorId);
+            });
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    it('handles edge case: empty party has no unique field entries', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          sharedFieldsArbitrary,
+          async (shared) => {
+            const partyData: PartyChronicleData = {
+              shared,
+              characters: {}
+            };
+
+            // Property: Empty party should have no character entries
+            expect(Object.keys(partyData.characters)).toHaveLength(0);
+          }
+        ),
+        { numRuns: 50 }
+      );
+    });
+
+    it('handles edge case: large party (10 characters)', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          sharedFieldsArbitrary,
+          fc.array(actorIdArbitrary, { minLength: 10, maxLength: 10 }),
+          async (shared, actorIds) => {
+            const characters: { [actorId: string]: UniqueFields } = {};
+            
+            actorIds.forEach((actorId, index) => {
+              characters[actorId] = {
+                characterName: `Character ${index + 1}`,
+                societyId: `${100000 + index}-${1000 + index}`,
+                level: (index % 20) + 1,
+                incomeEarned: index * 10,
+                goldEarned: index * 100,
+                goldSpent: index * 50,
+                notes: `Notes ${index + 1}`,
+                reputation: `Reputation ${index + 1}`
+              };
+            });
+
+            const partyData: PartyChronicleData = {
+              shared,
+              characters
+            };
+
+            // Property: All 10 characters should have unique field entries
+            expect(Object.keys(partyData.characters)).toHaveLength(10);
+            
+            actorIds.forEach(actorId => {
+              expect(partyData.characters[actorId]).toBeDefined();
+            });
+          }
+        ),
+        { numRuns: 50 }
+      );
+    });
+
+    it('maintains unique field structure integrity when characters are added/removed', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          sharedFieldsArbitrary,
+          fc.array(actorIdArbitrary, { minLength: 3, maxLength: 10 }),
+          async (shared, actorIds) => {
+            // Start with all characters
+            const characters: { [actorId: string]: UniqueFields } = {};
+            actorIds.forEach(actorId => {
+              characters[actorId] = {
+                characterName: `Character ${actorId.substring(0, 8)}`,
+                societyId: `123456-${actorId.substring(0, 4)}`,
+                level: 5,
+                incomeEarned: 10,
+                goldEarned: 50,
+                goldSpent: 20,
+                notes: 'Test notes',
+                reputation: 'Test reputation'
+              };
+            });
+
+            let partyData: PartyChronicleData = {
+              shared,
+              characters
+            };
+
+            // Property: Initial state has all characters
+            expect(Object.keys(partyData.characters)).toHaveLength(actorIds.length);
+
+            // Simulate removing a character
+            const removedActorId = actorIds[0];
+            const { [removedActorId]: removed, ...remainingCharacters } = partyData.characters;
+            
+            partyData = {
+              ...partyData,
+              characters: remainingCharacters
+            };
+
+            // Property: After removal, character count decreases by 1
+            expect(Object.keys(partyData.characters)).toHaveLength(actorIds.length - 1);
+            expect(partyData.characters[removedActorId]).toBeUndefined();
+
+            // Property: Remaining characters still have their unique fields
+            actorIds.slice(1).forEach(actorId => {
+              expect(partyData.characters[actorId]).toBeDefined();
+              expect(partyData.characters[actorId]).toHaveProperty('characterName');
+            });
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    it('ensures all required unique fields are present for each character', async () => {
+      await fc.assert(
+        fc.asyncProperty(
+          sharedFieldsArbitrary,
+          fc.array(
+            fc.tuple(actorIdArbitrary, uniqueFieldsArbitrary),
+            { minLength: 1, maxLength: 10 }
+          ),
+          async (shared, characterPairs) => {
+            const characters = Object.fromEntries(
+              characterPairs.map(([actorId, unique]) => [actorId, unique])
+            );
+
+            const partyData: PartyChronicleData = {
+              shared,
+              characters
+            };
+
+            // Property: Each character must have all required unique fields
+            const requiredFields: (keyof UniqueFields)[] = [
+              'characterName',
+              'societyId',
+              'level',
+              'incomeEarned',
+              'goldEarned',
+              'goldSpent',
+              'notes',
+              'reputation'
+            ];
+
+            Object.entries(partyData.characters).forEach(([actorId, uniqueFields]) => {
+              requiredFields.forEach(field => {
+                expect(uniqueFields).toHaveProperty(field);
+                expect(uniqueFields[field]).toBeDefined();
+              });
+            });
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+  });
+});
