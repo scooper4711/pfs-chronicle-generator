@@ -8,6 +8,15 @@ import { mapToCharacterData } from './party-chronicle-mapper';
 import { SharedFields, UniqueFields } from './party-chronicle-types';
 
 describe('mapToCharacterData', () => {
+  const createMockActor = (actorId: string, currentFaction: string | null = null) => ({
+    id: actorId,
+    system: {
+      pfs: {
+        currentFaction
+      }
+    }
+  });
+
   it('should correctly map shared and unique fields to ChronicleData format', () => {
     const shared: SharedFields = {
       gmPfsNumber: '12345',
@@ -20,7 +29,16 @@ describe('mapToCharacterData', () => {
       treasureBundles: 2,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 2,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
     };
 
     const unique: UniqueFields = {
@@ -30,11 +48,11 @@ describe('mapToCharacterData', () => {
       incomeEarned: 8,
       goldEarned: 24,
       goldSpent: 10,
-      notes: 'Saved the village from bandits',
-      reputation: 'Envoy\'s Alliance: +2'
+      notes: 'Saved the village from bandits'
     };
 
-    const result = mapToCharacterData(shared, unique);
+    const actor = createMockActor('actor-1', 'EA');
+    const result = mapToCharacterData(shared, unique, actor);
 
     // Character identification
     expect(result.char).toBe('Valeros');
@@ -53,9 +71,9 @@ describe('mapToCharacterData', () => {
     expect(result.gp_gained).toBe(24);
     expect(result.gp_spent).toBe(10);
 
-    // Notes and reputation
+    // Notes and reputation (reputation is now calculated)
     expect(result.notes).toBe('Saved the village from bandits');
-    expect(result.reputation).toBe('Envoy\'s Alliance: +2');
+    expect(result.reputation).toEqual(["Envoy's Alliance: +4"]); // 2 (faction-specific) + 2 (chosen)
 
     // Layout-dependent selections
     expect(result.summary_checkbox).toEqual(['Found the artifact', 'Saved the village']);
@@ -77,7 +95,16 @@ describe('mapToCharacterData', () => {
       treasureBundles: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
     };
 
     const unique: UniqueFields = {
@@ -87,17 +114,17 @@ describe('mapToCharacterData', () => {
       incomeEarned: 12,
       goldEarned: 36,
       goldSpent: 0,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
-    const result = mapToCharacterData(shared, unique);
+    const actor = createMockActor('actor-2', null);
+    const result = mapToCharacterData(shared, unique, actor);
 
     expect(result.summary_checkbox).toEqual([]);
     expect(result.strikeout_item_lines).toEqual([]);
     expect(result.treasure_bundles).toBe('0');
     expect(result.notes).toBe('');
-    expect(result.reputation).toBe('');
+    expect(result.reputation).toEqual([]); // No reputation since all values are 0
   });
 
   it('should handle zero values correctly', () => {
@@ -112,7 +139,16 @@ describe('mapToCharacterData', () => {
       treasureBundles: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
     };
 
     const unique: UniqueFields = {
@@ -122,11 +158,11 @@ describe('mapToCharacterData', () => {
       incomeEarned: 0,
       goldEarned: 0,
       goldSpent: 0,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
-    const result = mapToCharacterData(shared, unique);
+    const actor = createMockActor('actor-3', null);
+    const result = mapToCharacterData(shared, unique, actor);
 
     expect(result.xp_gained).toBe(0);
     expect(result.income_earned).toBe(0);
@@ -146,7 +182,16 @@ describe('mapToCharacterData', () => {
       treasureBundles: 3,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
     };
 
     const unique: UniqueFields = {
@@ -156,11 +201,11 @@ describe('mapToCharacterData', () => {
       incomeEarned: 8,
       goldEarned: 24,
       goldSpent: 10,
-      notes: 'Notes with "quotes" & special chars',
-      reputation: 'Faction: +2'
+      notes: 'Notes with "quotes" & special chars'
     };
 
-    const result = mapToCharacterData(shared, unique);
+    const actor = createMockActor('actor-4', null);
+    const result = mapToCharacterData(shared, unique, actor);
 
     expect(result.char).toBe('O\'Brien');
     expect(result.event).toBe('The Dragon\'s "Lair" & More');

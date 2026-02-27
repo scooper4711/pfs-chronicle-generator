@@ -50,6 +50,46 @@
         </li>
         
         <li class="box summary">
+            <header>Reputation</header>
+            <div class="summary-data">
+                <div class="form-group">
+                    <label for="chosenFactionReputation">Chosen Faction</label>
+                    <input type="number" id="chosenFactionReputation" name="shared.chosenFactionReputation" value="{{shared.chosenFactionReputation}}" min="0" max="9">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reputation-EA">Envoy's Alliance</label>
+                    <input type="number" id="reputation-EA" name="shared.reputationValues.EA" value="{{lookup shared.reputationValues 'EA'}}" min="0" max="9">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reputation-GA">Grand Archive</label>
+                    <input type="number" id="reputation-GA" name="shared.reputationValues.GA" value="{{lookup shared.reputationValues 'GA'}}" min="0" max="9">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reputation-HH">Horizon Hunters</label>
+                    <input type="number" id="reputation-HH" name="shared.reputationValues.HH" value="{{lookup shared.reputationValues 'HH'}}" min="0" max="9">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reputation-VS">Vigilant Seal</label>
+                    <input type="number" id="reputation-VS" name="shared.reputationValues.VS" value="{{lookup shared.reputationValues 'VS'}}" min="0" max="9">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reputation-RO">Radiant Oath</label>
+                    <input type="number" id="reputation-RO" name="shared.reputationValues.RO" value="{{lookup shared.reputationValues 'RO'}}" min="0" max="9">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reputation-VW">Verdant Wheel</label>
+                    <input type="number" id="reputation-VW" name="shared.reputationValues.VW" value="{{lookup shared.reputationValues 'VW'}}" min="0" max="9">
+                </div>
+            </div>
+        </li>
+        
+        <li class="box summary">
             <header>Shared Rewards</header>
             <div class="summary-data">
                 <div class="form-group">
@@ -132,11 +172,6 @@
                     <div class="form-group">
                         <label for="goldSpent-{{this.id}}">Gold Spent</label>
                         <input type="number" id="goldSpent-{{this.id}}" name="characters.{{this.id}}.goldSpent" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'goldSpent'}}{{else}}0{{/if}}" step="0.01">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="reputation-{{this.id}}">Reputation</label>
-                        <input type="text" id="reputation-{{this.id}}" name="characters.{{this.id}}.reputation" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'reputation'}}{{/if}}">
                     </div>
                     
                     <div class="form-group full-width">

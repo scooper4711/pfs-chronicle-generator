@@ -292,6 +292,46 @@
     display: none;
 }
 
+/* Reputation section styling */
+.sheet.party [data-tab=pfs] .sidebar .reputation-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .reputation-section .form-group {
+    margin-bottom: 0.5rem;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .reputation-section .form-group label {
+    display: block;
+    font-size: var(--font-size-12);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .reputation-section .form-group input[type="number"] {
+    width: 55%;
+    max-width: 280px;
+    box-sizing: border-box;
+    font-size: var(--font-size-12);
+    padding: 0.25rem;
+    flex: none;
+}
+
+/* Reputation validation error styling */
+.sheet.party [data-tab=pfs] .sidebar .reputation-section .form-group.has-error input {
+    border-color: #d32f2f;
+    background-color: rgba(255, 0, 0, 0.05);
+}
+
+.sheet.party [data-tab=pfs] .sidebar .reputation-section .form-group .field-error {
+    color: #d32f2f;
+    font-size: var(--font-size-10);
+    margin-top: 0.15rem;
+    display: block;
+}
+
 /* Validation error styling */
 .sheet.party [data-tab=pfs] .validation-errors {
     background-color: rgba(255, 0, 0, 0.1);

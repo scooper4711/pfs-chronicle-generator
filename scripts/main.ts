@@ -435,8 +435,9 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
             // Call the generateChronicles method
             await generateChroniclesFromForm(formData, partyActors);
             
-            // Re-render party sheet to update download buttons
-            partySheet.render(true);
+            // No need to re-render the party sheet - the download buttons are on
+            // individual character sheets, which will update when opened via the
+            // renderCharacterSheetPF2e hook
         });
         
         // Portrait click handler
@@ -468,6 +469,19 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
                 } else {
                     console.warn('[PFS Chronicle] Actor or actor sheet not found');
                 }
+            });
+        });
+        
+        // Reputation field change handlers (use native DOM APIs)
+        const reputationInputs = container.querySelectorAll(
+            'input[name^="shared.reputationValues"], input[name="shared.chosenFactionReputation"]'
+        );
+        console.log('[PFS Chronicle] Found reputation inputs:', reputationInputs.length);
+        reputationInputs.forEach((input) => {
+            input.addEventListener('change', async () => {
+                console.log('[PFS Chronicle] Reputation field changed');
+                await saveFormData($container, partyActors);
+                updateValidationDisplay($container, partyActors);
             });
         });
         
@@ -593,6 +607,15 @@ function extractFormData($container: any, partyActors: any[]): any {
         blankChroniclePath: $container.find('#blankChroniclePath').val() || '',
         adventureSummaryCheckboxes: $container.find('input[name="shared.adventureSummaryCheckboxes"]:checked').map(function() { return $(this).val(); }).get(),
         strikeoutItems: $container.find('input[name="shared.strikeoutItems"]:checked').map(function() { return $(this).val(); }).get(),
+        chosenFactionReputation: parseInt($container.find('#chosenFactionReputation').val() as string) || 2,
+        reputationValues: {
+            EA: parseInt($container.find('#reputation-EA').val() as string) || 0,
+            GA: parseInt($container.find('#reputation-GA').val() as string) || 0,
+            HH: parseInt($container.find('#reputation-HH').val() as string) || 0,
+            VS: parseInt($container.find('#reputation-VS').val() as string) || 0,
+            RO: parseInt($container.find('#reputation-RO').val() as string) || 0,
+            VW: parseInt($container.find('#reputation-VW').val() as string) || 0,
+        },
     };
     
     // Extract character-specific fields
@@ -609,7 +632,6 @@ function extractFormData($container: any, partyActors: any[]): any {
             goldEarned: parseFloat($container.find(`#goldEarned-${actorId}`).val() as string) || 0,
             goldSpent: parseFloat($container.find(`#goldSpent-${actorId}`).val() as string) || 0,
             notes: $container.find(`#notes-${actorId}`).val() || '',
-            reputation: $container.find(`#reputation-${actorId}`).val() || '',
         };
     });
     
@@ -794,8 +816,9 @@ async function generateChroniclesFromForm(formData: any, partyActors: any[]) {
         return;
     }
     
-    // Collect generation results for all characters
+    // Collect generation results and flag updates for all characters
     const results: any[] = [];
+    const flagUpdates: Array<{ actor: any, chronicleData: any, base64String: string }> = [];
     let allSucceeded = true;
     
     // Get the selected layout
@@ -815,7 +838,7 @@ async function generateChroniclesFromForm(formData: any, partyActors: any[]) {
         return;
     }
     
-    // Process each party member
+    // Process each party member - generate PDFs but don't set flags yet
     for (const actor of partyActors) {
         const characterId = actor.id;
         const characterName = actor.name;
@@ -825,10 +848,7 @@ async function generateChroniclesFromForm(formData: any, partyActors: any[]) {
             const characterData = formData.characters[characterId];
             
             // Map to chronicle data format
-            const chronicleData = mapToCharacterData(formData.shared, characterData);
-            
-            // Save chronicle data to actor flags
-            await actor.setFlag('pfs-chronicle-generator', 'chronicleData', chronicleData);
+            const chronicleData = mapToCharacterData(formData.shared, characterData, actor);
             
             // Generate PDF
             const response = await fetch(blankChroniclePath);
@@ -843,7 +863,7 @@ async function generateChroniclesFromForm(formData: any, partyActors: any[]) {
             const generator = new PdfGenerator(pdfDoc, layout, chronicleData);
             await generator.generate();
             
-            // Convert PDF to base64 and attach to actor
+            // Convert PDF to base64
             const modifiedPdfBytes = await pdfDoc.save();
             let binary = '';
             const len = modifiedPdfBytes.byteLength;
@@ -852,7 +872,8 @@ async function generateChroniclesFromForm(formData: any, partyActors: any[]) {
             }
             const base64String = btoa(binary);
             
-            await actor.setFlag('pfs-chronicle-generator', 'chroniclePdf', base64String);
+            // Store for batch update later
+            flagUpdates.push({ actor, chronicleData, base64String });
             
             // Record success
             results.push({
@@ -874,6 +895,17 @@ async function generateChroniclesFromForm(formData: any, partyActors: any[]) {
             });
             allSucceeded = false;
             console.error(`[PFS Chronicle] Failed to generate chronicle for ${characterName}:`, error);
+        }
+    }
+    
+    // Batch update all actor flags at once to minimize party sheet re-renders
+    console.log(`[PFS Chronicle] Updating flags for ${flagUpdates.length} actors`);
+    for (const { actor, chronicleData, base64String } of flagUpdates) {
+        try {
+            await actor.setFlag('pfs-chronicle-generator', 'chronicleData', chronicleData);
+            await actor.setFlag('pfs-chronicle-generator', 'chroniclePdf', base64String);
+        } catch (error) {
+            console.error(`[PFS Chronicle] Failed to set flags for ${actor.name}:`, error);
         }
     }
     

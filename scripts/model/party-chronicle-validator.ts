@@ -8,6 +8,7 @@
  */
 
 import { SharedFields, UniqueFields, ValidationResult } from './party-chronicle-types.js';
+import { FACTION_NAMES } from '../PFSChronicleGeneratorApp.js';
 
 /**
  * Validates that all required shared fields are populated and have valid formats.
@@ -124,6 +125,36 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
     errors.push('Treasure Bundles must be between 0 and 10');
   }
   
+  // Validate chosen faction reputation
+  if (shared.chosenFactionReputation === undefined || shared.chosenFactionReputation === null) {
+    errors.push('Chosen Faction reputation is required');
+  } else if (typeof shared.chosenFactionReputation !== 'number') {
+    errors.push('Chosen Faction reputation must be a number');
+  } else if (!Number.isInteger(shared.chosenFactionReputation)) {
+    errors.push('Chosen Faction reputation must be a whole number');
+  } else if (shared.chosenFactionReputation < 0 || shared.chosenFactionReputation > 9) {
+    errors.push('Chosen Faction reputation must be between 0 and 9');
+  } else if (shared.chosenFactionReputation === 0) {
+    errors.push('Chosen Faction reputation must be greater than 0');
+  }
+  
+  // Validate faction-specific reputation values
+  if (shared.reputationValues) {
+    const factionCodes = ['EA', 'GA', 'HH', 'VS', 'RO', 'VW'] as const;
+    for (const code of factionCodes) {
+      const value = shared.reputationValues[code];
+      if (value !== undefined && value !== null) {
+        if (typeof value !== 'number') {
+          errors.push(`${FACTION_NAMES[code]} reputation must be a number`);
+        } else if (!Number.isInteger(value)) {
+          errors.push(`${FACTION_NAMES[code]} reputation must be a whole number`);
+        } else if (value < 0 || value > 9) {
+          errors.push(`${FACTION_NAMES[code]} reputation must be between 0 and 9`);
+        }
+      }
+    }
+  }
+  
   return {
     valid: errors.length === 0,
     errors: errors
@@ -152,8 +183,7 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
  *   incomeEarned: 8,
  *   goldEarned: 24,
  *   goldSpent: 10,
- *   notes: '',
- *   reputation: ''
+ *   notes: ''
  * };
  * 
  * const result = validateUniqueFields(unique, 'Valeros');
@@ -226,8 +256,8 @@ export function validateUniqueFields(
     errors.push(`${prefix}Gold Spent cannot be negative`);
   }
   
-  // Optional fields - no validation needed for notes and reputation
-  // They can be empty strings
+  // Optional fields - no validation needed for notes
+  // Notes can be an empty string
   
   return {
     valid: errors.length === 0,

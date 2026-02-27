@@ -162,3 +162,105 @@ If you're unsure where to add code for a new feature:
 2. Check if it's data preparation → `PartyChronicleApp._prepareContext()`
 3. Check if it's template structure → `templates/party-chronicle-filling.hbs`
 4. When in doubt, follow the pattern of existing similar features
+
+
+## Coding Standards
+
+### File Size and Complexity
+
+To maintain code quality and readability, all production code must adhere to these standards:
+
+**File Size Limit**:
+- Production class files SHOULD be kept under 300 lines
+- Production class files MUST be kept under 500 lines
+- If a file exceeds 300 lines, consider refactoring by:
+  - Extracting helper functions into separate utility modules
+  - Splitting large classes into smaller, focused classes
+  - Moving related functionality into dedicated modules
+- If a file approaches 500 lines, refactoring is mandatory
+
+**Cyclomatic Complexity**:
+- Functions SHOULD maintain cyclomatic complexity below 5
+- Functions MUST maintain cyclomatic complexity below 15
+- Cyclomatic complexity measures the number of independent paths through code
+- High complexity (≥15) indicates code that is:
+  - Difficult to test thoroughly
+  - Hard to understand and maintain
+  - More prone to bugs
+
+**Important Nuance**:
+- CCN is a **guideline, not an absolute rule**
+- Simple, repetitive patterns are acceptable even if they increase CCN:
+  - Null-coalescing operators (`value || defaultValue`)
+  - Optional chaining (`obj?.prop ?? default`)
+  - Simple switch statements with straightforward cases
+  - Flat validation checks without nesting
+- **Focus on cognitive complexity** - how hard is the code to understand?
+- A function with CCN of 10 from null-coalescing is often clearer than CCN of 4 with nested conditionals
+
+**How to Reduce Complexity**:
+1. Extract complex conditionals into well-named helper functions
+2. Use early returns to reduce nesting
+3. Replace nested if-else chains with guard clauses
+4. Use lookup tables or strategy patterns instead of long switch statements
+5. Break down complex functions into smaller, single-purpose functions
+6. **Note**: Don't refactor simple null-coalescing patterns just to reduce CCN
+
+**What Actually Needs Refactoring**:
+- Nested conditionals (if inside if inside if)
+- Complex boolean expressions with multiple && and ||
+- Long chains of if-else with different logic in each branch
+- Functions that do multiple different things based on conditions
+
+**What Doesn't Need Refactoring**:
+- Flat lists of assignments with `|| defaultValue`
+- Simple switch statements with straightforward cases
+- Validation functions with flat, repetitive checks
+- Optional chaining patterns
+
+**Example - High Complexity (BAD)**:
+```typescript
+function processData(data: any, type: string, options: any) {
+  if (type === 'A') {
+    if (options.flag1) {
+      if (data.value > 10) {
+        return data.value * 2;
+      } else {
+        return data.value + 5;
+      }
+    } else {
+      return data.value;
+    }
+  } else if (type === 'B') {
+    // ... more nested logic
+  }
+  // Cyclomatic complexity: 6+
+}
+```
+
+**Example - Low Complexity (GOOD)**:
+```typescript
+function processData(data: any, type: string, options: any) {
+  if (type === 'A') return processTypeA(data, options);
+  if (type === 'B') return processTypeB(data, options);
+  return data.value;
+}
+
+function processTypeA(data: any, options: any) {
+  if (!options.flag1) return data.value;
+  return data.value > 10 ? data.value * 2 : data.value + 5;
+}
+// Cyclomatic complexity: 2-3 per function
+```
+
+**Enforcement**:
+- Use ESLint with complexity rules configured
+- Review file sizes during code review
+- Refactor proactively when approaching limits
+- Consider complexity during design phase
+
+**Exceptions**:
+- Test files are exempt from these limits (they often need to be longer)
+- Configuration files and type definition files are exempt
+- Generated code is exempt
+- If an exception is truly necessary, document the reason in comments

@@ -8,6 +8,7 @@
  */
 
 import { SharedFields, UniqueFields } from './party-chronicle-types.js';
+import { calculateReputation } from './reputation-calculator.js';
 
 /**
  * Chronicle data format expected by PdfGenerator
@@ -33,7 +34,7 @@ export interface ChronicleData {
   
   // Notes and reputation
   notes: string;
-  reputation: string;
+  reputation: string[];
   
   // Layout-dependent selections
   summary_checkbox: string[];
@@ -53,6 +54,7 @@ export interface ChronicleData {
  * 
  * @param shared - Shared fields that apply to all party members
  * @param unique - Character-specific unique fields
+ * @param actor - Actor object to read chosen faction from
  * @returns ChronicleData object ready for PdfGenerator
  * 
  * @example
@@ -65,10 +67,12 @@ export interface ChronicleData {
  *   xpEarned: 4,
  *   adventureSummaryCheckboxes: ['Found the artifact'],
  *   strikeoutItems: ['Potion of Healing'],
- *   treasureBundles: 'Bundle A, Bundle B',
+ *   treasureBundles: 2,
  *   layoutId: 'layout-1',
  *   seasonId: 'season-5',
- *   blankChroniclePath: '/path/to/chronicle.pdf'
+ *   blankChroniclePath: '/path/to/chronicle.pdf',
+ *   chosenFactionReputation: 2,
+ *   reputationValues: { EA: 2, GA: 1, HH: 0, VS: 0, RO: 0, VW: 0 }
  * };
  * 
  * const unique: UniqueFields = {
@@ -78,20 +82,25 @@ export interface ChronicleData {
  *   incomeEarned: 8,
  *   goldEarned: 24,
  *   goldSpent: 10,
- *   notes: 'Saved the village',
- *   reputation: 'Envoy\'s Alliance: +2'
+ *   notes: 'Saved the village'
  * };
  * 
- * const chronicleData = mapToCharacterData(shared, unique);
- * // chronicleData is now ready to pass to PdfGenerator
+ * const actor = { system: { pfs: { currentFaction: 'EA' } } };
+ * 
+ * const chronicleData = mapToCharacterData(shared, unique, actor);
+ * // chronicleData.reputation is now ["Envoy's Alliance: +4", "Grand Archive: +1"]
  * ```
  * 
- * Validates: Requirements 4.3, 5.2
+ * Validates: Requirements 5.1, 5.2, 5.3, 5.5
  */
 export function mapToCharacterData(
   shared: SharedFields,
-  unique: UniqueFields
+  unique: UniqueFields,
+  actor: any
 ): ChronicleData {
+  // Calculate reputation using the reputation calculator
+  const reputationLines = calculateReputation(shared, actor);
+  
   return {
     // Character identification from unique fields
     char: unique.characterName,
@@ -114,7 +123,7 @@ export function mapToCharacterData(
     
     // Character-specific notes from unique fields
     notes: unique.notes,
-    reputation: unique.reputation,
+    reputation: reputationLines,
     
     // Layout-dependent selections from shared fields
     summary_checkbox: shared.adventureSummaryCheckboxes,

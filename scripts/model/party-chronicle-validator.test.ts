@@ -3,6 +3,19 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
+
+// Mock the PFSChronicleGeneratorApp module to avoid Foundry dependencies
+jest.mock('../PFSChronicleGeneratorApp', () => ({
+  FACTION_NAMES: {
+    'EA': 'Envoy\'s Alliance',
+    'GA': 'Grand Archive',
+    'HH': 'Horizon Hunters',
+    'VS': 'Vigilant Seal',
+    'RO': 'Radiant Oath',
+    'VW': 'Verdant Wheel'
+  }
+}));
+
 import { validateSharedFields, validateUniqueFields, validateAllFields } from './party-chronicle-validator';
 import { SharedFields, UniqueFields } from './party-chronicle-types';
 
@@ -19,7 +32,16 @@ describe('validateSharedFields', () => {
       treasureBundles: 2,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
     };
 
     const result = validateSharedFields(shared);
@@ -235,7 +257,16 @@ describe('validateSharedFields', () => {
       treasureBundles: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
     };
 
     const result = validateSharedFields(shared);
@@ -256,7 +287,16 @@ describe('validateSharedFields', () => {
       treasureBundles: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
     };
 
     const result = validateSharedFields(shared);
@@ -281,6 +321,675 @@ describe('validateSharedFields', () => {
     expect(result.valid).toBe(false);
     expect(result.errors.length).toBeGreaterThan(5);
   });
+
+  it('should fail validation when chosen faction reputation is missing', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 4,
+      treasureBundles: 0,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain('Chosen Faction reputation is required');
+  });
+
+  it('should fail validation when chosen faction reputation is 0', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 4,
+      treasureBundles: 0,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 0,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain('Chosen Faction reputation must be greater than 0');
+  });
+
+  it('should fail validation when chosen faction reputation is out of range', () => {
+    const shared1: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 4,
+      treasureBundles: 0,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: -1,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result1 = validateSharedFields(shared1);
+    expect(result1.valid).toBe(false);
+    expect(result1.errors).toContain('Chosen Faction reputation must be between 0 and 9');
+
+    const shared2: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 4,
+      treasureBundles: 0,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 10,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result2 = validateSharedFields(shared2);
+    expect(result2.valid).toBe(false);
+    expect(result2.errors).toContain('Chosen Faction reputation must be between 0 and 9');
+  });
+
+  it('should fail validation when chosen faction reputation is not an integer', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 4,
+      treasureBundles: 0,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2.5,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain('Chosen Faction reputation must be a whole number');
+  });
+
+  it('should fail validation when faction-specific reputation is out of range', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 4,
+      treasureBundles: 0,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 10,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain("Envoy's Alliance reputation must be between 0 and 9");
+  });
+
+  it('should fail validation when faction-specific reputation is not an integer', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 4,
+      treasureBundles: 0,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 1.5,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain('Grand Archive reputation must be a whole number');
+  });
+
+  it('should accept valid reputation values', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 4,
+      treasureBundles: 0,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 3,
+        GA: 0,
+        HH: 9,
+        VS: 1,
+        RO: 0,
+        VW: 5
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  describe('reputation validation edge cases', () => {
+    it('should accept boundary value 0 for faction-specific reputation', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: 2,
+        reputationValues: {
+          EA: 0,
+          GA: 0,
+          HH: 0,
+          VS: 0,
+          RO: 0,
+          VW: 0
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should accept boundary value 9 for all reputation fields', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: 9,
+        reputationValues: {
+          EA: 9,
+          GA: 9,
+          HH: 9,
+          VS: 9,
+          RO: 9,
+          VW: 9
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should reject boundary value 10 for chosen faction reputation', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: 10,
+        reputationValues: {
+          EA: 0,
+          GA: 0,
+          HH: 0,
+          VS: 0,
+          RO: 0,
+          VW: 0
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Chosen Faction reputation must be between 0 and 9');
+    });
+
+    it('should reject boundary value 10 for faction-specific reputation', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: 2,
+        reputationValues: {
+          EA: 0,
+          GA: 0,
+          HH: 10,
+          VS: 0,
+          RO: 0,
+          VW: 0
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Horizon Hunters reputation must be between 0 and 9');
+    });
+
+    it('should reject boundary value -1 for chosen faction reputation', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: -1,
+        reputationValues: {
+          EA: 0,
+          GA: 0,
+          HH: 0,
+          VS: 0,
+          RO: 0,
+          VW: 0
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Chosen Faction reputation must be between 0 and 9');
+    });
+
+    it('should reject boundary value -1 for faction-specific reputation', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: 2,
+        reputationValues: {
+          EA: 0,
+          GA: 0,
+          HH: 0,
+          VS: -1,
+          RO: 0,
+          VW: 0
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Vigilant Seal reputation must be between 0 and 9');
+    });
+  });
+
+  describe('reputation validation error messages', () => {
+    it('should provide specific error message for missing chosen faction reputation', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        reputationValues: {
+          EA: 0,
+          GA: 0,
+          HH: 0,
+          VS: 0,
+          RO: 0,
+          VW: 0
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Chosen Faction reputation is required');
+    });
+
+    it('should provide specific error message for chosen faction reputation being 0', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: 0,
+        reputationValues: {
+          EA: 0,
+          GA: 0,
+          HH: 0,
+          VS: 0,
+          RO: 0,
+          VW: 0
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Chosen Faction reputation must be greater than 0');
+    });
+
+    it('should provide specific error message for non-integer chosen faction reputation', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: 2.5,
+        reputationValues: {
+          EA: 0,
+          GA: 0,
+          HH: 0,
+          VS: 0,
+          RO: 0,
+          VW: 0
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Chosen Faction reputation must be a whole number');
+    });
+
+    it('should provide specific error message for out-of-range chosen faction reputation', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: 15,
+        reputationValues: {
+          EA: 0,
+          GA: 0,
+          HH: 0,
+          VS: 0,
+          RO: 0,
+          VW: 0
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Chosen Faction reputation must be between 0 and 9');
+    });
+
+    it('should provide specific error messages for each faction with full faction names', () => {
+      const testCases = [
+        { code: 'EA', name: "Envoy's Alliance" },
+        { code: 'GA', name: 'Grand Archive' },
+        { code: 'HH', name: 'Horizon Hunters' },
+        { code: 'VS', name: 'Vigilant Seal' },
+        { code: 'RO', name: 'Radiant Oath' },
+        { code: 'VW', name: 'Verdant Wheel' }
+      ];
+
+      for (const testCase of testCases) {
+        const shared: Partial<SharedFields> = {
+          gmPfsNumber: '12345',
+          scenarioName: 'Test',
+          eventCode: 'TEST-001',
+          eventDate: '2024-01-15',
+          xpEarned: 4,
+          treasureBundles: 0,
+          layoutId: 'layout-1',
+          seasonId: 'season-5',
+          blankChroniclePath: '/path/to/chronicle.pdf',
+          chosenFactionReputation: 2,
+          reputationValues: {
+            EA: testCase.code === 'EA' ? 10 : 0,
+            GA: testCase.code === 'GA' ? 10 : 0,
+            HH: testCase.code === 'HH' ? 10 : 0,
+            VS: testCase.code === 'VS' ? 10 : 0,
+            RO: testCase.code === 'RO' ? 10 : 0,
+            VW: testCase.code === 'VW' ? 10 : 0
+          }
+        };
+
+        const result = validateSharedFields(shared);
+
+        expect(result.valid).toBe(false);
+        expect(result.errors).toContain(`${testCase.name} reputation must be between 0 and 9`);
+      }
+    });
+
+    it('should provide specific error message for non-integer faction-specific reputation', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: 2,
+        reputationValues: {
+          EA: 0,
+          GA: 0,
+          HH: 0,
+          VS: 0,
+          RO: 3.7,
+          VW: 0
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Radiant Oath reputation must be a whole number');
+    });
+  });
+
+  describe('multiple reputation validation errors', () => {
+    it('should collect multiple reputation validation errors at once', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: 0,
+        reputationValues: {
+          EA: 10,
+          GA: -1,
+          HH: 2.5,
+          VS: 0,
+          RO: 0,
+          VW: 0
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThanOrEqual(4);
+      expect(result.errors).toContain('Chosen Faction reputation must be greater than 0');
+      expect(result.errors).toContain("Envoy's Alliance reputation must be between 0 and 9");
+      expect(result.errors).toContain('Grand Archive reputation must be between 0 and 9');
+      expect(result.errors).toContain('Horizon Hunters reputation must be a whole number');
+    });
+
+    it('should collect errors for all invalid faction-specific reputations', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '12345',
+        scenarioName: 'Test',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: 2,
+        reputationValues: {
+          EA: 10,
+          GA: 11,
+          HH: 12,
+          VS: 13,
+          RO: 14,
+          VW: 15
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBe(6);
+      expect(result.errors).toContain("Envoy's Alliance reputation must be between 0 and 9");
+      expect(result.errors).toContain('Grand Archive reputation must be between 0 and 9');
+      expect(result.errors).toContain('Horizon Hunters reputation must be between 0 and 9');
+      expect(result.errors).toContain('Vigilant Seal reputation must be between 0 and 9');
+      expect(result.errors).toContain('Radiant Oath reputation must be between 0 and 9');
+      expect(result.errors).toContain('Verdant Wheel reputation must be between 0 and 9');
+    });
+
+    it('should collect both reputation and non-reputation errors', () => {
+      const shared: Partial<SharedFields> = {
+        gmPfsNumber: '',
+        scenarioName: '',
+        eventCode: 'TEST-001',
+        eventDate: '2024-01-15',
+        xpEarned: 4,
+        treasureBundles: 0,
+        layoutId: 'layout-1',
+        seasonId: 'season-5',
+        blankChroniclePath: '/path/to/chronicle.pdf',
+        chosenFactionReputation: 0,
+        reputationValues: {
+          EA: 10,
+          GA: 0,
+          HH: 0,
+          VS: 0,
+          RO: 0,
+          VW: 0
+        }
+      };
+
+      const result = validateSharedFields(shared);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThanOrEqual(4);
+      expect(result.errors).toContain('GM PFS Number is required');
+      expect(result.errors).toContain('Scenario Name is required');
+      expect(result.errors).toContain('Chosen Faction reputation must be greater than 0');
+      expect(result.errors).toContain("Envoy's Alliance reputation must be between 0 and 9");
+    });
+  });
 });
 
 describe('validateUniqueFields', () => {
@@ -292,8 +1001,7 @@ describe('validateUniqueFields', () => {
       incomeEarned: 8,
       goldEarned: 24,
       goldSpent: 10,
-      notes: 'Saved the village',
-      reputation: 'Envoy\'s Alliance: +2'
+      notes: 'Saved the village'
     };
 
     const result = validateUniqueFields(unique);
@@ -310,8 +1018,7 @@ describe('validateUniqueFields', () => {
       incomeEarned: 8,
       goldEarned: 24,
       goldSpent: 10,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique);
@@ -328,8 +1035,7 @@ describe('validateUniqueFields', () => {
       incomeEarned: 8,
       goldEarned: 24,
       goldSpent: 10,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique);
@@ -346,8 +1052,7 @@ describe('validateUniqueFields', () => {
       incomeEarned: 8,
       goldEarned: 24,
       goldSpent: 10,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique);
@@ -363,8 +1068,7 @@ describe('validateUniqueFields', () => {
       incomeEarned: 8,
       goldEarned: 24,
       goldSpent: 10,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique);
@@ -381,8 +1085,7 @@ describe('validateUniqueFields', () => {
       incomeEarned: 8,
       goldEarned: 24,
       goldSpent: 10,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result1 = validateUniqueFields(unique1);
@@ -396,8 +1099,7 @@ describe('validateUniqueFields', () => {
       incomeEarned: 8,
       goldEarned: 24,
       goldSpent: 10,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result2 = validateUniqueFields(unique2);
@@ -413,8 +1115,7 @@ describe('validateUniqueFields', () => {
       incomeEarned: 8,
       goldEarned: 24,
       goldSpent: 10,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique);
@@ -430,8 +1131,7 @@ describe('validateUniqueFields', () => {
       level: 3,
       goldEarned: 24,
       goldSpent: 10,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique);
@@ -448,8 +1148,7 @@ describe('validateUniqueFields', () => {
       incomeEarned: -5,
       goldEarned: 24,
       goldSpent: 10,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique);
@@ -465,8 +1164,7 @@ describe('validateUniqueFields', () => {
       level: 3,
       incomeEarned: 8,
       goldSpent: 10,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique);
@@ -482,8 +1180,7 @@ describe('validateUniqueFields', () => {
       level: 3,
       incomeEarned: 8,
       goldEarned: 24,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique);
@@ -500,8 +1197,7 @@ describe('validateUniqueFields', () => {
       incomeEarned: 0,
       goldEarned: 0,
       goldSpent: 0,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique);
@@ -518,8 +1214,7 @@ describe('validateUniqueFields', () => {
       incomeEarned: 8,
       goldEarned: 24,
       goldSpent: 10,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique);
@@ -536,8 +1231,7 @@ describe('validateUniqueFields', () => {
       incomeEarned: 8,
       goldEarned: 24,
       goldSpent: 10,
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique, 'Valeros');
@@ -550,8 +1244,7 @@ describe('validateUniqueFields', () => {
     const unique: Partial<UniqueFields> = {
       characterName: '',
       societyId: '',
-      notes: '',
-      reputation: ''
+      notes: ''
     };
 
     const result = validateUniqueFields(unique);
@@ -574,7 +1267,16 @@ describe('validateAllFields', () => {
       treasureBundles: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
     };
 
     const characters = {
@@ -585,8 +1287,7 @@ describe('validateAllFields', () => {
         incomeEarned: 8,
         goldEarned: 24,
         goldSpent: 10,
-        notes: '',
-        reputation: ''
+        notes: ''
       } as UniqueFields,
       'actor-2': {
         characterName: 'Seoni',
@@ -595,8 +1296,7 @@ describe('validateAllFields', () => {
         incomeEarned: 12,
         goldEarned: 36,
         goldSpent: 0,
-        notes: '',
-        reputation: ''
+        notes: ''
       } as UniqueFields
     };
 
@@ -615,7 +1315,16 @@ describe('validateAllFields', () => {
       xpEarned: 4,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
     };
 
     const characters = {
@@ -626,8 +1335,7 @@ describe('validateAllFields', () => {
         incomeEarned: 8,
         goldEarned: 24,
         goldSpent: 10,
-        notes: '',
-        reputation: ''
+        notes: ''
       } as Partial<UniqueFields>
     };
 
@@ -650,7 +1358,16 @@ describe('validateAllFields', () => {
       treasureBundles: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
     };
 
     const characters = {
@@ -661,8 +1378,7 @@ describe('validateAllFields', () => {
         incomeEarned: 8,
         goldEarned: 24,
         goldSpent: 10,
-        notes: '',
-        reputation: ''
+        notes: ''
       } as Partial<UniqueFields>,
       'actor-2': {
         characterName: 'Seoni',
@@ -671,8 +1387,7 @@ describe('validateAllFields', () => {
         incomeEarned: 12,
         goldEarned: 36,
         goldSpent: 0,
-        notes: '',
-        reputation: ''
+        notes: ''
       } as Partial<UniqueFields>
     };
 
@@ -694,7 +1409,16 @@ describe('validateAllFields', () => {
       treasureBundles: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
     };
 
     const characters = {
@@ -705,8 +1429,7 @@ describe('validateAllFields', () => {
         incomeEarned: 8,
         goldEarned: 24,
         goldSpent: 10,
-        notes: '',
-        reputation: ''
+        notes: ''
       } as Partial<UniqueFields>
     };
 

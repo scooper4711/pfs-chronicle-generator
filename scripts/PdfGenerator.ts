@@ -235,11 +235,11 @@ export class PdfGenerator {
                 break;
             case 'choice':
                 if (props.choices && props.content && typeof props.content === 'object' && !Array.isArray(props.content)) {
-                    const value = this.resolveValue(props.choices as string);
+                    const value = this.resolveValue(props.choices as string, 'choice');
                     const choices = value?.includes('|||') ? value.split('|||') : (value?.split(',') || []);
                     console.log('[PFS Chronicle] Split choices:', { value, choices });
                     console.log('[PFS Chronicle] Processing choices:', { 
-                        paramValue: this.resolveValue(props.choices as string),
+                        paramValue: this.resolveValue(props.choices as string, 'choice'),
                         choices, 
                         content: props.content,
                         data: this.data
@@ -493,11 +493,11 @@ export class PdfGenerator {
     }
 
     private async drawText(props: ResolvedElement) {
-        const value = this.resolveValue(props.value);
+        const value = this.resolveValue(props.value, 'text');
         if (!value) {
             console.log("[PFS Chronicle] Value is undefined:", { 
                 requestedValue: props.value,
-                resolvedValue: this.resolveValue(props.value),
+                resolvedValue: this.resolveValue(props.value, 'text'),
                 allData: this.data
             });
             return;
@@ -554,7 +554,7 @@ export class PdfGenerator {
     }
 
     private async drawMultilineText(props: ResolvedElement) {
-        const value = this.resolveValue(props.value);
+        const value = this.resolveValue(props.value, 'multiline');
         if (!value) {
             return;
         }
@@ -606,7 +606,7 @@ export class PdfGenerator {
         }
     }
 
-    private resolveValue(value: string | undefined): string | undefined {
+    private resolveValue(value: string | undefined, elementType?: string): string | undefined {
         if (!value) {
             return undefined;
         }
@@ -615,7 +615,8 @@ export class PdfGenerator {
             console.log('[PFS Chronicle] Resolving param:', { 
                 paramName, 
                 value: this.data[paramName],
-                isArray: Array.isArray(this.data[paramName])
+                isArray: Array.isArray(this.data[paramName]),
+                elementType
             });
             if (paramName === 'societyid.player') {
                 const societyid = this.data['societyid'];
@@ -638,10 +639,15 @@ export class PdfGenerator {
                 return '';
             }
             const paramValue = this.data[paramName];
-            // Handle arrays (like our new strikeout_item_lines format)
+            // Handle arrays
             if (Array.isArray(paramValue)) {
-                // Use a special delimiter that won't appear in the text
-                return paramValue.join('|||');
+                // For multiline elements, join with newlines
+                // For choice elements, join with ||| delimiter
+                if (elementType === 'multiline') {
+                    return paramValue.join('\n');
+                } else {
+                    return paramValue.join('|||');
+                }
             }
             return paramValue;
         }

@@ -153,6 +153,15 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       layoutId: effectiveLayoutId,
       seasonId: selectedSeasonId,
       blankChroniclePath: savedData?.shared?.blankChroniclePath || blankChroniclePath,
+      chosenFactionReputation: savedData?.shared?.chosenFactionReputation ?? 2,
+      reputationValues: savedData?.shared?.reputationValues ?? {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      },
     };
 
     // Return PartyChronicleContext object
@@ -218,11 +227,11 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * Handles portrait click events
    * Opens the corresponding actor sheet when a portrait is clicked
    *
-   * @param event - The mouse click event
+   * @param event - The click event
    *
    * Requirements: 1.1, 1.3, 1.4, 3.1, 3.2, 3.3
    */
-  private _onPortraitClick(event: MouseEvent): void {
+  private _onPortraitClick(event: Event): void {
     console.log('[PFS Chronicle] Portrait clicked!', event.target);
     
     // Prevent default link behavior
@@ -673,7 +682,16 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
           treasureBundles: Number(data.shared?.treasureBundles) || 0,
           layoutId: layoutId as string,
           seasonId: data.shared?.seasonId || '',
-          blankChroniclePath: blankChroniclePath
+          blankChroniclePath: blankChroniclePath,
+          chosenFactionReputation: Number(data.shared?.chosenFactionReputation) || 2,
+          reputationValues: {
+            EA: Number(data.shared?.reputationValues?.EA) || 0,
+            GA: Number(data.shared?.reputationValues?.GA) || 0,
+            HH: Number(data.shared?.reputationValues?.HH) || 0,
+            VS: Number(data.shared?.reputationValues?.VS) || 0,
+            RO: Number(data.shared?.reputationValues?.RO) || 0,
+            VW: Number(data.shared?.reputationValues?.VW) || 0
+          }
         };
         
         // Extract unique fields for this character
@@ -685,12 +703,11 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
           incomeEarned: Number(uniqueFields.incomeEarned) || 0,
           goldEarned: Number(uniqueFields.goldEarned) || 0,
           goldSpent: Number(uniqueFields.goldSpent) || 0,
-          notes: uniqueFields.notes || '',
-          reputation: uniqueFields.reputation || ''
+          notes: uniqueFields.notes || ''
         };
         
         // Map to chronicle data format
-        const chronicleData = mapToCharacterData(sharedFields, characterData);
+        const chronicleData = mapToCharacterData(sharedFields, characterData, actor);
         
         // Save chronicle data to actor flags
         await actor.setFlag('pfs-chronicle-generator', 'chronicleData', chronicleData);

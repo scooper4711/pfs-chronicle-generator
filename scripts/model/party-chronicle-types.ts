@@ -42,6 +42,19 @@ export interface SharedFields {
   
   /** Path to the blank chronicle PDF */
   blankChroniclePath: string;
+  
+  /** Reputation bonus for character's chosen faction (0-9) */
+  chosenFactionReputation: number;
+  
+  /** Faction-specific reputation bonuses (0-9 each) */
+  reputationValues: {
+    EA: number;
+    GA: number;
+    HH: number;
+    VS: number;
+    RO: number;
+    VW: number;
+  };
 }
 
 /**
@@ -69,9 +82,6 @@ export interface UniqueFields {
   
   /** Additional notes for this character */
   notes: string;
-  
-  /** Reputation earned (e.g., "Envoy's Alliance: +4") */
-  reputation: string;
 }
 
 /**

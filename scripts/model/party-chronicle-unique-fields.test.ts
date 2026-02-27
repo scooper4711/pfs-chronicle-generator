@@ -22,8 +22,7 @@ const uniqueFieldsArbitrary = fc.record({
   incomeEarned: fc.integer({ min: 0, max: 100 }),
   goldEarned: fc.integer({ min: 0, max: 1000 }),
   goldSpent: fc.integer({ min: 0, max: 1000 }),
-  notes: fc.string({ maxLength: 200 }),
-  reputation: fc.string({ maxLength: 50 })
+  notes: fc.string({ maxLength: 200 })
 });
 
 /**
@@ -47,13 +46,34 @@ const sharedFieldsArbitrary = fc.record({
   treasureBundles: fc.integer({ min: 0, max: 10 }),
   layoutId: fc.string({ minLength: 1, maxLength: 50 }),
   seasonId: fc.string({ minLength: 1, maxLength: 50 }),
-  blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 })
+  blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 }),
+  chosenFactionReputation: fc.integer({ min: 1, max: 9 }),
+  reputationValues: fc.record({
+    EA: fc.integer({ min: 0, max: 9 }),
+    GA: fc.integer({ min: 0, max: 9 }),
+    HH: fc.integer({ min: 0, max: 9 }),
+    VS: fc.integer({ min: 0, max: 9 }),
+    RO: fc.integer({ min: 0, max: 9 }),
+    VW: fc.integer({ min: 0, max: 9 })
+  })
 });
 
 /**
  * Generator for actor IDs
  */
 const actorIdArbitrary = fc.uuid();
+
+/**
+ * Create a mock actor object for testing
+ */
+const createMockActor = (actorId: string, currentFaction: string | null = null) => ({
+  id: actorId,
+  system: {
+    pfs: {
+      currentFaction
+    }
+  }
+});
 
 describe('Party Chronicle Unique Field Property Tests', () => {
   describe('Property 3: Unique Field Isolation', () => {
@@ -87,7 +107,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             const chronicleDataList = characterPairs.map(([actorId, unique]) => ({
               actorId,
               unique,
-              chronicleData: mapToCharacterData(shared, unique)
+              actor: createMockActor(actorId, 'EA'),
+              chronicleData: mapToCharacterData(shared, unique, createMockActor(actorId, 'EA'))
             }));
 
             // Property: Each character's chronicle data should contain only their unique fields
@@ -100,7 +121,6 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               expect(chronicleData.gp_gained).toBe(unique.goldEarned);
               expect(chronicleData.gp_spent).toBe(unique.goldSpent);
               expect(chronicleData.notes).toBe(unique.notes);
-              expect(chronicleData.reputation).toBe(unique.reputation);
 
               // Property: Verify this character's data does NOT contain other characters' unique values
               const otherCharacters = characterPairs.filter(([id]) => id !== actorId);
@@ -127,9 +147,6 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 if (otherUnique.notes !== unique.notes) {
                   expect(chronicleData.notes).not.toBe(otherUnique.notes);
                 }
-                if (otherUnique.reputation !== unique.reputation) {
-                  expect(chronicleData.reputation).not.toBe(otherUnique.reputation);
-                }
               });
             });
           }
@@ -155,15 +172,17 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             };
 
             // Map both characters
-            const chronicle1 = mapToCharacterData(shared, partyData.characters[actorId1]);
-            const chronicle2 = mapToCharacterData(shared, partyData.characters[actorId2]);
+            const actor1 = createMockActor(actorId1, 'EA');
+            const actor2 = createMockActor(actorId2, 'EA');
+            const chronicle1 = mapToCharacterData(shared, partyData.characters[actorId1], actor1);
+            const chronicle2 = mapToCharacterData(shared, partyData.characters[actorId2], actor2);
 
             // Property: Even with identical values, each character gets their own data
             expect(chronicle1).toEqual(chronicle2);
             
             // Property: Modifying one character's data doesn't affect the other
             const modifiedUnique = { ...uniqueFields, characterName: 'Modified Name' };
-            const modifiedChronicle = mapToCharacterData(shared, modifiedUnique);
+            const modifiedChronicle = mapToCharacterData(shared, modifiedUnique, actor1);
             
             expect(modifiedChronicle.char).toBe('Modified Name');
             expect(chronicle1.char).toBe(uniqueFields.characterName);
@@ -188,7 +207,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               }
             };
 
-            const chronicleData = mapToCharacterData(shared, unique);
+            const chronicleData = mapToCharacterData(shared, unique, createMockActor(actorId, 'EA'));
 
             // Property: Single character's unique fields are correctly applied
             expect(chronicleData.char).toBe(unique.characterName);
@@ -198,7 +217,6 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             expect(chronicleData.gp_gained).toBe(unique.goldEarned);
             expect(chronicleData.gp_spent).toBe(unique.goldSpent);
             expect(chronicleData.notes).toBe(unique.notes);
-            expect(chronicleData.reputation).toBe(unique.reputation);
           }
         ),
         { numRuns: 50 }
@@ -218,7 +236,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             const mappings = characterPairs.map(([actorId, unique]) => ({
               actorId,
               unique,
-              chronicleData: mapToCharacterData(shared, unique)
+              chronicleData: mapToCharacterData(shared, unique, createMockActor(actorId, 'EA'))
             }));
 
             // Property: Each mapping is independent
@@ -275,8 +293,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 incomeEarned: Math.floor(Math.random() * 100),
                 goldEarned: Math.floor(Math.random() * 1000),
                 goldSpent: Math.floor(Math.random() * 1000),
-                notes: `Notes for ${actorId.substring(0, 8)}`,
-                reputation: `Reputation for ${actorId.substring(0, 8)}`
+                notes: `Notes for ${actorId.substring(0, 8)}`
               };
             });
 
@@ -295,7 +312,6 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               expect(partyData.characters[actorId]).toHaveProperty('goldEarned');
               expect(partyData.characters[actorId]).toHaveProperty('goldSpent');
               expect(partyData.characters[actorId]).toHaveProperty('notes');
-              expect(partyData.characters[actorId]).toHaveProperty('reputation');
             });
 
             // Property: The number of unique field entries should match the number of actors
@@ -345,8 +361,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 incomeEarned: index * 10,
                 goldEarned: index * 100,
                 goldSpent: index * 50,
-                notes: `Notes ${index + 1}`,
-                reputation: `Reputation ${index + 1}`
+                notes: `Notes ${index + 1}`
               };
             });
 
@@ -383,8 +398,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 incomeEarned: 10,
                 goldEarned: 50,
                 goldSpent: 20,
-                notes: 'Test notes',
-                reputation: 'Test reputation'
+                notes: 'Test notes'
               };
             });
 
@@ -446,8 +460,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               'incomeEarned',
               'goldEarned',
               'goldSpent',
-              'notes',
-              'reputation'
+              'notes'
             ];
 
             Object.entries(partyData.characters).forEach(([actorId, uniqueFields]) => {

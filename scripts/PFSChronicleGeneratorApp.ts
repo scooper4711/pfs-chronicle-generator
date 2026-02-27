@@ -25,7 +25,7 @@ const PFS_REWARD_DATA: PfsRewardData = {
     }
 };
 
-const FACTION_NAMES: Record<string, string> = {
+export const FACTION_NAMES: Record<string, string> = {
     'EA': 'Envoy\'s Alliance',
     'GA': 'Grand Archive',
     'HH': 'Horizon Hunters',
