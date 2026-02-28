@@ -456,14 +456,8 @@ export async function generateChroniclesFromPartyData(
   if (allSucceeded) {
     ui.notifications?.info(`Successfully generated ${successCount} chronicle(s) for all party members.`);
     
-    // Clear saved data after successful generation
-    try {
-      await clearPartyChronicleData();
-      console.log('[PFS Chronicle] Cleared saved party chronicle data after successful generation');
-    } catch (error) {
-      console.error('[PFS Chronicle] Failed to clear saved data:', error);
-      ui.notifications?.warn("Chronicles generated but failed to clear saved data.");
-    }
+    // Note: Data is NOT cleared after generation to allow review and correction
+    // Data should only be cleared when the user explicitly clicks the Clear button
   } else {
     const failedCharacters = results
       .filter(r => !r.success)

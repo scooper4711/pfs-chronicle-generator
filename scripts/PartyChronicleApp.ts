@@ -190,14 +190,13 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
     const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber') as string || '';
     const eventName = game.settings.get('pfs-chronicle-generator', 'eventName') as string || '';
     const eventCode = game.settings.get('pfs-chronicle-generator', 'eventcode') as string || '';
-    const eventDate = game.settings.get('pfs-chronicle-generator', 'eventDate') as string || new Date().toISOString().slice(0, 10);
     const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string || '';
 
     return {
       gmPfsNumber: savedData?.shared?.gmPfsNumber || gmPfsNumber,
       scenarioName: savedData?.shared?.scenarioName || eventName,
       eventCode: savedData?.shared?.eventCode || eventCode,
-      eventDate: savedData?.shared?.eventDate || eventDate,
+      eventDate: savedData?.shared?.eventDate || new Date().toISOString().slice(0, 10),
       xpEarned: savedData?.shared?.xpEarned ?? 4,
       adventureSummaryCheckboxes: savedData?.shared?.adventureSummaryCheckboxes || [],
       strikeoutItems: savedData?.shared?.strikeoutItems || [],

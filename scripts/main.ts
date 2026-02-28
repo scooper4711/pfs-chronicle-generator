@@ -383,7 +383,7 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
             if (confirmed) {
                 await clearPartyChronicleData();
                 ui.notifications?.info('Chronicle data cleared');
-                // Re-render the form
+                // Re-render the form (which will reset event date to today)
                 await renderPartyChronicleForm(container, partyActors, partySheet);
             }
         });

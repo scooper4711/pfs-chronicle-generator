@@ -103,5 +103,7 @@ This document specifies requirements for adding party-level chronicle sheet fill
 
 1. WHILE the Party_Chronicle_Interface is open, THE Plugin SHALL save Chronicle_Data as the GM enters it
 2. WHEN the GM closes and reopens the Party_Chronicle_Interface, THE Plugin SHALL restore previously entered Chronicle_Data
-3. WHEN chronicles are successfully generated, THE Plugin SHALL clear the saved Chronicle_Data for that session
+3. WHEN chronicles are successfully generated, THE Plugin SHALL NOT clear the saved Chronicle_Data (data persists for review and correction)
+4. WHEN the GM clicks the Clear button, THE Plugin SHALL clear all saved Chronicle_Data
+5. WHEN the GM clicks the Clear button, THE Plugin SHALL reset the event date field to today's date
 
