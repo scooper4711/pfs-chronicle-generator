@@ -45,7 +45,7 @@ import {
  * }
  * ```
  * 
- * Validates: Requirements 6.1, 6.3
+ * Validates: Requirements party-chronicle-filling 6.1, 6.3
  */
 export function validateSharedFields(shared: Partial<SharedFields>): ValidationResult {
   const errors: string[] = [];
@@ -132,7 +132,6 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
  *   societyId: '',  // Missing!
  *   level: 3,
  *   incomeEarned: 8,
- *   goldEarned: 24,
  *   goldSpent: 10,
  *   notes: ''
  * };
@@ -144,7 +143,7 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
  * }
  * ```
  * 
- * Validates: Requirements 6.2, 6.3
+ * Validates: Requirements party-chronicle-filling 6.2, 6.3, treasure-bundle-calculation 10.1, 10.2, 10.3, 10.4
  */
 export function validateUniqueFields(
   unique: Partial<UniqueFields>,
@@ -177,11 +176,6 @@ export function validateUniqueFields(
   
   // Validate Income Earned
   errors.push(...validateNumberField(unique.incomeEarned, 'Income Earned', { 
-    min: 0 
-  }, prefix));
-  
-  // Validate Gold Earned
-  errors.push(...validateNumberField(unique.goldEarned, 'Gold Earned', { 
     min: 0 
   }, prefix));
   
@@ -228,7 +222,7 @@ export function validateUniqueFields(
  * }
  * ```
  * 
- * Validates: Requirements 6.1, 6.2, 6.3
+ * Validates: Requirements party-chronicle-filling 6.1, 6.2, 6.3
  */
 export function validateAllFields(
   shared: Partial<SharedFields>,

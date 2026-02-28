@@ -14,7 +14,9 @@ import {
     handleFieldChange,
     extractFormData,
     saveFormData,
-    generateChroniclesFromPartyData
+    generateChroniclesFromPartyData,
+    updateAllTreasureBundleDisplays,
+    updateTreasureBundleDisplay
 } from './handlers/party-chronicle-handlers.js';
 
 Hooks.on('init', async () => {
@@ -360,6 +362,34 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
             });
         });
         
+        // Treasure bundles input change handler for reactive display updates
+        const treasureBundlesInput = container.querySelector<HTMLInputElement>('#treasureBundles');
+        if (treasureBundlesInput) {
+            treasureBundlesInput.addEventListener('input', (event: Event) => {
+                const input = event.target as HTMLInputElement;
+                const treasureBundles = parseInt(input.value, 10) || 0;
+                updateAllTreasureBundleDisplays(treasureBundles, container);
+            });
+        }
+        
+        // Character level input change handlers for reactive display updates
+        const levelInputs = container.querySelectorAll<HTMLInputElement>('input[name$=".level"]');
+        levelInputs.forEach((levelInput) => {
+            levelInput.addEventListener('input', (event: Event) => {
+                const input = event.target as HTMLInputElement;
+                const fieldName = input.name;
+                const match = fieldName.match(/characters\.([^.]+)\.level/);
+                
+                if (match) {
+                    const characterId = match[1];
+                    const treasureBundlesInput = container.querySelector<HTMLInputElement>('#treasureBundles');
+                    const treasureBundles = parseInt(treasureBundlesInput?.value || '0', 10);
+                    const characterLevel = parseInt(input.value, 10);
+                    updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
+                }
+            });
+        });
+        
         // Save button handler
         const saveButton = container.querySelector('#saveData');
         saveButton?.addEventListener('click', async (event: Event) => {
@@ -430,6 +460,10 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
                 await saveFormData(container, partyActors);
             });
         }
+        
+        // Initialize treasure bundle displays on initial render
+        const initialTreasureBundles = parseInt(treasureBundlesInput?.value || '0', 10);
+        updateAllTreasureBundleDisplays(initialTreasureBundles, container);
         
         // Initial validation display and button state
         updateValidationDisplay(container, partyActors, extractFormData);

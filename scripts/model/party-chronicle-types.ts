@@ -60,6 +60,15 @@ export interface SharedFields {
 /**
  * Character-specific fields that are unique per party member
  * These fields are entered separately for each character
+ * 
+ * Note: The goldEarned field has been removed as of the Treasure Bundle Calculation feature.
+ * Gold earned is now calculated automatically at PDF generation time using the formula:
+ * treasure_bundles_gp = treasureBundles × getTreasureBundleValue(level)
+ * gp_gained = treasure_bundles_gp + incomeEarned
+ * 
+ * This prevents data inconsistency where stored goldEarned values don't match the
+ * calculated values. The calculation is performed in party-chronicle-mapper.ts using
+ * functions from utils/treasure-bundle-calculator.ts.
  */
 export interface UniqueFields {
   /** Character name (editable, may differ from actor name) */
@@ -73,9 +82,6 @@ export interface UniqueFields {
   
   /** Income earned during the adventure */
   incomeEarned: number;
-  
-  /** Gold earned (calculated from treasure bundles + income) */
-  goldEarned: number;
   
   /** Gold spent during the adventure */
   goldSpent: number;

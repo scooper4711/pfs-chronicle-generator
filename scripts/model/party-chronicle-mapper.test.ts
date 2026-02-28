@@ -60,7 +60,6 @@ describe('mapToCharacterData', () => {
       societyId: '12345-01',
       level: 3,
       incomeEarned: 8,
-      goldEarned: 24,
       goldSpent: 10,
       notes: 'Saved the village from bandits'
     };
@@ -79,10 +78,13 @@ describe('mapToCharacterData', () => {
     expect(result.eventcode).toBe('PFS-001');
     expect(result.date).toBe('2024-01-15');
 
-    // Rewards
+    // Rewards - calculated values
     expect(result.xp_gained).toBe(4);
     expect(result.income_earned).toBe(8);
-    expect(result.gp_gained).toBe(24);
+    // Level 3 treasure bundle value is 3.8, so 2 × 3.8 = 7.6
+    expect(result.treasure_bundles_gp).toBe(7.6);
+    // gp_gained = treasure_bundles_gp + income_earned = 7.6 + 8 = 15.6
+    expect(result.gp_gained).toBe(15.6);
     expect(result.gp_spent).toBe(10);
 
     // Notes and reputation (reputation is now calculated)
@@ -126,7 +128,6 @@ describe('mapToCharacterData', () => {
       societyId: '67890-02',
       level: 5,
       incomeEarned: 12,
-      goldEarned: 36,
       goldSpent: 0,
       notes: ''
     };
@@ -139,6 +140,10 @@ describe('mapToCharacterData', () => {
     expect(result.treasure_bundles).toBe('0');
     expect(result.notes).toBe('');
     expect(result.reputation).toEqual([]); // No reputation since all values are 0
+    // With 0 treasure bundles, treasure_bundles_gp should be 0
+    expect(result.treasure_bundles_gp).toBe(0);
+    // gp_gained = 0 + 12 = 12
+    expect(result.gp_gained).toBe(12);
   });
 
   it('should handle zero values correctly', () => {
@@ -170,7 +175,6 @@ describe('mapToCharacterData', () => {
       societyId: '11111-03',
       level: 1,
       incomeEarned: 0,
-      goldEarned: 0,
       goldSpent: 0,
       notes: ''
     };
@@ -180,6 +184,7 @@ describe('mapToCharacterData', () => {
 
     expect(result.xp_gained).toBe(0);
     expect(result.income_earned).toBe(0);
+    expect(result.treasure_bundles_gp).toBe(0);
     expect(result.gp_gained).toBe(0);
     expect(result.gp_spent).toBe(0);
   });
@@ -213,7 +218,6 @@ describe('mapToCharacterData', () => {
       societyId: '12345-01',
       level: 3,
       incomeEarned: 8,
-      goldEarned: 24,
       goldSpent: 10,
       notes: 'Notes with "quotes" & special chars'
     };
@@ -226,6 +230,139 @@ describe('mapToCharacterData', () => {
     expect(result.notes).toBe('Notes with "quotes" & special chars');
     expect(result.summary_checkbox).toEqual(['Choice with "quotes"']);
     expect(result.strikeout_item_lines).toEqual(['Item with \'apostrophe\'']);
+  });
+
+  it('should calculate treasure_bundles_gp correctly for various levels', () => {
+    const shared: SharedFields = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 4,
+      adventureSummaryCheckboxes: [],
+      strikeoutItems: [],
+      treasureBundles: 3,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 0,
+      reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+    };
+
+    const actor = createMockActor('actor-test', null);
+
+    // Test level 1: 3 × 1.4 = 4.2
+    const unique1: UniqueFields = {
+      characterName: 'Test1',
+      societyId: '12345-01',
+      level: 1,
+      incomeEarned: 0,
+      goldSpent: 0,
+      notes: ''
+    };
+    const result1 = mapToCharacterData(shared, unique1, actor);
+    expect(result1.treasure_bundles_gp).toBe(4.2);
+    expect(result1.gp_gained).toBe(4.2);
+
+    // Test level 10: 3 × 60 = 180
+    const unique10: UniqueFields = {
+      characterName: 'Test10',
+      societyId: '12345-02',
+      level: 10,
+      incomeEarned: 0,
+      goldSpent: 0,
+      notes: ''
+    };
+    const result10 = mapToCharacterData(shared, unique10, actor);
+    expect(result10.treasure_bundles_gp).toBe(180);
+    expect(result10.gp_gained).toBe(180);
+
+    // Test level 20: 3 × 3680 = 11040
+    const unique20: UniqueFields = {
+      characterName: 'Test20',
+      societyId: '12345-03',
+      level: 20,
+      incomeEarned: 0,
+      goldSpent: 0,
+      notes: ''
+    };
+    const result20 = mapToCharacterData(shared, unique20, actor);
+    expect(result20.treasure_bundles_gp).toBe(11040);
+    expect(result20.gp_gained).toBe(11040);
+  });
+
+  it('should calculate gp_gained as treasure_bundles_gp + income_earned', () => {
+    const shared: SharedFields = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 4,
+      adventureSummaryCheckboxes: [],
+      strikeoutItems: [],
+      treasureBundles: 2,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 0,
+      reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+    };
+
+    const unique: UniqueFields = {
+      characterName: 'Test',
+      societyId: '12345-01',
+      level: 5,
+      incomeEarned: 15.5,
+      goldSpent: 0,
+      notes: ''
+    };
+
+    const actor = createMockActor('actor-test', null);
+    const result = mapToCharacterData(shared, unique, actor);
+
+    // Level 5: 2 × 10 = 20
+    expect(result.treasure_bundles_gp).toBe(20);
+    // gp_gained = 20 + 15.5 = 35.5
+    expect(result.gp_gained).toBe(35.5);
+    expect(result.income_earned).toBe(15.5);
+  });
+
+  it('should use exact parameter names for PDF compatibility', () => {
+    const shared: SharedFields = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 4,
+      adventureSummaryCheckboxes: [],
+      strikeoutItems: [],
+      treasureBundles: 1,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 0,
+      reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+    };
+
+    const unique: UniqueFields = {
+      characterName: 'Test',
+      societyId: '12345-01',
+      level: 1,
+      incomeEarned: 5,
+      goldSpent: 0,
+      notes: ''
+    };
+
+    const actor = createMockActor('actor-test', null);
+    const result = mapToCharacterData(shared, unique, actor);
+
+    // Verify exact parameter names exist
+    expect(result).toHaveProperty('treasure_bundles_gp');
+    expect(result).toHaveProperty('gp_gained');
+    expect(result).toHaveProperty('income_earned');
+    
+    // Verify no legacy goldEarned field
+    expect(result).not.toHaveProperty('goldEarned');
   });
 });
 
@@ -260,7 +397,6 @@ describe('Property 6: Data Combination Correctness', () => {
       societyId: fc.string({ minLength: 1, maxLength: 20 }),
       level: fc.integer({ min: 1, max: 20 }),
       incomeEarned: fc.integer({ min: 0, max: 1000 }),
-      goldEarned: fc.integer({ min: 0, max: 10000 }),
       goldSpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.string({ maxLength: 500 }),
     });
@@ -285,10 +421,13 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.societyid).toBe(unique.societyId);
         expect(result.level).toBe(unique.level);
         expect(result.income_earned).toBe(unique.incomeEarned);
-        expect(result.gp_gained).toBe(unique.goldEarned);
         expect(result.gp_spent).toBe(unique.goldSpent);
         expect(result.notes).toBe(unique.notes);
-        // Reputation is now calculated from shared fields and actor
+        
+        // Verify calculated fields exist and are numbers
+        expect(typeof result.treasure_bundles_gp).toBe('number');
+        expect(typeof result.gp_gained).toBe('number');
+        expect(result.gp_gained).toBeGreaterThanOrEqual(unique.incomeEarned);
       }),
       { numRuns: 100 }
     );
@@ -324,7 +463,6 @@ describe('Property 6: Data Combination Correctness', () => {
       societyId: fc.string({ minLength: 1, maxLength: 20 }),
       level: fc.integer({ min: 1, max: 20 }),
       incomeEarned: fc.integer({ min: 0, max: 1000 }),
-      goldEarned: fc.integer({ min: 0, max: 10000 }),
       goldSpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.string({ maxLength: 500 }),
     });
@@ -343,7 +481,6 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.char).toStrictEqual(unique.characterName);
         expect(result.societyid).toStrictEqual(unique.societyId);
         expect(result.notes).toStrictEqual(unique.notes);
-        // Reputation is now calculated from shared fields and actor
         expect(result.reputation).toBeDefined();
         expect(result.treasure_bundles).toStrictEqual(shared.treasureBundles.toString());
 
@@ -351,8 +488,11 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.xp_gained).toStrictEqual(shared.xpEarned);
         expect(result.level).toStrictEqual(unique.level);
         expect(result.income_earned).toStrictEqual(unique.incomeEarned);
-        expect(result.gp_gained).toStrictEqual(unique.goldEarned);
         expect(result.gp_spent).toStrictEqual(unique.goldSpent);
+        
+        // Calculated fields should be numbers
+        expect(typeof result.treasure_bundles_gp).toBe('number');
+        expect(typeof result.gp_gained).toBe('number');
 
         // Array fields should be identical (deep equality)
         expect(result.summary_checkbox).toStrictEqual(shared.adventureSummaryCheckboxes);
@@ -392,7 +532,6 @@ describe('Property 6: Data Combination Correctness', () => {
       societyId: fc.string({ minLength: 1, maxLength: 20 }),
       level: fc.integer({ min: 1, max: 20 }),
       incomeEarned: fc.integer({ min: 0, max: 1000 }),
-      goldEarned: fc.integer({ min: 0, max: 10000 }),
       goldSpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.constant('')
     });
@@ -409,8 +548,12 @@ describe('Property 6: Data Combination Correctness', () => {
         // Verify zero value is converted to string
         expect(result.treasure_bundles).toBe('0');
         expect(result.notes).toBe('');
-        // Reputation is now calculated from shared fields, should be empty array when all values are 0
         expect(result.reputation).toEqual([]);
+        
+        // With 0 treasure bundles, treasure_bundles_gp should be 0
+        expect(result.treasure_bundles_gp).toBe(0);
+        // gp_gained should equal income_earned when treasure bundles is 0
+        expect(result.gp_gained).toBe(unique.incomeEarned);
       }),
       { numRuns: 100 }
     );
@@ -446,7 +589,6 @@ describe('Property 6: Data Combination Correctness', () => {
       societyId: fc.string({ minLength: 1, maxLength: 20 }),
       level: fc.integer({ min: 1, max: 20 }),
       incomeEarned: fc.constant(0),
-      goldEarned: fc.constant(0),
       goldSpent: fc.constant(0),
       notes: fc.string({ maxLength: 500 }),
     });
@@ -459,8 +601,11 @@ describe('Property 6: Data Combination Correctness', () => {
         // Verify zero values are preserved (not treated as falsy)
         expect(result.xp_gained).toBe(0);
         expect(result.income_earned).toBe(0);
-        expect(result.gp_gained).toBe(0);
         expect(result.gp_spent).toBe(0);
+        
+        // treasure_bundles_gp and gp_gained depend on treasure bundles
+        expect(typeof result.treasure_bundles_gp).toBe('number');
+        expect(typeof result.gp_gained).toBe('number');
       }),
       { numRuns: 100 }
     );
@@ -498,7 +643,6 @@ describe('Property 6: Data Combination Correctness', () => {
       societyId: stringArb,
       level: fc.integer({ min: 1, max: 20 }),
       incomeEarned: fc.integer({ min: 0, max: 1000 }),
-      goldEarned: fc.integer({ min: 0, max: 10000 }),
       goldSpent: fc.integer({ min: 0, max: 10000 }),
       notes: stringArb,
     });
@@ -516,7 +660,6 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.char).toBe(unique.characterName);
         expect(result.societyid).toBe(unique.societyId);
         expect(result.notes).toBe(unique.notes);
-        // Reputation is now calculated from shared fields and actor
         expect(result.treasure_bundles).toBe(shared.treasureBundles.toString());
 
         // Verify array elements preserve special characters

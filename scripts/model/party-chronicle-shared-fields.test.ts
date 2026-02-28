@@ -67,7 +67,6 @@ const uniqueFieldsArbitrary = fc.record({
   societyId: fc.string({ minLength: 5, maxLength: 15 }),
   level: fc.integer({ min: 1, max: 20 }),
   incomeEarned: fc.integer({ min: 0, max: 100 }),
-  goldEarned: fc.integer({ min: 0, max: 1000 }),
   goldSpent: fc.integer({ min: 0, max: 1000 }),
   notes: fc.string({ maxLength: 200 }),
 });

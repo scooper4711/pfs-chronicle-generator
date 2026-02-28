@@ -26,6 +26,7 @@ import { validateSharedFields, validateUniqueFields } from '../model/party-chron
 import { PdfGenerator } from '../PdfGenerator.js';
 import { PDFDocument } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
+import { calculateTreasureBundlesGp, formatGoldValue } from '../utils/treasure-bundle-calculator.js';
 
 /**
  * Handles portrait image click events to open character sheets
@@ -36,7 +37,7 @@ import fontkit from '@pdf-lib/fontkit';
  * @param event - The mouse click event
  * @param partyActors - Array of party member actors
  * 
- * Requirements: 5.1
+ * Requirements: party-chronicle-filling 5.1
  */
 export function handlePortraitClick(event: MouseEvent, partyActors: any[]): void {
     console.log('[PFS Chronicle] Portrait clicked!', event.target);
@@ -62,6 +63,65 @@ export function handlePortraitClick(event: MouseEvent, partyActors: any[]): void
     } else {
         console.warn('[PFS Chronicle] Actor or actor sheet not found');
     }
+}
+
+/**
+ * Updates the displayed treasure bundle value for a specific character.
+ * 
+ * This handler is called when treasure bundles or character level changes.
+ * It calculates the gold value from treasure bundles based on the character's level
+ * and updates the display element with class 'treasure-bundle-value'.
+ * 
+ * @param characterId - Actor ID of the character
+ * @param treasureBundles - Number of treasure bundles
+ * @param characterLevel - Character level
+ * @param container - Container element for the form
+ * 
+ * Requirements: treasure-bundle-calculation 4.1, 4.2, 4.3, 4.4
+ */
+export function updateTreasureBundleDisplay(
+  characterId: string,
+  treasureBundles: number,
+  characterLevel: number,
+  container: HTMLElement
+): void {
+  const displayElement = container.querySelector(
+    `.member-activity[data-character-id="${characterId}"] .treasure-bundle-value`
+  );
+  
+  if (displayElement) {
+    const treasureBundlesGp = calculateTreasureBundlesGp(treasureBundles, characterLevel);
+    displayElement.textContent = formatGoldValue(treasureBundlesGp);
+  }
+}
+
+/**
+ * Updates treasure bundle displays for all characters.
+ * 
+ * This handler is called when the shared treasure bundles field changes.
+ * It iterates through all party members and updates their treasure bundle displays
+ * based on their current level.
+ * 
+ * @param treasureBundles - Number of treasure bundles
+ * @param container - Container element for the form
+ * 
+ * Requirements: treasure-bundle-calculation 4.1, 4.2, 4.3, 4.4
+ */
+export function updateAllTreasureBundleDisplays(
+  treasureBundles: number,
+  container: HTMLElement
+): void {
+  const memberActivities = container.querySelectorAll('.member-activity');
+  
+  memberActivities.forEach((activity) => {
+    const characterId = activity.getAttribute('data-character-id');
+    const levelInput = activity.querySelector<HTMLInputElement>('input[name$=".level"]');
+    
+    if (characterId && levelInput) {
+      const characterLevel = parseInt(levelInput.value, 10);
+      updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
+    }
+  });
 }
 
 /**
@@ -172,12 +232,15 @@ export async function handleLayoutChange(
  * This handler is called when any input, select, or textarea field changes.
  * It auto-saves the form data and updates the validation display.
  * 
+ * For treasure bundles and level fields, it also triggers treasure bundle
+ * display updates to show the calculated gold values.
+ * 
  * @param event - The change event from the field
  * @param container - HTMLElement wrapping the form container
  * @param partyActors - Array of party member actors
  * @param extractFormData - Function to extract form data from the container
  * 
- * Requirements: 5.4
+ * Requirements: party-chronicle-filling 5.4, treasure-bundle-calculation 4.3
  */
 export async function handleFieldChange(
     event: Event,
@@ -186,6 +249,28 @@ export async function handleFieldChange(
     extractFormData: (container: HTMLElement, partyActors: any[]) => any
 ): Promise<void> {
     console.log('[PFS Chronicle] Field changed');
+    
+    const input = event.target as HTMLInputElement;
+    const fieldName = input.name;
+    
+    // If treasure bundles changed, update all treasure bundle displays
+    if (fieldName === 'shared.treasureBundles') {
+        const treasureBundles = parseInt(input.value, 10) || 0;
+        updateAllTreasureBundleDisplays(treasureBundles, container);
+    }
+    
+    // If a character's level changed, update that character's treasure bundle display
+    if (fieldName && fieldName.includes('.level')) {
+        const match = fieldName.match(/characters\.([^.]+)\.level/);
+        if (match) {
+            const characterId = match[1];
+            const treasureBundlesInput = container.querySelector<HTMLInputElement>('#treasureBundles');
+            const treasureBundles = parseInt(treasureBundlesInput?.value || '0', 10);
+            const characterLevel = parseInt(input.value, 10);
+            updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
+        }
+    }
+    
     await saveFormData(container, partyActors);
     // Update validation display and button state
     updateValidationDisplay(container, partyActors, extractFormData);
@@ -264,6 +349,7 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
     
     // Extract character-specific fields
     const characters: any = {};
+    // eslint-disable-next-line complexity
     partyActors.forEach((actor: any) => {
         const actorId = actor.id;
         characters[actorId] = {
@@ -273,7 +359,6 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
             level: parseInt((container.querySelector(`input[name="characters.${actorId}.level"]`) as HTMLInputElement)?.value) || actor.level || 1,
             // Read from visible editable fields
             incomeEarned: parseFloat((container.querySelector(`#incomeEarned-${actorId}`) as HTMLInputElement)?.value) || 0,
-            goldEarned: parseFloat((container.querySelector(`#goldEarned-${actorId}`) as HTMLInputElement)?.value) || 0,
             goldSpent: parseFloat((container.querySelector(`#goldSpent-${actorId}`) as HTMLInputElement)?.value) || 0,
             notes: (container.querySelector(`#notes-${actorId}`) as HTMLTextAreaElement)?.value || '',
         };

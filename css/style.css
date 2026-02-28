@@ -374,3 +374,16 @@
     margin-top: 0.15rem;
     display: block;
 }
+
+/* Treasure Bundle Value display styling */
+.sheet.party [data-tab=pfs] .activities .member-activity .treasure-bundle-value {
+    padding: 0.25rem 0.5rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: var(--font-size-12);
+    color: #333;
+    text-align: right;
+    min-width: 80px;
+}

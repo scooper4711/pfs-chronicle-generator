@@ -999,7 +999,6 @@ describe('validateUniqueFields', () => {
       societyId: '12345-01',
       level: 3,
       incomeEarned: 8,
-      goldEarned: 24,
       goldSpent: 10,
       notes: 'Saved the village'
     };
@@ -1016,7 +1015,6 @@ describe('validateUniqueFields', () => {
       societyId: '12345-01',
       level: 3,
       incomeEarned: 8,
-      goldEarned: 24,
       goldSpent: 10,
       notes: ''
     };
@@ -1033,7 +1031,6 @@ describe('validateUniqueFields', () => {
       societyId: '',
       level: 3,
       incomeEarned: 8,
-      goldEarned: 24,
       goldSpent: 10,
       notes: ''
     };
@@ -1050,7 +1047,6 @@ describe('validateUniqueFields', () => {
       societyId: '12345',
       level: 3,
       incomeEarned: 8,
-      goldEarned: 24,
       goldSpent: 10,
       notes: ''
     };
@@ -1066,7 +1062,6 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       societyId: '12345-01',
       incomeEarned: 8,
-      goldEarned: 24,
       goldSpent: 10,
       notes: ''
     };
@@ -1083,7 +1078,6 @@ describe('validateUniqueFields', () => {
       societyId: '12345-01',
       level: 0,
       incomeEarned: 8,
-      goldEarned: 24,
       goldSpent: 10,
       notes: ''
     };
@@ -1097,7 +1091,6 @@ describe('validateUniqueFields', () => {
       societyId: '12345-01',
       level: 21,
       incomeEarned: 8,
-      goldEarned: 24,
       goldSpent: 10,
       notes: ''
     };
@@ -1113,7 +1106,6 @@ describe('validateUniqueFields', () => {
       societyId: '12345-01',
       level: 3.5,
       incomeEarned: 8,
-      goldEarned: 24,
       goldSpent: 10,
       notes: ''
     };
@@ -1129,7 +1121,6 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       societyId: '12345-01',
       level: 3,
-      goldEarned: 24,
       goldSpent: 10,
       notes: ''
     };
@@ -1146,7 +1137,6 @@ describe('validateUniqueFields', () => {
       societyId: '12345-01',
       level: 3,
       incomeEarned: -5,
-      goldEarned: 24,
       goldSpent: 10,
       notes: ''
     };
@@ -1157,29 +1147,12 @@ describe('validateUniqueFields', () => {
     expect(result.errors).toContain('Income Earned cannot be negative');
   });
 
-  it('should fail validation when Gold Earned is missing', () => {
-    const unique: Partial<UniqueFields> = {
-      characterName: 'Valeros',
-      societyId: '12345-01',
-      level: 3,
-      incomeEarned: 8,
-      goldSpent: 10,
-      notes: ''
-    };
-
-    const result = validateUniqueFields(unique);
-
-    expect(result.valid).toBe(false);
-    expect(result.errors).toContain('Gold Earned is required');
-  });
-
   it('should fail validation when Gold Spent is missing', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
       societyId: '12345-01',
       level: 3,
       incomeEarned: 8,
-      goldEarned: 24,
       notes: ''
     };
 
@@ -1195,7 +1168,6 @@ describe('validateUniqueFields', () => {
       societyId: '12345-01',
       level: 1,
       incomeEarned: 0,
-      goldEarned: 0,
       goldSpent: 0,
       notes: ''
     };
@@ -1212,7 +1184,6 @@ describe('validateUniqueFields', () => {
       societyId: '12345-01',
       level: 3,
       incomeEarned: 8,
-      goldEarned: 24,
       goldSpent: 10,
       notes: ''
     };
@@ -1229,7 +1200,6 @@ describe('validateUniqueFields', () => {
       societyId: '',
       level: 3,
       incomeEarned: 8,
-      goldEarned: 24,
       goldSpent: 10,
       notes: ''
     };
@@ -1250,7 +1220,7 @@ describe('validateUniqueFields', () => {
     const result = validateUniqueFields(unique);
 
     expect(result.valid).toBe(false);
-    expect(result.errors.length).toBeGreaterThan(5);
+    expect(result.errors.length).toBeGreaterThanOrEqual(5);
   });
 });
 
@@ -1285,7 +1255,6 @@ describe('validateAllFields', () => {
         societyId: '12345-01',
         level: 3,
         incomeEarned: 8,
-        goldEarned: 24,
         goldSpent: 10,
         notes: ''
       } as UniqueFields,
@@ -1294,7 +1263,6 @@ describe('validateAllFields', () => {
         societyId: '67890-02',
         level: 5,
         incomeEarned: 12,
-        goldEarned: 36,
         goldSpent: 0,
         notes: ''
       } as UniqueFields
@@ -1333,7 +1301,6 @@ describe('validateAllFields', () => {
         societyId: '',
         level: 3,
         incomeEarned: 8,
-        goldEarned: 24,
         goldSpent: 10,
         notes: ''
       } as Partial<UniqueFields>
@@ -1376,7 +1343,6 @@ describe('validateAllFields', () => {
         societyId: '',
         level: 3,
         incomeEarned: 8,
-        goldEarned: 24,
         goldSpent: 10,
         notes: ''
       } as Partial<UniqueFields>,
@@ -1385,7 +1351,6 @@ describe('validateAllFields', () => {
         societyId: '',
         level: 5,
         incomeEarned: 12,
-        goldEarned: 36,
         goldSpent: 0,
         notes: ''
       } as Partial<UniqueFields>
@@ -1427,7 +1392,6 @@ describe('validateAllFields', () => {
         societyId: '',
         level: 3,
         incomeEarned: 8,
-        goldEarned: 24,
         goldSpent: 10,
         notes: ''
       } as Partial<UniqueFields>

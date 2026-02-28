@@ -51,7 +51,6 @@ export function createUniqueFields(overrides: Partial<UniqueFields> = {}): Uniqu
     societyId: '12345-01',
     level: 5,
     incomeEarned: 10,
-    goldEarned: 15,
     goldSpent: 5,
     notes: 'Test notes',
     ...overrides

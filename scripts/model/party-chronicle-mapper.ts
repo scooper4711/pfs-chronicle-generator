@@ -9,6 +9,7 @@
 
 import { SharedFields, UniqueFields } from './party-chronicle-types.js';
 import { calculateReputation } from './reputation-calculator.js';
+import { calculateTreasureBundlesGp, calculateGpGained } from '../utils/treasure-bundle-calculator.js';
 
 /**
  * Chronicle data format expected by PdfGenerator
@@ -29,6 +30,7 @@ export interface ChronicleData {
   // Rewards
   xp_gained: number;
   income_earned: number;
+  treasure_bundles_gp: number;
   gp_gained: number;
   gp_spent: number;
   
@@ -80,7 +82,6 @@ export interface ChronicleData {
  *   societyId: '12345-01',
  *   level: 3,
  *   incomeEarned: 8,
- *   goldEarned: 24,
  *   goldSpent: 10,
  *   notes: 'Saved the village'
  * };
@@ -88,16 +89,27 @@ export interface ChronicleData {
  * const actor = { system: { pfs: { currentFaction: 'EA' } } };
  * 
  * const chronicleData = mapToCharacterData(shared, unique, actor);
- * // chronicleData.reputation is now ["Envoy's Alliance: +4", "Grand Archive: +1"]
+ * // chronicleData.treasure_bundles_gp is calculated as 2 × 3.8 = 7.6
+ * // chronicleData.gp_gained is calculated as 7.6 + 8 = 15.6
+ * // chronicleData.reputation is ["Envoy's Alliance: +4", "Grand Archive: +1"]
  * ```
  * 
- * Validates: Requirements 5.1, 5.2, 5.3, 5.5
+ * Validates: Requirements party-chronicle-filling 5.1, 5.2, 5.3, 5.5, treasure-bundle-calculation 7.1, 7.2, 7.3, 7.4, 7.5
  */
 export function mapToCharacterData(
   shared: SharedFields,
   unique: UniqueFields,
   actor: any
 ): ChronicleData {
+  // Calculate treasure bundle gold based on character level
+  const treasureBundlesGp = calculateTreasureBundlesGp(
+    shared.treasureBundles,
+    unique.level
+  );
+  
+  // Calculate total gold gained
+  const gpGained = calculateGpGained(treasureBundlesGp, unique.incomeEarned);
+  
   // Calculate reputation using the reputation calculator
   const reputationLines = calculateReputation(shared, actor);
   
@@ -116,9 +128,10 @@ export function mapToCharacterData(
     // XP from shared fields
     xp_gained: shared.xpEarned,
     
-    // Character-specific rewards from unique fields
+    // Character-specific rewards - calculated values
     income_earned: unique.incomeEarned,
-    gp_gained: unique.goldEarned,
+    treasure_bundles_gp: treasureBundlesGp,
+    gp_gained: gpGained,
     gp_spent: unique.goldSpent,
     
     // Character-specific notes from unique fields

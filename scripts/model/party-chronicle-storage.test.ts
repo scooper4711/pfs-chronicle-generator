@@ -52,7 +52,6 @@ describe('Party Chronicle Storage', () => {
             societyId: '12345-01',
             level: 5,
             incomeEarned: 10,
-            goldEarned: 15,
             goldSpent: 5,
             notes: 'Test notes'
           }
@@ -201,7 +200,6 @@ describe('Party Chronicle Storage', () => {
             societyId: '12345-01',
             level: 5,
             incomeEarned: 10,
-            goldEarned: 15,
             goldSpent: 5,
             notes: ''
           })
@@ -395,7 +393,6 @@ describe('Party Chronicle Storage', () => {
             societyId: '12345-01',
             level: 5,
             incomeEarned: 10,
-            goldEarned: 15,
             goldSpent: 5,
             notes: 'Test notes'
           }),
@@ -404,7 +401,6 @@ describe('Party Chronicle Storage', () => {
             societyId: '12345-02',
             level: 3,
             incomeEarned: 8,
-            goldEarned: 12,
             goldSpent: 3,
             notes: 'More notes'
           })
@@ -649,7 +645,6 @@ describe('Party Chronicle Storage', () => {
         societyId: fc.string({ minLength: 1, maxLength: 20 }),
         level: fc.integer({ min: 1, max: 20 }),
         incomeEarned: fc.integer({ min: 0, max: 1000 }),
-        goldEarned: fc.integer({ min: 0, max: 10000 }),
         goldSpent: fc.integer({ min: 0, max: 10000 }),
         notes: fc.string({ maxLength: 500 })
       });
@@ -774,7 +769,6 @@ describe('Party Chronicle Storage', () => {
         societyId: stringArb,
         level: fc.integer({ min: 1, max: 20 }),
         incomeEarned: fc.integer({ min: 0, max: 1000 }),
-        goldEarned: fc.integer({ min: 0, max: 10000 }),
         goldSpent: fc.integer({ min: 0, max: 10000 }),
         notes: stringArb
       });
