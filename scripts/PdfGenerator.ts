@@ -1,7 +1,13 @@
-import { PDFDocument, PDFPage, rgb, StandardFonts, PDFFont, RGB, degrees } from 'pdf-lib';
-import { Layout, ContentElement, Preset, Canvas } from './model/layout';
-
-type ResolvedElement = Partial<Preset> & ContentElement;
+import { PDFDocument, PDFPage, rgb, degrees } from 'pdf-lib';
+import { Layout, ContentElement } from './model/layout';
+import { getFont, getColor, getCanvasRect } from './utils/pdf-utils';
+import { 
+    ResolvedElement, 
+    resolvePresets, 
+    resolveValue, 
+    getAllContentElements, 
+    findContentElement 
+} from './utils/pdf-element-utils';
 
 export class PdfGenerator {
     private pdfDoc: PDFDocument;
@@ -32,7 +38,8 @@ export class PdfGenerator {
     }
 
     public async drawGrid(canvasName: string) {
-        const canvasRect = this.getCanvasRect(canvasName);
+        const { width: pageWidth, height: pageHeight } = this.page.getSize();
+        const canvasRect = getCanvasRect(canvasName, this.layout.canvas!, pageWidth, pageHeight);
         const { x, y, width, height } = canvasRect;
 
         let spacing = 1;
@@ -46,8 +53,7 @@ export class PdfGenerator {
             spacing = 20;
         }
 
-        const pageHeight = this.page.getHeight();
-        const font = await this.getFont('helvetica');
+        const font = await getFont(this.pdfDoc, 'helvetica');
         const fontSize = 5;
 
         // Draw vertical lines
@@ -99,13 +105,13 @@ export class PdfGenerator {
         if (contentToHighlight) {
             if (typeof contentToHighlight === 'string') {
                 if (this.layout.content) {
-                    const element = this.findContentElement(this.layout.content, contentToHighlight);
+                    const element = findContentElement(this.layout.content, contentToHighlight);
                     if (element) {
                         await this.highlightContentElement(element);
                     }
                 }
             } else {
-                const allElements = this.getAllContentElements(contentToHighlight);
+                const allElements = getAllContentElements(contentToHighlight);
                 for (const element of allElements) {
                     await this.highlightContentElement(element);
                 }
@@ -114,12 +120,13 @@ export class PdfGenerator {
     }
 
     private async highlightContentElement(element: ContentElement) {
-        const props = this.resolvePresets(element);
+        const props = resolvePresets(element, this.layout.presets);
         const pageHeight = this.page.getHeight();
-        const font = await this.getFont('helvetica');
+        const font = await getFont(this.pdfDoc, 'helvetica');
         if (!props.canvas) return;
 
-        const elementCanvasRect = this.getCanvasRect(props.canvas);
+        const { width: pageWidth, height: pageHeightSize } = this.page.getSize();
+        const elementCanvasRect = getCanvasRect(props.canvas, this.layout.canvas!, pageWidth, pageHeightSize);
         const x = props.x || 0;
         const y = props.y || 0;
 
@@ -163,51 +170,10 @@ export class PdfGenerator {
         });
     }
 
-    private getAllContentElements(elements: ContentElement[] | Record<string, ContentElement[]>): ContentElement[] {
-        let allElements: ContentElement[] = [];
-        if (Array.isArray(elements)) {
-            for (const element of elements) {
-                if (element.value || element.type) {
-                    allElements.push(element);
-                }
-                if (element.content) {
-                    allElements = allElements.concat(this.getAllContentElements(element.content));
-                }
-            }
-        } else if (typeof elements === 'object') {
-            for (const key in elements) {
-                allElements = allElements.concat(this.getAllContentElements(elements[key]));
-            }
-        }
-        return allElements;
-    }
 
-    private findContentElement(elements: ContentElement[] | Record<string, ContentElement[]>, name: string): ContentElement | undefined {
-        if (Array.isArray(elements)) {
-            for (const element of elements) {
-                if (element.value === name) {
-                    return element;
-                }
-                if (element.content) {
-                    const found = this.findContentElement(element.content, name);
-                    if (found) {
-                        return found;
-                    }
-                }
-            }
-        } else if (typeof elements === 'object') {
-            for (const key in elements) {
-                const found = this.findContentElement(elements[key], name);
-                if (found) {
-                    return found;
-                }
-            }
-        }
-        return undefined;
-    }
 
     private async drawElement(element: ContentElement) {
-        const props: ResolvedElement = this.resolvePresets(element);
+        const props: ResolvedElement = resolvePresets(element, this.layout.presets);
         console.log('[PFS Chronicle] Drawing element:', { type: props.type, choices: props.choices });
 
         switch (props.type) {
@@ -235,11 +201,11 @@ export class PdfGenerator {
                 break;
             case 'choice':
                 if (props.choices && props.content && typeof props.content === 'object' && !Array.isArray(props.content)) {
-                    const value = this.resolveValue(props.choices as string, 'choice');
+                    const value = resolveValue(props.choices as string, this.data, 'choice');
                     const choices = value?.includes('|||') ? value.split('|||') : (value?.split(',') || []);
                     console.log('[PFS Chronicle] Split choices:', { value, choices });
                     console.log('[PFS Chronicle] Processing choices:', { 
-                        paramValue: this.resolveValue(props.choices as string, 'choice'),
+                        paramValue: resolveValue(props.choices as string, this.data, 'choice'),
                         choices, 
                         content: props.content,
                         data: this.data
@@ -272,7 +238,8 @@ export class PdfGenerator {
 
         let canvasRect;
         if (canvas) {
-            canvasRect = this.getCanvasRect(canvas);
+            const { width: pageWidth, height: pageHeight } = this.page.getSize();
+            canvasRect = getCanvasRect(canvas, this.layout.canvas!, pageWidth, pageHeight);
         } else {
             const { width, height } = this.page.getSize();
             canvasRect = { x: 0, y: 0, width, height };
@@ -288,7 +255,7 @@ export class PdfGenerator {
             start: { x: startX, y: startY },
             end: { x: endX, y: startY },
             thickness: linewidth,
-            color: this.getColor(color),
+            color: getColor(color),
         });
     }
 
@@ -297,7 +264,8 @@ export class PdfGenerator {
 
         let canvasRect;
         if (canvas) {
-            canvasRect = this.getCanvasRect(canvas);
+            const { width: pageWidth, height: pageHeight } = this.page.getSize();
+            canvasRect = getCanvasRect(canvas, this.layout.canvas!, pageWidth, pageHeight);
         } else {
             const { width, height } = this.page.getSize();
             canvasRect = { x: 0, y: 0, width, height };
@@ -314,7 +282,7 @@ export class PdfGenerator {
             y: rectY,
             width: rectWidth,
             height: rectHeight,
-            color: this.getColor(color),
+            color: getColor(color),
         });
     }
 
@@ -323,7 +291,8 @@ export class PdfGenerator {
 
         let canvasRect;
         if (canvas) {
-            canvasRect = this.getCanvasRect(canvas);
+            const { width: pageWidth, height: pageHeight } = this.page.getSize();
+            canvasRect = getCanvasRect(canvas, this.layout.canvas!, pageWidth, pageHeight);
         } else {
             const { width, height } = this.page.getSize();
             canvasRect = { x: 0, y: 0, width, height };
@@ -358,7 +327,7 @@ export class PdfGenerator {
             start: { x: innerX, y: innerY },
             end: { x: innerX + innerWidth, y: innerY - innerHeight },
             thickness: linewidth,
-            color: this.getColor(color),
+            color: getColor(color),
         });
 
         // Draw second diagonal (bottom-left to top-right)
@@ -366,138 +335,18 @@ export class PdfGenerator {
             start: { x: innerX, y: innerY - innerHeight },
             end: { x: innerX + innerWidth, y: innerY },
             thickness: linewidth,
-            color: this.getColor(color),
+            color: getColor(color),
         });
     }
 
-    private resolvePresets(element: ContentElement): ResolvedElement {
-        let resolved: Partial<Preset & ContentElement> = {};
-        if (element.presets && this.layout.presets) {
-            for (const presetName of element.presets) {
-                const preset = this.layout.presets[presetName];
-                if (preset) {
-                    const parentPresets = this.resolvePresets({ presets: preset.presets } as ContentElement);
-                    resolved = { ...resolved, ...parentPresets, ...preset };
-                }
-            }
-        }
-        return { ...resolved, ...element };
-    }
 
-    private getCanvasRect(canvasName: string): { x: number, y: number, width: number, height: number } {
-        if (!this.layout.canvas) {
-            throw new Error(`Canvas configuration not found in layout.`);
-        }
-        const canvas = this.layout.canvas[canvasName];
-        if (!canvas) {
-            throw new Error(`Canvas with name ${canvasName} not found.`);
-        }
-
-        const { width: pageWidth, height: pageHeight } = this.page.getSize();
-
-        if (canvas.parent) {
-            const parentRect = this.getCanvasRect(canvas.parent);
-            const x = parentRect.x + (canvas.x / 100) * parentRect.width;
-            const y = parentRect.y + (canvas.y / 100) * parentRect.height; // y from top
-            const width = ((canvas.x2 - canvas.x) / 100) * parentRect.width;
-            const height = ((canvas.y2 - canvas.y) / 100) * parentRect.height;
-            return { x, y, width, height };
-        } else {
-            const x = (canvas.x / 100) * pageWidth;
-            const y = (canvas.y / 100) * pageHeight; // y from top
-            const width = ((canvas.x2 - canvas.x) / 100) * pageWidth;
-            const height = ((canvas.y2 - canvas.y) / 100) * pageHeight;
-            return { x, y, width, height };
-        }
-    }
-
-    private async getFont(fontName: string | undefined, fontWeight: 'normal' | 'bold' = 'normal', fontStyle: 'normal' | 'italic' = 'normal'): Promise<PDFFont> {
-        const font = fontName?.toLowerCase() || 'helvetica';
-        
-        if (font.startsWith('noto') || font.startsWith('eczar') || font.startsWith('gelasio') || font.startsWith('roboto') || font.startsWith('tauri')) {
-            let fontUrl = '';
-            switch (font) {
-                case 'noto sans':
-                case 'noto':
-                    fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff`;
-                    break;
-                case 'eczar':
-                    fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/eczar/files/eczar-latin-400-normal.woff`;
-                    break;
-                case 'gelasio':
-                    fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/gelasio/files/gelasio-latin-400-normal.woff`;
-                    break;
-                case 'roboto condensed':
-                case 'roboto':
-                    fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/roboto-condensed/files/roboto-condensed-latin-400-normal.woff`;
-                    break;
-                case 'tauri':
-                    fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/tauri/files/tauri-latin-400-normal.woff`;
-                    break;
-            }
-            const fontBytes = await fetch(fontUrl).then(res => res.arrayBuffer());
-            return this.pdfDoc.embedFont(fontBytes);
-        }
-
-        let finalFont: string = StandardFonts.Helvetica;
-
-        if (font === 'helvetica') {
-            if (fontWeight === 'bold' && fontStyle === 'italic') {
-                finalFont = StandardFonts.HelveticaBoldOblique;
-            } else if (fontWeight === 'bold') {
-                finalFont = StandardFonts.HelveticaBold;
-            } else if (fontStyle === 'italic') {
-                finalFont = StandardFonts.HelveticaOblique;
-            }
-        } else if (font === 'times') {
-            if (fontWeight === 'bold' && fontStyle === 'italic') {
-                finalFont = StandardFonts.TimesRomanBoldItalic;
-            } else if (fontWeight === 'bold') {
-                finalFont = StandardFonts.TimesRomanBold;
-            } else if (fontStyle === 'italic') {
-                finalFont = StandardFonts.TimesRomanItalic;
-            } else {
-                finalFont = StandardFonts.TimesRoman;
-            }
-        } else if (font === 'courier') {
-            if (fontWeight === 'bold' && fontStyle === 'italic') {
-                finalFont = StandardFonts.CourierBoldOblique;
-            } else if (fontWeight === 'bold') {
-                finalFont = StandardFonts.CourierBold;
-            } else if (fontStyle === 'italic') {
-                finalFont = StandardFonts.CourierOblique;
-            } else {
-                finalFont = StandardFonts.Courier;
-            }
-        }
-
-        return this.pdfDoc.embedFont(finalFont);
-    }
-
-    private getColor(colorName: string | undefined): RGB {
-        if (!colorName) {
-            return rgb(0, 0, 0); // black
-        }
-        const colorMap: { [key: string]: RGB } = {
-            "black": rgb(0, 0, 0),
-            "white": rgb(1, 1, 1),
-            "red": rgb(1, 0, 0),
-            "green": rgb(0, 1, 0),
-            "blue": rgb(0, 0, 1),
-        };
-        const color = colorMap[colorName.toLowerCase()];
-        if (color) {
-            return color;
-        }
-        return rgb(0, 0, 0);
-    }
 
     private async drawText(props: ResolvedElement) {
-        const value = this.resolveValue(props.value, 'text');
+        const value = resolveValue(props.value, this.data, 'text');
         if (!value) {
             console.log("[PFS Chronicle] Value is undefined:", { 
                 requestedValue: props.value,
-                resolvedValue: this.resolveValue(props.value, 'text'),
+                resolvedValue: resolveValue(props.value, this.data, 'text'),
                 allData: this.data
             });
             return;
@@ -507,7 +356,8 @@ export class PdfGenerator {
         
         let canvasRect;
         if (canvas) {
-            canvasRect = this.getCanvasRect(canvas);
+            const { width: pageWidth, height: pageHeight } = this.page.getSize();
+            canvasRect = getCanvasRect(canvas, this.layout.canvas!, pageWidth, pageHeight);
         } else {
             const { width, height } = this.page.getSize();
             canvasRect = { x: 0, y: 0, width, height };
@@ -516,7 +366,7 @@ export class PdfGenerator {
         const boxX = canvasRect.x + (x / 100) * canvasRect.width;
         const boxWidth = ((x2 - x) / 100) * canvasRect.width;
 
-        const pdfFont = await this.getFont(font, fontweight, fontstyle);
+        const pdfFont = await getFont(this.pdfDoc, font, fontweight, fontstyle);
         const textSize = fontsize || 12;
         const textWidth = pdfFont.widthOfTextAtSize(String(value), textSize);
 
@@ -549,12 +399,12 @@ export class PdfGenerator {
             y: finalY,
             font: pdfFont,
             size: textSize,
-            color: this.getColor(color),
+            color: getColor(color),
         });
     }
 
     private async drawMultilineText(props: ResolvedElement) {
-        const value = this.resolveValue(props.value, 'multiline');
+        const value = resolveValue(props.value, this.data, 'multiline');
         if (!value) {
             return;
         }
@@ -563,7 +413,8 @@ export class PdfGenerator {
         
         let canvasRect;
         if (canvas) {
-            canvasRect = this.getCanvasRect(canvas);
+            const { width: pageWidth, height: pageHeight } = this.page.getSize();
+            canvasRect = getCanvasRect(canvas, this.layout.canvas!, pageWidth, pageHeight);
         } else {
             const { width, height } = this.page.getSize();
             canvasRect = { x: 0, y: 0, width, height };
@@ -574,7 +425,7 @@ export class PdfGenerator {
         const boxWidth = ((x2 - x) / 100) * canvasRect.width;
         const boxHeight = ((y2 - y) / 100) * canvasRect.height;
 
-        const pdfFont = await this.getFont(font, fontweight, fontstyle);
+        const pdfFont = await getFont(this.pdfDoc, font, fontweight, fontstyle);
         const textSize = fontsize || 12;
         const textHeight = pdfFont.heightAtSize(textSize);
         const lineHeight = boxHeight / (lines || 1);
@@ -601,56 +452,9 @@ export class PdfGenerator {
                 y: finalY,
                 font: pdfFont,
                 size: textSize,
-                color: this.getColor(color),
+                color: getColor(color),
             });
         }
     }
 
-    private resolveValue(value: string | undefined, elementType?: string): string | undefined {
-        if (!value) {
-            return undefined;
-        }
-        if (value.startsWith('param:')) {
-            const paramName = value.substring(6);
-            console.log('[PFS Chronicle] Resolving param:', { 
-                paramName, 
-                value: this.data[paramName],
-                isArray: Array.isArray(this.data[paramName]),
-                elementType
-            });
-            if (paramName === 'societyid.player') {
-                const societyid = this.data['societyid'];
-                if (societyid && typeof societyid === 'string') {
-                    const parts = societyid.split('-');
-                    if (parts.length === 2) {
-                        return parts[0];
-                    }
-                }
-                return '';
-            }
-            if (paramName === 'societyid.char_without_first_digit') {
-                const societyid = this.data['societyid'];
-                if (societyid && typeof societyid === 'string') {
-                    const parts = societyid.split('-');
-                    if (parts.length === 2) {
-                        return parts[1].substring(1);
-                    }
-                }
-                return '';
-            }
-            const paramValue = this.data[paramName];
-            // Handle arrays
-            if (Array.isArray(paramValue)) {
-                // For multiline elements, join with newlines
-                // For choice elements, join with ||| delimiter
-                if (elementType === 'multiline') {
-                    return paramValue.join('\n');
-                } else {
-                    return paramValue.join('|||');
-                }
-            }
-            return paramValue;
-        }
-        return value;
-    }
 }

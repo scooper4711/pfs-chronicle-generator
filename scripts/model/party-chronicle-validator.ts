@@ -9,6 +9,12 @@
 
 import { SharedFields, UniqueFields, ValidationResult } from './party-chronicle-types.js';
 import { FACTION_NAMES } from '../PFSChronicleGeneratorApp.js';
+import {
+  validateDateFormat,
+  validateNumberField,
+  validateRequiredString,
+  validateOptionalArray
+} from './validation-helpers.js';
 
 /**
  * Validates that all required shared fields are populated and have valid formats.
@@ -44,98 +50,44 @@ import { FACTION_NAMES } from '../PFSChronicleGeneratorApp.js';
 export function validateSharedFields(shared: Partial<SharedFields>): ValidationResult {
   const errors: string[] = [];
   
-  // Validate GM PFS Number
-  if (!shared.gmPfsNumber || shared.gmPfsNumber.trim() === '') {
-    errors.push('GM PFS Number is required');
-  }
-  
-  // Validate Scenario Name
-  if (!shared.scenarioName || shared.scenarioName.trim() === '') {
-    errors.push('Scenario Name is required');
-  }
-  
-  // Validate Event Code
-  if (!shared.eventCode || shared.eventCode.trim() === '') {
-    errors.push('Event Code is required');
-  }
+  // Validate required string fields
+  errors.push(...validateRequiredString(shared.gmPfsNumber, 'GM PFS Number'));
+  errors.push(...validateRequiredString(shared.scenarioName, 'Scenario Name'));
+  errors.push(...validateRequiredString(shared.eventCode, 'Event Code'));
+  errors.push(...validateRequiredString(shared.layoutId, 'Layout selection'));
+  errors.push(...validateRequiredString(shared.seasonId, 'Season selection'));
+  errors.push(...validateRequiredString(shared.blankChroniclePath, 'Blank Chronicle Path'));
   
   // Validate Event Date
-  if (!shared.eventDate || shared.eventDate.trim() === '') {
-    errors.push('Event Date is required');
-  } else {
-    // Check if date is valid format (YYYY-MM-DD)
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!dateRegex.test(shared.eventDate)) {
-      errors.push('Event Date must be in YYYY-MM-DD format');
-    } else {
-      // Check if date is a valid calendar date
-      const date = new Date(shared.eventDate);
-      if (isNaN(date.getTime())) {
-        errors.push('Event Date is not a valid date');
-      }
-    }
-  }
+  errors.push(...validateDateFormat(shared.eventDate, 'Event Date'));
   
   // Validate XP Earned
-  if (shared.xpEarned === undefined || shared.xpEarned === null) {
-    errors.push('XP Earned is required');
-  } else if (typeof shared.xpEarned !== 'number') {
-    errors.push('XP Earned must be a number');
-  } else if (shared.xpEarned < 0) {
-    errors.push('XP Earned cannot be negative');
-  }
+  errors.push(...validateNumberField(shared.xpEarned, 'XP Earned', { min: 0 }));
   
-  // Validate Layout ID
-  if (!shared.layoutId || shared.layoutId.trim() === '') {
-    errors.push('Layout selection is required');
-  }
+  // Validate optional array fields
+  errors.push(...validateOptionalArray(shared.adventureSummaryCheckboxes, 'Adventure Summary Checkboxes'));
+  errors.push(...validateOptionalArray(shared.strikeoutItems, 'Strikeout Items'));
   
-  // Validate Season ID
-  if (!shared.seasonId || shared.seasonId.trim() === '') {
-    errors.push('Season selection is required');
-  }
+  // Validate Treasure Bundles - required, must be integer from 0-10
+  errors.push(...validateNumberField(shared.treasureBundles, 'Treasure Bundles', { 
+    min: 0, 
+    max: 10, 
+    integer: true 
+  }));
   
-  // Validate Blank Chronicle Path
-  if (!shared.blankChroniclePath || shared.blankChroniclePath.trim() === '') {
-    errors.push('Blank Chronicle Path is required');
-  }
+  // Validate chosen faction reputation - must be integer from 1-9 (0 is not allowed)
+  // Check range first (< 0 or > 9), then check for 0 specifically
+  const chosenFactionErrors = validateNumberField(shared.chosenFactionReputation, 'Chosen Faction reputation', { 
+    min: 0, 
+    max: 9, 
+    integer: true
+  });
   
-  // Optional fields - validate format if provided
-  
-  // Adventure Summary Checkboxes - optional, but must be array if provided
-  if (shared.adventureSummaryCheckboxes !== undefined && 
-      !Array.isArray(shared.adventureSummaryCheckboxes)) {
-    errors.push('Adventure Summary Checkboxes must be an array');
-  }
-  
-  // Strikeout Items - optional, but must be array if provided
-  if (shared.strikeoutItems !== undefined && 
-      !Array.isArray(shared.strikeoutItems)) {
-    errors.push('Strikeout Items must be an array');
-  }
-  
-  // Treasure Bundles - required, must be integer from 0-10
-  if (shared.treasureBundles === undefined || shared.treasureBundles === null) {
-    errors.push('Treasure Bundles is required');
-  } else if (typeof shared.treasureBundles !== 'number') {
-    errors.push('Treasure Bundles must be a number');
-  } else if (!Number.isInteger(shared.treasureBundles)) {
-    errors.push('Treasure Bundles must be a whole number');
-  } else if (shared.treasureBundles < 0 || shared.treasureBundles > 10) {
-    errors.push('Treasure Bundles must be between 0 and 10');
-  }
-  
-  // Validate chosen faction reputation
-  if (shared.chosenFactionReputation === undefined || shared.chosenFactionReputation === null) {
-    errors.push('Chosen Faction reputation is required');
-  } else if (typeof shared.chosenFactionReputation !== 'number') {
-    errors.push('Chosen Faction reputation must be a number');
-  } else if (!Number.isInteger(shared.chosenFactionReputation)) {
-    errors.push('Chosen Faction reputation must be a whole number');
-  } else if (shared.chosenFactionReputation < 0 || shared.chosenFactionReputation > 9) {
-    errors.push('Chosen Faction reputation must be between 0 and 9');
-  } else if (shared.chosenFactionReputation === 0) {
+  // If the value is 0, replace the error message with a more specific one
+  if (shared.chosenFactionReputation === 0) {
     errors.push('Chosen Faction reputation must be greater than 0');
+  } else {
+    errors.push(...chosenFactionErrors);
   }
   
   // Validate faction-specific reputation values
@@ -144,13 +96,12 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
     for (const code of factionCodes) {
       const value = shared.reputationValues[code];
       if (value !== undefined && value !== null) {
-        if (typeof value !== 'number') {
-          errors.push(`${FACTION_NAMES[code]} reputation must be a number`);
-        } else if (!Number.isInteger(value)) {
-          errors.push(`${FACTION_NAMES[code]} reputation must be a whole number`);
-        } else if (value < 0 || value > 9) {
-          errors.push(`${FACTION_NAMES[code]} reputation must be between 0 and 9`);
-        }
+        errors.push(...validateNumberField(value, `${FACTION_NAMES[code]} reputation`, { 
+          min: 0, 
+          max: 9, 
+          integer: true,
+          required: false
+        }));
       }
     }
   }
@@ -203,58 +154,41 @@ export function validateUniqueFields(
   const prefix = characterName ? `${characterName}: ` : '';
   
   // Validate Character Name
-  if (!unique.characterName || unique.characterName.trim() === '') {
-    errors.push(`${prefix}Character Name is required`);
-  }
+  errors.push(...validateRequiredString(unique.characterName, 'Character Name', prefix));
   
-  // Validate Society ID
-  if (!unique.societyId || unique.societyId.trim() === '') {
-    errors.push(`${prefix}Society ID is required`);
-  } else {
-    // Check if society ID is in valid format (playerNumber-characterNumber)
+  // Validate Society ID with format check
+  const societyIdErrors = validateRequiredString(unique.societyId, 'Society ID', prefix);
+  if (societyIdErrors.length === 0) {
+    // Only check format if the field is not empty
     const societyIdRegex = /^\d+-\d+$/;
-    if (!societyIdRegex.test(unique.societyId)) {
+    if (unique.societyId && !societyIdRegex.test(unique.societyId)) {
       errors.push(`${prefix}Society ID must be in format "playerNumber-characterNumber" (e.g., "12345-01")`);
     }
+  } else {
+    errors.push(...societyIdErrors);
   }
   
   // Validate Level
-  if (unique.level === undefined || unique.level === null) {
-    errors.push(`${prefix}Level is required`);
-  } else if (typeof unique.level !== 'number') {
-    errors.push(`${prefix}Level must be a number`);
-  } else if (unique.level < 1 || unique.level > 20) {
-    errors.push(`${prefix}Level must be between 1 and 20`);
-  } else if (!Number.isInteger(unique.level)) {
-    errors.push(`${prefix}Level must be a whole number`);
-  }
+  errors.push(...validateNumberField(unique.level, 'Level', { 
+    min: 1, 
+    max: 20, 
+    integer: true 
+  }, prefix));
   
   // Validate Income Earned
-  if (unique.incomeEarned === undefined || unique.incomeEarned === null) {
-    errors.push(`${prefix}Income Earned is required`);
-  } else if (typeof unique.incomeEarned !== 'number') {
-    errors.push(`${prefix}Income Earned must be a number`);
-  } else if (unique.incomeEarned < 0) {
-    errors.push(`${prefix}Income Earned cannot be negative`);
-  }
+  errors.push(...validateNumberField(unique.incomeEarned, 'Income Earned', { 
+    min: 0 
+  }, prefix));
   
   // Validate Gold Earned
-  if (unique.goldEarned === undefined || unique.goldEarned === null) {
-    errors.push(`${prefix}Gold Earned is required`);
-  } else if (typeof unique.goldEarned !== 'number') {
-    errors.push(`${prefix}Gold Earned must be a number`);
-  } else if (unique.goldEarned < 0) {
-    errors.push(`${prefix}Gold Earned cannot be negative`);
-  }
+  errors.push(...validateNumberField(unique.goldEarned, 'Gold Earned', { 
+    min: 0 
+  }, prefix));
   
   // Validate Gold Spent
-  if (unique.goldSpent === undefined || unique.goldSpent === null) {
-    errors.push(`${prefix}Gold Spent is required`);
-  } else if (typeof unique.goldSpent !== 'number') {
-    errors.push(`${prefix}Gold Spent must be a number`);
-  } else if (unique.goldSpent < 0) {
-    errors.push(`${prefix}Gold Spent cannot be negative`);
-  }
+  errors.push(...validateNumberField(unique.goldSpent, 'Gold Spent', { 
+    min: 0 
+  }, prefix));
   
   // Optional fields - no validation needed for notes
   // Notes can be an empty string

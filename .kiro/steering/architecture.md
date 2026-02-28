@@ -35,11 +35,15 @@ When adding new interactive features to the Party Chronicle form:
 3. ✅ **DO** follow the existing pattern of other event handlers in that function
 4. ✅ **DO** use native DOM APIs (`querySelectorAll`, `addEventListener`) for new code
 5. ⚠️ **EXISTING** code uses jQuery (`$(container).find()`, `.on()`) - this is legacy but functional
+6. ✅ **DO** extract handler logic into `handlers/` modules for better organization and testability
 
 ### Where to Add Event Listeners
 
 **Correct location** - `scripts/main.ts` in `renderPartyChronicleForm()`:
 ```typescript
+// Import handler functions from handlers/ modules
+import { handlePortraitClick, handleSeasonChange } from './handlers/party-chronicle-handlers.js';
+
 async function renderPartyChronicleForm(container: HTMLElement, partyActors: any[], partySheet: any) {
     // ... template rendering ...
     
@@ -47,11 +51,26 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
     const portraits = container.querySelectorAll('.actor-image img.actor-link');
     portraits.forEach((img) => {
         img.addEventListener('click', (event: MouseEvent) => {
-            // Your handler logic
+            // Call handler function from handlers/ module
+            handlePortraitClick(event, partyActors);
         });
     });
     
     // ... rest of function ...
+}
+```
+
+**Correct location for handler logic** - `scripts/handlers/party-chronicle-handlers.ts`:
+```typescript
+/**
+ * Handles portrait image click events to open character sheets
+ * This handler is called from event listeners in main.ts
+ */
+export function handlePortraitClick(event: MouseEvent, partyActors: any[]): void {
+    event.preventDefault();
+    const memberActivity = (event.target as HTMLElement).closest('.member-activity');
+    const characterId = memberActivity?.getAttribute('data-character-id');
+    // ... handler logic ...
 }
 ```
 
@@ -135,18 +154,215 @@ When the PFS system fully migrates to ApplicationV2, this module can be refactor
 
 ## File Organization
 
-### Key Files
-- `scripts/main.ts` - Entry point, tab injection, manual rendering, event listeners
-- `scripts/PartyChronicleApp.ts` - ApplicationV2 class (context preparation only)
-- `templates/party-chronicle-filling.hbs` - Handlebars template for the form
-- `scripts/model/` - Data models, storage, validation, mapping
+### Directory Structure
+
+The codebase follows a modular organization pattern to maintain code quality and comply with file size and complexity standards:
+
+```
+scripts/
+├── main.ts                          # Entry point, tab injection, event listener attachments
+├── PartyChronicleApp.ts             # ApplicationV2 context preparation for party chronicles
+├── PFSChronicleGeneratorApp.ts      # ApplicationV2 for single-character chronicles
+├── PdfGenerator.ts                  # PDF rendering engine
+├── LayoutStore.ts                   # Layout configuration management
+├── handlers/                        # Event handler logic (called from main.ts)
+│   ├── party-chronicle-handlers.ts  # Party chronicle event handlers
+│   ├── single-chronicle-handlers.ts # Single-character chronicle handlers
+│   └── validation-display.ts        # Validation UI update logic
+├── utils/                           # Utility functions
+│   ├── filename-utils.ts            # Filename sanitization and generation
+│   ├── layout-utils.ts              # Layout-specific field utilities
+│   ├── pdf-utils.ts                 # PDF color, font, and coordinate utilities
+│   └── pdf-element-utils.ts         # PDF element resolution logic
+└── model/                           # Data models and business logic
+    ├── party-chronicle-types.ts     # TypeScript type definitions
+    ├── party-chronicle-storage.ts   # Data persistence
+    ├── party-chronicle-validator.ts # Validation logic
+    ├── validation-helpers.ts        # Reusable validation helper functions
+    ├── party-chronicle-mapper.ts    # Data transformation
+    ├── layout.ts                    # Layout data structures
+    └── reputation-calculator.ts     # Reputation calculation logic
+```
+
+### Module Responsibilities
+
+#### Core Application Files
+
+**`scripts/main.ts`**:
+- Module entry point and Foundry VTT hook registration
+- Tab injection into PFS party sheet's "Society" tab
+- Manual template rendering using `foundry.applications.handlebars.renderTemplate()`
+- **Event listener attachments** (CRITICAL: all event listeners MUST be attached here)
+- Calls handler functions from `handlers/` modules
+- Maintains hybrid ApplicationV2 pattern
+
+**`scripts/PartyChronicleApp.ts`**:
+- ApplicationV2 class for party chronicle form (context preparation only)
+- `_prepareContext()` method prepares data for template rendering
+- Does NOT use ApplicationV2 rendering lifecycle (`_onRender` is not called)
+- Helper methods for layout and field processing
+
+**`scripts/PFSChronicleGeneratorApp.ts`**:
+- ApplicationV2 class for single-character chronicle generation
+- Similar context preparation pattern to PartyChronicleApp
+- Handles individual character chronicle generation
+
+**`scripts/PdfGenerator.ts`**:
+- PDF rendering engine using pdf-lib
+- Renders chronicle data onto blank PDF templates
+- Uses utility functions from `utils/pdf-utils.ts` and `utils/pdf-element-utils.ts`
+
+#### Handler Modules (`scripts/handlers/`)
+
+**`party-chronicle-handlers.ts`**:
+- Event handler logic for party chronicle form interactions
+- Functions called by event listeners attached in `main.ts`
+- Handles: portrait clicks, season changes, layout changes, field changes
+- Key functions:
+  - `handlePortraitClick()` - Opens character sheet when portrait is clicked
+  - `handleSeasonChange()` - Updates layout options when season changes
+  - `handleLayoutChange()` - Updates form fields when layout changes
+  - `handleFieldChange()` - Handles form field changes and auto-save
+  - `generateChroniclesFromPartyData()` - Orchestrates PDF generation for all party members
+
+**`validation-display.ts`**:
+- Validation UI update logic extracted from `main.ts`
+- Updates validation error panel, inline field errors, and generate button state
+- Key functions:
+  - `updateValidationDisplay()` - Main entry point for validation UI updates
+  - Helper functions for rendering errors and updating UI components
+
+**`single-chronicle-handlers.ts`**:
+- Event handler logic for single-character chronicle generation
+- Called from `PFSChronicleGeneratorApp`
+- Key functions:
+  - `generateSingleChronicle()` - Generates PDF for a single character
+
+#### Utility Modules (`scripts/utils/`)
+
+**`filename-utils.ts`**:
+- Filename sanitization and generation for chronicle PDFs
+- Ensures cross-platform filename compatibility
+- Key functions:
+  - `sanitizeFilename()` - Removes invalid characters from filenames
+  - `generateChronicleFilename()` - Creates standardized chronicle filenames
+
+**`layout-utils.ts`**:
+- Layout-specific field utilities shared across multiple modules
+- Handles checkbox choices, strikeout choices, and layout field updates
+- Key functions:
+  - `findCheckboxChoices()` - Extracts checkbox options from layout
+  - `findStrikeoutChoices()` - Extracts strikeout options from layout
+  - `updateLayoutSpecificFields()` - Updates form fields based on selected layout
+
+**`pdf-utils.ts`**:
+- PDF rendering utilities for color, font, and coordinate handling
+- Extracted from `PdfGenerator.ts` to reduce file size
+- Key functions:
+  - Color resolution functions
+  - Font resolution functions
+  - Canvas and coordinate utilities
+
+**`pdf-element-utils.ts`**:
+- PDF element resolution logic
+- Handles element value extraction, type detection, and rendering
+- Extracted from `PdfGenerator.ts` to reduce file size
+
+#### Model Modules (`scripts/model/`)
+
+**`party-chronicle-validator.ts`**:
+- Validation logic for party chronicle data
+- Uses helper functions from `validation-helpers.ts` to reduce complexity
+- Key functions:
+  - `validateSharedFields()` - Validates fields shared across all party members
+  - `validateUniqueFields()` - Validates character-specific fields
+
+**`validation-helpers.ts`**:
+- Reusable validation helper functions
+- Reduces cyclomatic complexity in main validation functions
+- Key functions:
+  - `validateDateFormat()` - Validates date strings
+  - `validateSocietyIdFormat()` - Validates PFS society ID format
+  - `validateNumberField()` - Validates numeric fields with constraints
+  - `validateRequiredString()` - Validates required string fields
+  - `validateOptionalArray()` - Validates optional array fields
+
+**Other model files**:
+- `party-chronicle-types.ts` - TypeScript type definitions
+- `party-chronicle-storage.ts` - Data persistence (localStorage)
+- `party-chronicle-mapper.ts` - Data transformation between formats
+- `layout.ts` - Layout data structures and configuration
+- `reputation-calculator.ts` - Reputation calculation logic
 
 ### Where to Make Changes
-- **UI interactions**: Add event listeners in `main.ts` → `renderPartyChronicleForm()`
-- **Data preparation**: Modify `PartyChronicleApp._prepareContext()`
-- **Template structure**: Edit `templates/party-chronicle-filling.hbs`
+
+When implementing new features or fixing bugs, use this guide to determine where to make changes:
+
+#### Adding New UI Interactions
+
+1. **Event Listener Attachment**: Add in `main.ts` → `renderPartyChronicleForm()`
+   - ✅ Attach event listeners here using native DOM APIs or jQuery
+   - ❌ Do NOT add event listeners in `PartyChronicleApp._onRender()` (it's never called)
+
+2. **Event Handler Logic**: Add in `handlers/party-chronicle-handlers.ts`
+   - Create a new handler function (e.g., `handleNewFeature()`)
+   - Call this function from the event listener in `main.ts`
+   - Follow the pattern of existing handlers
+
+3. **Example Pattern**:
+   ```typescript
+   // In main.ts - renderPartyChronicleForm()
+   const newButton = container.querySelector('.new-feature-button');
+   newButton?.addEventListener('click', (event) => {
+       handleNewFeature(event, partyActors, container);
+   });
+   
+   // In handlers/party-chronicle-handlers.ts
+   export function handleNewFeature(event: MouseEvent, partyActors: any[], container: HTMLElement): void {
+       // Handler logic here
+   }
+   ```
+
+#### Modifying Data Preparation
+
+- **Party Chronicle Context**: Modify `PartyChronicleApp._prepareContext()`
+- **Single Chronicle Context**: Modify `PFSChronicleGeneratorApp._prepareContext()`
+- **Layout Processing**: Modify functions in `utils/layout-utils.ts`
+
+#### Updating Validation Logic
+
+- **Shared Field Validation**: Modify `model/party-chronicle-validator.ts` → `validateSharedFields()`
+- **Character Field Validation**: Modify `model/party-chronicle-validator.ts` → `validateUniqueFields()`
+- **New Validation Helpers**: Add to `model/validation-helpers.ts`
+- **Validation UI**: Modify `handlers/validation-display.ts`
+
+#### Modifying Template Structure
+
+- **Form Layout**: Edit `templates/party-chronicle-filling.hbs`
 - **Styling**: Update `css/style.css`
-- **Data logic**: Modify files in `scripts/model/`
+
+#### Adding Utility Functions
+
+- **Filename Operations**: Add to `utils/filename-utils.ts`
+- **Layout Operations**: Add to `utils/layout-utils.ts`
+- **PDF Operations**: Add to `utils/pdf-utils.ts` or `utils/pdf-element-utils.ts`
+- **General Utilities**: Create a new utility module in `utils/` if needed
+
+#### Modifying PDF Generation
+
+- **PDF Rendering Logic**: Modify `PdfGenerator.ts`
+- **PDF Utilities**: Modify `utils/pdf-utils.ts` or `utils/pdf-element-utils.ts`
+- **Chronicle Generation**: Modify `handlers/party-chronicle-handlers.ts` or `handlers/single-chronicle-handlers.ts`
+
+### Key Files (Legacy Reference)
+
+For quick reference, here are the most commonly modified files:
+
+- `scripts/main.ts` - Entry point, tab injection, manual rendering, event listeners
+- `scripts/PartyChronicleApp.ts` - ApplicationV2 class (context preparation only)
+- `scripts/handlers/party-chronicle-handlers.ts` - Event handler logic
+- `templates/party-chronicle-filling.hbs` - Handlebars template for the form
+- `scripts/model/` - Data models, storage, validation, mapping
 
 ## References
 
@@ -154,14 +370,17 @@ When the PFS system fully migrates to ApplicationV2, this module can be refactor
 - [ApplicationV2 Conversion Guide](https://foundryvtt.wiki/en/development/guides/applicationV2-conversion-guide)
 - Bugfix Spec: `.kiro/specs/modernize-jquery-to-native-dom/` - jQuery to native DOM migration
 - Feature Spec: `.kiro/specs/party-chronicle-filling/` - Original party chronicle implementation
+- Refactoring Spec: `.kiro/specs/code-standards-refactoring/` - Code standards compliance refactoring (2024)
 
 ## Questions?
 
 If you're unsure where to add code for a new feature:
-1. Check if it's UI interaction → `main.ts` in `renderPartyChronicleForm()`
-2. Check if it's data preparation → `PartyChronicleApp._prepareContext()`
-3. Check if it's template structure → `templates/party-chronicle-filling.hbs`
-4. When in doubt, follow the pattern of existing similar features
+1. Check if it's UI interaction → Event listener in `main.ts` → Handler logic in `handlers/party-chronicle-handlers.ts`
+2. Check if it's data preparation → `PartyChronicleApp._prepareContext()` or helper functions
+3. Check if it's validation → `model/party-chronicle-validator.ts` or `model/validation-helpers.ts`
+4. Check if it's a utility function → Create or add to appropriate module in `utils/`
+5. Check if it's template structure → `templates/party-chronicle-filling.hbs`
+6. When in doubt, follow the pattern of existing similar features and consult the "Where to Make Changes" section above
 
 
 ## Coding Standards

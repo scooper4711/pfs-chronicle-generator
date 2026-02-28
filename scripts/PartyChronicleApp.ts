@@ -23,6 +23,8 @@ import { validateSharedFields, validateUniqueFields } from './model/party-chroni
 import { PdfGenerator } from './PdfGenerator.js';
 import { PDFDocument } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
+import { findCheckboxChoices, findStrikeoutChoices, updateLayoutSpecificFields } from './utils/layout-utils.js';
+import { generateChroniclesFromPartyData } from './handlers/party-chronicle-handlers.js';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
 import FormDataExtended = foundry.applications.ux.FormDataExtended;
@@ -90,33 +92,64 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * 
    * Requirements: 1.3, 1.4, 8.2
    */
-  async _prepareContext(options?: any): Promise<object> {
-    // Extract party member data - filter to only include character actors
-    // Exclude: null actors, familiars, and NPCs
-    const partyMembers: PartyMember[] = this.partyActors
-      .filter(actor => actor && actor.type === 'character')
-      .map(actor => ({
-        id: actor.id,
-        name: actor.name,
-        img: actor.img,
-        level: actor.system?.details?.level?.value ?? 1,
-        societyId: actor.system?.pfs?.playerNumber && actor.system?.pfs?.characterNumber
-          ? `${actor.system.pfs.playerNumber}-${actor.system.pfs.characterNumber}`
-          : ''
-      }));
+  async _prepareContext(options?: any): Promise<any> {
+      // Extract party member data - filter to only include character actors
+      // Exclude: null actors, familiars, and NPCs
+      const partyMembers: PartyMember[] = this.partyActors
+        .filter(actor => actor && actor.type === 'character')
+        .map(actor => ({
+          id: actor.id,
+          name: actor.name,
+          img: actor.img,
+          level: actor.system?.details?.level?.value ?? 1,
+          societyId: actor.system?.pfs?.playerNumber && actor.system?.pfs?.characterNumber
+            ? `${actor.system.pfs.playerNumber}-${actor.system.pfs.characterNumber}`
+            : ''
+        }));
 
-    // Load saved party chronicle data from world flags
-    const savedStorage = await loadPartyChronicleData();
-    const savedData = savedStorage?.data ?? null;
+      // Load saved party chronicle data from world flags
+      const savedStorage = await loadPartyChronicleData();
+      const savedData = savedStorage?.data ?? null;
 
-    // Get GM PFS number and event details from settings
-    const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber') as string || '';
-    const eventName = game.settings.get('pfs-chronicle-generator', 'eventName') as string || '';
-    const eventCode = game.settings.get('pfs-chronicle-generator', 'eventcode') as string || '';
-    const eventDate = game.settings.get('pfs-chronicle-generator', 'eventDate') as string || new Date().toISOString().slice(0, 10);
-    const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string || '';
+      // Load layout data (seasons, layouts, selected IDs)
+      const {
+        seasons,
+        layoutsInSeason,
+        selectedSeasonId,
+        effectiveLayoutId
+      } = this.loadPartyLayoutData(savedData);
 
-    // Prepare season and layout dropdown data
+      // Map fields to context (merge saved data with defaults)
+      const shared = this.mapPartyFieldsToContext(savedData, effectiveLayoutId, selectedSeasonId);
+
+      // Return PartyChronicleContext object
+      return {
+        partyMembers,
+        shared,
+        seasons,
+        layoutsInSeason,
+        selectedSeasonId,
+        selectedLayoutId: effectiveLayoutId,
+        savedData,
+        buttons: [
+          { type: "submit", icon: "fa-solid fa-file-pdf", label: "Generate Chronicles" }
+        ]
+      };
+    }
+
+  /**
+   * Load layout data including seasons, layouts, and selected season/layout IDs.
+   * Handles season/layout selection logic and ensures selected layout belongs to selected season.
+   *
+   * @param savedData - Previously saved party chronicle data (if any)
+   * @returns Object containing seasons, layouts, and selected IDs
+   */
+  private loadPartyLayoutData(savedData: PartyChronicleData | null): {
+    seasons: any[];
+    layoutsInSeason: any[];
+    selectedSeasonId: string;
+    effectiveLayoutId: string;
+  } {
     const seasons = layoutStore.getSeasons();
     const settingSeasonId = game.settings.get('pfs-chronicle-generator', 'season') as string;
     const currentLayoutId = game.settings.get('pfs-chronicle-generator', 'layout') as string;
@@ -140,8 +173,35 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       ? selectedLayoutId
       : (layoutsInSeason.length > 0 ? layoutsInSeason[0].id : '');
 
-    // Prepare shared fields context (use saved data if available, otherwise defaults)
-    const shared: Partial<SharedFields> = {
+    return {
+      seasons,
+      layoutsInSeason,
+      selectedSeasonId,
+      effectiveLayoutId
+    };
+  }
+
+  /**
+   * Map party chronicle fields to context object.
+   * Merges saved data with default values from game settings.
+   *
+   * @param savedData - Previously saved party chronicle data (if any)
+   * @param effectiveLayoutId - The selected layout ID
+   * @param selectedSeasonId - The selected season ID
+   * @returns Partial SharedFields object for template context
+   */
+  private mapPartyFieldsToContext(
+    savedData: PartyChronicleData | null,
+    effectiveLayoutId: string,
+    selectedSeasonId: string
+  ): Partial<SharedFields> {
+    const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber') as string || '';
+    const eventName = game.settings.get('pfs-chronicle-generator', 'eventName') as string || '';
+    const eventCode = game.settings.get('pfs-chronicle-generator', 'eventcode') as string || '';
+    const eventDate = game.settings.get('pfs-chronicle-generator', 'eventDate') as string || new Date().toISOString().slice(0, 10);
+    const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string || '';
+
+    return {
       gmPfsNumber: savedData?.shared?.gmPfsNumber || gmPfsNumber,
       scenarioName: savedData?.shared?.scenarioName || eventName,
       eventCode: savedData?.shared?.eventCode || eventCode,
@@ -163,21 +223,26 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
         VW: 0
       },
     };
+  }
 
-    // Return PartyChronicleContext object
+  /**
+   * Process party choice fields (checkboxes and strikeout items).
+   * This is a placeholder for future extraction if checkbox/strikeout logic becomes more complex.
+   * Currently, these fields are simple arrays handled in mapPartyFieldsToContext.
+   *
+   * @param savedData - Previously saved party chronicle data (if any)
+   * @returns Object containing processed choice fields
+   */
+  private processPartyChoiceFields(savedData: PartyChronicleData | null): {
+    adventureSummaryCheckboxes: string[];
+    strikeoutItems: string[];
+  } {
     return {
-      partyMembers,
-      shared,
-      seasons,
-      layoutsInSeason,
-      selectedSeasonId,
-      selectedLayoutId: effectiveLayoutId,
-      savedData,
-      buttons: [
-        { type: "submit", icon: "fa-solid fa-file-pdf", label: "Generate Chronicles" }
-      ]
+      adventureSummaryCheckboxes: savedData?.shared?.adventureSummaryCheckboxes || [],
+      strikeoutItems: savedData?.shared?.strikeoutItems || []
     };
   }
+
 
   /**
    * Handles rendering lifecycle
@@ -343,98 +408,12 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
     const layoutId = layoutDropdown.value;
     if (!layoutId) return;
 
-    const layout = await layoutStore.getLayout(layoutId);
-    
-    // Get checkbox and strikeout choices from layout
-    const checkboxChoices = this._findCheckboxChoices(layout);
-    const strikeoutChoices = this._findStrikeoutChoices(layout);
-
-    // Load saved data to determine which items are selected
-    const savedStorage = await loadPartyChronicleData();
-    const savedCheckboxes = savedStorage?.data?.shared?.adventureSummaryCheckboxes || [];
-    const savedStrikeouts = savedStorage?.data?.shared?.strikeoutItems || [];
-
-    // Update adventure summary checkboxes
-    const checkboxContainer = this.element.querySelector('#adventureSummaryCheckboxes .checkbox-choices');
-    if (checkboxContainer) {
-      checkboxContainer.innerHTML = '';
-      checkboxChoices.forEach((choice, index) => {
-        const div = document.createElement('div');
-        div.className = 'checkbox-choice';
-        
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = `checkbox-${index}`;
-        checkbox.name = 'shared.adventureSummaryCheckboxes';
-        checkbox.value = choice;
-        checkbox.checked = savedCheckboxes.includes(choice);
-        
-        const label = document.createElement('label');
-        label.htmlFor = `checkbox-${index}`;
-        label.textContent = choice;
-        
-        div.appendChild(checkbox);
-        div.appendChild(label);
-        checkboxContainer.appendChild(div);
-      });
-    }
-
-    // Update strikeout items
-    const strikeoutContainer = this.element.querySelector('#strikeoutItems .strikeout-choices');
-    if (strikeoutContainer) {
-      strikeoutContainer.innerHTML = '';
-      strikeoutChoices.forEach((choice, index) => {
-        const div = document.createElement('div');
-        div.className = 'item-choice';
-        
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = `strikeout-${index}`;
-        checkbox.name = 'shared.strikeoutItems';
-        checkbox.value = choice;
-        checkbox.checked = savedStrikeouts.includes(choice);
-        
-        const label = document.createElement('label');
-        label.htmlFor = `strikeout-${index}`;
-        label.textContent = choice;
-        
-        div.appendChild(checkbox);
-        div.appendChild(label);
-        strikeoutContainer.appendChild(div);
-      });
-    }
-
-    // Re-attach change listeners to new checkboxes
-    const html = $(this.element);
-    html.find('#adventureSummaryCheckboxes input, #strikeoutItems input').on('change', this._onSharedFieldChanged.bind(this));
-  }
-
-  /**
-   * Extracts checkbox choices from layout parameters
-   * 
-   * @param layout - The layout object
-   * @returns Array of checkbox choice strings
-   */
-  private _findCheckboxChoices(layout: Layout): string[] {
-    const params = layout.parameters?.Checkboxes?.summary_checkbox;
-    if (params && params.choices && Array.isArray(params.choices)) {
-      return params.choices as string[];
-    }
-    return [];
-  }
-
-  /**
-   * Extracts strikeout item choices from layout parameters
-   * 
-   * @param layout - The layout object
-   * @returns Array of strikeout item strings
-   */
-  private _findStrikeoutChoices(layout: Layout): string[] {
-    const params = layout.parameters?.Items?.strikeout_item_lines;
-    if (params && params.choices && Array.isArray(params.choices)) {
-      return params.choices as string[];
-    }
-    return [];
+    // Use the utility function to update layout-specific fields
+    await updateLayoutSpecificFields(
+      this.element,
+      layoutId,
+      this._onSharedFieldChanged.bind(this)
+    );
   }
 
   /**
@@ -614,177 +593,18 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * @param formData - The extracted form data
    */
   static async #generateChronicles(
-    this: PartyChronicleApp,
-    event: SubmitEvent | Event,
-    form: HTMLFormElement,
-    formData: FormDataExtended
-  ): Promise<void> {
-    console.log('[PFS Chronicle] Generate chronicles called', formData);
-    
-    // Extract and expand form data
-    const data: any = foundry.utils.expandObject(formData.object);
-    console.log('[PFS Chronicle] Expanded form data:', data);
-    
-    // Validate shared fields
-    const sharedValidation = this.validateSharedFields(data);
-    if (!sharedValidation.valid) {
-      ui.notifications?.error(`Validation failed: ${sharedValidation.errors.join(', ')}`);
-      return;
+      this: PartyChronicleApp,
+      event: SubmitEvent | Event,
+      form: HTMLFormElement,
+      formData: FormDataExtended
+    ): Promise<void> {
+      // Extract and expand form data
+      const data: any = foundry.utils.expandObject(formData.object);
+      console.log('[PFS Chronicle] Expanded form data:', data);
+
+      // Delegate to extracted handler function
+      await generateChroniclesFromPartyData(data, this.partyActors);
     }
-    
-    // Validate unique fields for all characters
-    const uniqueValidation = this.validateUniqueFields(data);
-    if (!uniqueValidation.valid) {
-      ui.notifications?.error(`Validation failed: ${uniqueValidation.errors.join(', ')}`);
-      return;
-    }
-    
-    // Collect generation results for all characters
-    const results: GenerationResult[] = [];
-    let allSucceeded = true;
-    
-    // Get the selected layout
-    const layoutId = data.shared?.layoutId || game.settings.get('pfs-chronicle-generator', 'layout');
-    let layout: Layout;
-    try {
-      layout = await layoutStore.getLayout(layoutId as string);
-    } catch (error) {
-      ui.notifications?.error(`Failed to load layout: ${error instanceof Error ? error.message : String(error)}`);
-      return;
-    }
-    
-    // Get the blank chronicle path
-    const blankChroniclePath = data.shared?.blankChroniclePath || game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
-    if (!blankChroniclePath || typeof blankChroniclePath !== 'string') {
-      ui.notifications?.error("Blank chronicle PDF path is not set.");
-      return;
-    }
-    
-    // Process each party member
-    for (const actor of this.partyActors) {
-      const characterId = actor.id;
-      const characterName = actor.name;
-      
-      try {
-        // Extract shared fields
-        const sharedFields: SharedFields = {
-          gmPfsNumber: data.shared?.gmPfsNumber || '',
-          scenarioName: data.shared?.scenarioName || '',
-          eventCode: data.shared?.eventCode || '',
-          eventDate: data.shared?.eventDate || '',
-          xpEarned: Number(data.shared?.xpEarned) || 0,
-          adventureSummaryCheckboxes: Array.isArray(data.shared?.adventureSummaryCheckboxes) 
-            ? data.shared.adventureSummaryCheckboxes 
-            : (data.shared?.adventureSummaryCheckboxes ? [data.shared.adventureSummaryCheckboxes] : []),
-          strikeoutItems: Array.isArray(data.shared?.strikeoutItems)
-            ? data.shared.strikeoutItems
-            : (data.shared?.strikeoutItems ? [data.shared.strikeoutItems] : []),
-          treasureBundles: Number(data.shared?.treasureBundles) || 0,
-          layoutId: layoutId as string,
-          seasonId: data.shared?.seasonId || '',
-          blankChroniclePath: blankChroniclePath,
-          chosenFactionReputation: Number(data.shared?.chosenFactionReputation) || 2,
-          reputationValues: {
-            EA: Number(data.shared?.reputationValues?.EA) || 0,
-            GA: Number(data.shared?.reputationValues?.GA) || 0,
-            HH: Number(data.shared?.reputationValues?.HH) || 0,
-            VS: Number(data.shared?.reputationValues?.VS) || 0,
-            RO: Number(data.shared?.reputationValues?.RO) || 0,
-            VW: Number(data.shared?.reputationValues?.VW) || 0
-          }
-        };
-        
-        // Extract unique fields for this character
-        const uniqueFields = data.characters?.[characterId] || {};
-        const characterData = {
-          characterName: uniqueFields.characterName || characterName,
-          societyId: uniqueFields.societyId || '',
-          level: Number(uniqueFields.level) || actor.system?.details?.level?.value || 1,
-          incomeEarned: Number(uniqueFields.incomeEarned) || 0,
-          goldEarned: Number(uniqueFields.goldEarned) || 0,
-          goldSpent: Number(uniqueFields.goldSpent) || 0,
-          notes: uniqueFields.notes || ''
-        };
-        
-        // Map to chronicle data format
-        const chronicleData = mapToCharacterData(sharedFields, characterData, actor);
-        
-        // Save chronicle data to actor flags
-        await actor.setFlag('pfs-chronicle-generator', 'chronicleData', chronicleData);
-        
-        // Generate PDF
-        const response = await fetch(blankChroniclePath);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch blank chronicle PDF: ${response.statusText}`);
-        }
-        
-        const pdfBytes = await response.arrayBuffer();
-        const pdfDoc = await PDFDocument.load(pdfBytes);
-        pdfDoc.registerFontkit(fontkit);
-        
-        const generator = new PdfGenerator(pdfDoc, layout, chronicleData);
-        await generator.generate();
-        
-        // Convert PDF to base64 and attach to actor
-        const modifiedPdfBytes = await pdfDoc.save();
-        let binary = '';
-        const len = modifiedPdfBytes.byteLength;
-        for (let i = 0; i < len; i++) {
-          binary += String.fromCharCode(modifiedPdfBytes[i]);
-        }
-        const base64String = btoa(binary);
-        
-        await actor.setFlag('pfs-chronicle-generator', 'chroniclePdf', base64String);
-        
-        // Record success
-        results.push({
-          characterId,
-          characterName,
-          success: true
-        });
-        
-        console.log(`[PFS Chronicle] Successfully generated chronicle for ${characterName}`);
-        
-      } catch (error) {
-        // Record failure
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        results.push({
-          characterId,
-          characterName,
-          success: false,
-          error: errorMessage
-        });
-        allSucceeded = false;
-        console.error(`[PFS Chronicle] Failed to generate chronicle for ${characterName}:`, error);
-      }
-    }
-    
-    // Display summary notifications
-    const successCount = results.filter(r => r.success).length;
-    const failureCount = results.filter(r => !r.success).length;
-    
-    if (allSucceeded) {
-      ui.notifications?.info(`Successfully generated ${successCount} chronicle(s) for all party members.`);
-      
-      // Clear saved data after successful generation
-      try {
-        await clearPartyChronicleData();
-        console.log('[PFS Chronicle] Cleared saved party chronicle data after successful generation');
-      } catch (error) {
-        console.error('[PFS Chronicle] Failed to clear saved data:', error);
-        ui.notifications?.warn("Chronicles generated but failed to clear saved data.");
-      }
-    } else {
-      const failedCharacters = results
-        .filter(r => !r.success)
-        .map(r => `${r.characterName}: ${r.error}`)
-        .join('; ');
-      
-      ui.notifications?.warn(
-        `Generated ${successCount} chronicle(s), but ${failureCount} failed: ${failedCharacters}`
-      );
-    }
-  }
 
   /**
    * Validates shared fields using the validator module

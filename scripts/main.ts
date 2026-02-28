@@ -2,7 +2,20 @@ import { PFSChronicleGeneratorApp } from './PFSChronicleGeneratorApp.js';
 import { layoutStore } from './LayoutStore.js';
 import { LayoutDesignerApp } from './LayoutDesignerApp.js';
 import { PartyChronicleApp } from './PartyChronicleApp.js';
-import { loadPartyChronicleData, savePartyChronicleData, clearPartyChronicleData } from './model/party-chronicle-storage.js';
+import { clearPartyChronicleData } from './model/party-chronicle-storage.js';
+import { generateChronicleFilename } from './utils/filename-utils.js';
+import { updateLayoutSpecificFields } from './utils/layout-utils.js';
+import { updateValidationDisplay } from './handlers/validation-display.js';
+import { PartyChronicleContext } from './model/party-chronicle-types.js';
+import { 
+    handlePortraitClick, 
+    handleSeasonChange, 
+    handleLayoutChange, 
+    handleFieldChange,
+    extractFormData,
+    saveFormData,
+    generateChroniclesFromPartyData
+} from './handlers/party-chronicle-handlers.js';
 
 Hooks.on('init', async () => {
   game.settings.register('pfs-chronicle-generator','gmName', {
@@ -126,10 +139,6 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
         return;
     }
 
-    function sanitizeFilename(name: string) {
-        return name.replace(/[^a-zA-Z0-9_.-]/g, '_');
-    }
-
     // --- Generate Chronicle Button (GM only) ---
     if (game.user.isGM) {
         const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
@@ -169,11 +178,9 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
             const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], {type: 'application/pdf'});
             const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
-            const chronicleFileName = blankChroniclePath.split('/').pop() || 'chronicle.pdf';
-            const sanitizedActorName = sanitizeFilename(sheet.actor.name);
-            const sanitizedChronicleFileName = sanitizeFilename(chronicleFileName);
+            const filename = generateChronicleFilename(sheet.actor.name, blankChroniclePath);
             var FileSaver = require('file-saver');
-            FileSaver.saveAs(blob, `${sanitizedActorName}_${sanitizedChronicleFileName}`);
+            FileSaver.saveAs(blob, filename);
         }
     });
 
@@ -210,7 +217,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
  * 
  * Requirements: 1.1, 1.2
  */
-Hooks.on('renderPartySheetPF2e', (app: any, html: any, data: any) => {
+Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, data: any) => {
     console.log('[PFS Chronicle] renderPartySheetPF2e hook fired!');
     console.log('[PFS Chronicle] Is GM?', game.user.isGM);
 
@@ -316,7 +323,7 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
         const chronicleApp = new PartyChronicleApp(partyActors);
         
         // Prepare the context data
-        const context = await chronicleApp._prepareContext();
+        const context: PartyChronicleContext = await chronicleApp._prepareContext();
         console.log('[PFS Chronicle] Context prepared:', context);
         console.log('[PFS Chronicle] Party members count:', context.partyMembers?.length);
         console.log('[PFS Chronicle] Party members:', context.partyMembers);
@@ -325,7 +332,7 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
         const template = 'modules/pfs-chronicle-generator/templates/party-chronicle-filling.hbs';
         
         // Render the template using namespaced version
-        const html = await foundry.applications.handlebars.renderTemplate(template, context);
+        const html = await foundry.applications.handlebars.renderTemplate(template, context as any);
         console.log('[PFS Chronicle] Template rendered, HTML length:', html.length);
         
         // Insert the rendered HTML into the container
@@ -336,65 +343,17 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
         
         // Season change handler
         $container.find('#season').on('change', async (event: any) => {
-            console.log('[PFS Chronicle] Season changed');
-            const seasonId = event.target.value;
-            const layouts = layoutStore.getLayoutsByParent(seasonId);
-            
-            const layoutDropdown = $container.find('#layout');
-            layoutDropdown.empty();
-            for (const layout of layouts) {
-                const option = document.createElement('option');
-                option.value = layout.id;
-                option.innerText = layout.description;
-                layoutDropdown.append(option);
-            }
-            
-            if (layouts.length > 0) {
-                layoutDropdown.val(layouts[0].id);
-                layoutDropdown.trigger('change');
-            }
-            
-            // Auto-save
-            await saveFormData($container, partyActors);
-            
-            // Update validation display
-            updateValidationDisplay($container, partyActors);
+            await handleSeasonChange(event, $container, partyActors, extractFormData);
         });
         
         // Layout change handler
         $container.find('#layout').on('change', async (event: any) => {
-            console.log('[PFS Chronicle] Layout changed');
-            const layoutId = event.target.value;
-            
-            // Update blank chronicle path if defaultChronicleLocation exists
-            const layout = await layoutStore.getLayout(layoutId);
-            if (layout?.defaultChronicleLocation) {
-                try {
-                    const response = await fetch(layout.defaultChronicleLocation, { method: 'HEAD' });
-                    if (response.ok) {
-                        $container.find('#blankChroniclePath').val(layout.defaultChronicleLocation);
-                    }
-                } catch (error) {
-                    console.log(`Default chronicle location not accessible: ${layout.defaultChronicleLocation}`);
-                }
-            }
-            
-            // Update layout-specific fields (checkboxes and strikeout items)
-            await updateLayoutSpecificFields($container, layoutId);
-            
-            // Auto-save
-            await saveFormData($container, partyActors);
-            
-            // Update validation display
-            updateValidationDisplay($container, partyActors);
+            await handleLayoutChange(event, $container, partyActors, extractFormData);
         });
         
         // Field change handler for auto-save and validation
         $container.find('input, select, textarea').on('change', async (event: any) => {
-            console.log('[PFS Chronicle] Field changed');
-            await saveFormData($container, partyActors);
-            // Update validation display and button state
-            updateValidationDisplay($container, partyActors);
+            await handleFieldChange(event, $container, partyActors, extractFormData);
         });
         
         // Save button handler
@@ -432,12 +391,8 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
             const formData = extractFormData($container, partyActors);
             console.log('[PFS Chronicle] Extracted form data:', formData);
             
-            // Call the generateChronicles method
-            await generateChroniclesFromForm(formData, partyActors);
-            
-            // No need to re-render the party sheet - the download buttons are on
-            // individual character sheets, which will update when opened via the
-            // renderCharacterSheetPF2e hook
+            // Call the extracted handler function
+            await generateChroniclesFromPartyData(formData, partyActors);
         });
         
         // Portrait click handler
@@ -445,30 +400,8 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
         console.log('[PFS Chronicle] Found portrait images:', portraits.length);
         portraits.forEach((img, index) => {
             console.log(`[PFS Chronicle] Attaching click listener to portrait ${index}`);
-            img.addEventListener('click', (event: MouseEvent) => {
-                console.log('[PFS Chronicle] Portrait clicked!', event.target);
-                event.preventDefault();
-                
-                const memberActivity = (event.target as HTMLElement).closest('.member-activity');
-                console.log('[PFS Chronicle] Member activity element:', memberActivity);
-                
-                const characterId = memberActivity?.getAttribute('data-character-id');
-                console.log('[PFS Chronicle] Character ID:', characterId);
-                
-                if (!characterId) {
-                    console.warn('[PFS Chronicle] Portrait clicked but no character ID found');
-                    return;
-                }
-                
-                const actor = partyActors.find(a => a?.id === characterId);
-                console.log('[PFS Chronicle] Found actor:', actor);
-                
-                if (actor?.sheet) {
-                    console.log('[PFS Chronicle] Opening actor sheet');
-                    actor.sheet.render(true, { focus: true });
-                } else {
-                    console.warn('[PFS Chronicle] Actor or actor sheet not found');
-                }
+            img.addEventListener('click', (event: Event) => {
+                handlePortraitClick(event as MouseEvent, partyActors);
             });
         });
         
@@ -478,460 +411,31 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
         );
         console.log('[PFS Chronicle] Found reputation inputs:', reputationInputs.length);
         reputationInputs.forEach((input) => {
-            input.addEventListener('change', async () => {
-                console.log('[PFS Chronicle] Reputation field changed');
-                await saveFormData($container, partyActors);
-                updateValidationDisplay($container, partyActors);
+            input.addEventListener('change', async (event: any) => {
+                await handleFieldChange(event, $container, partyActors, extractFormData);
             });
         });
         
         // Initial population of layout-specific fields
         const layoutId = $container.find('#layout').val() as string;
         if (layoutId) {
-            await updateLayoutSpecificFields($container, layoutId);
+            await updateLayoutSpecificFields($container, layoutId, async () => {
+                await saveFormData($container, partyActors);
+            });
         }
         
         // Initial validation display and button state
-        updateValidationDisplay($container, partyActors);
+        updateValidationDisplay($container, partyActors, extractFormData);
         
         console.log('[PFS Chronicle] Party chronicle form rendered and event listeners attached');
     } catch (error) {
         console.error('[PFS Chronicle] Error rendering form:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         container.innerHTML = `
             <div style="padding: 2rem; text-align: center; color: red;">
                 <p>Error loading party chronicle form. Check console for details.</p>
-                <p>${error.message}</p>
+                <p>${errorMessage}</p>
             </div>
         `;
-    }
-}
-
-/**
- * Updates layout-specific fields (checkboxes and strikeout items)
- */
-async function updateLayoutSpecificFields($container: any, layoutId: string) {
-    if (!layoutId) return;
-    
-    const layout = await layoutStore.getLayout(layoutId);
-    
-    // Get checkbox and strikeout choices from layout
-    const checkboxChoices = findCheckboxChoices(layout);
-    const strikeoutChoices = findStrikeoutChoices(layout);
-    
-    // Load saved data to determine which items are selected
-    const savedStorage = await loadPartyChronicleData();
-    const savedCheckboxes = savedStorage?.data?.shared?.adventureSummaryCheckboxes || [];
-    const savedStrikeouts = savedStorage?.data?.shared?.strikeoutItems || [];
-    
-    // Update adventure summary checkboxes
-    const checkboxContainer = $container.find('#adventureSummaryCheckboxes .checkbox-choices');
-    checkboxContainer.empty();
-    checkboxChoices.forEach((choice: string, index: number) => {
-        const div = $('<div class="checkbox-choice"></div>');
-        const checkbox = $(`<input type="checkbox" id="checkbox-${index}" name="shared.adventureSummaryCheckboxes" value="${choice}" ${savedCheckboxes.includes(choice) ? 'checked' : ''}>`);
-        const label = $(`<label for="checkbox-${index}">${choice}</label>`);
-        div.append(checkbox).append(label);
-        checkboxContainer.append(div);
-    });
-    
-    // Update strikeout items
-    const strikeoutContainer = $container.find('#strikeoutItems .strikeout-choices');
-    strikeoutContainer.empty();
-    strikeoutChoices.forEach((choice: string, index: number) => {
-        const div = $('<div class="item-choice"></div>');
-        const checkbox = $(`<input type="checkbox" id="strikeout-${index}" name="shared.strikeoutItems" value="${choice}" ${savedStrikeouts.includes(choice) ? 'checked' : ''}>`);
-        const label = $(`<label for="strikeout-${index}">${choice}</label>`);
-        div.append(checkbox).append(label);
-        strikeoutContainer.append(div);
-    });
-    
-    // Re-attach change listeners to new checkboxes
-    $container.find('#adventureSummaryCheckboxes input, #strikeoutItems input').on('change', async () => {
-        await saveFormData($container, []);
-    });
-}
-
-/**
- * Extracts checkbox choices from layout parameters
- */
-function findCheckboxChoices(layout: any): string[] {
-    const params = layout?.parameters?.Checkboxes?.summary_checkbox;
-    if (params && params.choices && Array.isArray(params.choices)) {
-        return params.choices as string[];
-    }
-    return [];
-}
-
-/**
- * Extracts strikeout item choices from layout parameters
- */
-function findStrikeoutChoices(layout: any): string[] {
-    const params = layout?.parameters?.Items?.strikeout_item_lines;
-    if (params && params.choices && Array.isArray(params.choices)) {
-        return params.choices as string[];
-    }
-    return [];
-}
-
-/**
- * Saves form data to world flags
- */
-async function saveFormData($container: any, partyActors: any[]) {
-    try {
-        const formData = extractFormData($container, partyActors);
-        await savePartyChronicleData(formData);
-        console.log('[PFS Chronicle] Auto-saved party chronicle data');
-    } catch (error) {
-        console.error('[PFS Chronicle] Auto-save failed:', error);
-        ui.notifications?.warn('Failed to auto-save chronicle data');
-    }
-}
-
-/**
- * Extracts form data into PartyChronicleData structure
- */
-function extractFormData($container: any, partyActors: any[]): any {
-    const formElement = $container.closest('form')[0] || $container[0];
-    const formData = new FormData(formElement);
-    
-    // Extract shared fields
-    const shared: any = {
-        gmPfsNumber: $container.find('#gmPfsNumber').val() || '',
-        scenarioName: $container.find('#scenarioName').val() || '',
-        eventCode: $container.find('#eventCode').val() || '',
-        eventDate: $container.find('#eventDate').val() || '',
-        xpEarned: parseInt($container.find('#xpEarned').val() as string) || 0,
-        treasureBundles: parseInt($container.find('#treasureBundles').val() as string) || 0,
-        layoutId: $container.find('#layout').val() || '',
-        seasonId: $container.find('#season').val() || '',
-        blankChroniclePath: $container.find('#blankChroniclePath').val() || '',
-        adventureSummaryCheckboxes: $container.find('input[name="shared.adventureSummaryCheckboxes"]:checked').map(function() { return $(this).val(); }).get(),
-        strikeoutItems: $container.find('input[name="shared.strikeoutItems"]:checked').map(function() { return $(this).val(); }).get(),
-        chosenFactionReputation: parseInt($container.find('#chosenFactionReputation').val() as string) || 2,
-        reputationValues: {
-            EA: parseInt($container.find('#reputation-EA').val() as string) || 0,
-            GA: parseInt($container.find('#reputation-GA').val() as string) || 0,
-            HH: parseInt($container.find('#reputation-HH').val() as string) || 0,
-            VS: parseInt($container.find('#reputation-VS').val() as string) || 0,
-            RO: parseInt($container.find('#reputation-RO').val() as string) || 0,
-            VW: parseInt($container.find('#reputation-VW').val() as string) || 0,
-        },
-    };
-    
-    // Extract character-specific fields
-    const characters: any = {};
-    partyActors.forEach((actor: any) => {
-        const actorId = actor.id;
-        characters[actorId] = {
-            // Read from hidden fields (non-editable)
-            characterName: $container.find(`input[name="characters.${actorId}.characterName"]`).val() || actor.name,
-            societyId: $container.find(`input[name="characters.${actorId}.societyId"]`).val() || '',
-            level: parseInt($container.find(`input[name="characters.${actorId}.level"]`).val() as string) || actor.level || 1,
-            // Read from visible editable fields
-            incomeEarned: parseFloat($container.find(`#incomeEarned-${actorId}`).val() as string) || 0,
-            goldEarned: parseFloat($container.find(`#goldEarned-${actorId}`).val() as string) || 0,
-            goldSpent: parseFloat($container.find(`#goldSpent-${actorId}`).val() as string) || 0,
-            notes: $container.find(`#notes-${actorId}`).val() || '',
-        };
-    });
-    
-    return { shared, characters };
-}
-
-/**
- * Updates validation error display and button state
- * Shows inline errors and summary panel, disables generate button if errors exist
- * 
- * Requirements: 6.3, 6.4
- */
-function updateValidationDisplay($container: any, partyActors: any[]): void {
-    // Import validation functions
-    const { validateSharedFields, validateUniqueFields } = require('./model/party-chronicle-validator.js');
-    
-    // Extract form data
-    const formData = extractFormData($container, partyActors);
-    
-    // Validate shared fields
-    const sharedValidation = validateSharedFields(formData.shared);
-    
-    // Validate unique fields for all characters
-    const allErrors: string[] = [...sharedValidation.errors];
-    for (const [actorId, unique] of Object.entries(formData.characters)) {
-        const actor = partyActors.find(a => a.id === actorId);
-        const characterName = actor?.name || actorId;
-        const result = validateUniqueFields(unique as any, characterName);
-        allErrors.push(...result.errors);
-    }
-    
-    // Update validation error summary panel
-    const errorPanel = $container.find('#validationErrors');
-    const errorList = $container.find('#validationErrorList');
-    
-    if (allErrors.length > 0) {
-        // Show error panel with errors
-        errorList.empty();
-        allErrors.forEach(error => {
-            errorList.append(`<li>${error}</li>`);
-        });
-        errorPanel.show();
-    } else {
-        // Hide error panel
-        errorPanel.hide();
-    }
-    
-    // Update generate button state
-    const generateButton = $container.find('#generateChronicles');
-    if (allErrors.length > 0) {
-        generateButton.prop('disabled', true);
-        generateButton.attr('data-tooltip', 'Please correct validation errors before generating chronicles');
-    } else {
-        generateButton.prop('disabled', false);
-        generateButton.attr('data-tooltip', 'Generate Chronicles');
-    }
-    
-    // Clear all previous field error styling
-    $container.find('.form-group').removeClass('has-error');
-    $container.find('.field-error').remove();
-    
-    // Add inline error styling for specific fields
-    // This is a simplified approach - we mark fields as invalid based on error messages
-    if (sharedValidation.errors.length > 0) {
-        sharedValidation.errors.forEach(error => {
-            // Map error messages to field IDs
-            if (error.includes('GM PFS Number')) {
-                const formGroup = $container.find('#gmPfsNumber').closest('.form-group');
-                formGroup.addClass('has-error');
-                formGroup.find('label').after('<span class="field-error">Required</span>');
-            }
-            if (error.includes('Scenario Name')) {
-                const formGroup = $container.find('#scenarioName').closest('.form-group');
-                formGroup.addClass('has-error');
-                formGroup.find('label').after('<span class="field-error">Required</span>');
-            }
-            if (error.includes('Event Code')) {
-                const formGroup = $container.find('#eventCode').closest('.form-group');
-                formGroup.addClass('has-error');
-                formGroup.find('label').after('<span class="field-error">Required</span>');
-            }
-            if (error.includes('Event Date')) {
-                const formGroup = $container.find('#eventDate').closest('.form-group');
-                formGroup.addClass('has-error');
-                formGroup.find('label').after('<span class="field-error">Invalid date</span>');
-            }
-            if (error.includes('XP Earned')) {
-                const formGroup = $container.find('#xpEarned').closest('.form-group');
-                formGroup.addClass('has-error');
-                formGroup.find('label').after('<span class="field-error">Invalid value</span>');
-            }
-            if (error.includes('Treasure Bundles')) {
-                const formGroup = $container.find('#treasureBundles').closest('.form-group');
-                formGroup.addClass('has-error');
-                formGroup.find('label').after('<span class="field-error">Must be 0-10</span>');
-            }
-            if (error.includes('Layout selection')) {
-                const formGroup = $container.find('#layout').closest('.form-group');
-                formGroup.addClass('has-error');
-                formGroup.find('label').after('<span class="field-error">Required</span>');
-            }
-            if (error.includes('Season selection')) {
-                const formGroup = $container.find('#season').closest('.form-group');
-                formGroup.addClass('has-error');
-                formGroup.find('label').after('<span class="field-error">Required</span>');
-            }
-            if (error.includes('Blank Chronicle Path')) {
-                const formGroup = $container.find('#blankChroniclePath').closest('.form-group');
-                formGroup.addClass('has-error');
-                formGroup.find('label').after('<span class="field-error">Required</span>');
-            }
-        });
-    }
-    
-    // Add inline error styling for character-specific fields
-    partyActors.forEach((actor: any) => {
-        const actorId = actor.id;
-        const characterName = actor.name;
-        const unique = formData.characters[actorId];
-        const result = validateUniqueFields(unique as any, characterName);
-        
-        if (result.errors.length > 0) {
-            result.errors.forEach(error => {
-                // Map error messages to field IDs (remove character name prefix)
-                const errorWithoutPrefix = error.replace(`${characterName}: `, '');
-                
-                if (errorWithoutPrefix.includes('Society ID')) {
-                    const formGroup = $container.find(`#incomeEarned-${actorId}`).closest('.member-activity').find('.character-society-id');
-                    formGroup.css('color', '#d32f2f');
-                }
-                if (errorWithoutPrefix.includes('Income Earned')) {
-                    const formGroup = $container.find(`#incomeEarned-${actorId}`).closest('.form-group');
-                    formGroup.addClass('has-error');
-                }
-                if (errorWithoutPrefix.includes('Gold Earned')) {
-                    const formGroup = $container.find(`#goldEarned-${actorId}`).closest('.form-group');
-                    formGroup.addClass('has-error');
-                }
-                if (errorWithoutPrefix.includes('Gold Spent')) {
-                    const formGroup = $container.find(`#goldSpent-${actorId}`).closest('.form-group');
-                    formGroup.addClass('has-error');
-                }
-            });
-        }
-    });
-}
-
-
-/**
- * Generates chronicles for all party members from form data
- * This is the main entry point for chronicle generation from the party interface
- */
-async function generateChroniclesFromForm(formData: any, partyActors: any[]) {
-    console.log('[PFS Chronicle] Starting chronicle generation for party');
-    
-    // Import required modules
-    const { validateSharedFields, validateUniqueFields } = await import('./model/party-chronicle-validator.js');
-    const { mapToCharacterData } = await import('./model/party-chronicle-mapper.js');
-    const { clearPartyChronicleData } = await import('./model/party-chronicle-storage.js');
-    const { PdfGenerator } = await import('./PdfGenerator.js');
-    const { PDFDocument } = await import('pdf-lib');
-    const fontkit = await import('@pdf-lib/fontkit');
-    
-    // Validate shared fields
-    const sharedValidation = validateSharedFields(formData.shared);
-    if (!sharedValidation.valid) {
-        ui.notifications?.error(`Validation failed: ${sharedValidation.errors.join(', ')}`);
-        return;
-    }
-    
-    // Validate unique fields for all characters
-    const allErrors: string[] = [];
-    for (const [actorId, unique] of Object.entries(formData.characters)) {
-        const actor = partyActors.find(a => a.id === actorId);
-        const characterName = actor?.name || actorId;
-        const result = validateUniqueFields(unique as any, characterName);
-        allErrors.push(...result.errors);
-    }
-    
-    if (allErrors.length > 0) {
-        ui.notifications?.error(`Validation failed: ${allErrors.join(', ')}`);
-        return;
-    }
-    
-    // Collect generation results and flag updates for all characters
-    const results: any[] = [];
-    const flagUpdates: Array<{ actor: any, chronicleData: any, base64String: string }> = [];
-    let allSucceeded = true;
-    
-    // Get the selected layout
-    const layoutId = formData.shared?.layoutId || game.settings.get('pfs-chronicle-generator', 'layout');
-    let layout: any;
-    try {
-        layout = await layoutStore.getLayout(layoutId as string);
-    } catch (error) {
-        ui.notifications?.error(`Failed to load layout: ${error instanceof Error ? error.message : String(error)}`);
-        return;
-    }
-    
-    // Get the blank chronicle path
-    const blankChroniclePath = formData.shared?.blankChroniclePath || game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
-    if (!blankChroniclePath || typeof blankChroniclePath !== 'string') {
-        ui.notifications?.error("Blank chronicle PDF path is not set.");
-        return;
-    }
-    
-    // Process each party member - generate PDFs but don't set flags yet
-    for (const actor of partyActors) {
-        const characterId = actor.id;
-        const characterName = actor.name;
-        
-        try {
-            // Get character-specific data
-            const characterData = formData.characters[characterId];
-            
-            // Map to chronicle data format
-            const chronicleData = mapToCharacterData(formData.shared, characterData, actor);
-            
-            // Generate PDF
-            const response = await fetch(blankChroniclePath);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch blank chronicle PDF: ${response.statusText}`);
-            }
-            
-            const pdfBytes = await response.arrayBuffer();
-            const pdfDoc = await PDFDocument.load(pdfBytes);
-            pdfDoc.registerFontkit(fontkit.default);
-            
-            const generator = new PdfGenerator(pdfDoc, layout, chronicleData);
-            await generator.generate();
-            
-            // Convert PDF to base64
-            const modifiedPdfBytes = await pdfDoc.save();
-            let binary = '';
-            const len = modifiedPdfBytes.byteLength;
-            for (let i = 0; i < len; i++) {
-                binary += String.fromCharCode(modifiedPdfBytes[i]);
-            }
-            const base64String = btoa(binary);
-            
-            // Store for batch update later
-            flagUpdates.push({ actor, chronicleData, base64String });
-            
-            // Record success
-            results.push({
-                characterId,
-                characterName,
-                success: true
-            });
-            
-            console.log(`[PFS Chronicle] Successfully generated chronicle for ${characterName}`);
-            
-        } catch (error) {
-            // Record failure
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            results.push({
-                characterId,
-                characterName,
-                success: false,
-                error: errorMessage
-            });
-            allSucceeded = false;
-            console.error(`[PFS Chronicle] Failed to generate chronicle for ${characterName}:`, error);
-        }
-    }
-    
-    // Batch update all actor flags at once to minimize party sheet re-renders
-    console.log(`[PFS Chronicle] Updating flags for ${flagUpdates.length} actors`);
-    for (const { actor, chronicleData, base64String } of flagUpdates) {
-        try {
-            await actor.setFlag('pfs-chronicle-generator', 'chronicleData', chronicleData);
-            await actor.setFlag('pfs-chronicle-generator', 'chroniclePdf', base64String);
-        } catch (error) {
-            console.error(`[PFS Chronicle] Failed to set flags for ${actor.name}:`, error);
-        }
-    }
-    
-    // Display summary notifications
-    const successCount = results.filter(r => r.success).length;
-    const failureCount = results.filter(r => !r.success).length;
-    
-    if (allSucceeded) {
-        ui.notifications?.info(`Successfully generated ${successCount} chronicle(s) for all party members.`);
-        
-        // Clear saved data after successful generation
-        try {
-            await clearPartyChronicleData();
-            console.log('[PFS Chronicle] Cleared saved party chronicle data after successful generation');
-        } catch (error) {
-            console.error('[PFS Chronicle] Failed to clear saved data:', error);
-            ui.notifications?.warn("Chronicles generated but failed to clear saved data.");
-        }
-    } else {
-        const failedCharacters = results
-            .filter(r => !r.success)
-            .map(r => `${r.characterName}: ${r.error}`)
-            .join('; ');
-        
-        ui.notifications?.warn(
-            `Generated ${successCount} chronicle(s), but ${failureCount} failed: ${failedCharacters}`
-        );
     }
 }

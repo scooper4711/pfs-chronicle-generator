@@ -1,11 +1,9 @@
 import { layoutStore } from './LayoutStore.js';
-import { PdfGenerator } from './PdfGenerator.js';
-import { PDFDocument } from 'pdf-lib';
-import fontkit from '@pdf-lib/fontkit';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
 import FormDataExtended = foundry.applications.ux.FormDataExtended;
 import { ContentElement, Layout } from './model/layout.js';
+import { generateSingleChronicle } from './handlers/single-chronicle-handlers.js';
 
 // Placeholder data structure for level-based rewards
 type PfsRewardData = {
@@ -70,59 +68,7 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
   }
 
   static async #generatePDF(this: PFSChronicleGeneratorApp, event: SubmitEvent|Event, form: HTMLFormElement, formData: FormDataExtended) : Promise<void> {
-    const data : any = foundry.utils.expandObject(formData.object);
-    console.log('[PFS Chronicle] Raw form data:', formData);
-    console.log('[PFS Chronicle] Expanded form data:', data);
-    
-    if (this.actor) {
-        // Convert form data array into strikeout_item_lines array
-        data.strikeout_item_lines = Array.isArray(data.strikeout_item_lines) ? data.strikeout_item_lines : 
-            (data.strikeout_item_lines ? [data.strikeout_item_lines] : []);
-        console.log('[PFS Chronicle] Processed strikeout lines:', data.strikeout_item_lines);
-
-        // Convert form data array into summary_checkbox array
-        data.summary_checkbox = Array.isArray(data.summary_checkbox) ? data.summary_checkbox : 
-            (data.summary_checkbox ? [data.summary_checkbox] : []);
-        console.log('[PFS Chronicle] Processed checkboxes:', data.summary_checkbox);
-
-        await this.actor.setFlag('pfs-chronicle-generator', 'chronicleData', data);
-
-        try {
-            const layoutId = game.settings.get('pfs-chronicle-generator', 'layout');
-            const layout = await layoutStore.getLayout(layoutId as string);
-
-            const pdfPath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
-            if (pdfPath && typeof pdfPath === 'string') {
-                const response = await fetch(pdfPath);
-                if (response.ok) {
-                    const pdfBytes = await response.arrayBuffer();
-                    const pdfDoc = await PDFDocument.load(pdfBytes);
-                    pdfDoc.registerFontkit(fontkit);
-
-                    const generator = new PdfGenerator(pdfDoc, layout, data);
-                    await generator.generate();
-
-                    const modifiedPdfBytes = await pdfDoc.save();
-                    let binary = '';
-                    const len = modifiedPdfBytes.byteLength;
-                    for (let i = 0; i < len; i++) {
-                        binary += String.fromCharCode(modifiedPdfBytes[i]);
-                    }
-                    const base64String = btoa(binary);
-
-                    await this.actor.setFlag('pfs-chronicle-generator', 'chroniclePdf', base64String);
-                    ui.notifications?.info("Chronicle PDF generated and attached to actor.");
-                } else {
-                    ui.notifications?.error("Failed to fetch the blank chronicle PDF. Check the path in the settings.");
-                }
-            } else {
-                ui.notifications?.error("Blank chronicle PDF path is not set in the settings.");
-            }
-        } catch (e) {
-            console.error(e);
-            ui.notifications?.error("An error occurred during chronicle generation.");
-        }
-    }
+    await generateSingleChronicle(this.actor, event, form, formData);
   }
 
   static PARTS = {
@@ -318,76 +264,118 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
     }
     return [];
   }
-
-  async _prepareContext(): Promise<object> {
-    const savedData = this.actor.getFlag('pfs-chronicle-generator', 'chronicleData') || {};
-    console.log('[PFS Chronicle] Saved chronicle data:', savedData);
-
-    const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber');
-    const eventName = game.settings.get('pfs-chronicle-generator', 'eventName');
-    const eventcode = game.settings.get('pfs-chronicle-generator', 'eventcode');
-    const eventDate = game.settings.get('pfs-chronicle-generator', 'eventDate') as string;
-    const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
-    const chronicleFileName = blankChroniclePath ? blankChroniclePath.split('/').pop() || 'chronicle.pdf' : 'chronicle.pdf';
-    
-    // Get seasons and determine selected season and layout
+  /**
+   * Load layout data including seasons, selected season, and effective layout.
+   * Handles season/layout selection logic and ensures consistency.
+   * @returns Object containing seasons, selected season ID, layouts in season, and effective layout ID
+   */
+  private async loadLayoutData(): Promise<{
+    seasons: any[];
+    selectedSeasonId: string;
+    layoutsInSeason: any[];
+    effectiveLayoutId: string | undefined;
+    layout: Layout | undefined;
+  }> {
     const seasons = layoutStore.getSeasons();
     const settingSeasonId = game.settings.get('pfs-chronicle-generator', 'season') as string;
     const currentLayoutId = game.settings.get('pfs-chronicle-generator', 'layout') as string;
-    
+
     let selectedSeasonId = settingSeasonId || (seasons.length > 0 ? seasons[0].id : '');
     let selectedLayoutId = currentLayoutId || '';
-    
+
     // If a layout is set but doesn't belong to the selected season, adjust season accordingly
     if (selectedLayoutId) {
-      const seasonWithLayout = seasons.find(season => 
+      const seasonWithLayout = seasons.find(season =>
         layoutStore.getLayoutsByParent(season.id).some(layout => layout.id === selectedLayoutId)
       );
       if (seasonWithLayout) selectedSeasonId = seasonWithLayout.id;
     }
-    
+
     // Get layouts for the selected season
     const layoutsInSeason = layoutStore.getLayoutsByParent(selectedSeasonId);
-    
+
     // If current layout isn't in the season, select first layout in season
-    const effectiveLayoutId = layoutsInSeason.some(l => l.id === selectedLayoutId) 
-      ? selectedLayoutId 
+    const effectiveLayoutId = layoutsInSeason.some(l => l.id === selectedLayoutId)
+      ? selectedLayoutId
       : (layoutsInSeason.length > 0 ? layoutsInSeason[0].id : undefined);
-    
+
     const layout = effectiveLayoutId ? await layoutStore.getLayout(effectiveLayoutId) : await layoutStore.getLayout(currentLayoutId);
-    const strikeoutChoices = this.findStrikeoutChoices(layout);
-    const checkboxChoices = this.findCheckboxChoices(layout);
-    
-    // Convert saved data into a map of selected items
-    const savedStrikeouts = savedData.strikeout_item_lines || [];
-    const selectedStrikeouts = savedStrikeouts.reduce((acc: Record<string, boolean>, item: string) => {
-        acc[item] = true;
-        return acc;
-    }, {});
 
-    // Convert saved checkbox data into a map of selected checkboxes
-    const savedCheckboxes = savedData.summary_checkbox || [];
-    const selectedCheckboxes = savedCheckboxes.reduce((acc: Record<string, boolean>, item: string) => {
-        acc[item] = true;
-        return acc;
-    }, {});
+    return {
+      seasons,
+      selectedSeasonId,
+      layoutsInSeason,
+      effectiveLayoutId,
+      layout
+    };
+  }
 
+  /**
+   * Process choice fields (checkboxes and strikeouts) from layout and saved data.
+   * Converts saved arrays into maps of selected items for template rendering.
+   * @param layout The layout containing choice field definitions
+   * @param savedData The saved chronicle data containing selected choices
+   * @returns Object containing choice options and selected state maps
+   */
+  /**
+     * Process choice fields (checkboxes and strikeouts) from layout and saved data.
+     * Converts saved arrays into maps of selected items for template rendering.
+     * @param layout The layout containing choice field definitions
+     * @param savedData The saved chronicle data containing selected choices
+     * @returns Object containing choice options and selected state maps
+     */
+    private processChoiceFields(layout: Layout | undefined, savedData: any): {
+      checkboxChoices: string[];
+      selectedCheckboxes: Record<string, boolean>;
+      strikeoutChoices: string[];
+      selectedStrikeouts: Record<string, boolean>;
+    } {
+      const strikeoutChoices = layout ? this.findStrikeoutChoices(layout) : [];
+      const checkboxChoices = layout ? this.findCheckboxChoices(layout) : [];
+
+      // Convert saved data into a map of selected items
+      const savedStrikeouts = savedData.strikeout_item_lines || [];
+      const selectedStrikeouts = savedStrikeouts.reduce((acc: Record<string, boolean>, item: string) => {
+          acc[item] = true;
+          return acc;
+      }, {});
+
+      // Convert saved checkbox data into a map of selected checkboxes
+      const savedCheckboxes = savedData.summary_checkbox || [];
+      const selectedCheckboxes = savedCheckboxes.reduce((acc: Record<string, boolean>, item: string) => {
+          acc[item] = true;
+          return acc;
+      }, {});
+
+      return {
+        checkboxChoices,
+        selectedCheckboxes,
+        strikeoutChoices,
+        selectedStrikeouts
+      };
+    }
+
+  /**
+   * Map actor data and saved data to context fields for template rendering.
+   * Handles default values, data type conversions, and field calculations.
+   * @param savedData The saved chronicle data
+   * @param eventDate The event date from settings
+   * @returns Object containing all mapped field values
+   */
+  private mapFieldsToContext(savedData: any, eventDate: string): Record<string, any> {
     // Get full faction name from abbreviation
-    const factionName = this.currentFaction && FACTION_NAMES[this.currentFaction] 
-        ? FACTION_NAMES[this.currentFaction] 
+    const factionName = this.currentFaction && FACTION_NAMES[this.currentFaction]
+        ? FACTION_NAMES[this.currentFaction]
         : this.currentFaction;
 
     // Use saved date from actor data, fall back to event date setting, then today's date
     const defaultDate = savedData.date || eventDate || new Date().toISOString().slice(0, 10);
 
     return {
-      event: eventName,
-      eventcode: eventcode,
-      date: defaultDate,
-      gmid: gmPfsNumber,
       char: this.actor.name,
       level: this.actor.system.details.level.value ?? 1,
       societyid: this.playerNumber+'-'+this.characterNumber,
+      date: defaultDate,
       starting_xp: (savedData.starting_xp ?? ""),
       xp_gained: (savedData.xp_gained ?? "4"),
       total_xp: (savedData.total_xp ?? ""),
@@ -399,20 +387,45 @@ export class PFSChronicleGeneratorApp extends HandlebarsApplicationMixin(Applica
       gp_spent: (savedData.gp_spent ?? 0).toFixed(2),
       total_gp: (savedData.total_gp ?? ""),
       reputation: savedData.reputation ?? (factionName ? `${factionName}: +4` : ""),
-      notes: savedData.notes ?? "",
-      checkboxChoices: checkboxChoices,
-      selectedCheckboxes: selectedCheckboxes,
-      strikeoutChoices: strikeoutChoices,
-      selectedStrikeouts: selectedStrikeouts,
-      blankChroniclePath: blankChroniclePath,
-      chronicleFileName: chronicleFileName,
-      seasons: seasons,
-      selectedSeasonId: selectedSeasonId,
-      layoutsInSeason: layoutsInSeason,
-      selectedLayoutId: effectiveLayoutId,
-      buttons: [
-        { type: "submit", icon: "fa-solid fa-save", label: "SETTINGS.Save" }
-      ]
+      notes: savedData.notes ?? ""
     };
   }
+
+  async _prepareContext(): Promise<object> {
+      const savedData = this.actor.getFlag('pfs-chronicle-generator', 'chronicleData') || {};
+      console.log('[PFS Chronicle] Saved chronicle data:', savedData);
+
+      const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber');
+      const eventName = game.settings.get('pfs-chronicle-generator', 'eventName');
+      const eventcode = game.settings.get('pfs-chronicle-generator', 'eventcode');
+      const eventDate = game.settings.get('pfs-chronicle-generator', 'eventDate') as string;
+      const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
+      const chronicleFileName = blankChroniclePath ? blankChroniclePath.split('/').pop() || 'chronicle.pdf' : 'chronicle.pdf';
+
+      // Load layout data (seasons, layouts, effective layout)
+      const layoutData = await this.loadLayoutData();
+
+      // Process choice fields (checkboxes and strikeouts)
+      const choiceFields = this.processChoiceFields(layoutData.layout, savedData);
+
+      // Map actor and saved data to context fields
+      const mappedFields = this.mapFieldsToContext(savedData, eventDate);
+
+      return {
+        event: eventName,
+        eventcode: eventcode,
+        gmid: gmPfsNumber,
+        ...mappedFields,
+        ...choiceFields,
+        blankChroniclePath: blankChroniclePath,
+        chronicleFileName: chronicleFileName,
+        seasons: layoutData.seasons,
+        selectedSeasonId: layoutData.selectedSeasonId,
+        layoutsInSeason: layoutData.layoutsInSeason,
+        selectedLayoutId: layoutData.effectiveLayoutId,
+        buttons: [
+          { type: "submit", icon: "fa-solid fa-save", label: "SETTINGS.Save" }
+        ]
+      };
+    }
 }

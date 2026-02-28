@@ -4,6 +4,20 @@
 
 import { describe, it, expect } from '@jest/globals';
 import * as fc from 'fast-check';
+
+// Mock the PFSChronicleGeneratorApp module to avoid Foundry dependencies
+jest.mock('../PFSChronicleGeneratorApp', () => ({
+  FACTION_NAMES: {
+    'EA': 'Envoy\'s Alliance',
+    'GA': 'Grand Archive',
+    'HH': 'Horizon Hunters',
+    'VS': 'Vigilant Seal',
+    'RO': 'Radiant Oath',
+    'VW': 'Verdant Wheel'
+  }
+}));
+
+// Import after mocking
 import { mapToCharacterData } from './party-chronicle-mapper';
 import { SharedFields, UniqueFields } from './party-chronicle-types';
 
@@ -229,7 +243,16 @@ describe('Property 6: Data Combination Correctness', () => {
       treasureBundles: fc.integer({ min: 0, max: 10 }),
       layoutId: fc.string({ minLength: 1, maxLength: 50 }),
       seasonId: fc.string({ minLength: 1, maxLength: 50 }),
-      blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 })
+      blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 }),
+      chosenFactionReputation: fc.integer({ min: 1, max: 9 }),
+      reputationValues: fc.record({
+        EA: fc.integer({ min: 0, max: 9 }),
+        GA: fc.integer({ min: 0, max: 9 }),
+        HH: fc.integer({ min: 0, max: 9 }),
+        VS: fc.integer({ min: 0, max: 9 }),
+        RO: fc.integer({ min: 0, max: 9 }),
+        VW: fc.integer({ min: 0, max: 9 })
+      })
     });
 
     const uniqueFieldsArb = fc.record({
@@ -240,12 +263,12 @@ describe('Property 6: Data Combination Correctness', () => {
       goldEarned: fc.integer({ min: 0, max: 10000 }),
       goldSpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.string({ maxLength: 500 }),
-      reputation: fc.string({ maxLength: 100 })
     });
 
     fc.assert(
       fc.property(sharedFieldsArb, uniqueFieldsArb, (shared, unique) => {
-        const result = mapToCharacterData(shared, unique);
+        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } };
+        const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify all shared fields are present in the result
         expect(result.gmid).toBe(shared.gmPfsNumber);
@@ -265,7 +288,7 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.gp_gained).toBe(unique.goldEarned);
         expect(result.gp_spent).toBe(unique.goldSpent);
         expect(result.notes).toBe(unique.notes);
-        expect(result.reputation).toBe(unique.reputation);
+        // Reputation is now calculated from shared fields and actor
       }),
       { numRuns: 100 }
     );
@@ -284,7 +307,16 @@ describe('Property 6: Data Combination Correctness', () => {
       treasureBundles: fc.integer({ min: 0, max: 10 }),
       layoutId: fc.string({ minLength: 1, maxLength: 50 }),
       seasonId: fc.string({ minLength: 1, maxLength: 50 }),
-      blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 })
+      blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 }),
+      chosenFactionReputation: fc.integer({ min: 1, max: 9 }),
+      reputationValues: fc.record({
+        EA: fc.integer({ min: 0, max: 9 }),
+        GA: fc.integer({ min: 0, max: 9 }),
+        HH: fc.integer({ min: 0, max: 9 }),
+        VS: fc.integer({ min: 0, max: 9 }),
+        RO: fc.integer({ min: 0, max: 9 }),
+        VW: fc.integer({ min: 0, max: 9 })
+      })
     });
 
     const uniqueFieldsArb = fc.record({
@@ -295,12 +327,12 @@ describe('Property 6: Data Combination Correctness', () => {
       goldEarned: fc.integer({ min: 0, max: 10000 }),
       goldSpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.string({ maxLength: 500 }),
-      reputation: fc.string({ maxLength: 100 })
     });
 
     fc.assert(
       fc.property(sharedFieldsArb, uniqueFieldsArb, (shared, unique) => {
-        const result = mapToCharacterData(shared, unique);
+        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } };
+        const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify no data transformation or loss occurs
         // String fields should be identical
@@ -311,7 +343,8 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.char).toStrictEqual(unique.characterName);
         expect(result.societyid).toStrictEqual(unique.societyId);
         expect(result.notes).toStrictEqual(unique.notes);
-        expect(result.reputation).toStrictEqual(unique.reputation);
+        // Reputation is now calculated from shared fields and actor
+        expect(result.reputation).toBeDefined();
         expect(result.treasure_bundles).toStrictEqual(shared.treasureBundles.toString());
 
         // Numeric fields should be identical
@@ -342,7 +375,16 @@ describe('Property 6: Data Combination Correctness', () => {
       treasureBundles: fc.constant(0),
       layoutId: fc.string({ minLength: 1, maxLength: 50 }),
       seasonId: fc.string({ minLength: 1, maxLength: 50 }),
-      blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 })
+      blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 }),
+      chosenFactionReputation: fc.constant(0),
+      reputationValues: fc.constant({
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      })
     });
 
     const uniqueFieldsArb = fc.record({
@@ -352,13 +394,13 @@ describe('Property 6: Data Combination Correctness', () => {
       incomeEarned: fc.integer({ min: 0, max: 1000 }),
       goldEarned: fc.integer({ min: 0, max: 10000 }),
       goldSpent: fc.integer({ min: 0, max: 10000 }),
-      notes: fc.constant(''),
-      reputation: fc.constant('')
+      notes: fc.constant('')
     });
 
     fc.assert(
       fc.property(sharedFieldsArb, uniqueFieldsArb, (shared, unique) => {
-        const result = mapToCharacterData(shared, unique);
+        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } };
+        const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify empty arrays are preserved
         expect(result.summary_checkbox).toEqual([]);
@@ -367,7 +409,8 @@ describe('Property 6: Data Combination Correctness', () => {
         // Verify zero value is converted to string
         expect(result.treasure_bundles).toBe('0');
         expect(result.notes).toBe('');
-        expect(result.reputation).toBe('');
+        // Reputation is now calculated from shared fields, should be empty array when all values are 0
+        expect(result.reputation).toEqual([]);
       }),
       { numRuns: 100 }
     );
@@ -386,7 +429,16 @@ describe('Property 6: Data Combination Correctness', () => {
       treasureBundles: fc.integer({ min: 0, max: 10 }),
       layoutId: fc.string({ minLength: 1, maxLength: 50 }),
       seasonId: fc.string({ minLength: 1, maxLength: 50 }),
-      blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 })
+      blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 }),
+      chosenFactionReputation: fc.integer({ min: 1, max: 9 }),
+      reputationValues: fc.record({
+        EA: fc.integer({ min: 0, max: 9 }),
+        GA: fc.integer({ min: 0, max: 9 }),
+        HH: fc.integer({ min: 0, max: 9 }),
+        VS: fc.integer({ min: 0, max: 9 }),
+        RO: fc.integer({ min: 0, max: 9 }),
+        VW: fc.integer({ min: 0, max: 9 })
+      })
     });
 
     const uniqueFieldsArb = fc.record({
@@ -397,12 +449,12 @@ describe('Property 6: Data Combination Correctness', () => {
       goldEarned: fc.constant(0),
       goldSpent: fc.constant(0),
       notes: fc.string({ maxLength: 500 }),
-      reputation: fc.string({ maxLength: 100 })
     });
 
     fc.assert(
       fc.property(sharedFieldsArb, uniqueFieldsArb, (shared, unique) => {
-        const result = mapToCharacterData(shared, unique);
+        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } };
+        const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify zero values are preserved (not treated as falsy)
         expect(result.xp_gained).toBe(0);
@@ -429,7 +481,16 @@ describe('Property 6: Data Combination Correctness', () => {
       treasureBundles: fc.integer({ min: 0, max: 10 }),
       layoutId: stringArb,
       seasonId: stringArb,
-      blankChroniclePath: stringArb
+      blankChroniclePath: stringArb,
+      chosenFactionReputation: fc.integer({ min: 0, max: 9 }),
+      reputationValues: fc.record({
+        EA: fc.integer({ min: 0, max: 9 }),
+        GA: fc.integer({ min: 0, max: 9 }),
+        HH: fc.integer({ min: 0, max: 9 }),
+        VS: fc.integer({ min: 0, max: 9 }),
+        RO: fc.integer({ min: 0, max: 9 }),
+        VW: fc.integer({ min: 0, max: 9 })
+      })
     });
 
     const uniqueFieldsArb = fc.record({
@@ -440,12 +501,12 @@ describe('Property 6: Data Combination Correctness', () => {
       goldEarned: fc.integer({ min: 0, max: 10000 }),
       goldSpent: fc.integer({ min: 0, max: 10000 }),
       notes: stringArb,
-      reputation: stringArb
     });
 
     fc.assert(
       fc.property(sharedFieldsArb, uniqueFieldsArb, (shared, unique) => {
-        const result = mapToCharacterData(shared, unique);
+        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } };
+        const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify all string fields preserve special characters and unicode
         expect(result.gmid).toBe(shared.gmPfsNumber);
@@ -455,7 +516,7 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.char).toBe(unique.characterName);
         expect(result.societyid).toBe(unique.societyId);
         expect(result.notes).toBe(unique.notes);
-        expect(result.reputation).toBe(unique.reputation);
+        // Reputation is now calculated from shared fields and actor
         expect(result.treasure_bundles).toBe(shared.treasureBundles.toString());
 
         // Verify array elements preserve special characters

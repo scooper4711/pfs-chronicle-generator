@@ -6,14 +6,18 @@
   "scripts": {
     "build": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap",
     "watch": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap --watch",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint scripts/**/*.ts --max-warnings 0"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
     "esbuild": "^0.25.9",
+    "eslint": "^10.0.2",
     "fast-check": "^4.5.3",
     "fvtt-types": "npm:@league-of-foundry-developers/foundry-vtt-types@^13.346.0-beta.20250812191140",
     "jest": "^29.7.0",

@@ -9,6 +9,7 @@ import {
   clearPartyChronicleData
 } from './party-chronicle-storage';
 import { PartyChronicleData } from './party-chronicle-types';
+import { createSharedFields, createUniqueFields } from './test-helpers';
 
 // Mock the global game object
 const mockGameSettings: any = {
@@ -41,19 +42,10 @@ describe('Party Chronicle Storage', () => {
   describe('savePartyChronicleData', () => {
     it('should save party chronicle data with timestamp', async () => {
       const testData: PartyChronicleData = {
-        shared: {
-          gmPfsNumber: '12345-2001',
-          scenarioName: 'Test Scenario',
-          eventCode: 'TEST-001',
-          eventDate: '2024-01-15',
-          xpEarned: 4,
+        shared: createSharedFields({
           adventureSummaryCheckboxes: ['checkbox1'],
-          strikeoutItems: ['item1'],
-          treasureBundles: 2,
-          layoutId: 'layout-1',
-          seasonId: 'season-7',
-          blankChroniclePath: '/path/to/chronicle.pdf'
-        },
+          strikeoutItems: ['item1']
+        }),
         characters: {
           'actor-1': {
             characterName: 'Hero One',
@@ -62,8 +54,7 @@ describe('Party Chronicle Storage', () => {
             incomeEarned: 10,
             goldEarned: 15,
             goldSpent: 5,
-            notes: 'Test notes',
-            reputation: 'Envoy: +2'
+            notes: 'Test notes'
           }
         }
       };
@@ -82,7 +73,7 @@ describe('Party Chronicle Storage', () => {
 
     it('should throw error when save fails', async () => {
       const testData: PartyChronicleData = {
-        shared: {
+        shared: createSharedFields({
           gmPfsNumber: '',
           scenarioName: '',
           eventCode: '',
@@ -94,7 +85,7 @@ describe('Party Chronicle Storage', () => {
           layoutId: '',
           seasonId: '',
           blankChroniclePath: ''
-        },
+        }),
         characters: {}
       };
 
@@ -118,7 +109,9 @@ describe('Party Chronicle Storage', () => {
           treasureBundles: 0,
           layoutId: 'layout-1',
           seasonId: 'season-7',
-          blankChroniclePath: '/path'
+          blankChroniclePath: '/path',
+          chosenFactionReputation: 0,
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
         },
         characters: {}
       };
@@ -144,7 +137,9 @@ describe('Party Chronicle Storage', () => {
           treasureBundles: 10,
           layoutId: 'layout-1',
           seasonId: 'season-7',
-          blankChroniclePath: '/path/to/chronicle.pdf'
+          blankChroniclePath: '/path/to/chronicle.pdf',
+          chosenFactionReputation: 0,
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
         },
         characters: {}
       };
@@ -169,7 +164,9 @@ describe('Party Chronicle Storage', () => {
           treasureBundles: 0,
           layoutId: 'layout-1',
           seasonId: 'season-7',
-          blankChroniclePath: '/path'
+          blankChroniclePath: '/path',
+          chosenFactionReputation: 0,
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
         },
         characters: {}
       };
@@ -185,7 +182,7 @@ describe('Party Chronicle Storage', () => {
   describe('loadPartyChronicleData', () => {
     it('should load previously saved data', async () => {
       const testData: PartyChronicleData = {
-        shared: {
+        shared: createSharedFields({
           gmPfsNumber: '12345-2001',
           scenarioName: 'Test Scenario',
           eventCode: 'TEST-001',
@@ -197,18 +194,17 @@ describe('Party Chronicle Storage', () => {
           layoutId: 'layout-1',
           seasonId: 'season-7',
           blankChroniclePath: '/path/to/chronicle.pdf'
-        },
+        }),
         characters: {
-          'actor-1': {
+          'actor-1': createUniqueFields({
             characterName: 'Hero One',
             societyId: '12345-01',
             level: 5,
             incomeEarned: 10,
             goldEarned: 15,
             goldSpent: 5,
-            notes: '',
-            reputation: ''
-          }
+            notes: ''
+          })
         }
       };
 
@@ -330,7 +326,9 @@ describe('Party Chronicle Storage', () => {
           treasureBundles: 0,
           layoutId: 'layout-1',
           seasonId: 'season-7',
-          blankChroniclePath: '/path/to/chronicle.pdf'
+          blankChroniclePath: '/path/to/chronicle.pdf',
+          chosenFactionReputation: 0,
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
         },
         characters: {}
       };
@@ -378,7 +376,7 @@ describe('Party Chronicle Storage', () => {
   describe('Integration scenarios', () => {
     it('should handle save-load-clear workflow', async () => {
       const testData: PartyChronicleData = {
-        shared: {
+        shared: createSharedFields({
           gmPfsNumber: '12345-2001',
           scenarioName: 'Integration Test',
           eventCode: 'INT-001',
@@ -390,28 +388,26 @@ describe('Party Chronicle Storage', () => {
           layoutId: 'layout-1',
           seasonId: 'season-7',
           blankChroniclePath: '/path/to/chronicle.pdf'
-        },
+        }),
         characters: {
-          'actor-1': {
+          'actor-1': createUniqueFields({
             characterName: 'Hero One',
             societyId: '12345-01',
             level: 5,
             incomeEarned: 10,
             goldEarned: 15,
             goldSpent: 5,
-            notes: 'Test notes',
-            reputation: 'Envoy: +2'
-          },
-          'actor-2': {
+            notes: 'Test notes'
+          }),
+          'actor-2': createUniqueFields({
             characterName: 'Hero Two',
             societyId: '12345-02',
             level: 3,
             incomeEarned: 8,
             goldEarned: 12,
             goldSpent: 3,
-            notes: 'More notes',
-            reputation: 'Vigilant: +1'
-          }
+            notes: 'More notes'
+          })
         }
       };
 
@@ -447,7 +443,9 @@ describe('Party Chronicle Storage', () => {
           treasureBundles: 0,
           layoutId: 'layout-1',
           seasonId: 'season-7',
-          blankChroniclePath: '/path'
+          blankChroniclePath: '/path',
+          chosenFactionReputation: 0,
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
         },
         characters: {}
       };
@@ -514,7 +512,9 @@ describe('Party Chronicle Storage', () => {
           treasureBundles: 0,
           layoutId: 'layout-1',
           seasonId: 'season-7',
-          blankChroniclePath: '/path'
+          blankChroniclePath: '/path',
+          chosenFactionReputation: 0,
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
         },
         characters: {}
       };
@@ -547,7 +547,9 @@ describe('Party Chronicle Storage', () => {
           treasureBundles: 0,
           layoutId: 'layout-1',
           seasonId: 'season-7',
-          blankChroniclePath: '/path'
+          blankChroniclePath: '/path',
+          chosenFactionReputation: 0,
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
         },
         characters: {}
       };
@@ -598,7 +600,9 @@ describe('Party Chronicle Storage', () => {
           treasureBundles: 0,
           layoutId: 'layout-1',
           seasonId: 'season-7',
-          blankChroniclePath: '/path1'
+          blankChroniclePath: '/path1',
+          chosenFactionReputation: 0,
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
         },
         characters: {}
       };
@@ -615,7 +619,9 @@ describe('Party Chronicle Storage', () => {
           treasureBundles: 0,
           layoutId: 'layout-2',
           seasonId: 'season-7',
-          blankChroniclePath: '/path2'
+          blankChroniclePath: '/path2',
+          chosenFactionReputation: 0,
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
         },
         characters: {}
       };
@@ -645,8 +651,7 @@ describe('Party Chronicle Storage', () => {
         incomeEarned: fc.integer({ min: 0, max: 1000 }),
         goldEarned: fc.integer({ min: 0, max: 10000 }),
         goldSpent: fc.integer({ min: 0, max: 10000 }),
-        notes: fc.string({ maxLength: 500 }),
-        reputation: fc.string({ maxLength: 100 })
+        notes: fc.string({ maxLength: 500 })
       });
 
       const sharedDataArb = fc.record({
@@ -660,7 +665,16 @@ describe('Party Chronicle Storage', () => {
         treasureBundles: fc.integer({ min: 0, max: 10 }),
         layoutId: fc.string({ minLength: 1, maxLength: 50 }),
         seasonId: fc.string({ minLength: 1, maxLength: 50 }),
-        blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 })
+        blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 }),
+        chosenFactionReputation: fc.integer({ min: 1, max: 9 }),
+        reputationValues: fc.record({
+          EA: fc.integer({ min: 0, max: 9 }),
+          GA: fc.integer({ min: 0, max: 9 }),
+          HH: fc.integer({ min: 0, max: 9 }),
+          VS: fc.integer({ min: 0, max: 9 }),
+          RO: fc.integer({ min: 0, max: 9 }),
+          VW: fc.integer({ min: 0, max: 9 })
+        })
       });
 
       const partyChronicleDataArb = fc.record({
@@ -710,7 +724,16 @@ describe('Party Chronicle Storage', () => {
         treasureBundles: fc.integer({ min: 0, max: 10 }),
         layoutId: fc.string({ minLength: 1, maxLength: 50 }),
         seasonId: fc.string({ minLength: 1, maxLength: 50 }),
-        blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 })
+        blankChroniclePath: fc.string({ minLength: 1, maxLength: 200 }),
+        chosenFactionReputation: fc.integer({ min: 0, max: 9 }),
+        reputationValues: fc.record({
+          EA: fc.integer({ min: 0, max: 9 }),
+          GA: fc.integer({ min: 0, max: 9 }),
+          HH: fc.integer({ min: 0, max: 9 }),
+          VS: fc.integer({ min: 0, max: 9 }),
+          RO: fc.integer({ min: 0, max: 9 }),
+          VW: fc.integer({ min: 0, max: 9 })
+        })
       });
 
       await fc.assert(
@@ -753,8 +776,7 @@ describe('Party Chronicle Storage', () => {
         incomeEarned: fc.integer({ min: 0, max: 1000 }),
         goldEarned: fc.integer({ min: 0, max: 10000 }),
         goldSpent: fc.integer({ min: 0, max: 10000 }),
-        notes: stringArb,
-        reputation: stringArb
+        notes: stringArb
       });
 
       const sharedDataArb = fc.record({
