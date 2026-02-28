@@ -8,7 +8,7 @@ A critical constraint is maintaining the hybrid ApplicationV2 rendering pattern 
 
 ## Tasks
 
-- [ ] 1. Phase 1: Extract Utilities and Helpers
+- [x] 1. Phase 1: Extract Utilities and Helpers
   - [x] 1.1 Create utils/filename-utils.ts module
     - Extract `sanitizeFilename()` function from main.ts
     - Extract `generateChronicleFilename()` function from main.ts
@@ -26,7 +26,7 @@ A critical constraint is maintaining the hybrid ApplicationV2 rendering pattern 
     - File: `scripts/utils/layout-utils.ts` (new)
     - _Requirements: 1.5, 5.1, 5.3, 5.4, 5.5_
   
-  - [x]* 1.3 Create utils/dom-utils.ts module (SKIPPED - no value added)
+  - [x] 1.3 Create utils/dom-utils.ts module (SKIPPED - no value added)
     - ~~Extract DOM manipulation helper functions from main.ts~~
     - ~~Functions for element selection, attribute manipulation, class management~~
     - Note: Analysis showed this task would create one-line jQuery wrappers with no actual benefit
@@ -82,7 +82,7 @@ A critical constraint is maintaining the hybrid ApplicationV2 rendering pattern 
     - If tests fail, revert and adjust extraction strategy
     - _Requirements: 3.4, 3.5, 7.3_
 
-- [ ] 2. Phase 2: Decompose High-Complexity Functions
+- [x] 2. Phase 2: Decompose High-Complexity Functions
   - [x] 2.1 Create model/validation-helpers.ts module
     - Extract `validateDateFormat()` helper function
     - Extract `validateSocietyIdFormat()` helper function
@@ -141,14 +141,57 @@ A critical constraint is maintaining the hybrid ApplicationV2 rendering pattern 
     - File: `scripts/PartyChronicleApp.ts`
     - _Requirements: 2.1, 2.3, 2.6, 2.7, 2.8, 3.1, 3.6_
   
-  - [x] 2.7 Run tests after Phase 2 decomposition
+  - [x] 2.7 Refactor generateChroniclesFromPartyData - Extract validation logic
+    - Create helper function `validateAllCharacterFields()` in handlers/party-chronicle-handlers.ts
+    - Move shared field validation and unique field validation loops into helper
+    - Return aggregated validation results
+    - Reduce main function complexity by extracting validation responsibility
+    - File: `scripts/handlers/party-chronicle-handlers.ts`
+    - _Requirements: 2.6, 2.7, 2.8, 3.1, 3.6_
+  
+  - [x] 2.8 Refactor generateChroniclesFromPartyData - Extract data mapping logic
+    - Create helper function `extractCharacterChronicleData()` in handlers/party-chronicle-handlers.ts
+    - Move SharedFields and character data extraction logic into helper
+    - Takes raw form data and actor, returns structured chronicle data
+    - Reduce main function complexity by extracting data transformation responsibility
+    - File: `scripts/handlers/party-chronicle-handlers.ts`
+    - _Requirements: 2.6, 2.7, 2.8, 3.1, 3.6_
+  
+  - [x] 2.9 Refactor generateChroniclesFromPartyData - Extract PDF generation logic
+    - Create helper function `generateSingleCharacterPdf()` in handlers/party-chronicle-handlers.ts
+    - Move PDF loading, generation, and actor flag saving logic into helper
+    - Takes chronicle data, layout, blank PDF path, and actor
+    - Returns success/failure result
+    - Reduce main function complexity by extracting PDF generation responsibility
+    - File: `scripts/handlers/party-chronicle-handlers.ts`
+    - _Requirements: 2.6, 2.7, 2.8, 3.1, 3.6_
+  
+  - [x] 2.10 Refactor generateChroniclesFromPartyData - Extract notification logic
+    - Create helper function `displayGenerationResults()` in handlers/party-chronicle-handlers.ts
+    - Move result collection and notification display logic into helper
+    - Takes array of GenerationResult objects
+    - Displays appropriate success/warning notifications
+    - Reduce main function complexity by extracting notification responsibility
+    - File: `scripts/handlers/party-chronicle-handlers.ts`
+    - _Requirements: 2.6, 2.7, 2.8, 3.1, 3.6_
+  
+  - [x] 2.11 Refactor generateChroniclesFromPartyData - Simplify main orchestrator
+    - Update main function to call extracted helper functions
+    - Keep function as high-level orchestrator (under 50 lines)
+    - Flow: validate → load layout → process each character → display results
+    - Maintain exact behavior and error handling
+    - Target CCN: <10 (simple orchestration pattern)
+    - File: `scripts/handlers/party-chronicle-handlers.ts`
+    - _Requirements: 2.1, 2.6, 2.7, 2.8, 3.1, 3.6_
+  
+  - [x] 2.12 Run tests after Phase 2 decomposition
     - Run TypeScript compiler: `npm run build`
     - Run all unit tests: `npm test`
     - Verify all tests pass without modification
     - If tests fail, revert and adjust decomposition strategy
     - _Requirements: 3.4, 3.5, 7.3_
 
-- [ ] 3. Phase 3: Reorganize Event Handlers
+- [x] 3. Phase 3: Reorganize Event Handlers
   - [x] 3.1 Create handlers/party-chronicle-handlers.ts module
     - Extract `handlePortraitClick()` logic from main.ts
     - Extract `handleSeasonChange()` logic from main.ts
@@ -177,7 +220,7 @@ A critical constraint is maintaining the hybrid ApplicationV2 rendering pattern 
     - File: `scripts/PartyChronicleApp.ts`, `scripts/handlers/party-chronicle-handlers.ts`
     - _Requirements: 1.2, 5.1, 5.2, 5.3_
   
-  - [ ] 3.4 Update: `scripts/main.ts`
+  - [x] 3.4 Update: `scripts/main.ts`
     - _Requirements: 1.1, 4.1, 4.2, 4.3, 4.4, 4.5_
   
   - [x] 3.5 Create handlers/single-chronicle-handlers.ts module
@@ -202,7 +245,7 @@ A critical constraint is maintaining the hybrid ApplicationV2 rendering pattern 
     - If tests fail, revert and adjust extraction strategy
     - _Requirements: 3.4, 3.5, 7.3_
 
-- [ ] 4. Phase 4: Validate and Document
+- [x] 4. Phase 4: Validate and Document
   - [x] 4.1 Verify file size compliance
     - Check main.ts line count (target: <500 lines)
     - Check PartyChronicleApp.ts line count (target: <500 lines)

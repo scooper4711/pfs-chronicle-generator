@@ -167,6 +167,8 @@ scripts/
 ├── LayoutStore.ts                   # Layout configuration management
 ├── handlers/                        # Event handler logic (called from main.ts)
 │   ├── party-chronicle-handlers.ts  # Party chronicle event handlers
+│   ├── form-data-extraction.ts      # Form data extraction logic
+│   ├── chronicle-generation.ts      # Chronicle generation workflow
 │   ├── single-chronicle-handlers.ts # Single-character chronicle handlers
 │   └── validation-display.ts        # Validation UI update logic
 ├── utils/                           # Utility functions
@@ -217,13 +219,29 @@ scripts/
 **`party-chronicle-handlers.ts`**:
 - Event handler logic for party chronicle form interactions
 - Functions called by event listeners attached in `main.ts`
-- Handles: portrait clicks, season changes, layout changes, field changes
+- Handles: portrait clicks, season changes, layout changes, field changes, treasure bundle display updates
 - Key functions:
   - `handlePortraitClick()` - Opens character sheet when portrait is clicked
   - `handleSeasonChange()` - Updates layout options when season changes
   - `handleLayoutChange()` - Updates form fields when layout changes
   - `handleFieldChange()` - Handles form field changes and auto-save
-  - `generateChroniclesFromPartyData()` - Orchestrates PDF generation for all party members
+  - `updateTreasureBundleDisplay()` - Updates treasure bundle gold display for a character
+  - `updateAllTreasureBundleDisplays()` - Updates treasure bundle displays for all characters
+  - `saveFormData()` - Saves form data to world flags
+- Re-exports `extractFormData` and `generateChroniclesFromPartyData` for backward compatibility
+
+**`form-data-extraction.ts`**:
+- Form data extraction logic
+- Reads all form fields and constructs structured data objects
+- Key functions:
+  - `extractFormData()` - Extracts form data into PartyChronicleData structure
+
+**`chronicle-generation.ts`**:
+- Chronicle generation workflow orchestration
+- Handles validation, layout loading, PDF generation, and result display
+- Key functions:
+  - `generateChroniclesFromPartyData()` - Main orchestrator for chronicle generation
+  - Internal helpers for validation, layout loading, PDF generation, and notifications
 
 **`validation-display.ts`**:
 - Validation UI update logic extracted from `main.ts`
