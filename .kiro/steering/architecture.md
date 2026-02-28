@@ -385,6 +385,99 @@ If you're unsure where to add code for a new feature:
 
 ## Coding Standards
 
+### Clean Code Principles
+
+This project follows the principles from Robert C. Martin's "Clean Code". These are fundamental guidelines that apply to all code:
+
+**Meaningful Names**:
+- Use intention-revealing names that explain why something exists and what it does
+- Avoid abbreviations and single-letter variables (except loop counters in small scopes)
+- Use pronounceable, searchable names
+- Class names should be nouns (`ChronicleValidator`, `LayoutStore`)
+- Function names should be verbs (`validateFields`, `generatePdf`, `handleClick`)
+- Be consistent - use one word per concept (don't mix `fetch`, `retrieve`, and `get`)
+
+**Functions**:
+- Functions should do ONE thing and do it well (Single Responsibility Principle)
+- Keep functions small - ideally under 20 lines, definitely under 50
+- Function arguments: 0 is ideal, 1-2 is good, 3 requires justification, 4+ needs refactoring
+- Avoid flag arguments (boolean parameters that change behavior) - split into separate functions
+- No side effects - functions should do what their name says and nothing else
+- Use descriptive names - long descriptive names are better than short enigmatic ones
+
+**Comments**:
+- Strive for self-explanatory code, but use comments liberally when they add value
+- Good comments explain WHY, not WHAT - the code shows what it does, comments explain the reasoning
+- Encouraged comments:
+  - Legal comments (copyright, licenses)
+  - Explanatory comments for complex algorithms, regex patterns, or business logic
+  - Warning of consequences (e.g., "This test takes 10 minutes to run")
+  - TODO comments (but address them promptly)
+  - JSDoc for public APIs
+  - Context comments explaining architectural decisions or constraints
+  - Clarifying comments for non-obvious code that can't be easily refactored
+- Avoid these comment types:
+  - Redundant comments that merely repeat what code already says clearly
+  - Misleading or outdated comments (keep comments in sync with code changes)
+  - Noise comments that add no information ("// Constructor", "// Returns the value")
+- Commented-out code:
+  - Prefer version control over commented-out code for long-term storage
+  - Temporary commented-out code during active development is acceptable
+  - If keeping commented code, add a comment explaining why it's preserved
+
+**Formatting**:
+- Vertical formatting: Related concepts should be close together
+- Use blank lines to separate concepts
+- Variables should be declared close to their usage
+- Dependent functions should be vertically close (caller above callee)
+- Horizontal formatting: Keep lines short (under 120 characters)
+- Use consistent indentation (this project uses 2 spaces for TypeScript)
+
+**Error Handling**:
+- Use exceptions rather than return codes
+- Write try-catch-finally first when writing code that could throw
+- Provide context with exceptions - include operation name and failure type
+- Don't return null - return empty objects, arrays, or use Optional pattern
+- Don't pass null - avoid null parameters in function signatures
+
+**Objects and Data Structures**:
+- Objects hide data and expose operations (methods)
+- Data structures expose data and have no meaningful operations
+- Don't create hybrid structures that are half object, half data structure
+- Follow the Law of Demeter: a method should only call methods on:
+  - Itself
+  - Objects passed as parameters
+  - Objects it creates
+  - Its direct properties
+- Avoid "train wrecks": `a.getB().getC().doSomething()` - use intermediate variables
+
+**Classes**:
+- Classes should be small - measured by responsibilities, not lines
+- Single Responsibility Principle: a class should have one reason to change
+- High cohesion: methods and variables should be interdependent
+- Low coupling: minimize dependencies between classes
+- Organize from high-level to low-level (public methods first, private helpers below)
+
+**Tests**:
+- Tests should be FIRST:
+  - Fast: Tests should run quickly
+  - Independent: Tests should not depend on each other
+  - Repeatable: Tests should work in any environment
+  - Self-Validating: Tests should have boolean output (pass/fail)
+  - Timely: Write tests before production code (TDD)
+- One assert per test (or one concept per test)
+- Test code is as important as production code - keep it clean
+- Use descriptive test names that explain what is being tested
+
+**General Rules**:
+- Follow the Boy Scout Rule: "Leave the code cleaner than you found it"
+- Use consistent conventions throughout the codebase
+- Replace magic numbers with named constants
+- Be precise - don't use `any` type in TypeScript without good reason
+- Encapsulate conditionals: `if (isValid())` is better than `if (value > 0 && value < 100)`
+- Avoid negative conditionals: `if (isValid())` is clearer than `if (!isInvalid())`
+- Don't repeat yourself (DRY) - duplication is the root of evil in software
+
 ### File Size and Complexity
 
 To maintain code quality and readability, all production code must adhere to these standards:
@@ -416,6 +509,17 @@ To maintain code quality and readability, all production code must adhere to the
   - Flat validation checks without nesting
 - **Focus on cognitive complexity** - how hard is the code to understand?
 - A function with CCN of 10 from null-coalescing is often clearer than CCN of 4 with nested conditionals
+- **When high CCN is acceptable**: Suppress linter warnings with an explanatory comment:
+  ```typescript
+  // eslint-disable-next-line complexity -- Flat null-coalescing pattern is clearer than extraction
+  function initializeDefaults(config: Config): Config {
+    return {
+      value1: config.value1 || DEFAULT_VALUE1,
+      value2: config.value2 || DEFAULT_VALUE2,
+      // ... many more similar assignments
+    };
+  }
+  ```
 
 **How to Reduce Complexity**:
 1. Extract complex conditionals into well-named helper functions
