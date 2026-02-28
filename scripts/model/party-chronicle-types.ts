@@ -44,10 +44,10 @@ export interface SharedFields {
   blankChroniclePath: string;
   
   /** Reputation bonus for character's chosen faction (0-9) */
-  chosenFactionReputation: number;
+  chosenFactionReputation: number; // multi-line-reputation-tracking 1.2, 1.4, 4.2
   
   /** Faction-specific reputation bonuses (0-9 each) */
-  reputationValues: {
+  reputationValues: { // multi-line-reputation-tracking 1.3, 1.5, 4.1
     EA: number;
     GA: number;
     HH: number;

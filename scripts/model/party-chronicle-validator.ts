@@ -4,7 +4,7 @@
  * This module provides validation functions to check that required fields
  * are populated and have valid formats before chronicle generation.
  * 
- * Requirements: 6.1, 6.2, 6.3
+ * Requirements: party-chronicle-filling 6.1, 6.2, 6.3
  */
 
 import { SharedFields, UniqueFields, ValidationResult } from './party-chronicle-types.js';
@@ -45,7 +45,7 @@ import {
  * }
  * ```
  * 
- * Validates: Requirements party-chronicle-filling 6.1, 6.3
+ * Validates: Requirements party-chronicle-filling 6.1, 6.3, multi-line-reputation-tracking 6.1, 6.2, 6.3
  */
 export function validateSharedFields(shared: Partial<SharedFields>): ValidationResult {
   const errors: string[] = [];

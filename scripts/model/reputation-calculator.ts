@@ -3,6 +3,8 @@
  * 
  * Calculates multi-line reputation for characters during PDF generation.
  * Combines faction-specific reputation values with chosen faction bonuses.
+ * 
+ * Requirements: multi-line-reputation-tracking 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 5.1, 5.2, 5.3, 5.5, 8.2, 8.3
  */
 
 import { FACTION_NAMES } from '../PFSChronicleGeneratorApp.js';
@@ -22,6 +24,8 @@ import type { SharedFields } from './party-chronicle-types.js';
  * @param shared - Shared fields containing reputation values
  * @param actor - Actor object to read chosen faction from
  * @returns Array of reputation lines (e.g., ["Envoy's Alliance: +4"])
+ * 
+ * Requirements: multi-line-reputation-tracking 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 5.1, 5.2, 5.3, 8.2, 8.3
  */
 export function calculateReputation(
     shared: SharedFields,

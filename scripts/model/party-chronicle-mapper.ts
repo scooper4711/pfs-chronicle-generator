@@ -4,7 +4,7 @@
  * This module provides functions to map party chronicle data structures
  * to the format expected by PdfGenerator for individual chronicle generation.
  * 
- * Requirements: 4.3, 5.2
+ * Requirements: party-chronicle-filling 4.3, 5.2
  */
 
 import { SharedFields, UniqueFields } from './party-chronicle-types.js';
@@ -94,7 +94,7 @@ export interface ChronicleData {
  * // chronicleData.reputation is ["Envoy's Alliance: +4", "Grand Archive: +1"]
  * ```
  * 
- * Validates: Requirements party-chronicle-filling 5.1, 5.2, 5.3, 5.5, treasure-bundle-calculation 7.1, 7.2, 7.3, 7.4, 7.5
+ * Validates: Requirements party-chronicle-filling 5.1, 5.2, 5.3, 5.5, treasure-bundle-calculation 7.1, 7.2, 7.3, 7.4, 7.5, multi-line-reputation-tracking 5.1, 5.2
  */
 export function mapToCharacterData(
   shared: SharedFields,

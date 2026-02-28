@@ -9,7 +9,7 @@
  * MUST be attached in main.ts (renderPartyChronicleForm function), not in
  * PartyChronicleApp._onRender. See architecture.md for details.
  * 
- * Requirements: 4.5, 5.1, 5.2, 5.3, 5.4, 5.5
+ * Requirements: party-chronicle-filling 4.5, 5.1, 5.2, 5.3, 5.4, 5.5
  */
 
 import { layoutStore } from '../LayoutStore.js';
@@ -37,7 +37,7 @@ import { calculateTreasureBundlesGp, formatGoldValue } from '../utils/treasure-b
  * @param event - The mouse click event
  * @param partyActors - Array of party member actors
  * 
- * Requirements: party-chronicle-filling 5.1
+ * Requirements: clickable-player-portraits 1.1, 1.3, 1.4, 3.1, 3.2, 3.3
  */
 export function handlePortraitClick(event: MouseEvent, partyActors: any[]): void {
     console.log('[PFS Chronicle] Portrait clicked!', event.target);
@@ -138,7 +138,7 @@ export function updateAllTreasureBundleDisplays(
  * @param partyActors - Array of party member actors
  * @param extractFormData - Function to extract form data from the container
  * 
- * Requirements: 5.2
+ * Requirements: party-chronicle-filling 5.2
  */
 export async function handleSeasonChange(
     event: Event,
@@ -187,7 +187,7 @@ export async function handleSeasonChange(
  * @param partyActors - Array of party member actors
  * @param extractFormData - Function to extract form data from the container
  * 
- * Requirements: 5.3
+ * Requirements: party-chronicle-filling 5.3
  */
 export async function handleLayoutChange(
     event: Event,
@@ -316,6 +316,8 @@ export async function saveFormData(container: HTMLElement, partyActors: any[]): 
  * @param container - HTMLElement wrapping the form container
  * @param partyActors - Array of party member actors
  * @returns Structured form data object with shared and character-specific fields
+ * 
+ * Requirements: party-chronicle-filling 4.5, multi-line-reputation-tracking 1.2, 1.3, 4.1, 4.2
  */
 // eslint-disable-next-line complexity
 export function extractFormData(container: HTMLElement, partyActors: any[]): any {
@@ -383,7 +385,7 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
  * @param partyActors - Array of party member actors
  * @returns Promise that resolves when all chronicles are generated
  * 
- * Requirements: 1.2, 5.1, 5.2, 5.3
+ * Requirements: party-chronicle-filling 1.2, 5.1, 5.2, 5.3, multi-line-reputation-tracking 1.2, 1.3, 4.1, 4.2
  */
 export async function generateChroniclesFromPartyData(
   data: any,

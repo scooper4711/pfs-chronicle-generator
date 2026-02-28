@@ -217,7 +217,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
  * Detects when the party sheet is rendered and injects a GM-only "PFS" tab.
  * Matches the structure from templates/actors/party/sheet.hbs with data-tab attributes.
  * 
- * Requirements: 1.1, 1.2
+ * Requirements: party-chronicle-filling 1.1, 1.2
  */
 Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, data: any) => {
     console.log('[PFS Chronicle] renderPartySheetPF2e hook fired!');
@@ -312,9 +312,15 @@ Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, data: any) => {
 /**
  * Renders the party chronicle form directly into a container element
  * 
+ * This function manually renders the party chronicle form template and attaches
+ * all event listeners. It's called from the renderPartySheetPF2e hook to inject
+ * the form into the PFS party sheet's "Society" tab.
+ * 
  * @param container - DOM element to render the form into
  * @param partyActors - Array of party member actors
  * @param partySheet - The party sheet app instance
+ * 
+ * Requirements: party-chronicle-filling 1.1, 1.2, 1.3, 1.4, multi-line-reputation-tracking 7.1, 7.2, 7.3, 7.4
  */
 async function renderPartyChronicleForm(container: HTMLElement, partyActors: any[], partySheet: any) {
     console.log('[PFS Chronicle] Rendering party chronicle form into tab');

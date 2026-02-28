@@ -5,7 +5,7 @@
  * all party members, with both shared fields (applied to all) and unique fields
  * (per character). It integrates with the existing PdfGenerator infrastructure.
  * 
- * Requirements: 1.2, 1.3, 1.4, 8.2
+ * Requirements: party-chronicle-filling 1.2, 1.3, 1.4, 8.2
  */
 
 import { layoutStore } from './LayoutStore.js';
@@ -82,7 +82,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * 
    * @returns Promise resolving to context object for template rendering
    * 
-   * Requirements: 1.3, 1.4, 8.2
+   * Requirements: party-chronicle-filling 1.3, 1.4, 8.2
    */
   async _prepareContext(options?: any): Promise<any> {
       // Extract party member data - filter to only include character actors
@@ -181,6 +181,8 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * @param effectiveLayoutId - The selected layout ID
    * @param selectedSeasonId - The selected season ID
    * @returns Partial SharedFields object for template context
+   * 
+   * Requirements: party-chronicle-filling 1.3, 1.4, 8.2, multi-line-reputation-tracking 1.2, 1.3, 4.1, 4.2
    */
   private mapPartyFieldsToContext(
     savedData: PartyChronicleData | null,

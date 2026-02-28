@@ -4,7 +4,7 @@
  * This module provides functions to save, load, and clear party chronicle data
  * using Foundry VTT's game.settings API for world-level storage.
  * 
- * Requirements: 8.1, 8.2, 8.3
+ * Requirements: party-chronicle-filling 8.1, 8.2, 8.3
  */
 
 import { PartyChronicleData } from './party-chronicle-types.js';

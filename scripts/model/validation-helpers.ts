@@ -5,7 +5,7 @@
  * to validate individual fields. These helpers reduce cyclomatic complexity
  * in the main validation functions by extracting common validation patterns.
  * 
- * Requirements: 2.6, 5.1, 5.3, 5.4, 5.5
+ * Requirements: party-chronicle-filling 2.6, 5.1, 5.3, 5.4, 5.5
  */
 
 /**
