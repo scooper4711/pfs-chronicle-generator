@@ -15,18 +15,6 @@ import { SharedFields, UniqueFields } from './model/party-chronicle-types';
 import { createSharedFields, createUniqueFields, createMockActor } from './model/test-helpers';
 import { calculateTreasureBundlesGp, calculateGpGained } from './utils/treasure-bundle-calculator';
 
-// Mock the PFSChronicleGeneratorApp module to avoid Foundry dependencies
-jest.mock('./PFSChronicleGeneratorApp', () => ({
-  FACTION_NAMES: {
-    'EA': 'Envoy\'s Alliance',
-    'GA': 'Grand Archive',
-    'HH': 'Horizon Hunters',
-    'VS': 'Vigilant Seal',
-    'RO': 'Radiant Oath',
-    'VW': 'Verdant Wheel'
-  }
-}));
-
 describe('Treasure Bundle Calculation - Integration Tests', () => {
   describe('Complete Workflow: Enter treasure bundles → Calculate values → Generate PDFs', () => {
     it('should calculate correct gold values for party members at different levels', () => {

@@ -7,20 +7,6 @@
 
 import { describe, it, expect } from '@jest/globals';
 import type { SharedFields } from './party-chronicle-types';
-
-// Mock the PFSChronicleGeneratorApp module to avoid Foundry dependencies
-jest.mock('../PFSChronicleGeneratorApp', () => ({
-  FACTION_NAMES: {
-    'EA': 'Envoy\'s Alliance',
-    'GA': 'Grand Archive',
-    'HH': 'Horizon Hunters',
-    'VS': 'Vigilant Seal',
-    'RO': 'Radiant Oath',
-    'VW': 'Verdant Wheel'
-  }
-}));
-
-// Import after mocking
 import { calculateReputation } from './reputation-calculator';
 
 // Helper to create minimal SharedFields for testing

@@ -8,7 +8,7 @@
  */
 
 import { SharedFields, UniqueFields, ValidationResult } from './party-chronicle-types.js';
-import { FACTION_NAMES } from '../PFSChronicleGeneratorApp.js';
+import { FACTION_NAMES } from './faction-names.js';
 import {
   validateDateFormat,
   validateNumberField,

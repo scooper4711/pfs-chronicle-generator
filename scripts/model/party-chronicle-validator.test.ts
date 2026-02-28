@@ -3,19 +3,6 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-
-// Mock the PFSChronicleGeneratorApp module to avoid Foundry dependencies
-jest.mock('../PFSChronicleGeneratorApp', () => ({
-  FACTION_NAMES: {
-    'EA': 'Envoy\'s Alliance',
-    'GA': 'Grand Archive',
-    'HH': 'Horizon Hunters',
-    'VS': 'Vigilant Seal',
-    'RO': 'Radiant Oath',
-    'VW': 'Verdant Wheel'
-  }
-}));
-
 import { validateSharedFields, validateUniqueFields, validateAllFields } from './party-chronicle-validator';
 import { SharedFields, UniqueFields } from './party-chronicle-types';
 

@@ -8,31 +8,11 @@
 
 import fc from 'fast-check';
 import type { SharedFields } from './party-chronicle-types';
-
-// Mock the PFSChronicleGeneratorApp module to avoid Foundry dependencies
-jest.mock('../PFSChronicleGeneratorApp', () => ({
-  FACTION_NAMES: {
-    'EA': 'Envoy\'s Alliance',
-    'GA': 'Grand Archive',
-    'HH': 'Horizon Hunters',
-    'VS': 'Vigilant Seal',
-    'RO': 'Radiant Oath',
-    'VW': 'Verdant Wheel'
-  }
-}));
-
-// Import after mocking
 import { calculateReputation } from './reputation-calculator';
+import { FACTION_NAMES } from './faction-names';
 
-// Define FACTION_NAMES locally for test assertions
-const FACTION_NAMES: Record<string, string> = {
-  'EA': 'Envoy\'s Alliance',
-  'GA': 'Grand Archive',
-  'HH': 'Horizon Hunters',
-  'VS': 'Vigilant Seal',
-  'RO': 'Radiant Oath',
-  'VW': 'Verdant Wheel'
-};
+// Faction abbreviations for test generation
+const FACTION_ABBREVS = ['EA', 'GA', 'HH', 'VS', 'RO', 'VW'];
 
 /**
  * Generator for valid reputation values (0-9)

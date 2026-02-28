@@ -29,7 +29,6 @@ global.game = {
         gmPfsNumber: '123456',
         eventName: 'Test Event',
         eventcode: 'TEST-001',
-        eventDate: '2024-01-01',
         blankChroniclePath: '/path/to/blank.pdf',
         season: 'pfs2-season7',
         layout: 'test-layout'

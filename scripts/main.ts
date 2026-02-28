@@ -1,4 +1,3 @@
-import { PFSChronicleGeneratorApp } from './PFSChronicleGeneratorApp.js';
 import { layoutStore } from './LayoutStore.js';
 import { LayoutDesignerApp } from './LayoutDesignerApp.js';
 import { PartyChronicleApp } from './PartyChronicleApp.js';
@@ -20,41 +19,34 @@ import {
 } from './handlers/party-chronicle-handlers.js';
 
 Hooks.on('init', async () => {
+  // Register default settings for GM and event information
   game.settings.register('pfs-chronicle-generator','gmName', {
-        name: 'GM Name',
-        hint: 'The name of the Game Master.',
+        name: 'Default GM Name',
+        hint: 'The default name of the Game Master (can be overridden when generating chronicles).',
         scope: 'world',
         config: true,
         type: String,
         default: '',
   });
   game.settings.register('pfs-chronicle-generator','gmPfsNumber', {
-        name: 'GM PFS Number',
-        hint: 'The Pathfinder Society number of the Game Master.',
+        name: 'Default GM PFS Number',
+        hint: 'The default Pathfinder Society number of the Game Master (can be overridden when generating chronicles).',
         scope: 'world',
         config: true,
         type: String,
         default: '',
   });
   game.settings.register('pfs-chronicle-generator','eventName', {
-        name: 'Event Name',
-        hint: 'The name of the event.',
+        name: 'Default Event Name',
+        hint: 'The default name of the event (can be overridden when generating chronicles).',
         scope: 'world',
         config: true,
         type: String,
         default: '',
   });
   game.settings.register('pfs-chronicle-generator','eventcode', {
-        name: 'Event Code',
-        hint: 'The event code.',
-        scope: 'world',
-        config: true,
-        type: String,
-        default: '',
-  });
-  game.settings.register('pfs-chronicle-generator','eventDate', {
-        name: 'Event Date',
-        hint: 'The default date for events.',
+        name: 'Default Event Code',
+        hint: 'The default event code (can be overridden when generating chronicles).',
         scope: 'world',
         config: true,
         type: String,
@@ -139,28 +131,6 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
     const pfsTab = html.find('.tab[data-tab="pfs"]');
     if (pfsTab.length === 0) {
         return;
-    }
-
-    // --- Generate Chronicle Button (GM only) ---
-    if (game.user.isGM) {
-        const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
-
-        const header = document.createElement('header');
-        header.innerHTML = "PFS Chronicle Generator";
-        header.classList.add('pfs-chronicle-generator-header');
-        header.setAttribute('data-group-id', 'pfs-chronicle-generator');
-
-        const generateButton = document.createElement('button');
-        generateButton.innerHTML = '<section class="generate-chronicle"><i class="fas fa-file-pdf"></i> Generate Chronicle</section>';
-        generateButton.classList.add('pfs-chronicle-generator-button');
-        generateButton.disabled = !blankChroniclePath;
-        generateButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            new PFSChronicleGeneratorApp(sheet.actor).render({force:true});
-        });
-
-        pfsTab.append(header);
-        pfsTab.append(generateButton);
     }
 
     // --- Download and Delete Buttons ---
