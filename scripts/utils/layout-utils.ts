@@ -60,12 +60,12 @@ export function findStrikeoutChoices(layout: Layout): string[] {
  * 
  * This is used when the layout dropdown changes or when the form is initially rendered.
  * 
- * @param container - jQuery object or HTMLElement containing the form
+ * @param container - HTMLElement containing the form
  * @param layoutId - The ID of the layout to load choices from
  * @param onChangeCallback - Callback function to attach to checkbox change events
  */
 export async function updateLayoutSpecificFields(
-  container: JQuery | HTMLElement,
+  container: HTMLElement,
   layoutId: string,
   onChangeCallback: (event?: any) => void | Promise<void>
 ): Promise<void> {
@@ -82,95 +82,59 @@ export async function updateLayoutSpecificFields(
   const savedCheckboxes = savedStorage?.data?.shared?.adventureSummaryCheckboxes || [];
   const savedStrikeouts = savedStorage?.data?.shared?.strikeoutItems || [];
 
-  // Determine if we're working with jQuery or native DOM
-  const isJQuery = container && typeof (container as any).jquery !== 'undefined';
+  // Update adventure summary checkboxes
+  const checkboxContainer = container.querySelector('#adventureSummaryCheckboxes .checkbox-choices');
+  if (checkboxContainer) {
+    checkboxContainer.innerHTML = '';
+    checkboxChoices.forEach((choice, index) => {
+      const div = document.createElement('div');
+      div.className = 'checkbox-choice';
 
-  if (isJQuery) {
-    // jQuery implementation (used in main.ts)
-    const $container = container as JQuery;
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = `checkbox-${index}`;
+      checkbox.name = 'shared.adventureSummaryCheckboxes';
+      checkbox.value = choice;
+      checkbox.checked = savedCheckboxes.includes(choice);
 
-    // Update adventure summary checkboxes
-    const checkboxContainer = $container.find('#adventureSummaryCheckboxes .checkbox-choices');
-    checkboxContainer.empty();
-    checkboxChoices.forEach((choice: string, index: number) => {
-      const div = $('<div class="checkbox-choice"></div>');
-      const checkbox = $(`<input type="checkbox" id="checkbox-${index}" name="shared.adventureSummaryCheckboxes" value="${choice}" ${savedCheckboxes.includes(choice) ? 'checked' : ''}>`);
-      const label = $(`<label for="checkbox-${index}">${choice}</label>`);
-      div.append(checkbox).append(label);
-      checkboxContainer.append(div);
-    });
+      const label = document.createElement('label');
+      label.htmlFor = `checkbox-${index}`;
+      label.textContent = choice;
 
-    // Update strikeout items
-    const strikeoutContainer = $container.find('#strikeoutItems .strikeout-choices');
-    strikeoutContainer.empty();
-    strikeoutChoices.forEach((choice: string, index: number) => {
-      const div = $('<div class="item-choice"></div>');
-      const checkbox = $(`<input type="checkbox" id="strikeout-${index}" name="shared.strikeoutItems" value="${choice}" ${savedStrikeouts.includes(choice) ? 'checked' : ''}>`);
-      const label = $(`<label for="strikeout-${index}">${choice}</label>`);
-      div.append(checkbox).append(label);
-      strikeoutContainer.append(div);
-    });
-
-    // Re-attach change listeners to new checkboxes
-    $container.find('#adventureSummaryCheckboxes input, #strikeoutItems input').on('change', onChangeCallback);
-  } else {
-    // Native DOM implementation (used in PartyChronicleApp.ts)
-    const element = container as HTMLElement;
-
-    // Update adventure summary checkboxes
-    const checkboxContainer = element.querySelector('#adventureSummaryCheckboxes .checkbox-choices');
-    if (checkboxContainer) {
-      checkboxContainer.innerHTML = '';
-      checkboxChoices.forEach((choice, index) => {
-        const div = document.createElement('div');
-        div.className = 'checkbox-choice';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = `checkbox-${index}`;
-        checkbox.name = 'shared.adventureSummaryCheckboxes';
-        checkbox.value = choice;
-        checkbox.checked = savedCheckboxes.includes(choice);
-
-        const label = document.createElement('label');
-        label.htmlFor = `checkbox-${index}`;
-        label.textContent = choice;
-
-        div.appendChild(checkbox);
-        div.appendChild(label);
-        checkboxContainer.appendChild(div);
-      });
-    }
-
-    // Update strikeout items
-    const strikeoutContainer = element.querySelector('#strikeoutItems .strikeout-choices');
-    if (strikeoutContainer) {
-      strikeoutContainer.innerHTML = '';
-      strikeoutChoices.forEach((choice, index) => {
-        const div = document.createElement('div');
-        div.className = 'item-choice';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = `strikeout-${index}`;
-        checkbox.name = 'shared.strikeoutItems';
-        checkbox.value = choice;
-        checkbox.checked = savedStrikeouts.includes(choice);
-
-        const label = document.createElement('label');
-        label.htmlFor = `strikeout-${index}`;
-        label.textContent = choice;
-
-        div.appendChild(checkbox);
-        div.appendChild(label);
-        strikeoutContainer.appendChild(div);
-      });
-    }
-
-    // Re-attach change listeners to new checkboxes
-    const checkboxes = element.querySelectorAll('#adventureSummaryCheckboxes input, #strikeoutItems input');
-    checkboxes.forEach((checkbox) => {
-      checkbox.addEventListener('change', onChangeCallback as EventListener);
+      div.appendChild(checkbox);
+      div.appendChild(label);
+      checkboxContainer.appendChild(div);
     });
   }
+
+  // Update strikeout items
+  const strikeoutContainer = container.querySelector('#strikeoutItems .strikeout-choices');
+  if (strikeoutContainer) {
+    strikeoutContainer.innerHTML = '';
+    strikeoutChoices.forEach((choice, index) => {
+      const div = document.createElement('div');
+      div.className = 'item-choice';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = `strikeout-${index}`;
+      checkbox.name = 'shared.strikeoutItems';
+      checkbox.value = choice;
+      checkbox.checked = savedStrikeouts.includes(choice);
+
+      const label = document.createElement('label');
+      label.htmlFor = `strikeout-${index}`;
+      label.textContent = choice;
+
+      div.appendChild(checkbox);
+      div.appendChild(label);
+      strikeoutContainer.appendChild(div);
+    });
+  }
+
+  // Re-attach change listeners to new checkboxes
+  const checkboxes = container.querySelectorAll('#adventureSummaryCheckboxes input, #strikeoutItems input');
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener('change', onChangeCallback as EventListener);
+  });
 }

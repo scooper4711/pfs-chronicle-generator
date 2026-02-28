@@ -13,20 +13,20 @@
  * Validates both shared fields and character-specific fields, then updates
  * the UI to show errors and disable the generate button if needed.
  * 
- * @param $container - jQuery object containing the form container
+ * @param container - HTMLElement containing the form container
  * @param partyActors - Array of party actor objects
  * @param extractFormData - Function to extract form data from the container
  */
 export function updateValidationDisplay(
-    $container: any,
+    container: HTMLElement,
     partyActors: any[],
-    extractFormData: ($container: any, partyActors: any[]) => any
+    extractFormData: (container: HTMLElement, partyActors: any[]) => any
 ): void {
     // Import validation functions
     const { validateSharedFields, validateUniqueFields } = require('../model/party-chronicle-validator.js');
     
     // Extract form data
-    const formData = extractFormData($container, partyActors);
+    const formData = extractFormData(container, partyActors);
     
     // Validate shared fields
     const sharedValidation = validateSharedFields(formData.shared);
@@ -42,11 +42,11 @@ export function updateValidationDisplay(
     const allErrors = [...sharedValidation.errors, ...characterValidations.allErrors];
     
     // Update UI components
-    updateErrorPanel($container, allErrors);
-    updateGenerateButton($container, allErrors);
-    clearPreviousFieldErrors($container);
-    renderSharedFieldErrors($container, sharedValidation.errors);
-    renderCharacterErrors($container, partyActors, formData.characters, validateUniqueFields);
+    updateErrorPanel(container, allErrors);
+    updateGenerateButton(container, allErrors);
+    clearPreviousFieldErrors(container);
+    renderSharedFieldErrors(container, sharedValidation.errors);
+    renderCharacterErrors(container, partyActors, formData.characters, validateUniqueFields);
 }
 
 /**
@@ -80,23 +80,27 @@ function validateAllCharacters(
  * Updates the validation error summary panel.
  * Shows the panel with error list if there are errors, hides it otherwise.
  * 
- * @param $container - jQuery object containing the form container
+ * @param container - HTMLElement containing the form container
  * @param errors - Array of error messages to display
  */
-function updateErrorPanel($container: any, errors: string[]): void {
-    const errorPanel = $container.find('#validationErrors');
-    const errorList = $container.find('#validationErrorList');
+function updateErrorPanel(container: HTMLElement, errors: string[]): void {
+    const errorPanel = container.querySelector('#validationErrors') as HTMLElement;
+    const errorList = container.querySelector('#validationErrorList') as HTMLElement;
+    
+    if (!errorPanel || !errorList) return;
     
     if (errors.length > 0) {
         // Show error panel with errors
-        errorList.empty();
+        errorList.innerHTML = '';
         errors.forEach(error => {
-            errorList.append(`<li>${error}</li>`);
+            const li = document.createElement('li');
+            li.textContent = error;
+            errorList.appendChild(li);
         });
-        errorPanel.show();
+        errorPanel.style.display = 'block';
     } else {
         // Hide error panel
-        errorPanel.hide();
+        errorPanel.style.display = 'none';
     }
 }
 
@@ -104,18 +108,20 @@ function updateErrorPanel($container: any, errors: string[]): void {
  * Updates the generate button state based on validation errors.
  * Disables the button and shows a tooltip if there are errors.
  * 
- * @param $container - jQuery object containing the form container
+ * @param container - HTMLElement containing the form container
  * @param errors - Array of error messages
  */
-function updateGenerateButton($container: any, errors: string[]): void {
-    const generateButton = $container.find('#generateChronicles');
+function updateGenerateButton(container: HTMLElement, errors: string[]): void {
+    const generateButton = container.querySelector('#generateChronicles') as HTMLButtonElement;
+    
+    if (!generateButton) return;
     
     if (errors.length > 0) {
-        generateButton.prop('disabled', true);
-        generateButton.attr('data-tooltip', 'Please correct validation errors before generating chronicles');
+        generateButton.disabled = true;
+        generateButton.setAttribute('data-tooltip', 'Please correct validation errors before generating chronicles');
     } else {
-        generateButton.prop('disabled', false);
-        generateButton.attr('data-tooltip', 'Generate Chronicles');
+        generateButton.disabled = false;
+        generateButton.setAttribute('data-tooltip', 'Generate Chronicles');
     }
 }
 
@@ -123,21 +129,28 @@ function updateGenerateButton($container: any, errors: string[]): void {
  * Clears all previous field error styling from the form.
  * Removes error classes and error message spans.
  * 
- * @param $container - jQuery object containing the form container
+ * @param container - HTMLElement containing the form container
  */
-function clearPreviousFieldErrors($container: any): void {
-    $container.find('.form-group').removeClass('has-error');
-    $container.find('.field-error').remove();
+function clearPreviousFieldErrors(container: HTMLElement): void {
+    const formGroups = container.querySelectorAll('.form-group');
+    formGroups.forEach(group => {
+        group.classList.remove('has-error');
+    });
+    
+    const fieldErrors = container.querySelectorAll('.field-error');
+    fieldErrors.forEach(error => {
+        error.remove();
+    });
 }
 
 /**
  * Renders inline error styling for shared fields based on validation errors.
  * Maps error messages to specific field IDs and adds error styling.
  * 
- * @param $container - jQuery object containing the form container
+ * @param container - HTMLElement containing the form container
  * @param errors - Array of shared field error messages
  */
-function renderSharedFieldErrors($container: any, errors: string[]): void {
+function renderSharedFieldErrors(container: HTMLElement, errors: string[]): void {
     if (errors.length === 0) return;
     
     // Map of error keywords to field configurations
@@ -156,7 +169,7 @@ function renderSharedFieldErrors($container: any, errors: string[]): void {
     errors.forEach(error => {
         for (const mapping of fieldErrorMap) {
             if (error.includes(mapping.keyword)) {
-                addFieldError($container, mapping.fieldId, mapping.errorText);
+                addFieldError(container, mapping.fieldId, mapping.errorText);
             }
         }
     });
@@ -165,27 +178,39 @@ function renderSharedFieldErrors($container: any, errors: string[]): void {
 /**
  * Adds error styling to a specific field.
  * 
- * @param $container - jQuery object containing the form container
+ * @param container - HTMLElement containing the form container
  * @param fieldId - CSS selector for the field
  * @param errorText - Error message to display
  */
-function addFieldError($container: any, fieldId: string, errorText: string): void {
-    const formGroup = $container.find(fieldId).closest('.form-group');
-    formGroup.addClass('has-error');
-    formGroup.find('label').after(`<span class="field-error">${errorText}</span>`);
+function addFieldError(container: HTMLElement, fieldId: string, errorText: string): void {
+    const field = container.querySelector(fieldId);
+    if (!field) return;
+    
+    const formGroup = field.closest('.form-group');
+    if (!formGroup) return;
+    
+    formGroup.classList.add('has-error');
+    
+    const label = formGroup.querySelector('label');
+    if (label) {
+        const errorSpan = document.createElement('span');
+        errorSpan.className = 'field-error';
+        errorSpan.textContent = errorText;
+        label.insertAdjacentElement('afterend', errorSpan);
+    }
 }
 
 /**
  * Renders inline error styling for character-specific fields.
  * Validates each character's unique fields and adds error styling.
  * 
- * @param $container - jQuery object containing the form container
+ * @param container - HTMLElement containing the form container
  * @param partyActors - Array of party actor objects
  * @param characters - Object mapping actor IDs to character data
  * @param validateUniqueFields - Validation function for unique fields
  */
 function renderCharacterErrors(
-    $container: any,
+    container: HTMLElement,
     partyActors: any[],
     characters: any,
     validateUniqueFields: (unique: any, characterName: string) => { valid: boolean; errors: string[] }
@@ -202,20 +227,27 @@ function renderCharacterErrors(
                 const errorWithoutPrefix = error.replace(`${characterName}: `, '');
                 
                 if (errorWithoutPrefix.includes('Society ID')) {
-                    const formGroup = $container.find(`#incomeEarned-${actorId}`).closest('.member-activity').find('.character-society-id');
-                    formGroup.css('color', '#d32f2f');
+                    const incomeField = container.querySelector(`#incomeEarned-${actorId}`);
+                    const memberActivity = incomeField?.closest('.member-activity');
+                    const societyIdElement = memberActivity?.querySelector('.character-society-id') as HTMLElement;
+                    if (societyIdElement) {
+                        societyIdElement.style.color = '#d32f2f';
+                    }
                 }
                 if (errorWithoutPrefix.includes('Income Earned')) {
-                    const formGroup = $container.find(`#incomeEarned-${actorId}`).closest('.form-group');
-                    formGroup.addClass('has-error');
+                    const incomeField = container.querySelector(`#incomeEarned-${actorId}`);
+                    const formGroup = incomeField?.closest('.form-group');
+                    formGroup?.classList.add('has-error');
                 }
                 if (errorWithoutPrefix.includes('Gold Earned')) {
-                    const formGroup = $container.find(`#goldEarned-${actorId}`).closest('.form-group');
-                    formGroup.addClass('has-error');
+                    const goldField = container.querySelector(`#goldEarned-${actorId}`);
+                    const formGroup = goldField?.closest('.form-group');
+                    formGroup?.classList.add('has-error');
                 }
                 if (errorWithoutPrefix.includes('Gold Spent')) {
-                    const formGroup = $container.find(`#goldSpent-${actorId}`).closest('.form-group');
-                    formGroup.addClass('has-error');
+                    const spentField = container.querySelector(`#goldSpent-${actorId}`);
+                    const formGroup = spentField?.closest('.form-group');
+                    formGroup?.classList.add('has-error');
                 }
             });
         }

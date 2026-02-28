@@ -339,33 +339,39 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
         container.innerHTML = html;
         
         // Attach event listeners manually since we're not using the full ApplicationV2 lifecycle
-        const $container = $(container);
         
         // Season change handler
-        $container.find('#season').on('change', async (event: any) => {
-            await handleSeasonChange(event, $container, partyActors, extractFormData);
+        const seasonSelect = container.querySelector('#season') as HTMLSelectElement;
+        seasonSelect?.addEventListener('change', async (event: Event) => {
+            await handleSeasonChange(event, container, partyActors, extractFormData);
         });
         
         // Layout change handler
-        $container.find('#layout').on('change', async (event: any) => {
-            await handleLayoutChange(event, $container, partyActors, extractFormData);
+        const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
+        layoutSelect?.addEventListener('change', async (event: Event) => {
+            await handleLayoutChange(event, container, partyActors, extractFormData);
         });
         
         // Field change handler for auto-save and validation
-        $container.find('input, select, textarea').on('change', async (event: any) => {
-            await handleFieldChange(event, $container, partyActors, extractFormData);
+        const formElements = container.querySelectorAll('input, select, textarea');
+        formElements.forEach((element) => {
+            element.addEventListener('change', async (event: Event) => {
+                await handleFieldChange(event, container, partyActors, extractFormData);
+            });
         });
         
         // Save button handler
-        $container.find('#saveData').on('click', async (event: any) => {
+        const saveButton = container.querySelector('#saveData');
+        saveButton?.addEventListener('click', async (event: Event) => {
             event.preventDefault();
             console.log('[PFS Chronicle] Save button clicked');
-            await saveFormData($container, partyActors);
+            await saveFormData(container, partyActors);
             ui.notifications?.info('Chronicle data saved successfully');
         });
         
         // Clear button handler
-        $container.find('#clearData').on('click', async (event: any) => {
+        const clearButton = container.querySelector('#clearData');
+        clearButton?.addEventListener('click', async (event: Event) => {
             event.preventDefault();
             console.log('[PFS Chronicle] Clear button clicked');
             
@@ -383,12 +389,13 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
         });
         
         // Generate Chronicles button handler
-        $container.find('#generateChronicles').on('click', async (event: any) => {
+        const generateButton = container.querySelector('#generateChronicles');
+        generateButton?.addEventListener('click', async (event: Event) => {
             event.preventDefault();
             console.log('[PFS Chronicle] Generate Chronicles button clicked');
             
             // Extract form data from the container
-            const formData = extractFormData($container, partyActors);
+            const formData = extractFormData(container, partyActors);
             console.log('[PFS Chronicle] Extracted form data:', formData);
             
             // Call the extracted handler function
@@ -411,21 +418,21 @@ async function renderPartyChronicleForm(container: HTMLElement, partyActors: any
         );
         console.log('[PFS Chronicle] Found reputation inputs:', reputationInputs.length);
         reputationInputs.forEach((input) => {
-            input.addEventListener('change', async (event: any) => {
-                await handleFieldChange(event, $container, partyActors, extractFormData);
+            input.addEventListener('change', async (event: Event) => {
+                await handleFieldChange(event, container, partyActors, extractFormData);
             });
         });
         
         // Initial population of layout-specific fields
-        const layoutId = $container.find('#layout').val() as string;
+        const layoutId = layoutSelect?.value || '';
         if (layoutId) {
-            await updateLayoutSpecificFields($container, layoutId, async () => {
-                await saveFormData($container, partyActors);
+            await updateLayoutSpecificFields(container, layoutId, async () => {
+                await saveFormData(container, partyActors);
             });
         }
         
         // Initial validation display and button state
-        updateValidationDisplay($container, partyActors, extractFormData);
+        updateValidationDisplay(container, partyActors, extractFormData);
         
         console.log('[PFS Chronicle] Party chronicle form rendered and event listeners attached');
     } catch (error) {

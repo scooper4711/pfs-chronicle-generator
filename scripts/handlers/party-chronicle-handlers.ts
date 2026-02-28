@@ -74,41 +74,43 @@ export function handlePortraitClick(event: MouseEvent, partyActors: any[]): void
  * 4. Updates validation display
  * 
  * @param event - The change event from the season dropdown
- * @param $container - jQuery object wrapping the form container
+ * @param container - HTMLElement wrapping the form container
  * @param partyActors - Array of party member actors
  * @param extractFormData - Function to extract form data from the container
  * 
  * Requirements: 5.2
  */
 export async function handleSeasonChange(
-    event: any,
-    $container: any,
+    event: Event,
+    container: HTMLElement,
     partyActors: any[],
-    extractFormData: ($container: any, partyActors: any[]) => any
+    extractFormData: (container: HTMLElement, partyActors: any[]) => any
 ): Promise<void> {
     console.log('[PFS Chronicle] Season changed');
-    const seasonId = event.target.value;
+    const seasonId = (event.target as HTMLSelectElement).value;
     const layouts = layoutStore.getLayoutsByParent(seasonId);
     
-    const layoutDropdown = $container.find('#layout');
-    layoutDropdown.empty();
+    const layoutDropdown = container.querySelector('#layout') as HTMLSelectElement;
+    if (!layoutDropdown) return;
+    
+    layoutDropdown.innerHTML = '';
     for (const layout of layouts) {
         const option = document.createElement('option');
         option.value = layout.id;
         option.innerText = layout.description;
-        layoutDropdown.append(option);
+        layoutDropdown.appendChild(option);
     }
     
     if (layouts.length > 0) {
-        layoutDropdown.val(layouts[0].id);
-        layoutDropdown.trigger('change');
+        layoutDropdown.value = layouts[0].id;
+        layoutDropdown.dispatchEvent(new Event('change', { bubbles: true }));
     }
     
     // Auto-save
-    await saveFormData($container, partyActors);
+    await saveFormData(container, partyActors);
     
     // Update validation display
-    updateValidationDisplay($container, partyActors, extractFormData);
+    updateValidationDisplay(container, partyActors, extractFormData);
 }
 
 /**
@@ -121,20 +123,20 @@ export async function handleSeasonChange(
  * 4. Updates validation display
  * 
  * @param event - The change event from the layout dropdown
- * @param $container - jQuery object wrapping the form container
+ * @param container - HTMLElement wrapping the form container
  * @param partyActors - Array of party member actors
  * @param extractFormData - Function to extract form data from the container
  * 
  * Requirements: 5.3
  */
 export async function handleLayoutChange(
-    event: any,
-    $container: any,
+    event: Event,
+    container: HTMLElement,
     partyActors: any[],
-    extractFormData: ($container: any, partyActors: any[]) => any
+    extractFormData: (container: HTMLElement, partyActors: any[]) => any
 ): Promise<void> {
     console.log('[PFS Chronicle] Layout changed');
-    const layoutId = event.target.value;
+    const layoutId = (event.target as HTMLSelectElement).value;
     
     // Update blank chronicle path if defaultChronicleLocation exists
     const layout = await layoutStore.getLayout(layoutId);
@@ -142,7 +144,10 @@ export async function handleLayoutChange(
         try {
             const response = await fetch(layout.defaultChronicleLocation, { method: 'HEAD' });
             if (response.ok) {
-                $container.find('#blankChroniclePath').val(layout.defaultChronicleLocation);
+                const blankPathInput = container.querySelector('#blankChroniclePath') as HTMLInputElement;
+                if (blankPathInput) {
+                    blankPathInput.value = layout.defaultChronicleLocation;
+                }
             }
         } catch (error) {
             console.log(`Default chronicle location not accessible: ${layout.defaultChronicleLocation}`);
@@ -150,15 +155,15 @@ export async function handleLayoutChange(
     }
     
     // Update layout-specific fields (checkboxes and strikeout items)
-    await updateLayoutSpecificFields($container, layoutId, async () => {
-        await saveFormData($container, partyActors);
+    await updateLayoutSpecificFields(container, layoutId, async () => {
+        await saveFormData(container, partyActors);
     });
     
     // Auto-save
-    await saveFormData($container, partyActors);
+    await saveFormData(container, partyActors);
     
     // Update validation display
-    updateValidationDisplay($container, partyActors, extractFormData);
+    updateValidationDisplay(container, partyActors, extractFormData);
 }
 
 /**
@@ -168,22 +173,22 @@ export async function handleLayoutChange(
  * It auto-saves the form data and updates the validation display.
  * 
  * @param event - The change event from the field
- * @param $container - jQuery object wrapping the form container
+ * @param container - HTMLElement wrapping the form container
  * @param partyActors - Array of party member actors
  * @param extractFormData - Function to extract form data from the container
  * 
  * Requirements: 5.4
  */
 export async function handleFieldChange(
-    event: any,
-    $container: any,
+    event: Event,
+    container: HTMLElement,
     partyActors: any[],
-    extractFormData: ($container: any, partyActors: any[]) => any
+    extractFormData: (container: HTMLElement, partyActors: any[]) => any
 ): Promise<void> {
     console.log('[PFS Chronicle] Field changed');
-    await saveFormData($container, partyActors);
+    await saveFormData(container, partyActors);
     // Update validation display and button state
-    updateValidationDisplay($container, partyActors, extractFormData);
+    updateValidationDisplay(container, partyActors, extractFormData);
 }
 
 /**
@@ -194,12 +199,12 @@ export async function handleFieldChange(
  * 
  * Exported for use in main.ts (Save button and layout-specific fields callback).
  * 
- * @param $container - jQuery object wrapping the form container
+ * @param container - HTMLElement wrapping the form container
  * @param partyActors - Array of party member actors
  */
-export async function saveFormData($container: any, partyActors: any[]): Promise<void> {
+export async function saveFormData(container: HTMLElement, partyActors: any[]): Promise<void> {
     try {
-        const formData = extractFormData($container, partyActors);
+        const formData = extractFormData(container, partyActors);
         await savePartyChronicleData(formData);
         console.log('[PFS Chronicle] Auto-saved party chronicle data');
     } catch (error) {
@@ -223,36 +228,37 @@ export async function saveFormData($container: any, partyActors: any[]): Promise
  * (|| defaultValue) rather than nested conditionals. The cognitive complexity is low
  * and refactoring would create unnecessary abstraction without improving readability.
  * 
- * @param $container - jQuery object wrapping the form container
+ * @param container - HTMLElement wrapping the form container
  * @param partyActors - Array of party member actors
  * @returns Structured form data object with shared and character-specific fields
  */
 // eslint-disable-next-line complexity
-export function extractFormData($container: any, partyActors: any[]): any {
-    const formElement = $container.closest('form')[0] || $container[0];
-    const formData = new FormData(formElement);
-    
+export function extractFormData(container: HTMLElement, partyActors: any[]): any {
     // Extract shared fields
     const shared: any = {
-        gmPfsNumber: $container.find('#gmPfsNumber').val() || '',
-        scenarioName: $container.find('#scenarioName').val() || '',
-        eventCode: $container.find('#eventCode').val() || '',
-        eventDate: $container.find('#eventDate').val() || '',
-        xpEarned: parseInt($container.find('#xpEarned').val() as string) || 0,
-        treasureBundles: parseInt($container.find('#treasureBundles').val() as string) || 0,
-        layoutId: $container.find('#layout').val() || '',
-        seasonId: $container.find('#season').val() || '',
-        blankChroniclePath: $container.find('#blankChroniclePath').val() || '',
-        adventureSummaryCheckboxes: $container.find('input[name="shared.adventureSummaryCheckboxes"]:checked').map((_: number, el: HTMLElement) => $(el).val()).get(),
-        strikeoutItems: $container.find('input[name="shared.strikeoutItems"]:checked').map((_: number, el: HTMLElement) => $(el).val()).get(),
-        chosenFactionReputation: parseInt($container.find('#chosenFactionReputation').val() as string) || 2,
+        gmPfsNumber: (container.querySelector('#gmPfsNumber') as HTMLInputElement)?.value || '',
+        scenarioName: (container.querySelector('#scenarioName') as HTMLInputElement)?.value || '',
+        eventCode: (container.querySelector('#eventCode') as HTMLInputElement)?.value || '',
+        eventDate: (container.querySelector('#eventDate') as HTMLInputElement)?.value || '',
+        xpEarned: parseInt((container.querySelector('#xpEarned') as HTMLInputElement)?.value) || 0,
+        treasureBundles: parseInt((container.querySelector('#treasureBundles') as HTMLInputElement)?.value) || 0,
+        layoutId: (container.querySelector('#layout') as HTMLSelectElement)?.value || '',
+        seasonId: (container.querySelector('#season') as HTMLSelectElement)?.value || '',
+        blankChroniclePath: (container.querySelector('#blankChroniclePath') as HTMLInputElement)?.value || '',
+        adventureSummaryCheckboxes: Array.from(
+            container.querySelectorAll('input[name="shared.adventureSummaryCheckboxes"]:checked')
+        ).map((el) => (el as HTMLInputElement).value),
+        strikeoutItems: Array.from(
+            container.querySelectorAll('input[name="shared.strikeoutItems"]:checked')
+        ).map((el) => (el as HTMLInputElement).value),
+        chosenFactionReputation: parseInt((container.querySelector('#chosenFactionReputation') as HTMLInputElement)?.value) || 2,
         reputationValues: {
-            EA: parseInt($container.find('#reputation-EA').val() as string) || 0,
-            GA: parseInt($container.find('#reputation-GA').val() as string) || 0,
-            HH: parseInt($container.find('#reputation-HH').val() as string) || 0,
-            VS: parseInt($container.find('#reputation-VS').val() as string) || 0,
-            RO: parseInt($container.find('#reputation-RO').val() as string) || 0,
-            VW: parseInt($container.find('#reputation-VW').val() as string) || 0,
+            EA: parseInt((container.querySelector('#reputation-EA') as HTMLInputElement)?.value) || 0,
+            GA: parseInt((container.querySelector('#reputation-GA') as HTMLInputElement)?.value) || 0,
+            HH: parseInt((container.querySelector('#reputation-HH') as HTMLInputElement)?.value) || 0,
+            VS: parseInt((container.querySelector('#reputation-VS') as HTMLInputElement)?.value) || 0,
+            RO: parseInt((container.querySelector('#reputation-RO') as HTMLInputElement)?.value) || 0,
+            VW: parseInt((container.querySelector('#reputation-VW') as HTMLInputElement)?.value) || 0,
         },
     };
     
@@ -262,14 +268,14 @@ export function extractFormData($container: any, partyActors: any[]): any {
         const actorId = actor.id;
         characters[actorId] = {
             // Read from hidden fields (non-editable)
-            characterName: $container.find(`input[name="characters.${actorId}.characterName"]`).val() || actor.name,
-            societyId: $container.find(`input[name="characters.${actorId}.societyId"]`).val() || '',
-            level: parseInt($container.find(`input[name="characters.${actorId}.level"]`).val() as string) || actor.level || 1,
+            characterName: (container.querySelector(`input[name="characters.${actorId}.characterName"]`) as HTMLInputElement)?.value || actor.name,
+            societyId: (container.querySelector(`input[name="characters.${actorId}.societyId"]`) as HTMLInputElement)?.value || '',
+            level: parseInt((container.querySelector(`input[name="characters.${actorId}.level"]`) as HTMLInputElement)?.value) || actor.level || 1,
             // Read from visible editable fields
-            incomeEarned: parseFloat($container.find(`#incomeEarned-${actorId}`).val() as string) || 0,
-            goldEarned: parseFloat($container.find(`#goldEarned-${actorId}`).val() as string) || 0,
-            goldSpent: parseFloat($container.find(`#goldSpent-${actorId}`).val() as string) || 0,
-            notes: $container.find(`#notes-${actorId}`).val() || '',
+            incomeEarned: parseFloat((container.querySelector(`#incomeEarned-${actorId}`) as HTMLInputElement)?.value) || 0,
+            goldEarned: parseFloat((container.querySelector(`#goldEarned-${actorId}`) as HTMLInputElement)?.value) || 0,
+            goldSpent: parseFloat((container.querySelector(`#goldSpent-${actorId}`) as HTMLInputElement)?.value) || 0,
+            notes: (container.querySelector(`#notes-${actorId}`) as HTMLTextAreaElement)?.value || '',
         };
     });
     
