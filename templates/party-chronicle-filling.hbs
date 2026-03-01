@@ -67,37 +67,93 @@
             <div class="summary-data collapsible-content" id="reputation-content">
                 <div class="form-group">
                     <label for="chosenFactionReputation">Chosen Faction</label>
-                    <input type="number" id="chosenFactionReputation" name="shared.chosenFactionReputation" value="{{shared.chosenFactionReputation}}" min="0" max="9">
+                    <select id="chosenFactionReputation" name="shared.chosenFactionReputation">
+                        <option value="0" {{#if (eq shared.chosenFactionReputation 0)}}selected{{/if}}>-</option>
+                        <option value="1" {{#if (eq shared.chosenFactionReputation 1)}}selected{{/if}}>+1</option>
+                        <option value="2" {{#if (eq shared.chosenFactionReputation 2)}}selected{{/if}}>+2</option>
+                        <option value="3" {{#if (eq shared.chosenFactionReputation 3)}}selected{{/if}}>+3</option>
+                        <option value="4" {{#if (eq shared.chosenFactionReputation 4)}}selected{{/if}}>+4</option>
+                        <option value="5" {{#if (eq shared.chosenFactionReputation 5)}}selected{{/if}}>+5</option>
+                        <option value="6" {{#if (eq shared.chosenFactionReputation 6)}}selected{{/if}}>+6</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="reputation-EA">Envoy's Alliance</label>
-                    <input type="number" id="reputation-EA" name="shared.reputationValues.EA" value="{{lookup shared.reputationValues 'EA'}}" min="0" max="9">
+                    <select id="reputation-EA" name="shared.reputationValues.EA">
+                        <option value="0" {{#if (eq (lookup shared.reputationValues 'EA') 0)}}selected{{/if}}>-</option>
+                        <option value="1" {{#if (eq (lookup shared.reputationValues 'EA') 1)}}selected{{/if}}>+1</option>
+                        <option value="2" {{#if (eq (lookup shared.reputationValues 'EA') 2)}}selected{{/if}}>+2</option>
+                        <option value="3" {{#if (eq (lookup shared.reputationValues 'EA') 3)}}selected{{/if}}>+3</option>
+                        <option value="4" {{#if (eq (lookup shared.reputationValues 'EA') 4)}}selected{{/if}}>+4</option>
+                        <option value="5" {{#if (eq (lookup shared.reputationValues 'EA') 5)}}selected{{/if}}>+5</option>
+                        <option value="6" {{#if (eq (lookup shared.reputationValues 'EA') 6)}}selected{{/if}}>+6</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="reputation-GA">Grand Archive</label>
-                    <input type="number" id="reputation-GA" name="shared.reputationValues.GA" value="{{lookup shared.reputationValues 'GA'}}" min="0" max="9">
+                    <select id="reputation-GA" name="shared.reputationValues.GA">
+                        <option value="0" {{#if (eq (lookup shared.reputationValues 'GA') 0)}}selected{{/if}}>-</option>
+                        <option value="1" {{#if (eq (lookup shared.reputationValues 'GA') 1)}}selected{{/if}}>+1</option>
+                        <option value="2" {{#if (eq (lookup shared.reputationValues 'GA') 2)}}selected{{/if}}>+2</option>
+                        <option value="3" {{#if (eq (lookup shared.reputationValues 'GA') 3)}}selected{{/if}}>+3</option>
+                        <option value="4" {{#if (eq (lookup shared.reputationValues 'GA') 4)}}selected{{/if}}>+4</option>
+                        <option value="5" {{#if (eq (lookup shared.reputationValues 'GA') 5)}}selected{{/if}}>+5</option>
+                        <option value="6" {{#if (eq (lookup shared.reputationValues 'GA') 6)}}selected{{/if}}>+6</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="reputation-HH">Horizon Hunters</label>
-                    <input type="number" id="reputation-HH" name="shared.reputationValues.HH" value="{{lookup shared.reputationValues 'HH'}}" min="0" max="9">
+                    <select id="reputation-HH" name="shared.reputationValues.HH">
+                        <option value="0" {{#if (eq (lookup shared.reputationValues 'HH') 0)}}selected{{/if}}>-</option>
+                        <option value="1" {{#if (eq (lookup shared.reputationValues 'HH') 1)}}selected{{/if}}>+1</option>
+                        <option value="2" {{#if (eq (lookup shared.reputationValues 'HH') 2)}}selected{{/if}}>+2</option>
+                        <option value="3" {{#if (eq (lookup shared.reputationValues 'HH') 3)}}selected{{/if}}>+3</option>
+                        <option value="4" {{#if (eq (lookup shared.reputationValues 'HH') 4)}}selected{{/if}}>+4</option>
+                        <option value="5" {{#if (eq (lookup shared.reputationValues 'HH') 5)}}selected{{/if}}>+5</option>
+                        <option value="6" {{#if (eq (lookup shared.reputationValues 'HH') 6)}}selected{{/if}}>+6</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="reputation-VS">Vigilant Seal</label>
-                    <input type="number" id="reputation-VS" name="shared.reputationValues.VS" value="{{lookup shared.reputationValues 'VS'}}" min="0" max="9">
+                    <select id="reputation-VS" name="shared.reputationValues.VS">
+                        <option value="0" {{#if (eq (lookup shared.reputationValues 'VS') 0)}}selected{{/if}}>-</option>
+                        <option value="1" {{#if (eq (lookup shared.reputationValues 'VS') 1)}}selected{{/if}}>+1</option>
+                        <option value="2" {{#if (eq (lookup shared.reputationValues 'VS') 2)}}selected{{/if}}>+2</option>
+                        <option value="3" {{#if (eq (lookup shared.reputationValues 'VS') 3)}}selected{{/if}}>+3</option>
+                        <option value="4" {{#if (eq (lookup shared.reputationValues 'VS') 4)}}selected{{/if}}>+4</option>
+                        <option value="5" {{#if (eq (lookup shared.reputationValues 'VS') 5)}}selected{{/if}}>+5</option>
+                        <option value="6" {{#if (eq (lookup shared.reputationValues 'VS') 6)}}selected{{/if}}>+6</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="reputation-RO">Radiant Oath</label>
-                    <input type="number" id="reputation-RO" name="shared.reputationValues.RO" value="{{lookup shared.reputationValues 'RO'}}" min="0" max="9">
+                    <select id="reputation-RO" name="shared.reputationValues.RO">
+                        <option value="0" {{#if (eq (lookup shared.reputationValues 'RO') 0)}}selected{{/if}}>-</option>
+                        <option value="1" {{#if (eq (lookup shared.reputationValues 'RO') 1)}}selected{{/if}}>+1</option>
+                        <option value="2" {{#if (eq (lookup shared.reputationValues 'RO') 2)}}selected{{/if}}>+2</option>
+                        <option value="3" {{#if (eq (lookup shared.reputationValues 'RO') 3)}}selected{{/if}}>+3</option>
+                        <option value="4" {{#if (eq (lookup shared.reputationValues 'RO') 4)}}selected{{/if}}>+4</option>
+                        <option value="5" {{#if (eq (lookup shared.reputationValues 'RO') 5)}}selected{{/if}}>+5</option>
+                        <option value="6" {{#if (eq (lookup shared.reputationValues 'RO') 6)}}selected{{/if}}>+6</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="reputation-VW">Verdant Wheel</label>
-                    <input type="number" id="reputation-VW" name="shared.reputationValues.VW" value="{{lookup shared.reputationValues 'VW'}}" min="0" max="9">
+                    <select id="reputation-VW" name="shared.reputationValues.VW">
+                        <option value="0" {{#if (eq (lookup shared.reputationValues 'VW') 0)}}selected{{/if}}>-</option>
+                        <option value="1" {{#if (eq (lookup shared.reputationValues 'VW') 1)}}selected{{/if}}>+1</option>
+                        <option value="2" {{#if (eq (lookup shared.reputationValues 'VW') 2)}}selected{{/if}}>+2</option>
+                        <option value="3" {{#if (eq (lookup shared.reputationValues 'VW') 3)}}selected{{/if}}>+3</option>
+                        <option value="4" {{#if (eq (lookup shared.reputationValues 'VW') 4)}}selected{{/if}}>+4</option>
+                        <option value="5" {{#if (eq (lookup shared.reputationValues 'VW') 5)}}selected{{/if}}>+5</option>
+                        <option value="6" {{#if (eq (lookup shared.reputationValues 'VW') 6)}}selected{{/if}}>+6</option>
+                    </select>
                 </div>
             </div>
         </li>
