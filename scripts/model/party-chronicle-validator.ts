@@ -56,7 +56,7 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
   errors.push(...validateRequiredString(shared.eventCode, 'Event Code'));
   errors.push(...validateRequiredString(shared.layoutId, 'Layout selection'));
   errors.push(...validateRequiredString(shared.seasonId, 'Season selection'));
-  errors.push(...validateRequiredString(shared.blankChroniclePath, 'Blank Chronicle Path'));
+  errors.push(...validateRequiredString(shared.blankChroniclePath, 'Chronicle Path'));
   
   // Validate Event Date
   errors.push(...validateDateFormat(shared.eventDate, 'Event Date'));

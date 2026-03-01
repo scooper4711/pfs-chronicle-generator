@@ -193,19 +193,30 @@ export async function handleLayoutChange(
     console.log('[PFS Chronicle] Layout changed');
     const layoutId = (event.target as HTMLSelectElement).value;
     
-    // Update blank chronicle path if defaultChronicleLocation exists
+    // Update blank chronicle path based on layout's defaultChronicleLocation
     const layout = await layoutStore.getLayout(layoutId);
+    const blankPathInput = container.querySelector('#blankChroniclePath') as HTMLInputElement;
+    
     if (layout?.defaultChronicleLocation) {
+        // Layout has a default chronicle location - try to use it
         try {
             const response = await fetch(layout.defaultChronicleLocation, { method: 'HEAD' });
-            if (response.ok) {
-                const blankPathInput = container.querySelector('#blankChroniclePath') as HTMLInputElement;
-                if (blankPathInput) {
-                    blankPathInput.value = layout.defaultChronicleLocation;
-                }
+            if (response.ok && blankPathInput) {
+                blankPathInput.value = layout.defaultChronicleLocation;
             }
         } catch (error) {
             console.log(`Default chronicle location not accessible: ${layout.defaultChronicleLocation}`);
+            // Clear the path if default isn't accessible
+            if (blankPathInput) {
+                blankPathInput.value = '';
+            }
+        }
+    } else {
+        // Layout doesn't have a default chronicle location - clear the path
+        // This makes the chronicle path field visible so user can select a file
+        console.log('[PFS Chronicle] Layout has no default chronicle location, clearing path');
+        if (blankPathInput) {
+            blankPathInput.value = '';
         }
     }
     
@@ -216,6 +227,10 @@ export async function handleLayoutChange(
     
     // Auto-save
     await saveFormData(container, partyActors);
+    
+    // Update chronicle path visibility based on new path value
+    const newPath = blankPathInput?.value || '';
+    await updateChroniclePathVisibility(newPath, container, layoutId);
     
     // Update validation display
     updateValidationDisplay(container, partyActors, extractFormData);
@@ -269,6 +284,115 @@ export async function handleFieldChange(
     await saveFormData(container, partyActors);
     // Update validation display and button state
     updateValidationDisplay(container, partyActors, extractFormData);
+}
+
+/**
+ * Handles chronicle path file picker button click
+ * 
+ * Opens Foundry's FilePicker dialog to allow browsing and selecting
+ * a blank chronicle PDF file. Updates the input field and triggers
+ * auto-save when a file is selected.
+ * 
+ * @param event - Click event from file picker button
+ * @param container - Form container element
+ * @param partyActors - Array of party member actors
+ * 
+ * Requirements: conditional-chronicle-path-visibility 2.1, 2.2, 2.3, 2.4, 3.1, 3.2, 3.4, 4.1
+ */
+export async function handleChroniclePathFilePicker(
+    event: Event,
+    container: HTMLElement,
+    partyActors: any[]
+): Promise<void> {
+    event.preventDefault();
+    
+    const filePicker = new foundry.applications.apps.FilePicker.implementation({
+        type: 'any',
+        callback: async (path: string) => {
+            // Update input field
+            const input = container.querySelector('#blankChroniclePath') as HTMLInputElement;
+            if (input) {
+                input.value = path;
+                
+                // Trigger auto-save
+                await saveFormData(container, partyActors);
+                
+                // Get current layout ID to check if it has a default
+                const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
+                const layoutId = layoutSelect?.value;
+                
+                // Update visibility
+                await updateChroniclePathVisibility(path, container, layoutId);
+            }
+        }
+    });
+    
+    await filePicker.browse();
+}
+
+/**
+ * Updates chronicle path field visibility based on file existence and layout configuration
+ * 
+ * The field is hidden only if:
+ * 1. The selected layout has a default chronicle location, AND
+ * 2. A valid file exists at the chronicle path
+ * 
+ * Otherwise, the field is shown so users can select/change the file.
+ * This ensures that for layouts without a default, users can always change the chronicle path.
+ * 
+ * @param path - Chronicle path to check
+ * @param container - Form container element
+ * @param layoutId - Optional layout ID to check if it has a default chronicle location
+ * 
+ * Requirements: conditional-chronicle-path-visibility 5.1, 5.2, 5.3, 5.4, 5.5, 6.1, 6.2, 6.3
+ */
+export async function updateChroniclePathVisibility(
+    path: string,
+    container: HTMLElement,
+    layoutId?: string
+): Promise<void> {
+    const formGroup = container.querySelector('#chroniclePathGroup');
+    if (!formGroup) return;
+    
+    const fileExists = await checkFileExists(path);
+    
+    // Check if layout has a default chronicle location (if layoutId provided)
+    let layoutHasDefault = true; // Default to true for backward compatibility
+    if (layoutId) {
+        const layout = await layoutStore.getLayout(layoutId);
+        layoutHasDefault = !!layout?.defaultChronicleLocation;
+    }
+    
+    // Hide field only if layout has default AND file exists
+    // If layoutId not provided, use old behavior (hide if file exists)
+    const shouldHide = layoutHasDefault && fileExists;
+    
+    if (shouldHide) {
+        formGroup.classList.remove('chronicle-path-visible');
+    } else {
+        formGroup.classList.add('chronicle-path-visible');
+    }
+}
+
+/**
+ * Checks if a file exists at the given path
+ * 
+ * Uses Foundry's fetch API with HEAD request to verify file existence
+ * without downloading the entire file.
+ * 
+ * @param path - File path relative to Foundry data directory
+ * @returns True if file exists and is accessible, false otherwise
+ */
+async function checkFileExists(path: string): Promise<boolean> {
+    if (!path) return false;
+    
+    try {
+        const response = await fetch(path, { method: 'HEAD' });
+        return response.ok;
+    } catch (error) {
+        console.log(`Chronicle path file not accessible: ${path}`);
+        return false;
+    }
 }
 
 /**

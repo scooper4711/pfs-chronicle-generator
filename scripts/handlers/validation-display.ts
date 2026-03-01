@@ -163,7 +163,7 @@ function renderSharedFieldErrors(container: HTMLElement, errors: string[]): void
         { keyword: 'Treasure Bundles', fieldId: '#treasureBundles', errorText: 'Must be 0-10' },
         { keyword: 'Layout selection', fieldId: '#layout', errorText: 'Required' },
         { keyword: 'Season selection', fieldId: '#season', errorText: 'Required' },
-        { keyword: 'Blank Chronicle Path', fieldId: '#blankChroniclePath', errorText: 'Required' },
+        { keyword: 'Chronicle Path', fieldId: '#blankChroniclePath', errorText: 'Required' },
     ];
     
     errors.forEach(error => {

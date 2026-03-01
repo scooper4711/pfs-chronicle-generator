@@ -216,7 +216,7 @@ describe('validateSharedFields', () => {
     expect(result.errors).toContain('Season selection is required');
   });
 
-  it('should fail validation when Blank Chronicle Path is missing', () => {
+  it('should fail validation when Chronicle Path is missing', () => {
     const shared: Partial<SharedFields> = {
       gmPfsNumber: '12345',
       scenarioName: 'Test',
@@ -231,7 +231,7 @@ describe('validateSharedFields', () => {
     const result = validateSharedFields(shared);
 
     expect(result.valid).toBe(false);
-    expect(result.errors).toContain('Blank Chronicle Path is required');
+    expect(result.errors).toContain('Chronicle Path is required');
   });
 
   it('should accept zero XP', () => {

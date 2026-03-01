@@ -47,7 +47,12 @@ jest.mock('./LayoutStore', () => ({
     ]),
     getLayoutsByParent: jest.fn((seasonId: string) => [
       { id: 'test-layout', description: 'Test Layout' }
-    ])
+    ]),
+    getLayout: jest.fn(async (layoutId: string) => ({
+      id: layoutId,
+      description: 'Test Layout',
+      defaultChronicleLocation: undefined // No default for test layouts
+    }))
   }
 }));
 
@@ -224,6 +229,285 @@ describe('PartyChronicleApp Property Tests', () => {
         ),
         { numRuns: 100 }
       );
+    });
+  });
+
+  describe('File Existence Check', () => {
+    /**
+     * **Validates: Requirements 5.3**
+     * 
+     * Tests the checkFileExists method to ensure it correctly verifies
+     * file existence using HEAD requests and handles edge cases.
+     * 
+     * Feature: conditional-chronicle-path-visibility
+     */
+    
+    beforeEach(() => {
+      // Reset fetch mock before each test
+      global.fetch = jest.fn();
+    });
+
+    it('returns false for empty paths', async () => {
+      const app = new PartyChronicleApp([]);
+      
+      // Test empty string
+      const result1 = await (app as any).checkFileExists('');
+      expect(result1).toBe(false);
+      
+      // Verify fetch was not called for empty path
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('makes HEAD request for non-empty paths', async () => {
+      const app = new PartyChronicleApp([]);
+      const testPath = '/path/to/chronicle.pdf';
+      
+      // Mock successful response
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true
+      });
+      
+      await (app as any).checkFileExists(testPath);
+      
+      // Verify HEAD request was made with correct path
+      expect(global.fetch).toHaveBeenCalledWith(testPath, { method: 'HEAD' });
+    });
+
+    it('returns true for successful responses', async () => {
+      const app = new PartyChronicleApp([]);
+      const testPath = '/path/to/chronicle.pdf';
+      
+      // Mock successful response
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true
+      });
+      
+      const result = await (app as any).checkFileExists(testPath);
+      
+      expect(result).toBe(true);
+    });
+
+    it('returns false for failed responses', async () => {
+      const app = new PartyChronicleApp([]);
+      const testPath = '/path/to/missing.pdf';
+      
+      // Mock failed response (404)
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: false
+      });
+      
+      const result = await (app as any).checkFileExists(testPath);
+      
+      expect(result).toBe(false);
+    });
+
+    it('handles network errors gracefully and returns false', async () => {
+      const app = new PartyChronicleApp([]);
+      const testPath = '/path/to/chronicle.pdf';
+      
+      // Mock network error
+      const networkError = new Error('Network error');
+      (global.fetch as jest.Mock).mockRejectedValue(networkError);
+      
+      // Mock console.log to verify error logging
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+      
+      const result = await (app as any).checkFileExists(testPath);
+      
+      expect(result).toBe(false);
+      // Check that the error was logged (with the error object as second argument)
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        `[PFS Chronicle] Chronicle path file not accessible: ${testPath}`,
+        networkError
+      );
+      
+      consoleLogSpy.mockRestore();
+    });
+
+    it('handles various error types gracefully', async () => {
+      const app = new PartyChronicleApp([]);
+      const testPath = '/path/to/chronicle.pdf';
+      
+      // Test with different error types
+      const errors = [
+        new Error('Network error'),
+        new TypeError('Failed to fetch'),
+        'String error',
+        { message: 'Object error' }
+      ];
+      
+      for (const error of errors) {
+        (global.fetch as jest.Mock).mockRejectedValue(error);
+        
+        const result = await (app as any).checkFileExists(testPath);
+        expect(result).toBe(false);
+      }
+    });
+  });
+
+  describe('Context Preparation with File Existence Check', () => {
+    /**
+     * **Validates: Requirements 5.1, 5.2, 6.4**
+     * 
+     * Tests that _prepareContext correctly checks file existence and includes
+     * the chroniclePathExists boolean in the context.
+     * 
+     * Feature: conditional-chronicle-path-visibility
+     */
+    
+    beforeEach(() => {
+      // Reset fetch mock before each test
+      global.fetch = jest.fn();
+    });
+
+    it('sets chroniclePathExists to false when layout has no default (even if file exists)', async () => {
+      const { loadPartyChronicleData } = require('./model/party-chronicle-storage');
+      
+      // Mock saved data with a chronicle path
+      loadPartyChronicleData.mockResolvedValue({
+        data: {
+          shared: {
+            blankChroniclePath: '/path/to/existing.pdf'
+          }
+        }
+      });
+      
+      // Mock successful file existence check
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true
+      });
+      
+      const app = new PartyChronicleApp([]);
+      const context = await app._prepareContext();
+      
+      // Verify chroniclePathExists is false because layout has no default
+      // (field should remain visible so user can change it)
+      expect(context.chroniclePathExists).toBe(false);
+      
+      // Verify file existence check was called
+      expect(global.fetch).toHaveBeenCalledWith('/path/to/existing.pdf', { method: 'HEAD' });
+    });
+
+    it('sets chroniclePathExists to false when file does not exist', async () => {
+      const { loadPartyChronicleData } = require('./model/party-chronicle-storage');
+      
+      // Mock saved data with a chronicle path
+      loadPartyChronicleData.mockResolvedValue({
+        data: {
+          shared: {
+            blankChroniclePath: '/path/to/missing.pdf'
+          }
+        }
+      });
+      
+      // Mock failed file existence check (404)
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: false
+      });
+      
+      const app = new PartyChronicleApp([]);
+      const context = await app._prepareContext();
+      
+      // Verify chroniclePathExists is false
+      expect(context.chroniclePathExists).toBe(false);
+      
+      // Verify file existence check was called
+      expect(global.fetch).toHaveBeenCalledWith('/path/to/missing.pdf', { method: 'HEAD' });
+    });
+
+    it('sets chroniclePathExists to false when path is empty', async () => {
+      const { loadPartyChronicleData } = require('./model/party-chronicle-storage');
+      
+      // Mock saved data with empty chronicle path
+      loadPartyChronicleData.mockResolvedValue({
+        data: {
+          shared: {
+            blankChroniclePath: ''
+          }
+        }
+      });
+      
+      const app = new PartyChronicleApp([]);
+      const context = await app._prepareContext();
+      
+      // Verify chroniclePathExists is false
+      expect(context.chroniclePathExists).toBe(false);
+      
+      // Verify fetch was not called for empty path
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('sets chroniclePathExists to false when no saved data exists', async () => {
+      const { loadPartyChronicleData } = require('./model/party-chronicle-storage');
+      
+      // Mock no saved data
+      loadPartyChronicleData.mockResolvedValue(null);
+      
+      const app = new PartyChronicleApp([]);
+      const context = await app._prepareContext();
+      
+      // Verify chroniclePathExists is false
+      expect(context.chroniclePathExists).toBe(false);
+      
+      // Verify fetch was not called
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('calls checkFileExists during context preparation', async () => {
+      const { loadPartyChronicleData } = require('./model/party-chronicle-storage');
+      
+      // Mock saved data with a chronicle path
+      loadPartyChronicleData.mockResolvedValue({
+        data: {
+          shared: {
+            blankChroniclePath: '/path/to/chronicle.pdf'
+          }
+        }
+      });
+      
+      // Mock successful file existence check
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true
+      });
+      
+      const app = new PartyChronicleApp([]);
+      
+      // Spy on checkFileExists method
+      const checkFileExistsSpy = jest.spyOn(app as any, 'checkFileExists');
+      
+      await app._prepareContext();
+      
+      // Verify checkFileExists was called with the correct path
+      expect(checkFileExistsSpy).toHaveBeenCalledWith('/path/to/chronicle.pdf');
+      
+      checkFileExistsSpy.mockRestore();
+    });
+
+    it('handles network errors during file existence check', async () => {
+      const { loadPartyChronicleData } = require('./model/party-chronicle-storage');
+      
+      // Mock saved data with a chronicle path
+      loadPartyChronicleData.mockResolvedValue({
+        data: {
+          shared: {
+            blankChroniclePath: '/path/to/chronicle.pdf'
+          }
+        }
+      });
+      
+      // Mock network error
+      (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
+      
+      // Mock console.log to suppress error logging
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+      
+      const app = new PartyChronicleApp([]);
+      const context = await app._prepareContext();
+      
+      // Verify chroniclePathExists is false when error occurs
+      expect(context.chroniclePathExists).toBe(false);
+      
+      consoleLogSpy.mockRestore();
     });
   });
 });

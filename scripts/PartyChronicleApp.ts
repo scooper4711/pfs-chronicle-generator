@@ -78,11 +78,12 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * - Extracts party member data (id, name, level, societyId)
    * - Loads saved party chronicle data from world flags
    * - Prepares season and layout dropdown data
+   * - Checks if chronicle path file exists
    * - Returns PartyChronicleContext object
    * 
    * @returns Promise resolving to context object for template rendering
    * 
-   * Requirements: party-chronicle-filling 1.3, 1.4, 8.2
+   * Requirements: party-chronicle-filling 1.3, 1.4, 8.2, conditional-chronicle-path-visibility 5.1, 5.2, 5.5, 6.4
    */
   async _prepareContext(options?: any): Promise<any> {
       // Extract party member data - filter to only include character actors
@@ -114,6 +115,24 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       // Map fields to context (merge saved data with defaults)
       const shared = this.mapPartyFieldsToContext(savedData, effectiveLayoutId, selectedSeasonId);
 
+      // Check if chronicle path file exists and if layout has a default location
+      const chroniclePath = savedData?.shared?.blankChroniclePath || '';
+      console.log(`[PFS Chronicle] _prepareContext: chroniclePath = "${chroniclePath}"`);
+      const chroniclePathExists = await this.checkFileExists(chroniclePath);
+      console.log(`[PFS Chronicle] _prepareContext: chroniclePathExists = ${chroniclePathExists}`);
+      
+      // Get the selected layout to check if it has a default chronicle location
+      const selectedLayout = await layoutStore.getLayout(effectiveLayoutId);
+      const layoutHasDefault = !!selectedLayout?.defaultChronicleLocation;
+      console.log(`[PFS Chronicle] _prepareContext: layoutHasDefault = ${layoutHasDefault}`);
+      
+      // Field should be hidden only if:
+      // 1. Layout has a default chronicle location, AND
+      // 2. A valid file exists at the chronicle path
+      // Otherwise, field should be visible so user can select/change the file
+      const shouldHideChroniclePathField = layoutHasDefault && chroniclePathExists;
+      console.log(`[PFS Chronicle] _prepareContext: shouldHideChroniclePathField = ${shouldHideChroniclePathField}`);
+
       // Return PartyChronicleContext object
       return {
         partyMembers,
@@ -123,6 +142,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
         selectedSeasonId,
         selectedLayoutId: effectiveLayoutId,
         savedData,
+        chroniclePathExists: shouldHideChroniclePathField,
         buttons: [
           { type: "submit", icon: "fa-solid fa-file-pdf", label: "Generate Chronicles" }
         ]
@@ -284,4 +304,32 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       errors: allErrors
     };
   }
+
+   /**
+    * Checks if a file exists at the given path
+    *
+    * Uses Foundry's fetch API with HEAD request to verify file existence
+    * without downloading the entire file.
+    *
+    * @param path - File path relative to Foundry data directory
+    * @returns True if file exists and is accessible, false otherwise
+    *
+    * Requirements: conditional-chronicle-path-visibility 5.3, 5.4
+    */
+   private async checkFileExists(path: string): Promise<boolean> {
+     if (!path) {
+       console.log('[PFS Chronicle] checkFileExists: empty path, returning false');
+       return false;
+     }
+
+     try {
+       console.log(`[PFS Chronicle] checkFileExists: checking path "${path}"`);
+       const response = await fetch(path, { method: 'HEAD' });
+       console.log(`[PFS Chronicle] checkFileExists: response.ok = ${response.ok}`);
+       return response.ok;
+     } catch (error) {
+       console.log(`[PFS Chronicle] Chronicle path file not accessible: ${path}`, error);
+       return false;
+     }
+   }
 }

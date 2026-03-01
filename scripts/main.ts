@@ -15,7 +15,8 @@ import {
     saveFormData,
     generateChroniclesFromPartyData,
     updateAllTreasureBundleDisplays,
-    updateTreasureBundleDisplay
+    updateTreasureBundleDisplay,
+    handleChroniclePathFilePicker
 } from './handlers/party-chronicle-handlers.js';
 
 Hooks.on('init', async () => {
@@ -342,6 +343,12 @@ function attachEventListeners(
         img.addEventListener('click', (event: Event) => {
             handlePortraitClick(event as MouseEvent, partyActors);
         });
+    });
+    
+    // Chronicle path file picker button handler
+    const filePickerButton = container.querySelector('#chroniclePathFilePicker');
+    filePickerButton?.addEventListener('click', async (event: Event) => {
+        await handleChroniclePathFilePicker(event, container, partyActors);
     });
 }
 
