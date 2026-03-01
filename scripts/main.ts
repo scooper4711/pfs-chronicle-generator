@@ -171,12 +171,11 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
         deleteButton.disabled = !chroniclePdf;
         deleteButton.addEventListener('click', async (event) => {
             event.preventDefault();
-            const confirmed = await Dialog.confirm({
-                title: "Delete Chronicle",
+            const confirmed = await foundry.applications.api.DialogV2.confirm({
+                window: { title: "Delete Chronicle" },
                 content: "<p>Are you sure you want to delete this chronicle and all saved form data? This action cannot be undone.</p>",
-                yes: () => true,
-                no: () => false,
-                defaultYes: false
+                rejectClose: false,
+                modal: true
             });
             if (confirmed) {
                 await sheet.actor.unsetFlag('pfs-chronicle-generator', 'chroniclePdf');
@@ -323,9 +322,11 @@ function attachEventListeners(
     clearButton?.addEventListener('click', async (event: Event) => {
         event.preventDefault();
         
-        const confirmed = await Dialog.confirm({
-            title: 'Clear Chronicle Data',
+        const confirmed = await foundry.applications.api.DialogV2.confirm({
+            window: { title: 'Clear Chronicle Data' },
             content: '<p>Are you sure you want to clear all saved chronicle data? This cannot be undone.</p>',
+            rejectClose: false,
+            modal: true
         });
 
         if (confirmed) {
