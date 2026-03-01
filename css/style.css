@@ -84,6 +84,17 @@
 
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group.full-width {
     grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .form-group.full-width label {
+    margin-bottom: 0.1rem;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .form-group.full-width textarea {
+    width: 100%;
 }
 
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group label {
@@ -276,6 +287,8 @@
     color: #333;
     text-align: right;
     min-width: 80px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Conditional Chronicle Path Visibility */
