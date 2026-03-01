@@ -18,6 +18,12 @@ import {
     updateTreasureBundleDisplay,
     handleChroniclePathFilePicker
 } from './handlers/party-chronicle-handlers.js';
+import {
+    handleSectionHeaderClick,
+    handleSectionHeaderKeydown,
+    initializeCollapseSections,
+    updateAllSectionSummaries
+} from './handlers/collapsible-section-handlers.js';
 
 Hooks.on('init', async () => {
   // Register default settings for GM and event information
@@ -350,6 +356,17 @@ function attachEventListeners(
     filePickerButton?.addEventListener('click', async (event: Event) => {
         await handleChroniclePathFilePicker(event, container, partyActors);
     });
+    
+    // Collapsible section header click handlers
+    const collapsibleHeaders = container.querySelectorAll('.collapsible-header');
+    collapsibleHeaders.forEach((header) => {
+        header.addEventListener('click', (event: Event) => {
+            handleSectionHeaderClick(event as MouseEvent, container);
+        });
+        header.addEventListener('keydown', (event: Event) => {
+            handleSectionHeaderKeydown(event as KeyboardEvent, container);
+        });
+    });
 }
 
 /**
@@ -381,6 +398,10 @@ async function initializeForm(
     const treasureBundlesInput = container.querySelector<HTMLInputElement>('#treasureBundles');
     const initialTreasureBundles = parseInt(treasureBundlesInput?.value || '0', 10);
     updateAllTreasureBundleDisplays(initialTreasureBundles, container);
+    
+    // Initialize collapsible sections
+    initializeCollapseSections(container);
+    updateAllSectionSummaries(container);
     
     // Initial validation display and button state
     updateValidationDisplay(container, partyActors, extractFormData);

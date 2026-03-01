@@ -282,3 +282,111 @@
 .sheet.party [data-tab=pfs] .sidebar #chroniclePathGroup:not(.chronicle-path-visible) {
     display: none;
 }
+
+/* Collapsible Sections Styling */
+/* Requirements: collapsible-shared-sections 1.3, 1.4, 1.6, 1.8, 1.9, 2.3, 2.4, 2.9, 2.10, 2.11, 3.3, 3.4, 3.6, 3.7, 3.8, 4.3, 4.4, 4.5, 4.6, 5.3, 5.4, 5.5, 5.6 */
+
+/* Collapsible section container */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-section {
+    margin-bottom: 0.75rem;
+}
+
+/* Collapsible section header - interactive button-like element */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    margin: -0.5rem -0.5rem 0.5rem -0.5rem;
+    border-radius: 3px;
+    transition: background-color 0.15s ease;
+    user-select: none;
+}
+
+/* Hover state for collapsible header - subtle text highlight */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-header:hover {
+    text-decoration: underline;
+}
+
+/* Focus state for collapsible header - keyboard accessibility */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-header:focus {
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+    text-decoration: underline;
+}
+
+/* Chevron indicator - Unicode characters that change based on state */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-header .chevron {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+    display: inline-block;
+    font-size: 0.8em;
+    line-height: 1;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .collapsible-header .chevron::before {
+    content: '▼'; /* U+25BC BLACK DOWN-POINTING TRIANGLE - points down when expanded */
+}
+
+/* Change chevron to point right when section is collapsed */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-section.collapsed .chevron::before {
+    content: '▶'; /* U+25B6 BLACK RIGHT-POINTING TRIANGLE - points right when collapsed */
+}
+
+/* Section title - hide when collapsed (summary replaces it) */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-header .section-title {
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .collapsible-section.collapsed .section-title {
+    display: none;
+}
+
+/* Keep title visible for sections without summary text (Adventure Summary, Items to Strike Out) */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-section[data-section-id="adventure-summary"].collapsed .section-title,
+.sheet.party [data-tab=pfs] .sidebar .collapsible-section[data-section-id="items-to-strike-out"].collapsed .section-title {
+    display: block;
+}
+
+/* Section summary text - displays when collapsed, replaces title */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-header .section-summary {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: inherit;
+    font-size: inherit;
+    font-weight: bold;
+}
+
+/* Hide summary text when section is expanded */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-section:not(.collapsed) .section-summary {
+    display: none;
+}
+
+/* Collapsible content wrapper */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-content {
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+    max-height: 5000px;
+    opacity: 1;
+}
+
+/* Collapsed state - hide content */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-section.collapsed .collapsible-content {
+    max-height: 0;
+    opacity: 0;
+    display: none;
+}
+
+/* Hide Adventure Summary section when it has no checkboxes */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-section[data-section-id="adventure-summary"]:has(.checkbox-choices:empty) {
+    display: none;
+}
+
+/* Hide Items to Strike Out section when it has no strikeout items */
+.sheet.party [data-tab=pfs] .sidebar .collapsible-section[data-section-id="items-to-strike-out"]:has(.strikeout-choices:empty) {
+    display: none;
+}

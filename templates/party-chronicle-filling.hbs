@@ -1,9 +1,14 @@
 {{!-- Sidebar with shared fields --}}
 <aside class="sidebar">
     <ol class="box-list chronicle-shared">
-        <li class="box summary">
-            <header>Event Details</header>
-            <div class="summary-data">
+        <li class="box summary collapsible-section" data-section-id="event-details">
+            <header class="collapsible-header" role="button" tabindex="0" 
+                    aria-expanded="false" aria-controls="event-details-content">
+                <span class="chevron"></span>
+                <span class="section-title">Event Details</span>
+                <span class="section-summary"></span>
+            </header>
+            <div class="summary-data collapsible-content" id="event-details-content">
                 <div class="form-group">
                     <label for="gmPfsNumber">GM PFS Number</label>
                     <input type="text" id="gmPfsNumber" name="shared.gmPfsNumber" value="{{shared.gmPfsNumber}}">
@@ -19,7 +24,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="layout">Layout</label>
+                    <label for="layout">Scenario</label>
                     <select id="layout" name="shared.layoutId">
                         {{#each layoutsInSeason}}
                             <option value="{{this.id}}" {{#if (eq this.id ../selectedLayoutId)}}selected{{/if}}>{{this.description}}</option>
@@ -52,9 +57,14 @@
             </div>
         </li>
         
-        <li class="box summary">
-            <header>Reputation</header>
-            <div class="summary-data">
+        <li class="box summary collapsible-section" data-section-id="reputation">
+            <header class="collapsible-header" role="button" tabindex="0" 
+                    aria-expanded="false" aria-controls="reputation-content">
+                <span class="chevron"></span>
+                <span class="section-title">Reputation</span>
+                <span class="section-summary"></span>
+            </header>
+            <div class="summary-data collapsible-content" id="reputation-content">
                 <div class="form-group">
                     <label for="chosenFactionReputation">Chosen Faction</label>
                     <input type="number" id="chosenFactionReputation" name="shared.chosenFactionReputation" value="{{shared.chosenFactionReputation}}" min="0" max="9">
@@ -92,9 +102,14 @@
             </div>
         </li>
         
-        <li class="box summary">
-            <header>Shared Rewards</header>
-            <div class="summary-data">
+        <li class="box summary collapsible-section" data-section-id="shared-rewards">
+            <header class="collapsible-header" role="button" tabindex="0" 
+                    aria-expanded="false" aria-controls="shared-rewards-content">
+                <span class="chevron"></span>
+                <span class="section-title">Shared Rewards</span>
+                <span class="section-summary"></span>
+            </header>
+            <div class="summary-data collapsible-content" id="shared-rewards-content">
                 <div class="form-group">
                     <label for="xpEarned">XP Earned</label>
                     <input type="number" id="xpEarned" name="shared.xpEarned" value="{{shared.xpEarned}}" min="0">
@@ -107,18 +122,26 @@
             </div>
         </li>
         
-        <li class="box summary">
-            <header>Adventure Summary</header>
-            <div class="summary-data" id="adventureSummaryCheckboxes">
+        <li class="box summary collapsible-section" data-section-id="adventure-summary">
+            <header class="collapsible-header" role="button" tabindex="0" 
+                    aria-expanded="true" aria-controls="adventure-summary-content">
+                <span class="chevron"></span>
+                <span class="section-title">Adventure Summary</span>
+            </header>
+            <div class="summary-data collapsible-content" id="adventure-summary-content">
                 <div class="checkbox-choices">
                     {{!-- Will be populated dynamically based on layout --}}
                 </div>
             </div>
         </li>
         
-        <li class="box summary">
-            <header>Items to Strike Out</header>
-            <div class="summary-data" id="strikeoutItems">
+        <li class="box summary collapsible-section" data-section-id="items-to-strike-out">
+            <header class="collapsible-header" role="button" tabindex="0" 
+                    aria-expanded="true" aria-controls="items-to-strike-out-content">
+                <span class="chevron"></span>
+                <span class="section-title">Items to Strike Out</span>
+            </header>
+            <div class="summary-data collapsible-content" id="items-to-strike-out-content">
                 <div class="strikeout-choices">
                     {{!-- Will be populated dynamically based on layout --}}
                 </div>

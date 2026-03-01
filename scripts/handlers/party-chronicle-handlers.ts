@@ -19,6 +19,7 @@ import { updateValidationDisplay } from './validation-display.js';
 import { calculateTreasureBundlesGp, formatGoldValue } from '../utils/treasure-bundle-calculator.js';
 import { extractFormData } from './form-data-extraction.js';
 import { generateChroniclesFromPartyData } from './chronicle-generation.js';
+import { updateSectionSummary } from './collapsible-section-handlers.js';
 
 // Re-export for backward compatibility
 export { extractFormData, generateChroniclesFromPartyData };
@@ -245,13 +246,17 @@ export async function handleLayoutChange(
  * For treasure bundles and level fields, it also triggers treasure bundle
  * display updates to show the calculated gold values.
  * 
+ * For fields in collapsible sections, it updates the section summary text
+ * to reflect the new values.
+ * 
  * @param event - The change event from the field
  * @param container - HTMLElement wrapping the form container
  * @param partyActors - Array of party member actors
  * @param extractFormData - Function to extract form data from the container
  * 
- * Requirements: party-chronicle-filling 5.4, treasure-bundle-calculation 4.3
+ * Requirements: party-chronicle-filling 5.4, treasure-bundle-calculation 4.3, collapsible-shared-sections 7.1, 7.2, 7.3, 7.4
  */
+// eslint-disable-next-line complexity -- Flat field ID checks are clearer than extraction
 export async function handleFieldChange(
     event: Event,
     container: HTMLElement,
@@ -262,6 +267,7 @@ export async function handleFieldChange(
     
     const input = event.target as HTMLInputElement;
     const fieldName = input.name;
+    const fieldId = input.id;
     
     // If treasure bundles changed, update all treasure bundle displays
     if (fieldName === 'shared.treasureBundles') {
@@ -279,6 +285,22 @@ export async function handleFieldChange(
             const characterLevel = parseInt(input.value, 10);
             updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
         }
+    }
+    
+    // Update section summaries for relevant fields
+    // Event Details fields: layout (scenario), eventName, eventCode, eventDate
+    if (fieldId === 'layout' || fieldId === 'eventName' || fieldId === 'eventCode' || fieldId === 'eventDate') {
+        updateSectionSummary('event-details', container);
+    }
+    
+    // Reputation fields: chosenFactionReputation, reputation-*
+    if (fieldId === 'chosenFactionReputation' || fieldId?.startsWith('reputation-')) {
+        updateSectionSummary('reputation', container);
+    }
+    
+    // Shared Rewards fields: xpEarned, treasureBundles
+    if (fieldId === 'xpEarned' || fieldId === 'treasureBundles') {
+        updateSectionSummary('shared-rewards', container);
     }
     
     await saveFormData(container, partyActors);

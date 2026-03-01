@@ -83,7 +83,7 @@ export async function updateLayoutSpecificFields(
   const savedStrikeouts = savedStorage?.data?.shared?.strikeoutItems || [];
 
   // Update adventure summary checkboxes
-  const checkboxContainer = container.querySelector('#adventureSummaryCheckboxes .checkbox-choices');
+  const checkboxContainer = container.querySelector('#adventure-summary-content .checkbox-choices');
   if (checkboxContainer) {
     checkboxContainer.innerHTML = '';
     checkboxChoices.forEach((choice, index) => {
@@ -108,7 +108,7 @@ export async function updateLayoutSpecificFields(
   }
 
   // Update strikeout items
-  const strikeoutContainer = container.querySelector('#strikeoutItems .strikeout-choices');
+  const strikeoutContainer = container.querySelector('#items-to-strike-out-content .strikeout-choices');
   if (strikeoutContainer) {
     strikeoutContainer.innerHTML = '';
     strikeoutChoices.forEach((choice, index) => {
@@ -133,7 +133,7 @@ export async function updateLayoutSpecificFields(
   }
 
   // Re-attach change listeners to new checkboxes
-  const checkboxes = container.querySelectorAll('#adventureSummaryCheckboxes input, #strikeoutItems input');
+  const checkboxes = container.querySelectorAll('#adventure-summary-content input, #items-to-strike-out-content input');
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener('change', onChangeCallback as EventListener);
   });
