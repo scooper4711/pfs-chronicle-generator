@@ -12,17 +12,20 @@ The party chronicle form currently requires manual entry of "Gold Earned" for ea
 3. Add income earned to get total gold
 4. Manually enter the calculated value into the form
 
+The treasure bundles field is currently a numeric input, which requires GMs to remember that Series 1 quests award 2.5 treasure bundles.
+
 This manual process is error-prone and time-consuming, especially for parties with characters at different levels.
 
 ### Proposed Solution
 
 The system will:
-1. Maintain a lookup table mapping character levels (1-20) to treasure bundle values
-2. Automatically calculate `treasure_bundles_gp` (treasure bundles × treasure bundle value for character level)
-3. Automatically calculate `gp_gained` (treasure_bundles_gp + income_earned)
-4. Display the calculated treasure bundle value as read-only text in the form
-5. Remove the manual "Gold Earned" input field
-6. Pass the correct calculated values to PDF generation using the required parameter names
+1. Replace the treasure bundles numeric input with a dropdown selector containing standard values (-, 2.5 TB for Series 1 quests, 3-10 TB)
+2. Maintain a lookup table mapping character levels (1-20) to treasure bundle values
+3. Automatically calculate `treasure_bundles_gp` (treasure bundles × treasure bundle value for character level)
+4. Automatically calculate `gp_gained` (treasure_bundles_gp + income_earned)
+5. Display the calculated treasure bundle value as read-only text in the form
+6. Remove the manual "Gold Earned" input field
+7. Pass the correct calculated values to PDF generation using the required parameter names
 
 ### Parameter Naming Constraint
 
@@ -51,9 +54,9 @@ scripts/
 
 ### Data Flow
 
-1. **User Input**: GM enters treasure bundles (shared field) and income earned (per-character field)
-2. **Reactive Update**: When treasure bundles or character level changes, the form updates the displayed treasure bundle value
-3. **Auto-Save**: Changes to treasure bundles or income earned trigger auto-save
+1. **User Input**: GM selects treasure bundles from dropdown (shared field) and enters income earned (per-character field)
+2. **Reactive Update**: When treasure bundles dropdown selection or character level changes, the form updates the displayed treasure bundle value
+3. **Auto-Save**: Changes to treasure bundles dropdown or income earned trigger auto-save
 4. **PDF Generation**: When generating PDFs, the mapper calculates `treasure_bundles_gp` and `gp_gained` and passes them to PdfGenerator
 
 ### Hybrid ApplicationV2 Pattern
@@ -113,7 +116,7 @@ export function getTreasureBundleValue(level: number): number;
 /**
  * Calculates the total gold from treasure bundles for a character.
  * 
- * @param treasureBundles - Number of treasure bundles (0-10)
+ * @param treasureBundles - Number of treasure bundles (0, 2.5, or 3-10)
  * @param characterLevel - Character level (1-20)
  * @returns Total gold from treasure bundles, rounded to 2 decimal places
  */
@@ -129,11 +132,58 @@ export function calculateTreasureBundlesGp(
  * @param incomeEarned - Gold from income earned
  * @returns Total gold gained, rounded to 2 decimal places
  */
-export function calculate
-gp (defensive programming)
+export function calculateGpGained(
+  treasureBundlesGp: number,
+  incomeEarned: number
+): number;
+```
+
+**Defensive Programming**:
+- Returns 0 for invalid levels (defensive programming)
 - The module has no dependencies on other modules (pure utility)
 
-### 2. Type Definitions (MODIFIED)
+### 2. Treasure Bundle Dropdown Selector (NEW)
+
+**File**: `templates/party-chronicle-filling.hbs`
+
+**Purpose**: Provides a user-friendly dropdown selector for treasure bundles with predefined options.
+
+**Design Rationale**:
+- Dropdown prevents invalid values (e.g., 1 TB, 11 TB)
+- Makes Series 1 Quest value (2.5 TB) discoverable without requiring GMs to remember it
+- Reduces cognitive load by showing only valid options
+- Aligns with Pathfinder Society rules where treasure bundles are fixed values, not arbitrary numbers
+
+**Options**:
+```typescript
+[
+  { label: "-", value: 0 },                          // Default: no treasure bundles
+  { label: "2.5 TB (Series 1 Quest)", value: 2.5 }, // Special case for early quests
+  { label: "3 TB", value: 3 },                       // Standard quest minimum
+  { label: "4 TB", value: 4 },
+  { label: "5 TB", value: 5 },
+  { label: "6 TB", value: 6 },
+  { label: "7 TB", value: 7 },
+  { label: "8 TB", value: 8 },
+  { label: "9 TB", value: 9 },
+  { label: "10 TB", value: 10 }                      // Standard adventure maximum
+]
+```
+
+**Behavior**:
+- Default selection: "-" (value 0)
+- When "-" is selected, treasure bundle calculations treat it as 0
+- When "2.5 TB (Series 1 Quest)" is selected, calculations use 2.5
+- All other options use integer values 3-10
+- Selection triggers auto-save and reactive display updates
+
+**Integration**:
+- Replaces the current `<input type="number">` for treasure bundles
+- Uses same field name: `shared.treasureBundles`
+- Event listeners use `change` event instead of `input` event
+- Value extraction uses `parseFloat()` instead of `parseInt()` to support 2.5
+
+### 3. Type Definitions (MODIFIED)
 
 **File**: `scripts/model/party-chronicle-types.ts`
 
@@ -165,7 +215,7 @@ export interface UniqueFields {
 
 **Rationale**: The `goldEarned` field is removed because it's now a calculated value, not user input. This prevents data inconsistency where stored `goldEarned` doesn't match the calculated value.
 
-### 3. Data Mapper (MODIFIED)
+### 4. Data Mapper (MODIFIED)
 
 **File**: `scripts/model/party-chronicle-mapper.ts`
 
@@ -245,7 +295,7 @@ export function mapToCharacterData(
 
 **Backward Compatibility**: The mapper ignores any legacy `goldEarned` values in saved data and recalculates from treasure bundles and level.
 
-### 4. Validator (MODIFIED)
+### 5. Validator (MODIFIED)
 
 **File**: `scripts/model/party-chronicle-validator.ts`
 
@@ -279,7 +329,7 @@ export function validateUniqueFields(
 }
 ```
 
-### 5. Event Handlers (MODIFIED)
+### 6. Event Handlers (MODIFIED)
 
 **File**: `scripts/handlers/party-chronicle-handlers.ts`
 
@@ -344,15 +394,15 @@ Update `handleFieldChange` to trigger treasure bundle display updates:
 
 ```typescript
 export function handleFieldChange(event: Event, container: HTMLElement): void {
-  const input = event.target as HTMLInputElement;
+  const input = event.target as HTMLInputElement | HTMLSelectElement;
   const fieldName = input.name;
   
   // Trigger auto-save
   savePartyChronicleData(container);
   
-  // If treasure bundles changed, update all treasure bundle displays
+  // If treasure bundles dropdown changed, update all treasure bundle displays
   if (fieldName === 'shared.treasureBundles') {
-    const treasureBundles = parseInt(input.value, 10) || 0;
+    const treasureBundles = parseFloat((input as HTMLSelectElement).value) || 0;
     updateAllTreasureBundleDisplays(treasureBundles, container);
   }
   
@@ -361,9 +411,9 @@ export function handleFieldChange(event: Event, container: HTMLElement): void {
     const match = fieldName.match(/characters\.([^.]+)\.level/);
     if (match) {
       const characterId = match[1];
-      const treasureBundlesInput = container.querySelector<HTMLInputElement>('#treasureBundles');
-      const treasureBundles = parseInt(treasureBundlesInput?.value || '0', 10);
-      const characterLevel = parseInt(input.value, 10);
+      const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+      const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
+      const characterLevel = parseInt((input as HTMLInputElement).value, 10);
       updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
     }
   }
@@ -373,7 +423,7 @@ export function handleFieldChange(event: Event, container: HTMLElement): void {
 }
 ```
 
-### 6. Main Entry Point (MODIFIED)
+### 7. Main Entry Point (MODIFIED)
 
 **File**: `scripts/main.ts`
 
@@ -391,12 +441,12 @@ async function renderPartyChronicleForm(
   
   // Existing event listeners ...
   
-  // NEW: Event listener for treasure bundles field changes
-  const treasureBundlesInput = container.querySelector<HTMLInputElement>('#treasureBundles');
-  if (treasureBundlesInput) {
-    treasureBundlesInput.addEventListener('input', (event: Event) => {
-      const input = event.target as HTMLInputElement;
-      const treasureBundles = parseInt(input.value, 10) || 0;
+  // NEW: Event listener for treasure bundles dropdown changes
+  const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+  if (treasureBundlesSelect) {
+    treasureBundlesSelect.addEventListener('change', (event: Event) => {
+      const select = event.target as HTMLSelectElement;
+      const treasureBundles = parseFloat(select.value) || 0;
       updateAllTreasureBundleDisplays(treasureBundles, container);
     });
   }
@@ -411,8 +461,8 @@ async function renderPartyChronicleForm(
       
       if (match) {
         const characterId = match[1];
-        const treasureBundlesInput = container.querySelector<HTMLInputElement>('#treasureBundles');
-        const treasureBundles = parseInt(treasureBundlesInput?.value || '0', 10);
+        const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+        const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
         const characterLevel = parseInt(input.value, 10);
         updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
       }
@@ -420,16 +470,38 @@ async function renderPartyChronicleForm(
   });
   
   // Initialize treasure bundle displays on initial render
-  const initialTreasureBundles = parseInt(treasureBundlesInput?.value || '0', 10);
+  const initialTreasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
   updateAllTreasureBundleDisplays(initialTreasureBundles, container);
   
   // ... rest of function ...
 }
 ```
 
-### 7. Template (MODIFIED)
+### 8. Template (MODIFIED)
 
 **File**: `templates/party-chronicle-filling.hbs`
+
+**Changes to shared fields section**:
+
+Replace the treasure bundles numeric input with a dropdown selector:
+
+```handlebars
+<div class="form-group">
+    <label for="treasureBundles">Treasure Bundles</label>
+    <select id="treasureBundles" name="shared.treasureBundles">
+        <option value="0" {{#if (eq savedData.shared.treasureBundles 0)}}selected{{/if}}>-</option>
+        <option value="2.5" {{#if (eq savedData.shared.treasureBundles 2.5)}}selected{{/if}}>2.5 TB (Series 1 Quest)</option>
+        <option value="3" {{#if (eq savedData.shared.treasureBundles 3)}}selected{{/if}}>3 TB</option>
+        <option value="4" {{#if (eq savedData.shared.treasureBundles 4)}}selected{{/if}}>4 TB</option>
+        <option value="5" {{#if (eq savedData.shared.treasureBundles 5)}}selected{{/if}}>5 TB</option>
+        <option value="6" {{#if (eq savedData.shared.treasureBundles 6)}}selected{{/if}}>6 TB</option>
+        <option value="7" {{#if (eq savedData.shared.treasureBundles 7)}}selected{{/if}}>7 TB</option>
+        <option value="8" {{#if (eq savedData.shared.treasureBundles 8)}}selected{{/if}}>8 TB</option>
+        <option value="9" {{#if (eq savedData.shared.treasureBundles 9)}}selected{{/if}}>9 TB</option>
+        <option value="10" {{#if (eq savedData.shared.treasureBundles 10)}}selected{{/if}}>10 TB</option>
+    </select>
+</div>
+```
 
 **Changes to character-specific fields section**:
 
@@ -474,6 +546,15 @@ Replace the "Gold Earned" input with a "Treasure Bundle Value" read-only display
   font-size: 1rem;
   color: #333;
   text-align: right;
+}
+
+/* Style the treasure bundles dropdown to match other form inputs */
+#treasureBundles {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 1rem;
 }
 ```
 

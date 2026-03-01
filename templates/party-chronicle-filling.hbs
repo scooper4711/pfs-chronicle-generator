@@ -117,7 +117,18 @@
                 
                 <div class="form-group">
                     <label for="treasureBundles">Treasure Bundles</label>
-                    <input type="number" id="treasureBundles" name="shared.treasureBundles" value="{{shared.treasureBundles}}" min="0" max="10">
+                    <select id="treasureBundles" name="shared.treasureBundles">
+                        <option value="0" {{#if (eq shared.treasureBundles 0)}}selected{{/if}}>-</option>
+                        <option value="2.5" {{#if (eq shared.treasureBundles 2.5)}}selected{{/if}}>2.5 TB (Series 1 Quest)</option>
+                        <option value="3" {{#if (eq shared.treasureBundles 3)}}selected{{/if}}>3 TB</option>
+                        <option value="4" {{#if (eq shared.treasureBundles 4)}}selected{{/if}}>4 TB</option>
+                        <option value="5" {{#if (eq shared.treasureBundles 5)}}selected{{/if}}>5 TB</option>
+                        <option value="6" {{#if (eq shared.treasureBundles 6)}}selected{{/if}}>6 TB</option>
+                        <option value="7" {{#if (eq shared.treasureBundles 7)}}selected{{/if}}>7 TB</option>
+                        <option value="8" {{#if (eq shared.treasureBundles 8)}}selected{{/if}}>8 TB</option>
+                        <option value="9" {{#if (eq shared.treasureBundles 9)}}selected{{/if}}>9 TB</option>
+                        <option value="10" {{#if (eq shared.treasureBundles 10)}}selected{{/if}}>10 TB</option>
+                    </select>
                 </div>
             </div>
         </li>

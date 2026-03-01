@@ -73,7 +73,7 @@ export function handlePortraitClick(event: MouseEvent, partyActors: any[]): void
  * @param characterLevel - Character level
  * @param container - Container element for the form
  * 
- * Requirements: treasure-bundle-calculation 4.1, 4.2, 4.3, 4.4
+ * Requirements: treasure-bundle-calculation 5.1, 5.2, 5.3, 5.4
  */
 export function updateTreasureBundleDisplay(
   characterId: string,
@@ -101,7 +101,7 @@ export function updateTreasureBundleDisplay(
  * @param treasureBundles - Number of treasure bundles
  * @param container - Container element for the form
  * 
- * Requirements: treasure-bundle-calculation 4.1, 4.2, 4.3, 4.4
+ * Requirements: treasure-bundle-calculation 5.1, 5.2, 5.3, 5.4
  */
 export function updateAllTreasureBundleDisplays(
   treasureBundles: number,
@@ -254,7 +254,7 @@ export async function handleLayoutChange(
  * @param partyActors - Array of party member actors
  * @param extractFormData - Function to extract form data from the container
  * 
- * Requirements: party-chronicle-filling 5.4, treasure-bundle-calculation 4.3, collapsible-shared-sections 7.1, 7.2, 7.3, 7.4
+ * Requirements: party-chronicle-filling 5.4, treasure-bundle-calculation 5.3, collapsible-shared-sections 7.1, 7.2, 7.3, 7.4
  */
 // eslint-disable-next-line complexity -- Flat field ID checks are clearer than extraction
 export async function handleFieldChange(
@@ -271,7 +271,7 @@ export async function handleFieldChange(
     
     // If treasure bundles changed, update all treasure bundle displays
     if (fieldName === 'shared.treasureBundles') {
-        const treasureBundles = parseInt(input.value, 10) || 0;
+        const treasureBundles = parseFloat(input.value) || 0;
         updateAllTreasureBundleDisplays(treasureBundles, container);
     }
     
@@ -280,8 +280,8 @@ export async function handleFieldChange(
         const match = fieldName.match(/characters\.([^.]+)\.level/);
         if (match) {
             const characterId = match[1];
-            const treasureBundlesInput = container.querySelector<HTMLInputElement>('#treasureBundles');
-            const treasureBundles = parseInt(treasureBundlesInput?.value || '0', 10);
+            const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+            const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
             const characterLevel = parseInt(input.value, 10);
             updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
         }

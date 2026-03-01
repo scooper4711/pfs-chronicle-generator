@@ -143,7 +143,7 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
  * }
  * ```
  * 
- * Validates: Requirements party-chronicle-filling 6.2, 6.3, treasure-bundle-calculation 10.1, 10.2, 10.3, 10.4
+ * Validates: Requirements party-chronicle-filling 6.2, 6.3, treasure-bundle-calculation 11.1, 11.2, 11.3, 11.4
  */
 export function validateUniqueFields(
   unique: Partial<UniqueFields>,

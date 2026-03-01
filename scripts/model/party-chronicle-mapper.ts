@@ -94,7 +94,7 @@ export interface ChronicleData {
  * // chronicleData.reputation is ["Envoy's Alliance: +4", "Grand Archive: +1"]
  * ```
  * 
- * Validates: Requirements party-chronicle-filling 5.1, 5.2, 5.3, 5.5, treasure-bundle-calculation 7.1, 7.2, 7.3, 7.4, 7.5, multi-line-reputation-tracking 5.1, 5.2
+ * Validates: Requirements party-chronicle-filling 5.1, 5.2, 5.3, 5.5, treasure-bundle-calculation 8.1, 8.2, 8.3, 8.4, 8.5, multi-line-reputation-tracking 5.1, 5.2
  */
 export function mapToCharacterData(
   shared: SharedFields,

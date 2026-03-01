@@ -16,7 +16,7 @@ These parameter names are non-negotiable and must be used exactly as specified t
 
 ## Glossary
 
-- **Treasure_Bundle**: A shared reward unit earned by the entire party during an adventure (integer value 0-10)
+- **Treasure_Bundle**: A shared reward unit earned by the entire party during an adventure (numeric value 0-10, with 2.5 for Series 1 quests)
 - **Character_Level**: The level of a player character (integer value 1-20)
 - **Treasure_Bundle_Value**: The gold piece value of a single treasure bundle for a specific character level
 - **treasure_bundles_gp**: The total gold value from treasure bundles for a character (treasure bundles × treasure bundle value for character level) - REQUIRED parameter name for PDF compatibility
@@ -24,6 +24,7 @@ These parameter names are non-negotiable and must be used exactly as specified t
 - **gp_gained**: The sum of treasure_bundles_gp and income_earned - REQUIRED parameter name for PDF compatibility
 - **Party_Chronicle_Form**: The UI form for filling out chronicles for all party members at once
 - **PDF_Generator**: The system component that renders chronicle data onto blank PDF templates
+- **Series_1_Quest**: A limited set of early Pathfinder Society quests that awarded 2.5 treasure bundles instead of the standard 3-10 range
 
 ## Requirements
 
@@ -52,8 +53,31 @@ These parameter names are non-negotiable and must be used exactly as specified t
 2. THE System SHALL round treasure_bundles_gp to 2 decimal places
 3. WHEN treasure bundles is 0, THE System SHALL return 0 gp for treasure_bundles_gp
 4. FOR ALL character levels 1-20, THE calculation SHALL use the correct treasure bundle value from the lookup table
+5. THE System SHALL support treasure bundle value of 2.5 for Series 1 quests
 
-### Requirement 3: Calculate Total Gold Gained
+### Requirement 3: Treasure Bundle Dropdown Selector
+
+**User Story:** As a GM, I want to select treasure bundles from a dropdown menu, so that I can quickly choose the correct value including Series 1 quest rewards.
+
+#### Acceptance Criteria
+
+1. THE Party_Chronicle_Form SHALL display a dropdown selector for treasure bundles in the shared fields section
+2. THE dropdown SHALL contain the following options with these exact labels:
+   - "-" (value: 0, default selection)
+   - "2.5 TB (Series 1 Quest)" (value: 2.5)
+   - "3 TB" (value: 3)
+   - "4 TB" (value: 4)
+   - "5 TB" (value: 5)
+   - "6 TB" (value: 6)
+   - "7 TB" (value: 7)
+   - "8 TB" (value: 8)
+   - "9 TB" (value: 9)
+   - "10 TB" (value: 10)
+3. THE dropdown SHALL default to "-" (value 0) when no selection has been made
+4. WHEN "-" is selected, THE System SHALL treat treasure bundles as 0
+5. THE dropdown SHALL replace the current treasure bundles numeric input field
+
+### Requirement 4: Calculate Total Gold Gained
 
 **User Story:** As a GM, I want the system to calculate total gold gained for PDF generation, so that the chronicle shows the correct total gold amount.
 
@@ -64,7 +88,7 @@ These parameter names are non-negotiable and must be used exactly as specified t
 3. THE gp_gained value SHALL be passed to PDF_Generator using the exact parameter name "gp_gained"
 4. WHEN both treasure_bundles_gp and income_earned are 0, THE System SHALL pass 0 as gp_gained
 
-### Requirement 4: Display Treasure Bundle Gold in Form
+### Requirement 5: Display Treasure Bundle Gold in Form
 
 **User Story:** As a GM, I want to see the calculated treasure bundle gold value for each character in the form, so that I can verify the calculation is correct before generating chronicles.
 
@@ -76,7 +100,7 @@ These parameter names are non-negotiable and must be used exactly as specified t
 4. THE displayed value SHALL show gold amounts formatted to 2 decimal places with "gp" suffix
 5. THE "Treasure Bundle Value" field SHALL replace the current "Gold Earned" input field in the character-specific section
 
-### Requirement 5: Remove Manual Gold Earned Input
+### Requirement 6: Remove Manual Gold Earned Input
 
 **User Story:** As a GM, I want the gold earned field to be calculated automatically, so that I cannot accidentally enter incorrect values.
 
@@ -87,7 +111,7 @@ These parameter names are non-negotiable and must be used exactly as specified t
 3. THE System SHALL calculate treasure_bundles_gp at PDF generation time
 4. WHEN loading saved party chronicle data, THE System SHALL ignore any legacy goldEarned values
 
-### Requirement 6: Preserve Income Earned Field
+### Requirement 7: Preserve Income Earned Field
 
 **User Story:** As a GM, I want to continue entering income earned separately, so that I can track downtime earnings and other income sources.
 
@@ -98,7 +122,7 @@ These parameter names are non-negotiable and must be used exactly as specified t
 3. THE System SHALL store income_earned values in the UniqueFields data structure using the exact field name "income_earned"
 4. WHEN generating PDFs, THE System SHALL pass income_earned to PDF_Generator using the exact parameter name "income_earned"
 
-### Requirement 7: Update Data Mapping for PDF Generation
+### Requirement 8: Update Data Mapping for PDF Generation
 
 **User Story:** As a developer, I want the data mapper to calculate treasure bundle gold and total gold gained, so that PDF generation receives correct values with correct parameter names.
 
@@ -111,7 +135,7 @@ These parameter names are non-negotiable and must be used exactly as specified t
 5. THE System SHALL pass income_earned to PDF_Generator using the exact parameter name "income_earned"
 6. THE System SHALL NOT use the goldEarned field from UniqueFields for PDF generation
 
-### Requirement 8: Maintain Backward Compatibility
+### Requirement 9: Maintain Backward Compatibility
 
 **User Story:** As a GM, I want existing saved party chronicle data to continue working, so that I don't lose my in-progress chronicles.
 
@@ -122,18 +146,18 @@ These parameter names are non-negotiable and must be used exactly as specified t
 3. THE System SHALL preserve income_earned values from saved data
 4. WHEN saving party chronicle data, THE System SHALL NOT include goldEarned in the saved data structure
 
-### Requirement 9: Update Form Auto-Save
+### Requirement 10: Update Form Auto-Save
 
 **User Story:** As a GM, I want the form to auto-save when I change treasure bundles, so that my calculated gold values are preserved.
 
 #### Acceptance Criteria
 
-1. WHEN the treasure bundles field changes, THE System SHALL trigger auto-save
+1. WHEN the treasure bundles dropdown changes, THE System SHALL trigger auto-save
 2. WHEN the income_earned field changes, THE System SHALL trigger auto-save
 3. THE auto-save SHALL store treasure bundles and income_earned values
 4. THE auto-save SHALL NOT store calculated treasure_bundles_gp values
 
-### Requirement 10: Update Validation Logic
+### Requirement 11: Update Validation Logic
 
 **User Story:** As a GM, I want validation to check income earned but not gold earned, so that I receive appropriate error messages.
 

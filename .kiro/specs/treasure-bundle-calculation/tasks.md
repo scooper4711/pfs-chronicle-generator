@@ -13,18 +13,20 @@ The implementation follows the existing modular architecture and hybrid Applicat
   - Implement `TREASURE_BUNDLE_VALUES` lookup table with all 20 levels
   - Implement `getTreasureBundleValue(level: number): number` function
   - Implement `calculateTreasureBundlesGp(treasureBundles: number, characterLevel: number): number` function
+  - Support decimal treasure bundle values (e.g., 2.5 for Series 1 quests)
   - Implement `calculateGpGained(treasureBundlesGp: number, incomeEarned: number): number` function
   - Implement `formatGoldValue(value: number): string` helper function for display formatting
-  - _Requirements: 1.1, 1.2, 1.3, 1.4, 2.1, 2.2, 2.3, 2.4, 3.1, 3.2_
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2_
 
 - [x] 1.1 Write unit tests for treasure bundle calculator
   - Test `getTreasureBundleValue()` for all levels 1-20
   - Test `getTreasureBundleValue()` for out-of-range levels (returns 0)
   - Test `calculateTreasureBundlesGp()` with various treasure bundle counts and levels
   - Test `calculateTreasureBundlesGp()` with 0 treasure bundles (returns 0)
+  - Test `calculateTreasureBundlesGp()` with 2.5 treasure bundles (Series 1 quest)
   - Test `calculateGpGained()` with various combinations
   - Test rounding to 2 decimal places
-  - _Requirements: 1.1, 1.2, 1.3, 1.4, 2.1, 2.2, 2.3, 2.4, 3.1, 3.2_
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2_
 
 - [x] 2. Update type definitions
   - Modify `scripts/model/party-chronicle-types.ts`
@@ -63,44 +65,51 @@ The implementation follows the existing modular architecture and hybrid Applicat
   - Test that no validation errors occur for missing `goldEarned` field
   - _Requirements: 10.1, 10.2, 10.3, 10.4_
 
-- [-] 5. Add event handler functions for reactive updates
+- [x] 5. Add event handler functions for reactive updates
   - Modify `scripts/handlers/party-chronicle-handlers.ts`
   - Import calculation functions from `treasure-bundle-calculator.ts`
   - Implement `updateTreasureBundleDisplay()` function to update a single character's display
   - Implement `updateAllTreasureBundleDisplays()` function to update all characters' displays
-  - Modify `handleFieldChange()` to trigger treasure bundle display updates when treasure bundles or level changes
-  - _Requirements: 4.1, 4.2, 4.3, 4.4_
+  - Modify `handleFieldChange()` to trigger treasure bundle display updates when treasure bundles dropdown or level changes
+  - Update event handlers to use `HTMLSelectElement` and `parseFloat()` for treasure bundles dropdown (instead of `HTMLInputElement` and `parseInt()`)
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.3, 4.4_
 
 - [x] 5.1 Write unit tests for event handlers
   - Test `updateTreasureBundleDisplay()` updates the correct DOM element
   - Test `updateAllTreasureBundleDisplays()` updates all character displays
-  - Test `handleFieldChange()` triggers updates for treasure bundles field changes
+  - Test `handleFieldChange()` triggers updates for treasure bundles dropdown changes
   - Test `handleFieldChange()` triggers updates for level field changes
-  - _Requirements: 4.1, 4.2, 4.3, 4.4_
+  - Test dropdown value extraction using `parseFloat()` correctly handles 2.5 TB option
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.3, 4.4_
 
-- [x] 6. Update template to display treasure bundle value
+- [x] 6. Update template to add treasure bundle dropdown and display value
   - Modify `templates/party-chronicle-filling.hbs`
+  - Replace treasure bundles numeric input with dropdown selector in shared fields section
+  - Add dropdown options: "-" (value 0, default), "2.5 TB (Series 1 Quest)" (value 2.5), "3 TB" through "10 TB" (values 3-10)
   - Remove the "Gold Earned" input field from character-specific section
-  - Add "Treasure Bundle Value" read-only display field
+  - Add "Treasure Bundle Value" read-only display field in character-specific section
   - Use class `treasure-bundle-value` for the display element
   - Initialize display with "0.00 gp" placeholder text
-  - _Requirements: 4.1, 4.2, 4.5, 5.1_
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.5, 5.1_
 
-- [x] 7. Add CSS styling for treasure bundle value display
+- [x] 7. Add CSS styling for treasure bundle dropdown and value display
   - Modify `css/style.css`
-  - Add styles for `.treasure-bundle-value` class
+  - Add styles for `.treasure-bundle-value` class (read-only field appearance)
   - Style as read-only field (gray background, border, monospace font)
   - Ensure right-aligned text for numeric display
-  - _Requirements: 4.1, 4.2_
+  - Add styles for `#treasureBundles` dropdown to match other form inputs
+  - _Requirements: 3.1, 3.2, 4.1, 4.2_
 
 - [x] 8. Attach event listeners in main entry point
   - Modify `scripts/main.ts` in `renderPartyChronicleForm()` function
   - Import handler functions from `party-chronicle-handlers.ts`
-  - Add event listener for treasure bundles input field changes
+  - Add event listener for treasure bundles dropdown changes (use `change` event for select element)
   - Add event listeners for all character level input field changes
   - Call `updateAllTreasureBundleDisplays()` on initial render to populate displays
   - Follow existing pattern of event listener attachment (native DOM APIs)
-  - _Requirements: 4.3, 9.1_
+  - Use `HTMLSelectElement` type for treasure bundles dropdown
+  - Use `parseFloat()` to extract dropdown value (supports 2.5 TB option)
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.3, 9.1_
 
 - [x] 9. Update auto-save logic
   - Verify that `handleFieldChange()` triggers auto-save for treasure bundles changes
@@ -117,13 +126,15 @@ The implementation follows the existing modular architecture and hybrid Applicat
   - Ask the user if questions arise
 
 - [x] 11. Integration testing
-  - Test complete workflow: enter treasure bundles → see calculated values → generate PDFs
+  - Test complete workflow: select treasure bundles from dropdown → see calculated values → generate PDFs
   - Test with party members at different levels
-  - Test with 0 treasure bundles
-  - Test with maximum treasure bundles (10)
+  - Test with "-" selection (0 treasure bundles)
+  - Test with "2.5 TB (Series 1 Quest)" selection
+  - Test with maximum treasure bundles (10 TB)
   - Test that income earned is added correctly to treasure bundle gold
   - Verify PDF contains correct gold values with correct parameter names
-  - _Requirements: 2.1, 2.2, 2.3, 2.4, 3.1, 3.2, 3.3, 3.4, 4.3, 4.4, 7.1, 7.2, 7.3, 7.4, 7.5_
+  - Verify dropdown selection is preserved on form reload
+  - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 3.1, 3.2, 3.3, 3.4, 3.5, 4.3, 4.4, 7.1, 7.2, 7.3, 7.4, 7.5_
 
 ## Notes
 

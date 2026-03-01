@@ -6,7 +6,7 @@
  * 2. Generate PDFs with correct gold values
  * 3. Verify parameter names are correct
  * 
- * Requirements: treasure-bundle-calculation 2.1, 2.2, 2.3, 2.4, 3.1, 3.2, 3.3, 3.4, 4.3, 4.4, 7.1, 7.2, 7.3, 7.4, 7.5
+ * Requirements: treasure-bundle-calculation 2.1, 2.2, 2.3, 2.4, 4.1, 4.2, 4.3, 4.4, 5.3, 5.4, 8.1, 8.2, 8.3, 8.4, 8.5
  */
 
 import { describe, it, expect, beforeEach } from '@jest/globals';

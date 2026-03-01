@@ -284,11 +284,11 @@ function attachEventListeners(
         });
     });
     
-    // Treasure bundles input change handler for reactive display updates
-    const treasureBundlesInput = container.querySelector<HTMLInputElement>('#treasureBundles');
-    treasureBundlesInput?.addEventListener('input', (event: Event) => {
-        const input = event.target as HTMLInputElement;
-        const treasureBundles = parseInt(input.value, 10) || 0;
+    // Treasure bundles dropdown change handler for reactive display updates
+    const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+    treasureBundlesSelect?.addEventListener('change', (event: Event) => {
+        const select = event.target as HTMLSelectElement;
+        const treasureBundles = parseFloat(select.value) || 0;
         updateAllTreasureBundleDisplays(treasureBundles, container);
     });
     
@@ -301,8 +301,8 @@ function attachEventListeners(
             
             if (match) {
                 const characterId = match[1];
-                const treasureBundlesInput = container.querySelector<HTMLInputElement>('#treasureBundles');
-                const treasureBundles = parseInt(treasureBundlesInput?.value || '0', 10);
+                const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+                const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
                 const characterLevel = parseInt(input.value, 10);
                 updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
             }
@@ -396,8 +396,8 @@ async function initializeForm(
     }
     
     // Initialize treasure bundle displays on initial render
-    const treasureBundlesInput = container.querySelector<HTMLInputElement>('#treasureBundles');
-    const initialTreasureBundles = parseInt(treasureBundlesInput?.value || '0', 10);
+    const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+    const initialTreasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
     updateAllTreasureBundleDisplays(initialTreasureBundles, container);
     
     // Initialize collapsible sections

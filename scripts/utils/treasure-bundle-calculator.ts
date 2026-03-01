@@ -87,7 +87,7 @@ export function calculateTreasureBundlesGp(
  * @param incomeEarned - Gold from income earned
  * @returns Total gold gained, rounded to 2 decimal places
  * 
- * Requirements: treasure-bundle-calculation 3.1, 3.2
+ * Requirements: treasure-bundle-calculation 4.1, 4.2
  */
 export function calculateGpGained(
   treasureBundlesGp: number,
