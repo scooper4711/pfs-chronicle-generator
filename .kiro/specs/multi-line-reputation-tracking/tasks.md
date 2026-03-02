@@ -98,7 +98,7 @@ The implementation follows the hybrid ApplicationV2 architecture where event lis
     - Verify validator rejects data when chosenFactionReputation is 0
     - Minimum 100 iterations
   
-  - [~] 3.5 Write property test for validation error UI feedback
+  - [ ] 3.5 Write property test for validation error UI feedback
     - **Property 13: Validation Error UI Feedback**
     - **Validates: Requirements 6.4**
     - Verify validation errors are displayed and Generate button is disabled

@@ -167,6 +167,7 @@ describe('Chronicle Path Persistence Property Tests', () => {
         adventureSummaryCheckboxes: [],
         strikeoutItems: [],
         treasureBundles: 2,
+        downtimeDays: 8, // Calculated from xpEarned (4 * 2 = 8)
         layoutId: 'layout1',
         seasonId: 'season1',
         blankChroniclePath: chroniclePath,
@@ -185,7 +186,10 @@ describe('Chronicle Path Persistence Property Tests', () => {
           characterName: 'Character 1',
           societyId: '12345-2001',
           level: 5,
-          incomeEarned: 10.5,
+          taskLevel: 3,
+          successLevel: 'success',
+          proficiencyRank: 'trained',
+          earnedIncome: 10.5,
           goldSpent: 5.0,
           notes: 'Test notes 1'
         },
@@ -193,7 +197,10 @@ describe('Chronicle Path Persistence Property Tests', () => {
           characterName: 'Character 2',
           societyId: '12345-2002',
           level: 3,
-          incomeEarned: 8.0,
+          taskLevel: 1,
+          successLevel: 'success',
+          proficiencyRank: 'trained',
+          earnedIncome: 8.0,
           goldSpent: 3.5,
           notes: 'Test notes 2'
         }
@@ -477,14 +484,14 @@ describe('Chronicle Path Persistence Property Tests', () => {
               expect(characters.actor1.characterName).toBe('Character 1');
               expect(characters.actor1.societyId).toBe('12345-2001');
               expect(characters.actor1.level).toBe(5);
-              expect(characters.actor1.incomeEarned).toBe(10.5);
+              expect(characters.actor1.earnedIncome).toBe(10.5);
               expect(characters.actor1.goldSpent).toBe(5.0);
               expect(characters.actor1.notes).toBe('Test notes 1');
 
               expect(characters.actor2.characterName).toBe('Character 2');
               expect(characters.actor2.societyId).toBe('12345-2002');
               expect(characters.actor2.level).toBe(3);
-              expect(characters.actor2.incomeEarned).toBe(8.0);
+              expect(characters.actor2.earnedIncome).toBe(8.0);
               expect(characters.actor2.goldSpent).toBe(3.5);
               expect(characters.actor2.notes).toBe('Test notes 2');
             }

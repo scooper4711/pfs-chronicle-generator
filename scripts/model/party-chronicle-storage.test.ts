@@ -47,14 +47,14 @@ describe('Party Chronicle Storage', () => {
           strikeoutItems: ['item1']
         }),
         characters: {
-          'actor-1': {
+          'actor-1': createUniqueFields({
             characterName: 'Hero One',
             societyId: '12345-01',
             level: 5,
-            incomeEarned: 10,
+            earnedIncome: 10,
             goldSpent: 5,
             notes: 'Test notes'
-          }
+          })
         }
       };
 
@@ -110,7 +110,8 @@ describe('Party Chronicle Storage', () => {
           seasonId: 'season-7',
           blankChroniclePath: '/path',
           chosenFactionReputation: 0,
-          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+          downtimeDays: 0
         },
         characters: {}
       };
@@ -138,7 +139,8 @@ describe('Party Chronicle Storage', () => {
           seasonId: 'season-7',
           blankChroniclePath: '/path/to/chronicle.pdf',
           chosenFactionReputation: 0,
-          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+          downtimeDays: 0
         },
         characters: {}
       };
@@ -165,7 +167,8 @@ describe('Party Chronicle Storage', () => {
           seasonId: 'season-7',
           blankChroniclePath: '/path',
           chosenFactionReputation: 0,
-          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+          downtimeDays: 0
         },
         characters: {}
       };
@@ -199,7 +202,6 @@ describe('Party Chronicle Storage', () => {
             characterName: 'Hero One',
             societyId: '12345-01',
             level: 5,
-            incomeEarned: 10,
             goldSpent: 5,
             notes: ''
           })
@@ -326,7 +328,8 @@ describe('Party Chronicle Storage', () => {
           seasonId: 'season-7',
           blankChroniclePath: '/path/to/chronicle.pdf',
           chosenFactionReputation: 0,
-          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+          downtimeDays: 0
         },
         characters: {}
       };
@@ -392,7 +395,6 @@ describe('Party Chronicle Storage', () => {
             characterName: 'Hero One',
             societyId: '12345-01',
             level: 5,
-            incomeEarned: 10,
             goldSpent: 5,
             notes: 'Test notes'
           }),
@@ -400,7 +402,6 @@ describe('Party Chronicle Storage', () => {
             characterName: 'Hero Two',
             societyId: '12345-02',
             level: 3,
-            incomeEarned: 8,
             goldSpent: 3,
             notes: 'More notes'
           })
@@ -441,7 +442,8 @@ describe('Party Chronicle Storage', () => {
           seasonId: 'season-7',
           blankChroniclePath: '/path',
           chosenFactionReputation: 0,
-          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+          downtimeDays: 0
         },
         characters: {}
       };
@@ -510,7 +512,8 @@ describe('Party Chronicle Storage', () => {
           seasonId: 'season-7',
           blankChroniclePath: '/path',
           chosenFactionReputation: 0,
-          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+          downtimeDays: 0
         },
         characters: {}
       };
@@ -545,7 +548,8 @@ describe('Party Chronicle Storage', () => {
           seasonId: 'season-7',
           blankChroniclePath: '/path',
           chosenFactionReputation: 0,
-          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+          downtimeDays: 0
         },
         characters: {}
       };
@@ -598,7 +602,8 @@ describe('Party Chronicle Storage', () => {
           seasonId: 'season-7',
           blankChroniclePath: '/path1',
           chosenFactionReputation: 0,
-          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+          downtimeDays: 0
         },
         characters: {}
       };
@@ -617,7 +622,8 @@ describe('Party Chronicle Storage', () => {
           seasonId: 'season-7',
           blankChroniclePath: '/path2',
           chosenFactionReputation: 0,
-          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+          reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+          downtimeDays: 0
         },
         characters: {}
       };
@@ -644,7 +650,13 @@ describe('Party Chronicle Storage', () => {
         characterName: fc.string({ minLength: 1, maxLength: 50 }),
         societyId: fc.string({ minLength: 1, maxLength: 20 }),
         level: fc.integer({ min: 1, max: 20 }),
-        incomeEarned: fc.integer({ min: 0, max: 1000 }),
+        taskLevel: fc.oneof(
+          fc.constant('-'),
+          fc.integer({ min: 0, max: 20 })
+        ),
+        successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
+        proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
+        earnedIncome: fc.float({ min: 0, max: 1000, noNaN: true }),
         goldSpent: fc.integer({ min: 0, max: 10000 }),
         notes: fc.string({ maxLength: 500 })
       });
@@ -669,7 +681,8 @@ describe('Party Chronicle Storage', () => {
           VS: fc.integer({ min: 0, max: 9 }),
           RO: fc.integer({ min: 0, max: 9 }),
           VW: fc.integer({ min: 0, max: 9 })
-        })
+        }),
+        downtimeDays: fc.integer({ min: 0, max: 8 })
       });
 
       const partyChronicleDataArb = fc.record({
@@ -728,7 +741,8 @@ describe('Party Chronicle Storage', () => {
           VS: fc.integer({ min: 0, max: 9 }),
           RO: fc.integer({ min: 0, max: 9 }),
           VW: fc.integer({ min: 0, max: 9 })
-        })
+        }),
+        downtimeDays: fc.integer({ min: 0, max: 8 })
       });
 
       await fc.assert(
@@ -768,7 +782,10 @@ describe('Party Chronicle Storage', () => {
         characterName: stringArb,
         societyId: stringArb,
         level: fc.integer({ min: 1, max: 20 }),
-        incomeEarned: fc.integer({ min: 0, max: 1000 }),
+        taskLevel: fc.oneof(fc.constant('-'), fc.integer({ min: 0, max: 20 })),
+        successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
+        proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
+        earnedIncome: fc.integer({ min: 0, max: 1000 }),
         goldSpent: fc.integer({ min: 0, max: 10000 }),
         notes: stringArb
       });
@@ -782,9 +799,19 @@ describe('Party Chronicle Storage', () => {
         adventureSummaryCheckboxes: fc.array(stringArb, { maxLength: 5 }),
         strikeoutItems: fc.array(stringArb, { maxLength: 5 }),
         treasureBundles: fc.integer({ min: 0, max: 10 }),
+        downtimeDays: fc.integer({ min: 0, max: 8 }),
         layoutId: stringArb,
         seasonId: stringArb,
-        blankChroniclePath: stringArb
+        blankChroniclePath: stringArb,
+        chosenFactionReputation: fc.integer({ min: 1, max: 9 }),
+        reputationValues: fc.record({
+          EA: fc.integer({ min: 0, max: 9 }),
+          GA: fc.integer({ min: 0, max: 9 }),
+          HH: fc.integer({ min: 0, max: 9 }),
+          VS: fc.integer({ min: 0, max: 9 }),
+          RO: fc.integer({ min: 0, max: 9 }),
+          VW: fc.integer({ min: 0, max: 9 })
+        })
       });
 
       const partyChronicleDataArb = fc.record({

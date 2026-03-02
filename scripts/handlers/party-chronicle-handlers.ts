@@ -17,6 +17,7 @@ import { savePartyChronicleData } from '../model/party-chronicle-storage.js';
 import { updateLayoutSpecificFields } from '../utils/layout-utils.js';
 import { updateValidationDisplay } from './validation-display.js';
 import { calculateTreasureBundlesGp, formatGoldValue } from '../utils/treasure-bundle-calculator.js';
+import { calculateDowntimeDays, calculateEarnedIncome, formatIncomeValue } from '../utils/earned-income-calculator.js';
 import { extractFormData } from './form-data-extraction.js';
 import { generateChroniclesFromPartyData } from './chronicle-generation.js';
 import { updateSectionSummary } from './collapsible-section-handlers.js';
@@ -116,6 +117,154 @@ export function updateAllTreasureBundleDisplays(
     if (characterId && levelInput) {
       const characterLevel = parseInt(levelInput.value, 10);
       updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
+    }
+  });
+}
+
+/**
+ * Updates the downtime days display based on XP earned and treasure bundles.
+ * 
+ * This handler is called when the XP Earned or Treasure Bundles dropdown changes.
+ * It calculates the downtime days using the formula: XP × 2 for Quests/Scenarios,
+ * 0 for Bounties, with a special case for Series 1 Quests (1 XP + 2.5 TB = 2 days).
+ * After updating the downtime days display, it triggers a recalculation of all
+ * character earned income displays.
+ * 
+ * @param xpEarned - XP earned from the adventure (1 for Bounty/Series 1 Quest, 2 for Quest, 4 for Scenario)
+ * @param container - Container element for the form
+ * 
+ * Requirements: earned-income-calculation 2.4, 2.5, 7.3
+ */
+export function updateDowntimeDaysDisplay(
+  xpEarned: number,
+  container: HTMLElement
+): void {
+  // Get treasure bundles value to detect Series 1 Quest
+  const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+  const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
+  
+  // Calculate downtime days based on XP earned and treasure bundles
+  const downtimeDays = calculateDowntimeDays(xpEarned, treasureBundles);
+  
+  // Update the downtime days display element
+  const displayElement = container.querySelector('.downtime-days-value');
+  if (displayElement) {
+    displayElement.textContent = downtimeDays.toString();
+  }
+  
+  // Update the hidden input field for form submission
+  const hiddenInput = container.querySelector<HTMLInputElement>('#downtimeDays');
+  if (hiddenInput) {
+    hiddenInput.value = downtimeDays.toString();
+  }
+  
+  // Update all earned income displays with the new downtime days value
+  updateAllEarnedIncomeDisplays(downtimeDays, container);
+}
+
+/**
+ * Updates the displayed earned income value for a specific character.
+ * 
+ * This handler is called when task level, success level, proficiency rank, or downtime days changes.
+ * It calculates the earned income based on the character's inputs and updates the display element
+ * with class 'earned-income-value'.
+ * 
+ * @param characterId - Actor ID of the character
+ * @param taskLevel - Task level (0-20 or "-")
+ * @param successLevel - Success level (critical_failure, failure, success, critical_success)
+ * @param proficiencyRank - Proficiency rank (trained, expert, master, legendary)
+ * @param downtimeDays - Number of downtime days (0-8)
+ * @param container - Container element for the form
+ * 
+ * Requirements: earned-income-calculation 2.5, 7.3
+ */
+export function updateEarnedIncomeDisplay(
+  characterId: string,
+  taskLevel: number | string,
+  successLevel: string,
+  proficiencyRank: string,
+  downtimeDays: number,
+  container: HTMLElement
+): void {
+  console.log('[PFS Chronicle] updateEarnedIncomeDisplay called:', {
+    characterId,
+    taskLevel,
+    successLevel,
+    proficiencyRank,
+    downtimeDays
+  });
+  
+  const displayElement = container.querySelector(
+    `.member-activity[data-character-id="${characterId}"] .earned-income-value`
+  );
+  
+  const hiddenInput = container.querySelector(
+    `.member-activity[data-character-id="${characterId}"] input[name="characters.${characterId}.earnedIncome"]`
+  ) as HTMLInputElement;
+  
+  console.log('[PFS Chronicle] Display element found:', !!displayElement);
+  
+  if (displayElement) {
+    const earnedIncome = calculateEarnedIncome(taskLevel, successLevel, proficiencyRank, downtimeDays);
+    const formattedValue = formatIncomeValue(earnedIncome);
+    console.log('[PFS Chronicle] Calculated earned income:', earnedIncome, 'formatted:', formattedValue);
+    displayElement.textContent = formattedValue;
+    
+    // Update hidden input field for form submission and validation
+    if (hiddenInput) {
+      hiddenInput.value = earnedIncome.toString();
+      console.log('[PFS Chronicle] Hidden input updated to:', hiddenInput.value);
+    }
+    
+    console.log('[PFS Chronicle] Display element updated to:', displayElement.textContent);
+  } else {
+    console.warn('[PFS Chronicle] Display element not found for character:', characterId);
+  }
+}
+
+/**
+ * Updates earned income displays for all characters.
+ * 
+ * This handler is called when the shared downtime days field changes.
+ * It iterates through all party members and updates their earned income displays
+ * based on their current task level, success level, and proficiency rank.
+ * 
+ * @param downtimeDays - Number of downtime days (0-8)
+ * @param container - Container element for the form
+ * 
+ * Requirements: earned-income-calculation 2.5, 7.3
+ */
+export function updateAllEarnedIncomeDisplays(
+  downtimeDays: number,
+  container: HTMLElement
+): void {
+  console.log('[PFS Chronicle] updateAllEarnedIncomeDisplays called with downtimeDays:', downtimeDays);
+  const memberActivities = container.querySelectorAll('.member-activity');
+  console.log('[PFS Chronicle] Found member activities:', memberActivities.length);
+  
+  memberActivities.forEach((activity) => {
+    const characterId = activity.getAttribute('data-character-id');
+    const taskLevelSelect = activity.querySelector<HTMLSelectElement>('select[name$=".taskLevel"]');
+    const successLevelSelect = activity.querySelector<HTMLSelectElement>('select[name$=".successLevel"]');
+    const proficiencyRankSelect = activity.querySelector<HTMLSelectElement>('select[name$=".proficiencyRank"]');
+    
+    console.log('[PFS Chronicle] Processing character:', characterId, {
+      hasTaskLevel: !!taskLevelSelect,
+      hasSuccessLevel: !!successLevelSelect,
+      hasProficiencyRank: !!proficiencyRankSelect,
+      taskLevelValue: taskLevelSelect?.value,
+      successLevelValue: successLevelSelect?.value,
+      proficiencyRankValue: proficiencyRankSelect?.value
+    });
+    
+    if (characterId && taskLevelSelect && successLevelSelect && proficiencyRankSelect) {
+      const taskLevel = taskLevelSelect.value;
+      const successLevel = successLevelSelect.value;
+      const proficiencyRank = proficiencyRankSelect.value;
+      
+      updateEarnedIncomeDisplay(characterId, taskLevel, successLevel, proficiencyRank, downtimeDays, container);
+    } else {
+      console.warn('[PFS Chronicle] Skipping character due to missing elements:', characterId);
     }
   });
 }
@@ -246,6 +395,9 @@ export async function handleLayoutChange(
  * For treasure bundles and level fields, it also triggers treasure bundle
  * display updates to show the calculated gold values.
  * 
+ * For earned income fields (downtime days, task level, success level, proficiency rank),
+ * it triggers earned income display updates to show the calculated income values.
+ * 
  * For fields in collapsible sections, it updates the section summary text
  * to reflect the new values.
  * 
@@ -254,7 +406,7 @@ export async function handleLayoutChange(
  * @param partyActors - Array of party member actors
  * @param extractFormData - Function to extract form data from the container
  * 
- * Requirements: party-chronicle-filling 5.4, treasure-bundle-calculation 5.3, collapsible-shared-sections 7.1, 7.2, 7.3, 7.4
+ * Requirements: party-chronicle-filling 5.4, treasure-bundle-calculation 5.3, earned-income-calculation 2.5, 7.3, collapsible-shared-sections 7.1, 7.2, 7.3, 7.4
  */
 // eslint-disable-next-line complexity -- Flat field ID checks are clearer than extraction
 export async function handleFieldChange(
@@ -284,6 +436,37 @@ export async function handleFieldChange(
             const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
             const characterLevel = parseInt(input.value, 10);
             updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
+        }
+    }
+    
+    // If downtime days changed, update all earned income displays
+    if (fieldName === 'shared.downtimeDays') {
+        const downtimeDays = parseInt(input.value, 10) || 0;
+        updateAllEarnedIncomeDisplays(downtimeDays, container);
+    }
+    
+    // If a character's task level, success level, or proficiency rank changed, update that character's earned income display
+    if (fieldName && (fieldName.includes('.taskLevel') || fieldName.includes('.successLevel') || fieldName.includes('.proficiencyRank'))) {
+        const match = fieldName.match(/characters\.([^.]+)\./);
+        if (match) {
+            const characterId = match[1];
+            const downtimeDaysInput = container.querySelector<HTMLInputElement>('#downtimeDays');
+            const downtimeDays = parseInt(downtimeDaysInput?.value || '0', 10);
+            
+            const memberActivity = container.querySelector(`.member-activity[data-character-id="${characterId}"]`);
+            if (memberActivity) {
+                const taskLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".taskLevel"]');
+                const successLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".successLevel"]');
+                const proficiencyRankSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".proficiencyRank"]');
+                
+                if (taskLevelSelect && successLevelSelect && proficiencyRankSelect) {
+                    const taskLevel = taskLevelSelect.value;
+                    const successLevel = successLevelSelect.value;
+                    const proficiencyRank = proficiencyRankSelect.value;
+                    
+                    updateEarnedIncomeDisplay(characterId, taskLevel, successLevel, proficiencyRank, downtimeDays, container);
+                }
+            }
         }
     }
     

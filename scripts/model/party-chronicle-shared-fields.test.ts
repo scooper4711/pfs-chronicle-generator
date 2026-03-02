@@ -41,7 +41,8 @@ const sharedFieldsArbitrary = fc.record({
     VS: fc.integer({ min: 0, max: 9 }),
     RO: fc.integer({ min: 0, max: 9 }),
     VW: fc.integer({ min: 0, max: 9 })
-  })
+  }),
+  downtimeDays: fc.integer({ min: 0, max: 8 })
 });
 
 /**
@@ -52,7 +53,13 @@ const uniqueFieldsArbitrary = fc.record({
   characterName: fc.string({ minLength: 1, maxLength: 30 }),
   societyId: fc.string({ minLength: 5, maxLength: 15 }),
   level: fc.integer({ min: 1, max: 20 }),
-  incomeEarned: fc.integer({ min: 0, max: 100 }),
+  taskLevel: fc.oneof(
+    fc.constant('-'),
+    fc.integer({ min: 0, max: 20 })
+  ),
+  successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
+  proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
+  earnedIncome: fc.integer({ min: 0, max: 1000 }),
   goldSpent: fc.integer({ min: 0, max: 1000 }),
   notes: fc.string({ maxLength: 200 }),
 });

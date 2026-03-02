@@ -11,6 +11,7 @@ import fc from 'fast-check';
 import { PartyChronicleData, UniqueFields } from './party-chronicle-types';
 import { mapToCharacterData } from './party-chronicle-mapper';
 import { calculateTreasureBundlesGp, calculateGpGained } from '../utils/treasure-bundle-calculator';
+import { calculateEarnedIncome } from '../utils/earned-income-calculator';
 
 /**
  * Generator for unique field values
@@ -20,7 +21,13 @@ const uniqueFieldsArbitrary = fc.record({
   characterName: fc.string({ minLength: 1, maxLength: 30 }),
   societyId: fc.string({ minLength: 5, maxLength: 15 }),
   level: fc.integer({ min: 1, max: 20 }),
-  incomeEarned: fc.integer({ min: 0, max: 100 }),
+  taskLevel: fc.oneof(
+    fc.constant('-'),
+    fc.integer({ min: 0, max: 20 })
+  ),
+  successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
+  proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
+  earnedIncome: fc.integer({ min: 0, max: 1000 }),
   goldSpent: fc.integer({ min: 0, max: 1000 }),
   notes: fc.string({ maxLength: 200 })
 });
@@ -55,7 +62,8 @@ const sharedFieldsArbitrary = fc.record({
     VS: fc.integer({ min: 0, max: 9 }),
     RO: fc.integer({ min: 0, max: 9 }),
     VW: fc.integer({ min: 0, max: 9 })
-  })
+  }),
+  downtimeDays: fc.integer({ min: 0, max: 8 })
 });
 
 /**
@@ -113,15 +121,23 @@ describe('Party Chronicle Unique Field Property Tests', () => {
 
             // Property: Each character's chronicle data should contain only their unique fields
             chronicleDataList.forEach(({ actorId, unique, chronicleData }) => {
+              // Calculate expected earned income based on task level, success level, proficiency rank, and downtime days
+              const expectedEarnedIncome = calculateEarnedIncome(
+                unique.taskLevel,
+                unique.successLevel,
+                unique.proficiencyRank,
+                shared.downtimeDays
+              );
+              
               // Calculate expected gold values
               const expectedTreasureBundlesGp = calculateTreasureBundlesGp(shared.treasureBundles, unique.level);
-              const expectedGpGained = calculateGpGained(expectedTreasureBundlesGp, unique.incomeEarned);
+              const expectedGpGained = calculateGpGained(expectedTreasureBundlesGp, expectedEarnedIncome);
               
               // Verify character-specific fields match this character's unique data
               expect(chronicleData.char).toBe(unique.characterName);
               expect(chronicleData.societyid).toBe(unique.societyId);
               expect(chronicleData.level).toBe(unique.level);
-              expect(chronicleData.income_earned).toBe(unique.incomeEarned);
+              expect(chronicleData.income_earned).toBe(expectedEarnedIncome);
               expect(chronicleData.gp_gained).toBe(expectedGpGained);
               expect(chronicleData.gp_spent).toBe(unique.goldSpent);
               expect(chronicleData.notes).toBe(unique.notes);
@@ -129,9 +145,17 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               // Property: Verify this character's data does NOT contain other characters' unique values
               const otherCharacters = characterPairs.filter(([id]) => id !== actorId);
               otherCharacters.forEach(([_, otherUnique]) => {
+                // Calculate expected earned income for other character
+                const otherExpectedEarnedIncome = calculateEarnedIncome(
+                  otherUnique.taskLevel,
+                  otherUnique.successLevel,
+                  otherUnique.proficiencyRank,
+                  shared.downtimeDays
+                );
+                
                 // Calculate expected values for other character
                 const otherExpectedTreasureBundlesGp = calculateTreasureBundlesGp(shared.treasureBundles, otherUnique.level);
-                const otherExpectedGpGained = calculateGpGained(otherExpectedTreasureBundlesGp, otherUnique.incomeEarned);
+                const otherExpectedGpGained = calculateGpGained(otherExpectedTreasureBundlesGp, otherExpectedEarnedIncome);
                 
                 // If the values are different, ensure they don't leak
                 if (otherUnique.characterName !== unique.characterName) {
@@ -143,8 +167,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 if (otherUnique.level !== unique.level) {
                   expect(chronicleData.level).not.toBe(otherUnique.level);
                 }
-                if (otherUnique.incomeEarned !== unique.incomeEarned) {
-                  expect(chronicleData.income_earned).not.toBe(otherUnique.incomeEarned);
+                if (otherExpectedEarnedIncome !== expectedEarnedIncome) {
+                  expect(chronicleData.income_earned).not.toBe(otherExpectedEarnedIncome);
                 }
                 if (expectedGpGained !== otherExpectedGpGained) {
                   expect(chronicleData.gp_gained).not.toBe(otherExpectedGpGained);
@@ -217,15 +241,23 @@ describe('Party Chronicle Unique Field Property Tests', () => {
 
             const chronicleData = mapToCharacterData(shared, unique, createMockActor(actorId, 'EA'));
 
+            // Calculate expected earned income based on task level, success level, proficiency rank, and downtime days
+            const expectedEarnedIncome = calculateEarnedIncome(
+              unique.taskLevel,
+              unique.successLevel,
+              unique.proficiencyRank,
+              shared.downtimeDays
+            );
+            
             // Calculate expected gold values
             const expectedTreasureBundlesGp = calculateTreasureBundlesGp(shared.treasureBundles, unique.level);
-            const expectedGpGained = calculateGpGained(expectedTreasureBundlesGp, unique.incomeEarned);
+            const expectedGpGained = calculateGpGained(expectedTreasureBundlesGp, expectedEarnedIncome);
 
             // Property: Single character's unique fields are correctly applied
             expect(chronicleData.char).toBe(unique.characterName);
             expect(chronicleData.societyid).toBe(unique.societyId);
             expect(chronicleData.level).toBe(unique.level);
-            expect(chronicleData.income_earned).toBe(unique.incomeEarned);
+            expect(chronicleData.income_earned).toBe(expectedEarnedIncome);
             expect(chronicleData.gp_gained).toBe(expectedGpGained);
             expect(chronicleData.gp_spent).toBe(unique.goldSpent);
             expect(chronicleData.notes).toBe(unique.notes);
@@ -302,7 +334,10 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 characterName: `Character ${actorId.substring(0, 8)}`,
                 societyId: `${Math.floor(Math.random() * 900000 + 100000)}-${Math.floor(Math.random() * 9000 + 1000)}`,
                 level: Math.floor(Math.random() * 20) + 1,
-                incomeEarned: Math.floor(Math.random() * 100),
+                taskLevel: Math.floor(Math.random() * 20),
+                successLevel: 'success',
+                proficiencyRank: 'trained',
+                earnedIncome: Math.floor(Math.random() * 100),
                 goldSpent: Math.floor(Math.random() * 1000),
                 notes: `Notes for ${actorId.substring(0, 8)}`
               };
@@ -319,7 +354,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               expect(partyData.characters[actorId]).toHaveProperty('characterName');
               expect(partyData.characters[actorId]).toHaveProperty('societyId');
               expect(partyData.characters[actorId]).toHaveProperty('level');
-              expect(partyData.characters[actorId]).toHaveProperty('incomeEarned');
+              expect(partyData.characters[actorId]).toHaveProperty('earnedIncome');
               expect(partyData.characters[actorId]).toHaveProperty('goldSpent');
               expect(partyData.characters[actorId]).toHaveProperty('notes');
             });
@@ -368,7 +403,10 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 characterName: `Character ${index + 1}`,
                 societyId: `${100000 + index}-${1000 + index}`,
                 level: (index % 20) + 1,
-                incomeEarned: index * 10,
+                taskLevel: (index % 20),
+                successLevel: 'success',
+                proficiencyRank: 'trained',
+                earnedIncome: index * 10,
                 goldSpent: index * 50,
                 notes: `Notes ${index + 1}`
               };
@@ -404,7 +442,10 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 characterName: `Character ${actorId.substring(0, 8)}`,
                 societyId: `123456-${actorId.substring(0, 4)}`,
                 level: 5,
-                incomeEarned: 10,
+                taskLevel: 3,
+                successLevel: 'success',
+                proficiencyRank: 'trained',
+                earnedIncome: 10,
                 goldSpent: 20,
                 notes: 'Test notes'
               };
@@ -465,7 +506,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               'characterName',
               'societyId',
               'level',
-              'incomeEarned',
+              'earnedIncome',
               'goldSpent',
               'notes'
             ];

@@ -119,7 +119,7 @@
 }
 
 .sheet.party [data-tab=pfs] .sidebar .form-group {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .sheet.party [data-tab=pfs] .sidebar .form-group label {
@@ -136,6 +136,24 @@
     font-size: var(--font-size-12);
     padding: 0.25rem;
     /* Override Foundry's flex: 3 on form-group children */
+    flex: none;
+}
+
+/* Downtime Days Value display styling - read-only calculated field */
+/* Requirements: earned-income-calculation 7.1, 7.2 */
+.sheet.party [data-tab=pfs] .sidebar .downtime-days-value {
+    padding: 2px 3px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: var(--font-size-12);
+    line-height: normal;
+    color: #333;
+    text-align: right;
+    width: 55%;
+    max-width: 280px;
+    box-sizing: border-box;
     flex: none;
 }
 
@@ -291,6 +309,40 @@
     box-sizing: border-box;
 }
 
+/* Earned Income Section styling */
+/* Requirements: earned-income-calculation 7.1, 7.2 */
+.sheet.party [data-tab=pfs] .activities .member-activity .earned-income-section {
+    display: contents; /* Remove visual container, keep logical grouping */
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .earned-income-section h4 {
+    display: none; /* Hide the "Earned Income" heading */
+}
+
+/* Earned Income Value display styling - read-only calculated field */
+.sheet.party [data-tab=pfs] .activities .member-activity .earned-income-value {
+    padding: 0.25rem 0.5rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: var(--font-size-12);
+    color: #333;
+    text-align: right;
+    min-width: 80px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Help text styling - explanatory text for form fields */
+.sheet.party [data-tab=pfs] .activities .member-activity .help-text {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: #666;
+    font-style: italic;
+}
+
 /* Conditional Chronicle Path Visibility */
 .sheet.party [data-tab=pfs] .sidebar #chroniclePathGroup:not(.chronicle-path-visible) {
     display: none;
@@ -402,4 +454,17 @@
 /* Hide Items to Strike Out section when it has no strikeout items */
 .sheet.party [data-tab=pfs] .sidebar .collapsible-section[data-section-id="items-to-strike-out"]:has(.strikeout-choices:empty) {
     display: none;
+}
+
+/* Task Level help icon styling - uses Foundry's built-in tooltip system */
+.sheet.party [data-tab=pfs] .activities .member-activity .form-group label .fa-question-circle {
+  margin-left: 4px;
+  font-size: 0.85em;
+  color: var(--color-text-dark-secondary);
+  cursor: help;
+  vertical-align: middle;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .form-group label .fa-question-circle:hover {
+  color: var(--color-text-dark-primary);
 }

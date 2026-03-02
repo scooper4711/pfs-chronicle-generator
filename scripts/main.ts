@@ -1,11 +1,12 @@
 import { layoutStore } from './LayoutStore.js';
 import { LayoutDesignerApp } from './LayoutDesignerApp.js';
 import { PartyChronicleApp } from './PartyChronicleApp.js';
-import { clearPartyChronicleData } from './model/party-chronicle-storage.js';
+import { clearPartyChronicleData, savePartyChronicleData } from './model/party-chronicle-storage.js';
 import { generateChronicleFilename } from './utils/filename-utils.js';
 import { updateLayoutSpecificFields } from './utils/layout-utils.js';
 import { updateValidationDisplay } from './handlers/validation-display.js';
 import { PartyChronicleContext } from './model/party-chronicle-types.js';
+import { calculateTaskLevelOptions, calculateDowntimeDays } from './utils/earned-income-calculator.js';
 import { 
     handlePortraitClick, 
     handleSeasonChange, 
@@ -16,7 +17,10 @@ import {
     generateChroniclesFromPartyData,
     updateAllTreasureBundleDisplays,
     updateTreasureBundleDisplay,
-    handleChroniclePathFilePicker
+    handleChroniclePathFilePicker,
+    updateAllEarnedIncomeDisplays,
+    updateEarnedIncomeDisplay,
+    updateDowntimeDaysDisplay
 } from './handlers/party-chronicle-handlers.js';
 import {
     handleSectionHeaderClick,
@@ -84,6 +88,22 @@ Hooks.on('init', async () => {
   game.modules.get('pfs-chronicle-generator').api = {
     LayoutDesignerApp
   };
+  
+  // Register Handlebars helper for task level options
+  // Requirements: earned-income-calculation 1.1, 1.2, 1.4, 1.5, 1.8, 1.9
+  Handlebars.registerHelper('calculateTaskLevelOptions', function(characterLevel: number, savedTaskLevel: any) {
+    console.log('[PFS Chronicle] calculateTaskLevelOptions called with level:', characterLevel, 'savedTaskLevel:', savedTaskLevel, 'types:', typeof characterLevel, typeof savedTaskLevel);
+    const options = calculateTaskLevelOptions(characterLevel);
+    
+    // Mark the saved option as selected
+    const optionsWithSelected = options.map(opt => ({
+      ...opt,
+      selected: opt.value === savedTaskLevel || (typeof opt.value === 'number' && opt.value === Number(savedTaskLevel))
+    }));
+    
+    console.log('[PFS Chronicle] calculateTaskLevelOptions returned:', optionsWithSelected);
+    return optionsWithSelected;
+  });
 });
 
 // Hidden settings registered and initialized on ready
@@ -309,6 +329,114 @@ function attachEventListeners(
         });
     });
     
+    // XP Earned dropdown change handler for reactive downtime days display updates
+    // Requirements: earned-income-calculation 2.4, 2.5, 7.3
+    const xpEarnedSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
+    xpEarnedSelect?.addEventListener('change', (event: Event) => {
+        const select = event.target as HTMLSelectElement;
+        const xpEarned = parseInt(select.value, 10) || 0;
+        updateDowntimeDaysDisplay(xpEarned, container);
+    });
+    
+    // Treasure Bundles dropdown change handler for reactive downtime days display updates
+    // (needed for Series 1 Quest detection: 1 XP + 2.5 TB = 2 downtime days)
+    // Requirements: earned-income-calculation 2.4, 2.5, 7.3
+    treasureBundlesSelect?.addEventListener('change', (event: Event) => {
+        const xpEarnedSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
+        const xpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
+        updateDowntimeDaysDisplay(xpEarned, container);
+    });
+    
+    // Downtime days dropdown change handler for reactive earned income display updates
+    // Requirements: earned-income-calculation 7.3
+    const downtimeDaysSelect = container.querySelector<HTMLSelectElement>('#downtimeDays');
+    downtimeDaysSelect?.addEventListener('change', (event: Event) => {
+        const select = event.target as HTMLSelectElement;
+        const downtimeDays = parseInt(select.value, 10) || 1;
+        updateAllEarnedIncomeDisplays(downtimeDays, container);
+    });
+    
+    // Task level dropdown change handlers for reactive earned income display updates
+    // Requirements: earned-income-calculation 7.3
+    const taskLevelSelects = container.querySelectorAll<HTMLSelectElement>('select[name$=".taskLevel"]');
+    taskLevelSelects.forEach((select) => {
+        select.addEventListener('change', (event: Event) => {
+            const selectElement = event.target as HTMLSelectElement;
+            const match = selectElement.name.match(/characters\.([^.]+)\.taskLevel/);
+            
+            if (match) {
+                const characterId = match[1];
+                // Calculate downtime days based on XP and treasure bundles
+                const xpEarnedSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
+                const xpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
+                const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+                const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
+                const downtimeDays = calculateDowntimeDays(xpEarned, treasureBundles);
+                const taskLevel = selectElement.value === '-' ? '-' : parseInt(selectElement.value, 10);
+                const successLevelSelect = container.querySelector<HTMLSelectElement>(`select[name="characters.${characterId}.successLevel"]`);
+                const successLevel = successLevelSelect?.value || 'success';
+                const proficiencyRankSelect = container.querySelector<HTMLSelectElement>(`select[name="characters.${characterId}.proficiencyRank"]`);
+                const proficiencyRank = proficiencyRankSelect?.value || 'trained';
+                
+                updateEarnedIncomeDisplay(characterId, taskLevel, successLevel, proficiencyRank, downtimeDays, container);
+            }
+        });
+    });
+    
+    // Success level dropdown change handlers for reactive earned income display updates
+    // Requirements: earned-income-calculation 7.3
+    const successLevelSelects = container.querySelectorAll<HTMLSelectElement>('select[name$=".successLevel"]');
+    successLevelSelects.forEach((select) => {
+        select.addEventListener('change', (event: Event) => {
+            const selectElement = event.target as HTMLSelectElement;
+            const match = selectElement.name.match(/characters\.([^.]+)\.successLevel/);
+            
+            if (match) {
+                const characterId = match[1];
+                // Calculate downtime days based on XP and treasure bundles
+                const xpEarnedSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
+                const xpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
+                const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+                const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
+                const downtimeDays = calculateDowntimeDays(xpEarned, treasureBundles);
+                const taskLevelSelect = container.querySelector<HTMLSelectElement>(`select[name="characters.${characterId}.taskLevel"]`);
+                const taskLevel = taskLevelSelect?.value === '-' ? '-' : parseInt(taskLevelSelect?.value || '0', 10);
+                const successLevel = selectElement.value;
+                const proficiencyRankSelect = container.querySelector<HTMLSelectElement>(`select[name="characters.${characterId}.proficiencyRank"]`);
+                const proficiencyRank = proficiencyRankSelect?.value || 'trained';
+                
+                updateEarnedIncomeDisplay(characterId, taskLevel, successLevel, proficiencyRank, downtimeDays, container);
+            }
+        });
+    });
+    
+    // Proficiency rank dropdown change handlers for reactive earned income display updates
+    // Requirements: earned-income-calculation 7.3
+    const proficiencyRankSelects = container.querySelectorAll<HTMLSelectElement>('select[name$=".proficiencyRank"]');
+    proficiencyRankSelects.forEach((select) => {
+        select.addEventListener('change', (event: Event) => {
+            const selectElement = event.target as HTMLSelectElement;
+            const match = selectElement.name.match(/characters\.([^.]+)\.proficiencyRank/);
+            
+            if (match) {
+                const characterId = match[1];
+                // Calculate downtime days based on XP and treasure bundles
+                const xpEarnedSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
+                const xpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
+                const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+                const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
+                const downtimeDays = calculateDowntimeDays(xpEarned, treasureBundles);
+                const taskLevelSelect = container.querySelector<HTMLSelectElement>(`select[name="characters.${characterId}.taskLevel"]`);
+                const taskLevel = taskLevelSelect?.value === '-' ? '-' : parseInt(taskLevelSelect?.value || '0', 10);
+                const successLevelSelect = container.querySelector<HTMLSelectElement>(`select[name="characters.${characterId}.successLevel"]`);
+                const successLevel = successLevelSelect?.value || 'success';
+                const proficiencyRank = selectElement.value;
+                
+                updateEarnedIncomeDisplay(characterId, taskLevel, successLevel, proficiencyRank, downtimeDays, container);
+            }
+        });
+    });
+    
     // Save button handler
     const saveButton = container.querySelector('#saveData');
     saveButton?.addEventListener('click', async (event: Event) => {
@@ -330,8 +458,90 @@ function attachEventListeners(
         });
 
         if (confirmed) {
+            // Get current values to preserve
+            const gmPfsNumber = (container.querySelector('#gmPfsNumber') as HTMLInputElement)?.value || '';
+            const scenarioName = (container.querySelector('#scenarioName') as HTMLInputElement)?.value || '';
+            const eventCode = (container.querySelector('#eventCode') as HTMLInputElement)?.value || '';
+            const chroniclePath = (container.querySelector('#chroniclePath') as HTMLInputElement)?.value || '';
+            const seasonSelect = container.querySelector('#season') as HTMLSelectElement;
+            const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
+            const seasonId = seasonSelect?.value || '';
+            const layoutId = layoutSelect?.value || '';
+            
+            // Determine adventure type based on scenario name (case-insensitive)
+            const scenarioNameLower = scenarioName.toLowerCase();
+            const isBounty = scenarioNameLower.includes('bounty');
+            const isQuest = scenarioNameLower.includes('quest');
+            
+            // Set smart defaults based on adventure type
+            // Bounty: 1 XP, Quest: 2 XP, Scenario: 4 XP (default)
+            const defaultXp = isBounty ? 1 : (isQuest ? 2 : 4);
+            const defaultTreasureBundles = isBounty ? 2 : (isQuest ? 4 : 8);
+            const defaultDowntimeDays = isBounty ? 0 : (isQuest ? 4 : 8);
+            const defaultChosenFactionRep = isBounty ? 1 : (isQuest ? 2 : 4);
+            
+            // Clear all data first
             await clearPartyChronicleData();
-            ui.notifications?.info('Chronicle data cleared');
+            
+            // Create new data with preserved values and smart defaults
+            const newData: any = {
+                shared: {
+                    gmPfsNumber,
+                    scenarioName,
+                    eventCode,
+                    eventDate: '',
+                    xpEarned: defaultXp,
+                    treasureBundles: defaultTreasureBundles,
+                    downtimeDays: defaultDowntimeDays,
+                    layoutId,
+                    seasonId,
+                    blankChroniclePath: chroniclePath,
+                    adventureSummaryCheckboxes: [],
+                    strikeoutItems: [],
+                    chosenFactionReputation: defaultChosenFactionRep,
+                    reputationValues: {
+                        EA: 0,
+                        GA: 0,
+                        HH: 0,
+                        VS: 0,
+                        RO: 0,
+                        VW: 0
+                    }
+                },
+                characters: {}
+            };
+            
+            // Set default earned income values for each character
+            partyActors.forEach((actor: any) => {
+                if (actor?.id) {
+                    const characterLevel = actor.system?.details?.level?.value || 1;
+                    const defaultTaskLevel = Math.max(0, characterLevel - 2);
+                    
+                    console.log('[PFS Chronicle] Setting defaults for character:', actor.name, {
+                        characterLevel,
+                        defaultTaskLevel
+                    });
+                    
+                    newData.characters[actor.id] = {
+                        characterName: actor.name || '',
+                        societyId: '',
+                        level: characterLevel,
+                        taskLevel: defaultTaskLevel,
+                        successLevel: 'success',
+                        proficiencyRank: 'trained',
+                        earnedIncome: 0,
+                        goldSpent: 0,
+                        notes: ''
+                    };
+                }
+            });
+            
+            // Save the new data with defaults
+            console.log('[PFS Chronicle] Saving new data with defaults:', newData);
+            await savePartyChronicleData(newData);
+            
+            ui.notifications?.info('Chronicle data cleared and defaults set');
+            console.log('[PFS Chronicle] Re-rendering form after clear');
             await renderPartyChronicleForm(container, partyActors, partySheet);
         }
     });
@@ -399,6 +609,20 @@ async function initializeForm(
     const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
     const initialTreasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
     updateAllTreasureBundleDisplays(initialTreasureBundles, container);
+    
+    // Initialize downtime days display based on XP earned
+    // Requirements: earned-income-calculation 2.4, 2.5, 7.3
+    const xpEarnedSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
+    const initialXpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
+    updateDowntimeDaysDisplay(initialXpEarned, container);
+    
+    // Initialize earned income displays on initial render
+    // Requirements: earned-income-calculation 7.3
+    console.log('[PFS Chronicle] Initializing earned income displays...');
+    const downtimeDaysSelect = container.querySelector<HTMLSelectElement>('#downtimeDays');
+    const initialDowntimeDays = parseInt(downtimeDaysSelect?.value || '1', 10);
+    console.log('[PFS Chronicle] Initial downtime days:', initialDowntimeDays, 'from select:', downtimeDaysSelect?.value);
+    updateAllEarnedIncomeDisplays(initialDowntimeDays, container);
     
     // Initialize collapsible sections
     initializeCollapseSections(container);

@@ -10,6 +10,7 @@
 import { SharedFields, UniqueFields } from './party-chronicle-types.js';
 import { calculateReputation } from './reputation-calculator.js';
 import { calculateTreasureBundlesGp, calculateGpGained } from '../utils/treasure-bundle-calculator.js';
+import { calculateEarnedIncome } from '../utils/earned-income-calculator.js';
 
 /**
  * Chronicle data format expected by PdfGenerator
@@ -94,13 +95,21 @@ export interface ChronicleData {
  * // chronicleData.reputation is ["Envoy's Alliance: +4", "Grand Archive: +1"]
  * ```
  * 
- * Validates: Requirements party-chronicle-filling 5.1, 5.2, 5.3, 5.5, treasure-bundle-calculation 8.1, 8.2, 8.3, 8.4, 8.5, multi-line-reputation-tracking 5.1, 5.2
+ * Validates: Requirements party-chronicle-filling 5.1, 5.2, 5.3, 5.5, treasure-bundle-calculation 8.1, 8.2, 8.3, 8.4, 8.5, multi-line-reputation-tracking 5.1, 5.2, earned-income-calculation 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 12.1, 12.2, 12.3
  */
 export function mapToCharacterData(
   shared: SharedFields,
   unique: UniqueFields,
   actor: any
 ): ChronicleData {
+  // Calculate earned income based on inputs
+  const incomeEarned = calculateEarnedIncome(
+    unique.taskLevel,
+    unique.successLevel,
+    unique.proficiencyRank,
+    shared.downtimeDays
+  );
+  
   // Calculate treasure bundle gold based on character level
   const treasureBundlesGp = calculateTreasureBundlesGp(
     shared.treasureBundles,
@@ -108,7 +117,7 @@ export function mapToCharacterData(
   );
   
   // Calculate total gold gained
-  const gpGained = calculateGpGained(treasureBundlesGp, unique.incomeEarned);
+  const gpGained = calculateGpGained(treasureBundlesGp, incomeEarned);
   
   // Calculate reputation using the reputation calculator
   const reputationLines = calculateReputation(shared, actor);
@@ -129,7 +138,7 @@ export function mapToCharacterData(
     xp_gained: shared.xpEarned,
     
     // Character-specific rewards - calculated values
-    income_earned: unique.incomeEarned,
+    income_earned: incomeEarned,
     treasure_bundles_gp: treasureBundlesGp,
     gp_gained: gpGained,
     gp_spent: unique.goldSpent,

@@ -4,7 +4,7 @@
  * This module handles extraction of form data from the party chronicle form.
  * It reads all form fields and constructs structured data objects.
  * 
- * Requirements: party-chronicle-filling 4.5, multi-line-reputation-tracking 1.2, 1.3, 4.1, 4.2
+ * Requirements: party-chronicle-filling 4.5, multi-line-reputation-tracking 1.2, 1.3, 4.1, 4.2, earned-income-calculation 10.1, 10.2, 10.3, 10.4, 10.5, 10.6
  */
 
 /**
@@ -26,7 +26,7 @@
  * @param partyActors - Array of party member actors
  * @returns Structured form data object with shared and character-specific fields
  * 
- * Requirements: party-chronicle-filling 4.5, multi-line-reputation-tracking 1.2, 1.3, 4.1, 4.2
+ * Requirements: party-chronicle-filling 4.5, multi-line-reputation-tracking 1.2, 1.3, 4.1, 4.2, earned-income-calculation 10.1, 10.2, 10.3, 10.4, 10.5, 10.6
  */
 // eslint-disable-next-line complexity
 export function extractFormData(container: HTMLElement, partyActors: any[]): any {
@@ -38,6 +38,7 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
         eventDate: (container.querySelector('#eventDate') as HTMLInputElement)?.value || '',
         xpEarned: parseInt((container.querySelector('#xpEarned') as HTMLInputElement)?.value) || 0,
         treasureBundles: parseInt((container.querySelector('#treasureBundles') as HTMLInputElement)?.value) || 0,
+        downtimeDays: parseInt((container.querySelector('#downtimeDays') as HTMLInputElement)?.value) || 0,
         layoutId: (container.querySelector('#layout') as HTMLSelectElement)?.value || '',
         seasonId: (container.querySelector('#season') as HTMLSelectElement)?.value || '',
         blankChroniclePath: (container.querySelector('#blankChroniclePath') as HTMLInputElement)?.value || '',
@@ -62,13 +63,23 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
     const characters: any = {};
     partyActors.forEach((actor: any) => {
         const actorId = actor.id;
+        
+        // Get task level value (can be "-" or a number)
+        const taskLevelSelect = container.querySelector(`select[name="characters.${actorId}.taskLevel"]`) as HTMLSelectElement;
+        const taskLevelValue = taskLevelSelect?.value || '-';
+        const taskLevel = taskLevelValue === '-' ? '-' : parseInt(taskLevelValue, 10);
+        
         characters[actorId] = {
             // Read from hidden fields (non-editable)
             characterName: (container.querySelector(`input[name="characters.${actorId}.characterName"]`) as HTMLInputElement)?.value || actor.name,
             societyId: (container.querySelector(`input[name="characters.${actorId}.societyId"]`) as HTMLInputElement)?.value || '',
             level: parseInt((container.querySelector(`input[name="characters.${actorId}.level"]`) as HTMLInputElement)?.value) || actor.level || 1,
+            // Read earned income input fields
+            taskLevel: taskLevel,
+            successLevel: (container.querySelector(`select[name="characters.${actorId}.successLevel"]`) as HTMLSelectElement)?.value || 'success',
+            proficiencyRank: (container.querySelector(`select[name="characters.${actorId}.proficiencyRank"]`) as HTMLSelectElement)?.value || 'trained',
+            earnedIncome: parseFloat((container.querySelector(`input[name="characters.${actorId}.earnedIncome"]`) as HTMLInputElement)?.value) || 0,
             // Read from visible editable fields
-            incomeEarned: parseFloat((container.querySelector(`#incomeEarned-${actorId}`) as HTMLInputElement)?.value) || 0,
             goldSpent: parseFloat((container.querySelector(`#goldSpent-${actorId}`) as HTMLInputElement)?.value) || 0,
             notes: (container.querySelector(`#notes-${actorId}`) as HTMLTextAreaElement)?.value || '',
         };

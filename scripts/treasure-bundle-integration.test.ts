@@ -14,6 +14,7 @@ import { mapToCharacterData } from './model/party-chronicle-mapper';
 import { SharedFields, UniqueFields } from './model/party-chronicle-types';
 import { createSharedFields, createUniqueFields, createMockActor } from './model/test-helpers';
 import { calculateTreasureBundlesGp, calculateGpGained } from './utils/treasure-bundle-calculator';
+import { calculateEarnedIncome } from './utils/earned-income-calculator';
 
 describe('Treasure Bundle Calculation - Integration Tests', () => {
   describe('Complete Workflow: Enter treasure bundles → Calculate values → Generate PDFs', () => {
@@ -36,7 +37,6 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
         const unique = createUniqueFields({
           characterName: name,
           level,
-          incomeEarned: 10
         });
 
         const actor = createMockActor(`actor-${level}`, 'EA');
@@ -47,11 +47,12 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
         
         // Verify gp_gained includes both treasure bundles and income earned
         // Requirement 3.1, 3.2, 3.3: Calculate total gold gained
-        const expectedGpGained = expectedTreasureBundlesGp + 10;
+        // With task level 3, success, trained, 8 downtime days: 0.5 * 8 = 4 gp
+        const expectedGpGained = expectedTreasureBundlesGp + 4;
         expect(result.gp_gained).toBe(expectedGpGained);
         
-        // Verify income_earned is preserved
-        expect(result.income_earned).toBe(10);
+        // Verify income_earned is calculated correctly
+        expect(result.income_earned).toBe(4);
       });
     });
 
@@ -63,7 +64,6 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
 
       const unique = createUniqueFields({
         level: 5,
-        incomeEarned: 15
       });
 
       const actor = createMockActor('actor-1', 'EA');
@@ -73,15 +73,16 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       expect(result.treasure_bundles_gp).toBe(0);
       
       // gp_gained should equal income_earned when treasure bundles is 0
-      // Requirement 3.4: When both are 0, pass 0 as gp_gained
-      expect(result.gp_gained).toBe(15);
-      expect(result.income_earned).toBe(15);
+      // With task level 3, success, trained, 8 downtime days: 0.5 * 8 = 4 gp
+      expect(result.gp_gained).toBe(4);
+      expect(result.income_earned).toBe(4);
     });
 
     it('should handle maximum treasure bundles (10) correctly', () => {
       // Test with maximum treasure bundles
       const shared = createSharedFields({
-        treasureBundles: 10
+        treasureBundles: 10,
+        downtimeDays: 0
       });
 
       const testCases = [
@@ -93,7 +94,6 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       testCases.forEach(({ level, expectedTreasureBundlesGp }) => {
         const unique = createUniqueFields({
           level,
-          incomeEarned: 0
         });
 
         const actor = createMockActor(`actor-${level}`, 'EA');
@@ -111,24 +111,31 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       });
 
       const testCases = [
-        { level: 5, incomeEarned: 0, expectedTreasureBundlesGp: 20, expectedGpGained: 20 },
-        { level: 5, incomeEarned: 10, expectedTreasureBundlesGp: 20, expectedGpGained: 30 },
-        { level: 5, incomeEarned: 25.5, expectedTreasureBundlesGp: 20, expectedGpGained: 45.5 },
-        { level: 10, incomeEarned: 50, expectedTreasureBundlesGp: 120, expectedGpGained: 170 }
+        { level: 5, taskLevel: '-', successLevel: 'success', proficiencyRank: 'trained', downtimeDays: 0, expectedIncomeEarned: 0, expectedTreasureBundlesGp: 20, expectedGpGained: 20 },
+        { level: 5, taskLevel: 3, successLevel: 'success', proficiencyRank: 'trained', downtimeDays: 4, expectedIncomeEarned: 2, expectedTreasureBundlesGp: 20, expectedGpGained: 22 },
+        { level: 5, taskLevel: 3, successLevel: 'critical_success', proficiencyRank: 'expert', downtimeDays: 8, expectedIncomeEarned: 8, expectedTreasureBundlesGp: 20, expectedGpGained: 28 },
+        { level: 10, taskLevel: 8, successLevel: 'success', proficiencyRank: 'master', downtimeDays: 8, expectedIncomeEarned: 24, expectedTreasureBundlesGp: 120, expectedGpGained: 144 }
       ];
 
-      testCases.forEach(({ level, incomeEarned, expectedTreasureBundlesGp, expectedGpGained }) => {
+      testCases.forEach(({ level, taskLevel, successLevel, proficiencyRank, downtimeDays, expectedIncomeEarned, expectedTreasureBundlesGp, expectedGpGained }) => {
+        const sharedWithDowntime = createSharedFields({
+          treasureBundles: 2,
+          downtimeDays
+        });
+        
         const unique = createUniqueFields({
           level,
-          incomeEarned
+          taskLevel,
+          successLevel,
+          proficiencyRank
         });
 
-        const actor = createMockActor(`actor-${level}-${incomeEarned}`, 'EA');
-        const result = mapToCharacterData(shared, unique, actor);
+        const actor = createMockActor(`actor-${level}-${taskLevel}`, 'EA');
+        const result = mapToCharacterData(sharedWithDowntime, unique, actor);
 
         expect(result.treasure_bundles_gp).toBe(expectedTreasureBundlesGp);
-        expect(result.gp_gained).toBe(expectedGpGained);
-        expect(result.income_earned).toBe(incomeEarned);
+        expect(result.income_earned).toBeCloseTo(expectedIncomeEarned, 2);
+        expect(result.gp_gained).toBeCloseTo(expectedGpGained, 2);
       });
     });
 
@@ -140,7 +147,6 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
 
       const unique = createUniqueFields({
         level: 5,
-        incomeEarned: 10
       });
 
       const actor = createMockActor('actor-1', 'EA');
@@ -173,34 +179,33 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       // Level 1: 1.4 gp per bundle, 3 × 1.4 = 4.2
       const unique1 = createUniqueFields({
         level: 1,
-        incomeEarned: 5.55
       });
 
       const actor1 = createMockActor('actor-1', 'EA');
       const result1 = mapToCharacterData(shared, unique1, actor1);
 
       expect(result1.treasure_bundles_gp).toBe(4.2);
-      // 4.2 + 5.55 = 9.75
-      expect(result1.gp_gained).toBe(9.75);
+      // 4.2 + 4 (earned income) = 8.2
+      expect(result1.gp_gained).toBe(8.2);
 
       // Level 2: 2.2 gp per bundle, 3 × 2.2 = 6.6
       const unique2 = createUniqueFields({
         level: 2,
-        incomeEarned: 10.444
       });
 
       const actor2 = createMockActor('actor-2', 'EA');
       const result2 = mapToCharacterData(shared, unique2, actor2);
 
       expect(result2.treasure_bundles_gp).toBe(6.6);
-      // 6.6 + 10.444 = 17.044, rounded to 17.04
-      expect(result2.gp_gained).toBe(17.04);
+      // 6.6 + 4 (earned income) = 10.6
+      expect(result2.gp_gained).toBe(10.6);
     });
 
     it('should handle all character levels 1-20 correctly', () => {
       // Requirement 2.4: For all character levels 1-20, use correct treasure bundle value
       const shared = createSharedFields({
-        treasureBundles: 1
+        treasureBundles: 1,
+        downtimeDays: 0
       });
 
       const expectedValues = [
@@ -229,7 +234,6 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       expectedValues.forEach(({ level, value }) => {
         const unique = createUniqueFields({
           level,
-          incomeEarned: 0
         });
 
         const actor = createMockActor(`actor-${level}`, 'EA');
@@ -250,36 +254,44 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       });
 
       const partyMembers = [
-        { level: 3, incomeEarned: 5, expectedTreasureBundlesGp: 15.2, expectedGpGained: 20.2 },
-        { level: 4, incomeEarned: 0, expectedTreasureBundlesGp: 25.6, expectedGpGained: 25.6 },
-        { level: 5, incomeEarned: 10, expectedTreasureBundlesGp: 40, expectedGpGained: 50 },
-        { level: 5, incomeEarned: 8, expectedTreasureBundlesGp: 40, expectedGpGained: 48 }
+        { level: 3, taskLevel: 1, successLevel: 'success', proficiencyRank: 'trained', downtimeDays: 4, expectedIncomeEarned: 0.8, expectedTreasureBundlesGp: 15.2, expectedGpGained: 16 },
+        { level: 4, taskLevel: '-', successLevel: 'success', proficiencyRank: 'trained', downtimeDays: 4, expectedIncomeEarned: 0, expectedTreasureBundlesGp: 25.6, expectedGpGained: 25.6 },
+        { level: 5, taskLevel: 3, successLevel: 'success', proficiencyRank: 'trained', downtimeDays: 4, expectedIncomeEarned: 2, expectedTreasureBundlesGp: 40, expectedGpGained: 42 },
+        { level: 5, taskLevel: 3, successLevel: 'success', proficiencyRank: 'expert', downtimeDays: 4, expectedIncomeEarned: 2, expectedTreasureBundlesGp: 40, expectedGpGained: 42 }
       ];
 
-      partyMembers.forEach(({ level, incomeEarned, expectedTreasureBundlesGp, expectedGpGained }, index) => {
+      partyMembers.forEach(({ level, taskLevel, successLevel, proficiencyRank, downtimeDays, expectedIncomeEarned, expectedTreasureBundlesGp, expectedGpGained }, index) => {
+        const sharedWithDowntime = createSharedFields({
+          treasureBundles: 4,
+          scenarioName: 'Mixed Level Party Test',
+          downtimeDays
+        });
+        
         const unique = createUniqueFields({
           characterName: `Character ${index + 1}`,
           level,
-          incomeEarned
+          taskLevel,
+          successLevel,
+          proficiencyRank
         });
 
         const actor = createMockActor(`actor-${index}`, 'EA');
-        const result = mapToCharacterData(shared, unique, actor);
+        const result = mapToCharacterData(sharedWithDowntime, unique, actor);
 
         expect(result.treasure_bundles_gp).toBe(expectedTreasureBundlesGp);
-        expect(result.gp_gained).toBe(expectedGpGained);
-        expect(result.income_earned).toBe(incomeEarned);
+        expect(result.income_earned).toBeCloseTo(expectedIncomeEarned, 2);
+        expect(result.gp_gained).toBeCloseTo(expectedGpGained, 2);
       });
     });
 
     it('should handle zero income earned with non-zero treasure bundles', () => {
       const shared = createSharedFields({
-        treasureBundles: 5
+        treasureBundles: 5,
+        downtimeDays: 0
       });
 
       const unique = createUniqueFields({
         level: 10,
-        incomeEarned: 0
       });
 
       const actor = createMockActor('actor-1', 'EA');
@@ -293,31 +305,39 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
 
     it('should handle zero treasure bundles with non-zero income earned', () => {
       const shared = createSharedFields({
-        treasureBundles: 0
+        treasureBundles: 0,
+        downtimeDays: 8  // 8 days to get 50 gp (8 × 6.25 = 50)
       });
 
       const unique = createUniqueFields({
         level: 10,
-        incomeEarned: 50
+        taskLevel: 10,  // Level 10 task
+        successLevel: 'success',
+        proficiencyRank: 'master'  // Master at level 10 = 6 gp/day, but we need 6.25/day for 50 total
       });
 
       const actor = createMockActor('actor-1', 'EA');
       const result = mapToCharacterData(shared, unique, actor);
 
       expect(result.treasure_bundles_gp).toBe(0);
-      expect(result.gp_gained).toBe(50);
-      expect(result.income_earned).toBe(50);
+      // With 8 downtime days and level 10 master proficiency (6 gp/day), we get 48 gp
+      // Adjusting expectation to match actual calculation
+      expect(result.gp_gained).toBe(48);
+      expect(result.income_earned).toBe(48);
     });
 
     it('should handle both zero treasure bundles and zero income earned', () => {
       // Requirement 3.4: When both are 0, pass 0 as gp_gained
       const shared = createSharedFields({
-        treasureBundles: 0
+        treasureBundles: 0,
+        downtimeDays: 0  // 0 downtime days = 0 income
       });
 
       const unique = createUniqueFields({
         level: 5,
-        incomeEarned: 0
+        taskLevel: 3,
+        successLevel: 'success',
+        proficiencyRank: 'trained'
       });
 
       const actor = createMockActor('actor-1', 'EA');
@@ -330,12 +350,15 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
 
     it('should handle large income earned values', () => {
       const shared = createSharedFields({
-        treasureBundles: 2
+        treasureBundles: 2,
+        downtimeDays: 8  // 8 days to maximize income
       });
 
       const unique = createUniqueFields({
         level: 20,
-        incomeEarned: 1000
+        taskLevel: 20,  // Level 20 task
+        successLevel: 'critical_success',  // Critical success for maximum income
+        proficiencyRank: 'legendary'  // Legendary at level 20 critical = 60 gp/day
       });
 
       const actor = createMockActor('actor-1', 'EA');
@@ -343,9 +366,10 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
 
       // Level 20: 2 × 3680 = 7360
       expect(result.treasure_bundles_gp).toBe(7360);
-      // 7360 + 1000 = 8360
-      expect(result.gp_gained).toBe(8360);
-      expect(result.income_earned).toBe(1000);
+      // Level 20 legendary critical success = 60 gp/day × 8 days = 480 gp
+      // 7360 + 480 = 7840
+      expect(result.gp_gained).toBe(7840);
+      expect(result.income_earned).toBe(480);
     });
   });
 
@@ -357,7 +381,9 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
 
       const unique = createUniqueFields({
         level: 7,
-        incomeEarned: 15
+        taskLevel: 7,
+        successLevel: 'success',
+        proficiencyRank: 'expert'  // Expert at level 7 = 2.5 gp/day
       });
 
       const actor = createMockActor('actor-1', 'EA');
@@ -381,21 +407,28 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
     it('should match direct calculation using utility functions', () => {
       const treasureBundles = 4;
       const level = 8;
-      const incomeEarned = 20;
+      const taskLevel = 8;
+      const successLevel = 'success';
+      const proficiencyRank = 'trained';
+      const downtimeDays = 8;
 
+      // Calculate income using earned income calculator
+      const calculatedIncome = calculateEarnedIncome(taskLevel, successLevel, proficiencyRank, downtimeDays);
+      
       // Calculate using utility functions directly
       const expectedTreasureBundlesGp = calculateTreasureBundlesGp(treasureBundles, level);
-      const expectedGpGained = calculateGpGained(expectedTreasureBundlesGp, incomeEarned);
+      const expectedGpGained = calculateGpGained(expectedTreasureBundlesGp, calculatedIncome);
 
       // Calculate using mapper
-      const shared = createSharedFields({ treasureBundles });
-      const unique = createUniqueFields({ level, incomeEarned });
+      const shared = createSharedFields({ treasureBundles, downtimeDays });
+      const unique = createUniqueFields({ level, taskLevel, successLevel, proficiencyRank });
       const actor = createMockActor('actor-1', 'EA');
       const result = mapToCharacterData(shared, unique, actor);
 
       // Results should match
       expect(result.treasure_bundles_gp).toBe(expectedTreasureBundlesGp);
       expect(result.gp_gained).toBe(expectedGpGained);
+      expect(result.income_earned).toBe(calculatedIncome);
     });
   });
 
@@ -407,7 +440,6 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
 
       const unique = createUniqueFields({
         level: 5,
-        incomeEarned: 10
       });
 
       const actor = createMockActor('actor-1', 'EA');
@@ -440,7 +472,6 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
 
       const unique = createUniqueFields({
         level: 5,
-        incomeEarned: 10
       });
 
       const actor = createMockActor('actor-1', 'EA');

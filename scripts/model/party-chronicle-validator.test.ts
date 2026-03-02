@@ -17,6 +17,7 @@ describe('validateSharedFields', () => {
       adventureSummaryCheckboxes: ['Found the artifact'],
       strikeoutItems: ['Potion of Healing'],
       treasureBundles: 2,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -177,7 +178,7 @@ describe('validateSharedFields', () => {
     const result = validateSharedFields(shared);
 
     expect(result.valid).toBe(false);
-    expect(result.errors).toContain('XP Earned cannot be negative');
+    expect(result.errors).toContain('XP Earned must be 1 (Bounty), 2 (Quest), or 4 (Scenario)');
   });
 
   it('should fail validation when Layout ID is missing', () => {
@@ -234,7 +235,7 @@ describe('validateSharedFields', () => {
     expect(result.errors).toContain('Chronicle Path is required');
   });
 
-  it('should accept zero XP', () => {
+  it('should reject zero XP', () => {
     const shared: Partial<SharedFields> = {
       gmPfsNumber: '12345',
       scenarioName: 'Test',
@@ -242,6 +243,7 @@ describe('validateSharedFields', () => {
       eventDate: '2024-01-15',
       xpEarned: 0,
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -258,8 +260,8 @@ describe('validateSharedFields', () => {
 
     const result = validateSharedFields(shared);
 
-    expect(result.valid).toBe(true);
-    expect(result.errors).toEqual([]);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain('XP Earned must be 1 (Bounty), 2 (Quest), or 4 (Scenario)');
   });
 
   it('should accept empty optional arrays', () => {
@@ -272,6 +274,7 @@ describe('validateSharedFields', () => {
       adventureSummaryCheckboxes: [],
       strikeoutItems: [],
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -317,6 +320,7 @@ describe('validateSharedFields', () => {
       eventDate: '2024-01-15',
       xpEarned: 4,
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -344,6 +348,7 @@ describe('validateSharedFields', () => {
       eventDate: '2024-01-15',
       xpEarned: 4,
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -372,6 +377,7 @@ describe('validateSharedFields', () => {
       eventDate: '2024-01-15',
       xpEarned: 4,
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -397,6 +403,7 @@ describe('validateSharedFields', () => {
       eventDate: '2024-01-15',
       xpEarned: 4,
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -424,6 +431,7 @@ describe('validateSharedFields', () => {
       eventDate: '2024-01-15',
       xpEarned: 4,
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -452,6 +460,7 @@ describe('validateSharedFields', () => {
       eventDate: '2024-01-15',
       xpEarned: 4,
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -480,6 +489,7 @@ describe('validateSharedFields', () => {
       eventDate: '2024-01-15',
       xpEarned: 4,
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -508,6 +518,7 @@ describe('validateSharedFields', () => {
       eventDate: '2024-01-15',
       xpEarned: 4,
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -537,6 +548,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -565,6 +577,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -593,6 +606,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -621,6 +635,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -649,6 +664,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -677,6 +693,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -707,6 +724,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -734,6 +752,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -762,6 +781,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -790,6 +810,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -828,6 +849,7 @@ describe('validateSharedFields', () => {
           eventDate: '2024-01-15',
           xpEarned: 4,
           treasureBundles: 0,
+      downtimeDays: 0,
           layoutId: 'layout-1',
           seasonId: 'season-5',
           blankChroniclePath: '/path/to/chronicle.pdf',
@@ -857,6 +879,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -887,6 +910,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -919,6 +943,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -953,6 +978,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
+      downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -985,9 +1011,12 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       societyId: '12345-01',
       level: 3,
-      incomeEarned: 8,
       goldSpent: 10,
-      notes: 'Saved the village'
+      notes: 'Saved the village',
+      taskLevel: 1,
+      successLevel: 'success',
+      proficiencyRank: 'trained',
+      earnedIncome: 0.8
     };
 
     const result = validateUniqueFields(unique);
@@ -1001,7 +1030,6 @@ describe('validateUniqueFields', () => {
       characterName: '',
       societyId: '12345-01',
       level: 3,
-      incomeEarned: 8,
       goldSpent: 10,
       notes: ''
     };
@@ -1017,7 +1045,6 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       societyId: '',
       level: 3,
-      incomeEarned: 8,
       goldSpent: 10,
       notes: ''
     };
@@ -1033,7 +1060,6 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       societyId: '12345',
       level: 3,
-      incomeEarned: 8,
       goldSpent: 10,
       notes: ''
     };
@@ -1048,7 +1074,6 @@ describe('validateUniqueFields', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
       societyId: '12345-01',
-      incomeEarned: 8,
       goldSpent: 10,
       notes: ''
     };
@@ -1064,7 +1089,6 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       societyId: '12345-01',
       level: 0,
-      incomeEarned: 8,
       goldSpent: 10,
       notes: ''
     };
@@ -1077,7 +1101,6 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       societyId: '12345-01',
       level: 21,
-      incomeEarned: 8,
       goldSpent: 10,
       notes: ''
     };
@@ -1092,7 +1115,6 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       societyId: '12345-01',
       level: 3.5,
-      incomeEarned: 8,
       goldSpent: 10,
       notes: ''
     };
@@ -1103,43 +1125,14 @@ describe('validateUniqueFields', () => {
     expect(result.errors).toContain('Level must be a whole number');
   });
 
-  it('should fail validation when Income Earned is missing', () => {
-    const unique: Partial<UniqueFields> = {
-      characterName: 'Valeros',
-      societyId: '12345-01',
-      level: 3,
-      goldSpent: 10,
-      notes: ''
-    };
-
-    const result = validateUniqueFields(unique);
-
-    expect(result.valid).toBe(false);
-    expect(result.errors).toContain('Income Earned is required');
-  });
-
-  it('should fail validation when Income Earned is negative', () => {
-    const unique: Partial<UniqueFields> = {
-      characterName: 'Valeros',
-      societyId: '12345-01',
-      level: 3,
-      incomeEarned: -5,
-      goldSpent: 10,
-      notes: ''
-    };
-
-    const result = validateUniqueFields(unique);
-
-    expect(result.valid).toBe(false);
-    expect(result.errors).toContain('Income Earned cannot be negative');
-  });
+  // Note: Income Earned validation tests removed - earned income is now calculated
+  // from taskLevel, successLevel, and proficiencyRank (see earned-income-calculation spec)
 
   it('should fail validation when Gold Spent is missing', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
       societyId: '12345-01',
       level: 3,
-      incomeEarned: 8,
       notes: ''
     };
 
@@ -1154,9 +1147,12 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       societyId: '12345-01',
       level: 1,
-      incomeEarned: 0,
       goldSpent: 0,
-      notes: ''
+      notes: '',
+      taskLevel: '-',
+      successLevel: 'success',
+      proficiencyRank: 'trained',
+      earnedIncome: 0
     };
 
     const result = validateUniqueFields(unique);
@@ -1170,9 +1166,12 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       societyId: '12345-01',
       level: 3,
-      incomeEarned: 8,
       goldSpent: 10,
-      notes: ''
+      notes: '',
+      taskLevel: 1,
+      successLevel: 'success',
+      proficiencyRank: 'trained',
+      earnedIncome: 0.8
     };
 
     const result = validateUniqueFields(unique);
@@ -1186,7 +1185,6 @@ describe('validateUniqueFields', () => {
       characterName: '',
       societyId: '',
       level: 3,
-      incomeEarned: 8,
       goldSpent: 10,
       notes: ''
     };
@@ -1207,7 +1205,7 @@ describe('validateUniqueFields', () => {
     const result = validateUniqueFields(unique);
 
     expect(result.valid).toBe(false);
-    expect(result.errors.length).toBeGreaterThanOrEqual(5);
+    expect(result.errors.length).toBeGreaterThanOrEqual(4); // Character Name, Society ID, Level, Gold Spent
   });
 });
 
@@ -1222,6 +1220,7 @@ describe('validateAllFields', () => {
       adventureSummaryCheckboxes: [],
       strikeoutItems: [],
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -1241,15 +1240,17 @@ describe('validateAllFields', () => {
         characterName: 'Valeros',
         societyId: '12345-01',
         level: 3,
-        incomeEarned: 8,
         goldSpent: 10,
-        notes: ''
+        notes: '',
+        taskLevel: 1,
+        successLevel: 'success',
+        proficiencyRank: 'trained',
+        earnedIncome: 0.8
       } as UniqueFields,
       'actor-2': {
         characterName: 'Seoni',
         societyId: '67890-02',
         level: 5,
-        incomeEarned: 12,
         goldSpent: 0,
         notes: ''
       } as UniqueFields
@@ -1287,7 +1288,6 @@ describe('validateAllFields', () => {
         characterName: 'Valeros',
         societyId: '',
         level: 3,
-        incomeEarned: 8,
         goldSpent: 10,
         notes: ''
       } as Partial<UniqueFields>
@@ -1310,6 +1310,7 @@ describe('validateAllFields', () => {
       adventureSummaryCheckboxes: [],
       strikeoutItems: [],
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -1329,7 +1330,6 @@ describe('validateAllFields', () => {
         characterName: 'Valeros',
         societyId: '',
         level: 3,
-        incomeEarned: 8,
         goldSpent: 10,
         notes: ''
       } as Partial<UniqueFields>,
@@ -1337,7 +1337,6 @@ describe('validateAllFields', () => {
         characterName: 'Seoni',
         societyId: '',
         level: 5,
-        incomeEarned: 12,
         goldSpent: 0,
         notes: ''
       } as Partial<UniqueFields>
@@ -1359,6 +1358,7 @@ describe('validateAllFields', () => {
       adventureSummaryCheckboxes: [],
       strikeoutItems: [],
       treasureBundles: 0,
+      downtimeDays: 0,
       layoutId: 'layout-1',
       seasonId: 'season-5',
       blankChroniclePath: '/path/to/chronicle.pdf',
@@ -1378,7 +1378,6 @@ describe('validateAllFields', () => {
         characterName: 'Valeros',
         societyId: '',
         level: 3,
-        incomeEarned: 8,
         goldSpent: 10,
         notes: ''
       } as Partial<UniqueFields>
@@ -1392,5 +1391,723 @@ describe('validateAllFields', () => {
 
     expect(result.valid).toBe(false);
     expect(result.errors.some(e => e.includes('Valeros the Brave:'))).toBe(true);
+  });
+});
+
+describe('validateSharedFields - XP Earned', () => {
+  /**
+   * Tests for XP Earned validation
+   * Requirements: earned-income-calculation 2.1, 9.1, 9.2, 9.3
+   */
+
+  it('should accept XP value of 1 (Bounty)', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 1,
+      treasureBundles: 0,
+      downtimeDays: 0,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should accept XP value of 2 (Quest)', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 2,
+      treasureBundles: 0,
+      downtimeDays: 4,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should accept XP value of 4 (Scenario)', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 4,
+      treasureBundles: 0,
+      downtimeDays: 8,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should reject XP value of 0', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 0,
+      treasureBundles: 0,
+      downtimeDays: 0,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain('XP Earned must be 1 (Bounty), 2 (Quest), or 4 (Scenario)');
+  });
+
+  it('should reject XP value of 3', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: 3,
+      treasureBundles: 0,
+      downtimeDays: 6,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain('XP Earned must be 1 (Bounty), 2 (Quest), or 4 (Scenario)');
+  });
+
+  it('should reject negative XP values', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      xpEarned: -1,
+      treasureBundles: 0,
+      downtimeDays: 0,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain('XP Earned must be 1 (Bounty), 2 (Quest), or 4 (Scenario)');
+  });
+
+  it('should fail validation when XP is missing', () => {
+    const shared: Partial<SharedFields> = {
+      gmPfsNumber: '12345',
+      scenarioName: 'Test',
+      eventCode: 'TEST-001',
+      eventDate: '2024-01-15',
+      treasureBundles: 0,
+      downtimeDays: 0,
+      layoutId: 'layout-1',
+      seasonId: 'season-5',
+      blankChroniclePath: '/path/to/chronicle.pdf',
+      chosenFactionReputation: 2,
+      reputationValues: {
+        EA: 0,
+        GA: 0,
+        HH: 0,
+        VS: 0,
+        RO: 0,
+        VW: 0
+      }
+    };
+
+    const result = validateSharedFields(shared);
+
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain('XP Earned is required');
+  });
+});
+
+
+describe('validateUniqueFields - Earned Income', () => {
+  /**
+   * Tests for earned income validation
+   * Requirements: earned-income-calculation 9.5, 9.6, 9.7
+   */
+
+  describe('Task Level Validation', () => {
+    it('should accept task level "-" (opt-out)', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: '-'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should accept task level 0', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 0,
+        successLevel: 'success',
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should accept task level 20', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 20,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 20,
+        successLevel: 'success',
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should accept all task levels from 0 to 20', () => {
+      for (let level = 0; level <= 20; level++) {
+        const unique: Partial<UniqueFields> = {
+          characterName: 'Valeros',
+          societyId: '12345-01',
+          level: Math.max(level, 1),
+          goldSpent: 10,
+          notes: '',
+          taskLevel: level,
+          successLevel: 'success',
+          proficiencyRank: 'trained'
+        };
+
+        const result = validateUniqueFields(unique);
+
+        expect(result.valid).toBe(true);
+        expect(result.errors).toEqual([]);
+      }
+    });
+
+    it('should reject task level less than 0', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: -1,
+        successLevel: 'success',
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Task Level must be between 0 and 20 or "-"');
+    });
+
+    it('should reject task level greater than 20', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 21,
+        successLevel: 'success',
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Task Level must be between 0 and 20 or "-"');
+    });
+
+    it('should reject invalid task level string', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 'invalid' as any,
+        successLevel: 'success',
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Task Level must be between 0 and 20 or "-"');
+    });
+  });
+
+  describe('Success Level Validation', () => {
+    it('should accept success level "critical_failure"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        successLevel: 'critical_failure',
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should accept success level "failure"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        successLevel: 'failure',
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should accept success level "success"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        successLevel: 'success',
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should accept success level "critical_success"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        successLevel: 'critical_success',
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should reject invalid success level', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        successLevel: 'invalid',
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Success Level must be critical_failure, failure, success, or critical_success');
+    });
+  });
+
+  describe('Proficiency Rank Validation', () => {
+    it('should accept proficiency rank "trained"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        successLevel: 'success',
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should accept proficiency rank "expert"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        successLevel: 'success',
+        proficiencyRank: 'expert'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should accept proficiency rank "master"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        successLevel: 'success',
+        proficiencyRank: 'master'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should accept proficiency rank "legendary"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        successLevel: 'success',
+        proficiencyRank: 'legendary'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should reject invalid proficiency rank', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        successLevel: 'success',
+        proficiencyRank: 'invalid'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Proficiency Rank must be trained, expert, master, or legendary');
+    });
+  });
+
+  describe('Conditional Validation', () => {
+    it('should require success level when task level is not "-"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        proficiencyRank: 'trained'
+        // successLevel is missing
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Success Level is required when Task Level is not "-"');
+    });
+
+    it('should require proficiency rank when task level is not "-"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        successLevel: 'success'
+        // proficiencyRank is missing
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Proficiency Rank is required when Task Level is not "-"');
+    });
+
+    it('should require both success level and proficiency rank when task level is not "-"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1
+        // both successLevel and proficiencyRank are missing
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Success Level is required when Task Level is not "-"');
+      expect(result.errors).toContain('Proficiency Rank is required when Task Level is not "-"');
+    });
+
+    it('should not require success level when task level is "-"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: '-'
+        // successLevel and proficiencyRank are missing, but that's OK
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should not require proficiency rank when task level is "-"', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: '-'
+        // successLevel and proficiencyRank are missing, but that's OK
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should accept success level and proficiency rank when task level is "-" (optional)', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: '-',
+        successLevel: 'success',
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should prefix conditional validation errors with character name', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1
+        // both successLevel and proficiencyRank are missing
+      };
+
+      const result = validateUniqueFields(unique, 'Valeros');
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('Valeros: Success Level is required when Task Level is not "-"');
+      expect(result.errors).toContain('Valeros: Proficiency Rank is required when Task Level is not "-"');
+    });
+  });
+
+  describe('Combined Earned Income Validation', () => {
+    it('should pass validation with all earned income fields valid', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 5,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 3,
+        successLevel: 'success',
+        proficiencyRank: 'expert',
+        earnedIncome: 2.5
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should collect multiple earned income validation errors', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: 'Valeros',
+        societyId: '12345-01',
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 25,  // Invalid
+        successLevel: 'invalid',  // Invalid
+        proficiencyRank: 'invalid'  // Invalid
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThanOrEqual(3);
+      expect(result.errors).toContain('Task Level must be between 0 and 20 or "-"');
+      expect(result.errors).toContain('Success Level must be critical_failure, failure, success, or critical_success');
+      expect(result.errors).toContain('Proficiency Rank must be trained, expert, master, or legendary');
+    });
+
+    it('should validate earned income fields alongside other unique fields', () => {
+      const unique: Partial<UniqueFields> = {
+        characterName: '',  // Invalid
+        societyId: '',  // Invalid
+        level: 3,
+        goldSpent: 10,
+        notes: '',
+        taskLevel: 1,
+        // successLevel missing - Invalid
+        proficiencyRank: 'trained'
+      };
+
+      const result = validateUniqueFields(unique);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThanOrEqual(3);
+      expect(result.errors).toContain('Character Name is required');
+      expect(result.errors).toContain('Society ID is required');
+      expect(result.errors).toContain('Success Level is required when Task Level is not "-"');
+    });
   });
 });

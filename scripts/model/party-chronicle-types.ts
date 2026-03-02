@@ -55,6 +55,9 @@ export interface SharedFields {
     RO: number;
     VW: number;
   };
+  
+  /** Number of downtime days granted by the scenario (0-8) */
+  downtimeDays: number;
 }
 
 /**
@@ -80,8 +83,17 @@ export interface UniqueFields {
   /** Character level */
   level: number;
   
-  /** Income earned during the adventure */
-  incomeEarned: number;
+  /** Task level for Earn Income (number 0-20 or "-" for opt-out) */
+  taskLevel: number | string;
+  
+  /** Success level for Earn Income check (critical_failure, failure, success, or critical_success) */
+  successLevel: string;
+  
+  /** Proficiency rank in the skill used (trained, expert, master, or legendary) */
+  proficiencyRank: string;
+  
+  /** Calculated earned income in gold pieces (stored for display, recalculated for PDF) */
+  earnedIncome: number;
   
   /** Gold spent during the adventure */
   goldSpent: number;

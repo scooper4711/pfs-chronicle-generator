@@ -23,6 +23,7 @@ function createSharedFields(
     adventureSummaryCheckboxes: [],
     strikeoutItems: [],
     treasureBundles: 2,
+    downtimeDays: 8, // Calculated from xpEarned (4 * 2 = 8)
     layoutId: 'test-layout',
     seasonId: 'season-6',
     blankChroniclePath: 'path/to/blank.pdf',

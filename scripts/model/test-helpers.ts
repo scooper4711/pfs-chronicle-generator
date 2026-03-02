@@ -35,6 +35,7 @@ export function createSharedFields(overrides: Partial<SharedFields> = {}): Share
       RO: 0,
       VW: 0
     },
+    downtimeDays: 8,
     ...overrides
   };
 }
@@ -50,7 +51,10 @@ export function createUniqueFields(overrides: Partial<UniqueFields> = {}): Uniqu
     characterName: 'Test Character',
     societyId: '12345-01',
     level: 5,
-    incomeEarned: 10,
+    taskLevel: 3,
+    successLevel: 'success',
+    proficiencyRank: 'trained',
+    earnedIncome: 0,
     goldSpent: 5,
     notes: 'Test notes',
     ...overrides

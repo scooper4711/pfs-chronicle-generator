@@ -167,12 +167,22 @@
             </header>
             <div class="summary-data collapsible-content" id="shared-rewards-content">
                 <div class="form-group">
-                    <label for="xpEarned">XP Earned</label>
-                    <input type="number" id="xpEarned" name="shared.xpEarned" value="{{shared.xpEarned}}" min="0">
+                    <label for="xpEarned">
+                        XP Earned
+                        <span class="fas fa-question-circle" data-tooltip="Each Scenario awards 4 XP. Each Bounty or Quest (Series 1) typically awards 1 XP, while each Series 2 Quest (#14 and up) typically awards 2 XP."></span>
+                    </label>
+                    <select id="xpEarned" name="shared.xpEarned">
+                        <option value="1" {{#if (eq shared.xpEarned 1)}}selected{{/if}}>Bounty or Series 1 Quest (1 XP)</option>
+                        <option value="2" {{#if (eq shared.xpEarned 2)}}selected{{/if}}>Quest (2 XP)</option>
+                        <option value="4" {{#if (or (eq shared.xpEarned 4) (not shared.xpEarned))}}selected{{/if}}>Scenario (4 XP)</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
-                    <label for="treasureBundles">Treasure Bundles</label>
+                    <label for="treasureBundles">
+                        Treasure Bundles
+                        <span class="fas fa-question-circle" data-tooltip="At the end of a scenario, the GM counts the Treasure Bundles (TB) the party found. The value of a Treasure Bundle depends on the level of the character earning it. Most scenarios are designed to award 8 Treasure Bundles, with 2 bonus Treasure Bundles available through exceptional play."></span>
+                        </label>
                     <select id="treasureBundles" name="shared.treasureBundles">
                         <option value="0" {{#if (eq shared.treasureBundles 0)}}selected{{/if}}>-</option>
                         <option value="2.5" {{#if (eq shared.treasureBundles 2.5)}}selected{{/if}}>2.5 TB (Series 1 Quest)</option>
@@ -185,6 +195,15 @@
                         <option value="9" {{#if (eq shared.treasureBundles 9)}}selected{{/if}}>9 TB</option>
                         <option value="10" {{#if (eq shared.treasureBundles 10)}}selected{{/if}}>10 TB</option>
                     </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        Downtime Days
+                        <i class="fas fa-question-circle" data-tooltip="Scenarios and Quests grant two days of Downtime per XP earned. Bounties are missions the PC undertakes during their Downtime and thus grant no Downtime."></i>
+                    </label>
+                    <div class="downtime-days-value">0</div>
+                    <input type="hidden" id="downtimeDays" name="shared.downtimeDays" value="{{shared.downtimeDays}}">
                 </div>
             </div>
         </li>
@@ -206,7 +225,7 @@
             <header class="collapsible-header" role="button" tabindex="0" 
                     aria-expanded="true" aria-controls="items-to-strike-out-content">
                 <span class="chevron"></span>
-                <span class="section-title">Items to Strike Out</span>
+                <span class="section-title">Items to Strike Out <span class="fas fa-question-circle" data-tooltip="The GM must cross off the high level range items on the Chronicle Sheet if the party did not play in the high level range. The GM also must cross off items that the PCs did not encounter."></span></span>
             </header>
             <div class="summary-data collapsible-content" id="items-to-strike-out-content">
                 <div class="strikeout-choices">
@@ -252,9 +271,49 @@
                 </div>
                 
                 <div class="character-fields">
-                    <div class="form-group">
-                        <label for="incomeEarned-{{this.id}}">Income Earned</label>
-                        <input type="number" id="incomeEarned-{{this.id}}" name="characters.{{this.id}}.incomeEarned" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'incomeEarned'}}{{else}}0{{/if}}" step="0.01">
+                    {{!-- Earned Income Section --}}
+                    <div class="earned-income-section">
+                        <h4>Earned Income</h4>
+                        
+                        <div class="form-group">
+                            <label for="taskLevel-{{this.id}}">
+                                Task Level
+                                <span class="fas fa-question-circle" data-tooltip="The default task level in PFS is PC Level - 2. <br/>Select '-' if the character chose not to earn income, e.g. the chronicle won't be immediately applied or the PC will be doing a different downtime activity. <br/>PC Level - 1 or PC Level may be used if the character has a feat or boon that allows it. <br/><em style='font-size: 0.9em;'>Note: PCs with infamy are treated as one level lower (PC Level - 3).</em>"></span>
+                            </label>
+                            <select id="taskLevel-{{this.id}}" name="characters.{{this.id}}.taskLevel" data-character-level="{{this.level}}">
+                                {{#each (calculateTaskLevelOptions this.level (lookup (lookup ../savedData.characters this.id) 'taskLevel'))}}
+                                    <option value="{{value}}" {{#if selected}}selected{{/if}}>
+                                        {{label}}
+                                    </option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="successLevel-{{this.id}}">Success Level</label>
+                            <select id="successLevel-{{this.id}}" name="characters.{{this.id}}.successLevel">
+                                <option value="critical_failure" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'critical_failure')}}selected{{/if}}>Critical Failure</option>
+                                <option value="failure" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'failure')}}selected{{/if}}>Failure</option>
+                                <option value="success" {{#if (or (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'success') (not (lookup (lookup ../savedData.characters this.id) 'successLevel')))}}selected{{/if}}>Success</option>
+                                <option value="critical_success" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'critical_success')}}selected{{/if}}>Critical Success</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="proficiencyRank-{{this.id}}">Proficiency Rank</label>
+                            <select id="proficiencyRank-{{this.id}}" name="characters.{{this.id}}.proficiencyRank">
+                                <option value="trained" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'trained')}}selected{{/if}}>Trained</option>
+                                <option value="expert" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'expert')}}selected{{/if}}>Expert</option>
+                                <option value="master" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'master')}}selected{{/if}}>Master</option>
+                                <option value="legendary" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'legendary')}}selected{{/if}}>Legendary</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Earned Income</label>
+                            <div class="earned-income-value">0.00 gp</div>
+                            <input type="hidden" name="characters.{{this.id}}.earnedIncome" value="0" class="earned-income-hidden">
+                        </div>
                     </div>
                     
                     {{!-- Treasure Bundle Value display (read-only, calculated from treasure bundles × level) --}}

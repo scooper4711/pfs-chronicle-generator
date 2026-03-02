@@ -79,6 +79,7 @@ describe('Form Data Extraction Property Tests', () => {
       <input type="text" id="eventDate" value="2024-01-15">
       <input type="number" id="xpEarned" value="4">
       <input type="number" id="treasureBundles" value="2">
+      <input type="number" id="downtimeDays" value="0">
       <select id="layout"><option value="layout1" selected>Layout 1</option></select>
       <select id="season"><option value="season1" selected>Season 1</option></select>
       
@@ -106,14 +107,20 @@ describe('Form Data Extraction Property Tests', () => {
       <input type="text" name="characters.actor1.characterName" value="Character 1">
       <input type="text" name="characters.actor1.societyId" value="12345-2001">
       <input type="number" name="characters.actor1.level" value="5">
-      <input type="number" id="incomeEarned-actor1" value="10.5">
+      <select name="characters.actor1.taskLevel"><option value="3" selected>3</option></select>
+      <select name="characters.actor1.successLevel"><option value="success" selected>Success</option></select>
+      <select name="characters.actor1.proficiencyRank"><option value="trained" selected>Trained</option></select>
+      <input type="number" id="earnedIncome-actor1" value="10.5">
       <input type="number" id="goldSpent-actor1" value="5.0">
       <textarea id="notes-actor1">Test notes 1</textarea>
       
       <input type="text" name="characters.actor2.characterName" value="Character 2">
       <input type="text" name="characters.actor2.societyId" value="12345-2002">
       <input type="number" name="characters.actor2.level" value="3">
-      <input type="number" id="incomeEarned-actor2" value="8.0">
+      <select name="characters.actor2.taskLevel"><option value="3" selected>3</option></select>
+      <select name="characters.actor2.successLevel"><option value="success" selected>Success</option></select>
+      <select name="characters.actor2.proficiencyRank"><option value="trained" selected>Trained</option></select>
+      <input type="number" id="earnedIncome-actor2" value="8.0">
       <input type="number" id="goldSpent-actor2" value="3.5">
       <textarea id="notes-actor2">Test notes 2</textarea>
     `;
@@ -350,14 +357,18 @@ describe('Form Data Extraction Property Tests', () => {
             expect(formData.characters.actor1.characterName).toBe('Character 1');
             expect(formData.characters.actor1.societyId).toBe('12345-2001');
             expect(formData.characters.actor1.level).toBe(5);
-            expect(formData.characters.actor1.incomeEarned).toBe(10.5);
+            expect(formData.characters.actor1.taskLevel).toBe(3);
+            expect(formData.characters.actor1.successLevel).toBe('success');
+            expect(formData.characters.actor1.proficiencyRank).toBe('trained');
             expect(formData.characters.actor1.goldSpent).toBe(5.0);
             expect(formData.characters.actor1.notes).toBe('Test notes 1');
 
             expect(formData.characters.actor2.characterName).toBe('Character 2');
             expect(formData.characters.actor2.societyId).toBe('12345-2002');
             expect(formData.characters.actor2.level).toBe(3);
-            expect(formData.characters.actor2.incomeEarned).toBe(8.0);
+            expect(formData.characters.actor2.taskLevel).toBe(3);
+            expect(formData.characters.actor2.successLevel).toBe('success');
+            expect(formData.characters.actor2.proficiencyRank).toBe('trained');
             expect(formData.characters.actor2.goldSpent).toBe(3.5);
             expect(formData.characters.actor2.notes).toBe('Test notes 2');
           }

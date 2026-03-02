@@ -45,7 +45,7 @@ import {
  * }
  * ```
  * 
- * Validates: Requirements party-chronicle-filling 6.1, 6.3, multi-line-reputation-tracking 6.1, 6.2, 6.3
+ * Validates: Requirements party-chronicle-filling 6.1, 6.3, multi-line-reputation-tracking 6.1, 6.2, 6.3, earned-income-calculation 2.1, 9.1, 9.2, 9.3
  */
 export function validateSharedFields(shared: Partial<SharedFields>): ValidationResult {
   const errors: string[] = [];
@@ -61,8 +61,14 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
   // Validate Event Date
   errors.push(...validateDateFormat(shared.eventDate, 'Event Date'));
   
-  // Validate XP Earned
-  errors.push(...validateNumberField(shared.xpEarned, 'XP Earned', { min: 0 }));
+  // Validate XP Earned - must be 1, 2, or 4 (Bounty, Quest, or Scenario)
+  if (shared.xpEarned !== undefined && shared.xpEarned !== null) {
+    if (![1, 2, 4].includes(shared.xpEarned)) {
+      errors.push('XP Earned must be 1 (Bounty), 2 (Quest), or 4 (Scenario)');
+    }
+  } else {
+    errors.push('XP Earned is required');
+  }
   
   // Validate optional array fields
   errors.push(...validateOptionalArray(shared.adventureSummaryCheckboxes, 'Adventure Summary Checkboxes'));
@@ -74,6 +80,9 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
     max: 10, 
     integer: true 
   }));
+  
+  // Note: Downtime Days is calculated from XP Earned and doesn't need validation
+  // Requirements: earned-income-calculation 2.1, 2.4
   
   // Validate chosen faction reputation - must be integer from 1-9 (0 is not allowed)
   // Check range first (< 0 or > 9), then check for 0 specifically
@@ -143,7 +152,7 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
  * }
  * ```
  * 
- * Validates: Requirements party-chronicle-filling 6.2, 6.3, treasure-bundle-calculation 11.1, 11.2, 11.3, 11.4
+ * Validates: Requirements party-chronicle-filling 6.2, 6.3, treasure-bundle-calculation 11.1, 11.2, 11.3, 11.4, earned-income-calculation 9.5, 9.6, 9.7
  */
 export function validateUniqueFields(
   unique: Partial<UniqueFields>,
@@ -174,15 +183,39 @@ export function validateUniqueFields(
     integer: true 
   }, prefix));
   
-  // Validate Income Earned
-  errors.push(...validateNumberField(unique.incomeEarned, 'Income Earned', { 
-    min: 0 
-  }, prefix));
+  // Note: Earned Income is calculated automatically and doesn't need validation
+  // Requirements: earned-income-calculation 6.1, 6.7
   
   // Validate Gold Spent
   errors.push(...validateNumberField(unique.goldSpent, 'Gold Spent', { 
     min: 0 
   }, prefix));
+  
+  // Validate Task Level
+  if (unique.taskLevel !== undefined && unique.taskLevel !== '-') {
+    const taskLevelNum = typeof unique.taskLevel === 'number' ? unique.taskLevel : parseInt(unique.taskLevel as string);
+    if (isNaN(taskLevelNum) || taskLevelNum < 0 || taskLevelNum > 20) {
+      errors.push(`${prefix}Task Level must be between 0 and 20 or "-"`);
+    }
+    
+    // If task level is not "-", require success level and proficiency rank
+    if (!unique.successLevel) {
+      errors.push(`${prefix}Success Level is required when Task Level is not "-"`);
+    }
+    if (!unique.proficiencyRank) {
+      errors.push(`${prefix}Proficiency Rank is required when Task Level is not "-"`);
+    }
+  }
+  
+  // Validate Success Level (if provided)
+  if (unique.successLevel && !['critical_failure', 'failure', 'success', 'critical_success'].includes(unique.successLevel)) {
+    errors.push(`${prefix}Success Level must be critical_failure, failure, success, or critical_success`);
+  }
+  
+  // Validate Proficiency Rank (if provided)
+  if (unique.proficiencyRank && !['trained', 'expert', 'master', 'legendary'].includes(unique.proficiencyRank)) {
+    errors.push(`${prefix}Proficiency Rank must be trained, expert, master, or legendary`);
+  }
   
   // Optional fields - no validation needed for notes
   // Notes can be an empty string

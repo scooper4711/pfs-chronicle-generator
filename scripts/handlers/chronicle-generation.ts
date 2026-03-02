@@ -10,6 +10,7 @@
 import { layoutStore } from '../LayoutStore.js';
 import { 
   SharedFields,
+  UniqueFields,
   GenerationResult
 } from '../model/party-chronicle-types.js';
 import { Layout } from '../model/layout.js';
@@ -156,17 +157,20 @@ function extractCharacterChronicleData(
       VS: Number(data.shared?.reputationValues?.VS) || 0,
       RO: Number(data.shared?.reputationValues?.RO) || 0,
       VW: Number(data.shared?.reputationValues?.VW) || 0
-    }
+    },
+    downtimeDays: Number(data.shared?.downtimeDays) || 0
   };
 
   // Extract unique fields for this character
   const uniqueFields = data.characters?.[characterId] || {};
-  const characterData = {
+  const characterData: UniqueFields = {
     characterName: uniqueFields.characterName || characterName,
     societyId: uniqueFields.societyId || '',
     level: Number(uniqueFields.level) || actor.system?.details?.level?.value || 1,
-    incomeEarned: Number(uniqueFields.incomeEarned) || 0,
-    goldEarned: Number(uniqueFields.goldEarned) || 0,
+    taskLevel: uniqueFields.taskLevel !== undefined ? uniqueFields.taskLevel : (Number(uniqueFields.level) || 1) - 2,
+    successLevel: uniqueFields.successLevel || 'success',
+    proficiencyRank: uniqueFields.proficiencyRank || 'trained',
+    earnedIncome: Number(uniqueFields.earnedIncome) || 0,
     goldSpent: Number(uniqueFields.goldSpent) || 0,
     notes: uniqueFields.notes || ''
   };
