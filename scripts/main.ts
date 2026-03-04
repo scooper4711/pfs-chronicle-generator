@@ -20,7 +20,8 @@ import {
     handleChroniclePathFilePicker,
     updateAllEarnedIncomeDisplays,
     updateEarnedIncomeDisplay,
-    updateDowntimeDaysDisplay
+    updateDowntimeDaysDisplay,
+    updateChroniclePathVisibility
 } from './handlers/party-chronicle-handlers.js';
 import {
     handleSectionHeaderClick,
@@ -176,7 +177,10 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
             }
             const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], {type: 'application/pdf'});
-            const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
+            // Check actor flags first, fall back to module setting for backward compatibility
+            const chronicleData = sheet.actor.getFlag('pfs-chronicle-generator', 'chronicleData') as any;
+            const blankChroniclePath = chronicleData?.blankChroniclePath 
+                || game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
             const filename = generateChronicleFilename(sheet.actor.name, blankChroniclePath);
             var FileSaver = require('file-saver');
             FileSaver.saveAs(blob, filename);
@@ -462,7 +466,7 @@ function attachEventListeners(
             const gmPfsNumber = (container.querySelector('#gmPfsNumber') as HTMLInputElement)?.value || '';
             const scenarioName = (container.querySelector('#scenarioName') as HTMLInputElement)?.value || '';
             const eventCode = (container.querySelector('#eventCode') as HTMLInputElement)?.value || '';
-            const chroniclePath = (container.querySelector('#chroniclePath') as HTMLInputElement)?.value || '';
+            const chroniclePath = (container.querySelector('#blankChroniclePath') as HTMLInputElement)?.value || '';
             const seasonSelect = container.querySelector('#season') as HTMLSelectElement;
             const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
             const seasonId = seasonSelect?.value || '';
@@ -543,6 +547,9 @@ function attachEventListeners(
             ui.notifications?.info('Chronicle data cleared and defaults set');
             console.log('[PFS Chronicle] Re-rendering form after clear');
             await renderPartyChronicleForm(container, partyActors, partySheet);
+            
+            console.log("[PFS Chronicle] Update chronicle path visibility after re-rendering")
+            await updateChroniclePathVisibility(chroniclePath, container, layoutId);
         }
     });
     

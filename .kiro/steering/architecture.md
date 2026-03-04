@@ -492,9 +492,18 @@ This project follows the principles from Robert C. Martin's "Clean Code". These 
 - Use consistent conventions throughout the codebase
 - Replace magic numbers with named constants
 - Be precise - don't use `any` type in TypeScript without good reason
+- **TypeScript Type Safety**:
+  - Do NOT use the `any` type except when interfacing with libraries which lack TypeScript definitions
+  - When `any` is necessary, add a comment explaining why and document the expected shape
+  - Prefer `unknown` over `any` when the type is truly unknown - it forces type checking before use
+  - Use proper type definitions or interfaces instead of `any` whenever possible
 - Encapsulate conditionals: `if (isValid())` is better than `if (value > 0 && value < 100)`
 - Avoid negative conditionals: `if (isValid())` is clearer than `if (!isInvalid())`
-- Don't repeat yourself (DRY) - duplication is the root of evil in software
+- Don't repeat yourself (DRY) - avoid repeated code and duplication
+- **Parameter Management**:
+  - When dealing with large groups of parameters (4+), create structures (interfaces or types)
+  - Group related parameters into objects for better maintainability
+  - Example: Instead of `function createUser(name: string, email: string, age: number, address: string, phone: string)`, use `function createUser(userData: UserData)`
 
 ### File Size and Complexity
 
