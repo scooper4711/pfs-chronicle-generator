@@ -87,6 +87,7 @@ async function loadLayoutConfiguration(
   
   // Get the blank chronicle path
   const blankChroniclePath = data.shared?.blankChroniclePath || game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
+  
   if (!blankChroniclePath || typeof blankChroniclePath !== 'string') {
     ui.notifications?.error("Blank chronicle PDF path is not set.");
     return null;
@@ -176,7 +177,9 @@ function extractCharacterChronicleData(
   };
 
   // Map to chronicle data format
-  return mapToCharacterData(sharedFields, characterData, actor);
+  const mappedData = mapToCharacterData(sharedFields, characterData, actor);
+  
+  return mappedData;
 }
 
 /**
@@ -209,8 +212,13 @@ async function generateSingleCharacterPdf(
   const characterName = actor.name;
 
   try {
-    // Save chronicle data to actor flags
-    await actor.setFlag('pfs-chronicle-generator', 'chronicleData', chronicleData);
+    // Save chronicle data to actor flags (add blankChroniclePath for filename generation)
+    const chronicleDataWithPath = {
+      ...chronicleData,
+      blankChroniclePath: blankChroniclePath
+    };
+    
+    await actor.setFlag('pfs-chronicle-generator', 'chronicleData', chronicleDataWithPath);
 
     // Load blank PDF
     const response = await fetch(blankChroniclePath);
@@ -367,8 +375,6 @@ export async function generateChroniclesFromPartyData(
   data: any,
   partyActors: any[]
 ): Promise<void> {
-  console.log('[PFS Chronicle] Generate chronicles called', data);
-  
   // Step 1: Validate all fields
   const validation = validateAllCharacterFields(data, partyActors);
   if (!validation.valid) {

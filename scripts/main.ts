@@ -7,6 +7,14 @@ import { updateLayoutSpecificFields } from './utils/layout-utils.js';
 import { updateValidationDisplay } from './handlers/validation-display.js';
 import { PartyChronicleContext } from './model/party-chronicle-types.js';
 import { calculateTaskLevelOptions, calculateDowntimeDays } from './utils/earned-income-calculator.js';
+import { extractEarnedIncomeParams, extractCharacterIdFromFieldName, createEarnedIncomeChangeHandler } from './utils/earned-income-form-helpers.js';
+import { 
+    SHARED_FIELD_SELECTORS,
+    CHARACTER_FIELD_SELECTORS,
+    CHARACTER_FIELD_PATTERNS,
+    BUTTON_SELECTORS,
+    GENERAL_SELECTORS
+} from './constants/dom-selectors.js';
 import { 
     handlePortraitClick, 
     handleSeasonChange, 
@@ -290,18 +298,18 @@ function attachEventListeners(
     partySheet: any
 ): void {
     // Season and layout change handlers
-    const seasonSelect = container.querySelector('#season') as HTMLSelectElement;
+    const seasonSelect = container.querySelector(SHARED_FIELD_SELECTORS.SEASON) as HTMLSelectElement;
     seasonSelect?.addEventListener('change', async (event: Event) => {
         await handleSeasonChange(event, container, partyActors, extractFormData);
     });
     
-    const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
+    const layoutSelect = container.querySelector(SHARED_FIELD_SELECTORS.LAYOUT) as HTMLSelectElement;
     layoutSelect?.addEventListener('change', async (event: Event) => {
         await handleLayoutChange(event, container, partyActors, extractFormData);
     });
     
     // Field change handler for auto-save and validation
-    const formElements = container.querySelectorAll('input, select, textarea');
+    const formElements = container.querySelectorAll(GENERAL_SELECTORS.ALL_FORM_ELEMENTS);
     formElements.forEach((element) => {
         element.addEventListener('change', async (event: Event) => {
             await handleFieldChange(event, container, partyActors, extractFormData);
@@ -309,7 +317,7 @@ function attachEventListeners(
     });
     
     // Treasure bundles dropdown change handler for reactive display updates
-    const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+    const treasureBundlesSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.TREASURE_BUNDLES);
     treasureBundlesSelect?.addEventListener('change', (event: Event) => {
         const select = event.target as HTMLSelectElement;
         const treasureBundles = parseFloat(select.value) || 0;
@@ -317,7 +325,7 @@ function attachEventListeners(
     });
     
     // Character level input change handlers for reactive display updates
-    const levelInputs = container.querySelectorAll<HTMLInputElement>('input[name$=".level"]');
+    const levelInputs = container.querySelectorAll<HTMLInputElement>(CHARACTER_FIELD_PATTERNS.LEVEL_ALL);
     levelInputs.forEach((levelInput) => {
         levelInput.addEventListener('input', (event: Event) => {
             const input = event.target as HTMLInputElement;
@@ -325,7 +333,7 @@ function attachEventListeners(
             
             if (match) {
                 const characterId = match[1];
-                const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+                const treasureBundlesSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.TREASURE_BUNDLES);
                 const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
                 const characterLevel = parseInt(input.value, 10);
                 updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
@@ -335,7 +343,7 @@ function attachEventListeners(
     
     // XP Earned dropdown change handler for reactive downtime days display updates
     // Requirements: earned-income-calculation 2.4, 2.5, 7.3
-    const xpEarnedSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
+    const xpEarnedSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.XP_EARNED);
     xpEarnedSelect?.addEventListener('change', (event: Event) => {
         const select = event.target as HTMLSelectElement;
         const xpEarned = parseInt(select.value, 10) || 0;
@@ -346,14 +354,14 @@ function attachEventListeners(
     // (needed for Series 1 Quest detection: 1 XP + 2.5 TB = 2 downtime days)
     // Requirements: earned-income-calculation 2.4, 2.5, 7.3
     treasureBundlesSelect?.addEventListener('change', (event: Event) => {
-        const xpEarnedSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
+        const xpEarnedSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.XP_EARNED);
         const xpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
         updateDowntimeDaysDisplay(xpEarned, container);
     });
     
     // Downtime days dropdown change handler for reactive earned income display updates
     // Requirements: earned-income-calculation 7.3
-    const downtimeDaysSelect = container.querySelector<HTMLSelectElement>('#downtimeDays');
+    const downtimeDaysSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.DOWNTIME_DAYS);
     downtimeDaysSelect?.addEventListener('change', (event: Event) => {
         const select = event.target as HTMLSelectElement;
         const downtimeDays = parseInt(select.value, 10) || 1;
@@ -362,87 +370,27 @@ function attachEventListeners(
     
     // Task level dropdown change handlers for reactive earned income display updates
     // Requirements: earned-income-calculation 7.3
-    const taskLevelSelects = container.querySelectorAll<HTMLSelectElement>('select[name$=".taskLevel"]');
+    const taskLevelSelects = container.querySelectorAll<HTMLSelectElement>(CHARACTER_FIELD_PATTERNS.TASK_LEVEL_ALL);
     taskLevelSelects.forEach((select) => {
-        select.addEventListener('change', (event: Event) => {
-            const selectElement = event.target as HTMLSelectElement;
-            const match = selectElement.name.match(/characters\.([^.]+)\.taskLevel/);
-            
-            if (match) {
-                const characterId = match[1];
-                // Calculate downtime days based on XP and treasure bundles
-                const xpEarnedSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
-                const xpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
-                const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
-                const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
-                const downtimeDays = calculateDowntimeDays(xpEarned, treasureBundles);
-                const taskLevel = selectElement.value === '-' ? '-' : parseInt(selectElement.value, 10);
-                const successLevelSelect = container.querySelector<HTMLSelectElement>(`select[name="characters.${characterId}.successLevel"]`);
-                const successLevel = successLevelSelect?.value || 'success';
-                const proficiencyRankSelect = container.querySelector<HTMLSelectElement>(`select[name="characters.${characterId}.proficiencyRank"]`);
-                const proficiencyRank = proficiencyRankSelect?.value || 'trained';
-                
-                updateEarnedIncomeDisplay(characterId, taskLevel, successLevel, proficiencyRank, downtimeDays, container);
-            }
-        });
+        select.addEventListener('change', createEarnedIncomeChangeHandler(container));
     });
     
     // Success level dropdown change handlers for reactive earned income display updates
     // Requirements: earned-income-calculation 7.3
-    const successLevelSelects = container.querySelectorAll<HTMLSelectElement>('select[name$=".successLevel"]');
+    const successLevelSelects = container.querySelectorAll<HTMLSelectElement>(CHARACTER_FIELD_PATTERNS.SUCCESS_LEVEL_ALL);
     successLevelSelects.forEach((select) => {
-        select.addEventListener('change', (event: Event) => {
-            const selectElement = event.target as HTMLSelectElement;
-            const match = selectElement.name.match(/characters\.([^.]+)\.successLevel/);
-            
-            if (match) {
-                const characterId = match[1];
-                // Calculate downtime days based on XP and treasure bundles
-                const xpEarnedSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
-                const xpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
-                const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
-                const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
-                const downtimeDays = calculateDowntimeDays(xpEarned, treasureBundles);
-                const taskLevelSelect = container.querySelector<HTMLSelectElement>(`select[name="characters.${characterId}.taskLevel"]`);
-                const taskLevel = taskLevelSelect?.value === '-' ? '-' : parseInt(taskLevelSelect?.value || '0', 10);
-                const successLevel = selectElement.value;
-                const proficiencyRankSelect = container.querySelector<HTMLSelectElement>(`select[name="characters.${characterId}.proficiencyRank"]`);
-                const proficiencyRank = proficiencyRankSelect?.value || 'trained';
-                
-                updateEarnedIncomeDisplay(characterId, taskLevel, successLevel, proficiencyRank, downtimeDays, container);
-            }
-        });
+        select.addEventListener('change', createEarnedIncomeChangeHandler(container));
     });
     
     // Proficiency rank dropdown change handlers for reactive earned income display updates
     // Requirements: earned-income-calculation 7.3
-    const proficiencyRankSelects = container.querySelectorAll<HTMLSelectElement>('select[name$=".proficiencyRank"]');
+    const proficiencyRankSelects = container.querySelectorAll<HTMLSelectElement>(CHARACTER_FIELD_PATTERNS.PROFICIENCY_RANK_ALL);
     proficiencyRankSelects.forEach((select) => {
-        select.addEventListener('change', (event: Event) => {
-            const selectElement = event.target as HTMLSelectElement;
-            const match = selectElement.name.match(/characters\.([^.]+)\.proficiencyRank/);
-            
-            if (match) {
-                const characterId = match[1];
-                // Calculate downtime days based on XP and treasure bundles
-                const xpEarnedSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
-                const xpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
-                const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
-                const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
-                const downtimeDays = calculateDowntimeDays(xpEarned, treasureBundles);
-                const taskLevelSelect = container.querySelector<HTMLSelectElement>(`select[name="characters.${characterId}.taskLevel"]`);
-                const taskLevel = taskLevelSelect?.value === '-' ? '-' : parseInt(taskLevelSelect?.value || '0', 10);
-                const successLevelSelect = container.querySelector<HTMLSelectElement>(`select[name="characters.${characterId}.successLevel"]`);
-                const successLevel = successLevelSelect?.value || 'success';
-                const proficiencyRank = selectElement.value;
-                
-                updateEarnedIncomeDisplay(characterId, taskLevel, successLevel, proficiencyRank, downtimeDays, container);
-            }
-        });
+        select.addEventListener('change', createEarnedIncomeChangeHandler(container));
     });
     
     // Save button handler
-    const saveButton = container.querySelector('#saveData');
+    const saveButton = container.querySelector(BUTTON_SELECTORS.SAVE_DATA);
     saveButton?.addEventListener('click', async (event: Event) => {
         event.preventDefault();
         await saveFormData(container, partyActors);
@@ -450,7 +398,7 @@ function attachEventListeners(
     });
     
     // Clear button handler
-    const clearButton = container.querySelector('#clearData');
+    const clearButton = container.querySelector(BUTTON_SELECTORS.CLEAR_DATA);
     clearButton?.addEventListener('click', async (event: Event) => {
         event.preventDefault();
         
@@ -463,12 +411,12 @@ function attachEventListeners(
 
         if (confirmed) {
             // Get current values to preserve
-            const gmPfsNumber = (container.querySelector('#gmPfsNumber') as HTMLInputElement)?.value || '';
-            const scenarioName = (container.querySelector('#scenarioName') as HTMLInputElement)?.value || '';
-            const eventCode = (container.querySelector('#eventCode') as HTMLInputElement)?.value || '';
-            const chroniclePath = (container.querySelector('#blankChroniclePath') as HTMLInputElement)?.value || '';
-            const seasonSelect = container.querySelector('#season') as HTMLSelectElement;
-            const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
+            const gmPfsNumber = (container.querySelector(SHARED_FIELD_SELECTORS.GM_PFS_NUMBER) as HTMLInputElement)?.value || '';
+            const scenarioName = (container.querySelector(SHARED_FIELD_SELECTORS.SCENARIO_NAME) as HTMLInputElement)?.value || '';
+            const eventCode = (container.querySelector(SHARED_FIELD_SELECTORS.EVENT_CODE) as HTMLInputElement)?.value || '';
+            const chroniclePath = (container.querySelector(SHARED_FIELD_SELECTORS.BLANK_CHRONICLE_PATH) as HTMLInputElement)?.value || '';
+            const seasonSelect = container.querySelector(SHARED_FIELD_SELECTORS.SEASON) as HTMLSelectElement;
+            const layoutSelect = container.querySelector(SHARED_FIELD_SELECTORS.LAYOUT) as HTMLSelectElement;
             const seasonId = seasonSelect?.value || '';
             const layoutId = layoutSelect?.value || '';
             
@@ -554,7 +502,7 @@ function attachEventListeners(
     });
     
     // Generate Chronicles button handler
-    const generateButton = container.querySelector('#generateChronicles');
+    const generateButton = container.querySelector(BUTTON_SELECTORS.GENERATE_CHRONICLES);
     generateButton?.addEventListener('click', async (event: Event) => {
         event.preventDefault();
         const formData = extractFormData(container, partyActors);
@@ -570,7 +518,7 @@ function attachEventListeners(
     });
     
     // Chronicle path file picker button handler
-    const filePickerButton = container.querySelector('#chroniclePathFilePicker');
+    const filePickerButton = container.querySelector(SHARED_FIELD_SELECTORS.CHRONICLE_PATH_FILE_PICKER);
     filePickerButton?.addEventListener('click', async (event: Event) => {
         await handleChroniclePathFilePicker(event, container, partyActors);
     });

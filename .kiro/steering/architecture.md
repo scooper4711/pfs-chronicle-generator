@@ -505,6 +505,175 @@ This project follows the principles from Robert C. Martin's "Clean Code". These 
   - Group related parameters into objects for better maintainability
   - Example: Instead of `function createUser(name: string, email: string, age: number, address: string, phone: string)`, use `function createUser(userData: UserData)`
 
+### DRY Principle (Don't Repeat Yourself)
+
+The DRY principle states that "Every piece of knowledge must have a single, unambiguous, authoritative representation within a system." Code duplication is one of the most common sources of bugs and maintenance issues.
+
+**Core Tenets of DRY**:
+
+1. **Single Source of Truth**
+   - Each piece of logic should exist in exactly one place
+   - When logic needs to change, there should be only one place to change it
+   - Duplication means multiple places to update, increasing the risk of inconsistency
+
+2. **Abstraction Over Duplication**
+   - When you find yourself copying code, create an abstraction instead
+   - Extract repeated logic into functions, classes, or modules
+   - Use parameters to handle variations rather than duplicating code
+
+3. **Knowledge Representation**
+   - DRY applies to more than just code - it includes:
+     - Business logic and algorithms
+     - Data structures and schemas
+     - Configuration and constants
+     - Documentation and comments
+   - If the same concept appears in multiple places, consolidate it
+
+**Identifying Code Duplication**:
+
+**Exact Duplication** (easiest to spot):
+```typescript
+// BAD - Exact duplication
+function calculatePriceA(quantity: number): number {
+  const basePrice = 10;
+  const tax = 0.08;
+  return quantity * basePrice * (1 + tax);
+}
+
+function calculatePriceB(quantity: number): number {
+  const basePrice = 10;
+  const tax = 0.08;
+  return quantity * basePrice * (1 + tax);
+}
+
+// GOOD - Single source of truth
+function calculatePrice(quantity: number, basePrice: number): number {
+  const tax = 0.08;
+  return quantity * basePrice * (1 + tax);
+}
+```
+
+**Structural Duplication** (same pattern, different details):
+```typescript
+// BAD - Structural duplication
+taskLevelSelects.forEach((select) => {
+  select.addEventListener('change', (event: Event) => {
+    const selectElement = event.target as HTMLSelectElement;
+    const characterId = extractCharacterIdFromFieldName(selectElement.name);
+    if (characterId) {
+      const params = extractEarnedIncomeParams(characterId, container);
+      updateEarnedIncomeDisplay(params.characterId, params.taskLevel, 
+        params.successLevel, params.proficiencyRank, params.downtimeDays, container);
+    }
+  });
+});
+
+successLevelSelects.forEach((select) => {
+  select.addEventListener('change', (event: Event) => {
+    const selectElement = event.target as HTMLSelectElement;
+    const characterId = extractCharacterIdFromFieldName(selectElement.name);
+    if (characterId) {
+      const params = extractEarnedIncomeParams(characterId, container);
+      updateEarnedIncomeDisplay(params.characterId, params.taskLevel, 
+        params.successLevel, params.proficiencyRank, params.downtimeDays, container);
+    }
+  });
+});
+
+// GOOD - Extract common handler
+function createEarnedIncomeChangeHandler(container: HTMLElement) {
+  return (event: Event) => {
+    const selectElement = event.target as HTMLSelectElement;
+    const characterId = extractCharacterIdFromFieldName(selectElement.name);
+    if (characterId) {
+      const params = extractEarnedIncomeParams(characterId, container);
+      updateEarnedIncomeDisplay(params.characterId, params.taskLevel, 
+        params.successLevel, params.proficiencyRank, params.downtimeDays, container);
+    }
+  };
+}
+
+taskLevelSelects.forEach(select => 
+  select.addEventListener('change', createEarnedIncomeChangeHandler(container)));
+successLevelSelects.forEach(select => 
+  select.addEventListener('change', createEarnedIncomeChangeHandler(container)));
+```
+
+**Semantic Duplication** (same concept, different implementation):
+```typescript
+// BAD - Same concept implemented differently
+function isValidEmailA(email: string): boolean {
+  return email.includes('@') && email.includes('.');
+}
+
+function checkEmailB(email: string): boolean {
+  const parts = email.split('@');
+  return parts.length === 2 && parts[1].includes('.');
+}
+
+// GOOD - Single validation function
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+```
+
+**When to Apply DRY**:
+
+✅ **DO apply DRY when**:
+- The same logic appears in 2+ places
+- Changes to one instance would require changing others
+- The duplication represents the same concept or knowledge
+- The code is stable and unlikely to diverge
+
+❌ **DON'T apply DRY when**:
+- Code looks similar but represents different concepts (coincidental duplication)
+- The duplication is temporary during active development
+- Abstracting would make the code harder to understand
+- The code is likely to diverge in the future (premature abstraction)
+
+**DRY Refactoring Strategies**:
+
+1. **Extract Function**
+   - Pull repeated code into a named function
+   - Use parameters for variations
+
+2. **Extract Data Structure**
+   - When passing the same group of parameters repeatedly, create an interface or type
+   - Example: `EarnedIncomeParams` interface instead of 5 separate parameters
+
+3. **Extract Constant**
+   - Replace magic numbers and strings with named constants
+   - Define once, reference everywhere
+
+4. **Use Higher-Order Functions**
+   - Create functions that return functions (factories)
+   - Example: `createEarnedIncomeChangeHandler()` returns an event handler
+
+5. **Template Method Pattern**
+   - Define algorithm structure in base, let subclasses fill in details
+   - Useful for similar workflows with variations
+
+6. **Configuration Over Code**
+   - Use data structures to drive behavior instead of duplicating code
+   - Example: Lookup tables instead of long if-else chains
+
+**Measuring Code Duplication**:
+
+Tools like `jscpd` (JavaScript Copy/Paste Detector) can automatically detect duplicated code blocks. This project uses automated duplication detection in CI to catch violations.
+
+**Acceptable Duplication Threshold**:
+- **0-5% duplication**: Excellent
+- **5-10% duplication**: Acceptable
+- **10-20% duplication**: Needs attention
+- **>20% duplication**: Requires immediate refactoring
+
+**Rule of Three**:
+- First time: Write the code
+- Second time: Duplicate with a comment noting the duplication
+- Third time: Refactor to eliminate duplication
+
+This prevents premature abstraction while ensuring duplication doesn't spread.
+
 ### File Size and Complexity
 
 To maintain code quality and readability, all production code must adhere to these standards:

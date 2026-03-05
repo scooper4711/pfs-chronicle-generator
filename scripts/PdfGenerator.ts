@@ -202,7 +202,9 @@ export class PdfGenerator {
             case 'choice':
                 if (props.choices && props.content && typeof props.content === 'object' && !Array.isArray(props.content)) {
                     const value = resolveValue(props.choices as string, this.data, 'choice');
-                    const choices = value?.includes('|||') ? value.split('|||') : (value?.split(',') || []);
+                    // Split on ||| delimiter (used for arrays), or treat as single value if no delimiter
+                    // DO NOT split on comma, as choice values may contain commas
+                    const choices = value?.includes('|||') ? value.split('|||') : (value ? [value] : []);
                     console.log('[PFS Chronicle] Split choices:', { value, choices });
                     console.log('[PFS Chronicle] Processing choices:', { 
                         paramValue: resolveValue(props.choices as string, this.data, 'choice'),
@@ -210,6 +212,7 @@ export class PdfGenerator {
                         content: props.content,
                         data: this.data
                     });
+                    
                     for (const choice of choices) {
                         const contentElements = (props.content as Record<string, ContentElement[]>)[choice];
                         if (contentElements) {

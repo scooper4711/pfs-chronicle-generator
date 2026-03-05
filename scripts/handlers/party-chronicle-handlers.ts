@@ -21,6 +21,12 @@ import { calculateDowntimeDays, calculateEarnedIncome, formatIncomeValue } from 
 import { extractFormData } from './form-data-extraction.js';
 import { generateChroniclesFromPartyData } from './chronicle-generation.js';
 import { updateSectionSummary } from './collapsible-section-handlers.js';
+import { 
+    SHARED_FIELD_SELECTORS,
+    CHARACTER_FIELD_SELECTORS,
+    GENERAL_SELECTORS,
+    CSS_CLASSES
+} from '../constants/dom-selectors.js';
 
 // Re-export for backward compatibility
 export { extractFormData, generateChroniclesFromPartyData };
@@ -556,7 +562,7 @@ export async function updateChroniclePathVisibility(
     container: HTMLElement,
     layoutId?: string
 ): Promise<void> {
-    const formGroup = container.querySelector('#chroniclePathGroup');
+    const formGroup = container.querySelector(SHARED_FIELD_SELECTORS.CHRONICLE_PATH_GROUP);
     if (!formGroup) return;
     
     const fileExists = await checkFileExists(path);
@@ -573,9 +579,9 @@ export async function updateChroniclePathVisibility(
     const shouldHide = layoutHasDefault && fileExists;
     
     if (shouldHide) {
-        formGroup.classList.remove('chronicle-path-visible');
+        formGroup.classList.remove(CSS_CLASSES.CHRONICLE_PATH_VISIBLE);
     } else {
-        formGroup.classList.add('chronicle-path-visible');
+        formGroup.classList.add(CSS_CLASSES.CHRONICLE_PATH_VISIBLE);
     }
 }
 

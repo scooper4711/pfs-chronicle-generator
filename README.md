@@ -54,3 +54,48 @@ This module for Foundry VTT allows the GM to fill-in Pathfinder and Starfinder S
 ## Contributing
 
 We welcome contributions! If you want to add a new layout or fix a bug, please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
+
+## Development
+
+### Setup
+
+```bash
+npm install
+```
+
+### Building
+
+```bash
+npm run build        # Build once
+npm run watch        # Build and watch for changes
+```
+
+### Testing
+
+```bash
+npm test             # Run unit tests
+npm run test:all     # Run tests + code quality checks
+```
+
+### Code Quality
+
+This project enforces code quality standards for maintainability:
+
+```bash
+npm run check:quality        # Run all quality checks
+npm run check:complexity     # Check cyclomatic complexity and file size
+npm run check:duplication    # Check code duplication (DRY principle)
+```
+
+**Standards:**
+- **Cyclomatic Complexity**: Functions must have CCN < 15
+- **File Size**: Files must be < 500 lines (excluding comments/blanks)
+- **Code Duplication**: Must be < 20% (target: < 5%)
+
+See [CODE_QUALITY.md](CODE_QUALITY.md) for detailed documentation on code quality standards and how to fix violations.
+
+### Linting
+
+```bash
+npm run lint         # Run ESLint
+```

@@ -122,7 +122,7 @@ export function mapToCharacterData(
   // Calculate reputation using the reputation calculator
   const reputationLines = calculateReputation(shared, actor);
   
-  return {
+  const chronicleData: ChronicleData = {
     // Character identification from unique fields
     char: unique.characterName,
     societyid: unique.societyId,
@@ -154,4 +154,6 @@ export function mapToCharacterData(
     // Treasure bundles from shared fields (convert number to string)
     treasure_bundles: shared.treasureBundles.toString(),
   };
+  
+  return chronicleData;
 }
