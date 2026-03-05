@@ -1,42 +1,42 @@
 import { layoutStore } from './LayoutStore.js';
 import { LayoutDesignerApp } from './LayoutDesignerApp.js';
 import { PartyChronicleApp } from './PartyChronicleApp.js';
-import { clearPartyChronicleData, savePartyChronicleData } from './model/party-chronicle-storage.js';
+import { savePartyChronicleData } from './model/party-chronicle-storage.js';
 import { generateChronicleFilename } from './utils/filename-utils.js';
 import { updateLayoutSpecificFields } from './utils/layout-utils.js';
 import { updateValidationDisplay } from './handlers/validation-display.js';
 import { PartyChronicleContext } from './model/party-chronicle-types.js';
-import { calculateTaskLevelOptions, calculateDowntimeDays } from './utils/earned-income-calculator.js';
-import { extractEarnedIncomeParams, extractCharacterIdFromFieldName, createEarnedIncomeChangeHandler } from './utils/earned-income-form-helpers.js';
+import { calculateTaskLevelOptions } from './utils/earned-income-calculator.js';
 import { 
     SHARED_FIELD_SELECTORS,
-    CHARACTER_FIELD_SELECTORS,
-    CHARACTER_FIELD_PATTERNS,
     BUTTON_SELECTORS,
     GENERAL_SELECTORS
 } from './constants/dom-selectors.js';
 import { 
-    handlePortraitClick, 
-    handleSeasonChange, 
-    handleLayoutChange, 
-    handleFieldChange,
     extractFormData,
     saveFormData,
-    generateChroniclesFromPartyData,
     updateAllTreasureBundleDisplays,
-    updateTreasureBundleDisplay,
-    handleChroniclePathFilePicker,
-    updateAllEarnedIncomeDisplays,
-    updateEarnedIncomeDisplay,
     updateDowntimeDaysDisplay,
-    updateChroniclePathVisibility
+    updateAllEarnedIncomeDisplays
 } from './handlers/party-chronicle-handlers.js';
 import {
-    handleSectionHeaderClick,
-    handleSectionHeaderKeydown,
     initializeCollapseSections,
     updateAllSectionSummaries
 } from './handlers/collapsible-section-handlers.js';
+import {
+    PartyActor,
+    attachSeasonAndLayoutListeners,
+    attachFormFieldListeners,
+    attachTreasureBundleListeners,
+    attachDowntimeDaysListeners,
+    attachEarnedIncomeListeners,
+    attachSaveButtonListener,
+    attachClearButtonListener,
+    attachGenerateButtonListener,
+    attachPortraitListeners,
+    attachFilePickerListener,
+    attachCollapsibleSectionListeners
+} from './handlers/event-listener-helpers.js';
 
 Hooks.on('init', async () => {
   // Register default settings for GM and event information
@@ -279,8 +279,8 @@ Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, data: any) => {
  * Attaches all event listeners to the party chronicle form
  * 
  * This helper function attaches all event listeners to form elements after the
- * template has been rendered. It's separated from renderPartyChronicleForm to
- * improve readability and maintainability.
+ * template has been rendered. It delegates to specialized helper functions to
+ * maintain low complexity and improve type safety.
  * 
  * CRITICAL: Event listeners MUST be attached here in main.ts, not in
  * PartyChronicleApp._onRender, due to the hybrid ApplicationV2 pattern.
@@ -294,245 +294,35 @@ Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, data: any) => {
  */
 function attachEventListeners(
     container: HTMLElement,
-    partyActors: any[],
-    partySheet: any
+    partyActors: PartyActor[],
+    partySheet: unknown
 ): void {
     // Season and layout change handlers
-    const seasonSelect = container.querySelector(SHARED_FIELD_SELECTORS.SEASON) as HTMLSelectElement;
-    seasonSelect?.addEventListener('change', async (event: Event) => {
-        await handleSeasonChange(event, container, partyActors, extractFormData);
-    });
+    attachSeasonAndLayoutListeners(container, partyActors);
     
-    const layoutSelect = container.querySelector(SHARED_FIELD_SELECTORS.LAYOUT) as HTMLSelectElement;
-    layoutSelect?.addEventListener('change', async (event: Event) => {
-        await handleLayoutChange(event, container, partyActors, extractFormData);
-    });
+    // Auto-save and validation for all form fields
+    attachFormFieldListeners(container, partyActors);
     
-    // Field change handler for auto-save and validation
-    const formElements = container.querySelectorAll(GENERAL_SELECTORS.ALL_FORM_ELEMENTS);
-    formElements.forEach((element) => {
-        element.addEventListener('change', async (event: Event) => {
-            await handleFieldChange(event, container, partyActors, extractFormData);
-        });
-    });
+    // Treasure bundle related listeners
+    attachTreasureBundleListeners(container);
     
-    // Treasure bundles dropdown change handler for reactive display updates
-    const treasureBundlesSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.TREASURE_BUNDLES);
-    treasureBundlesSelect?.addEventListener('change', (event: Event) => {
-        const select = event.target as HTMLSelectElement;
-        const treasureBundles = parseFloat(select.value) || 0;
-        updateAllTreasureBundleDisplays(treasureBundles, container);
-    });
+    // Downtime days related listeners
+    attachDowntimeDaysListeners(container);
     
-    // Character level input change handlers for reactive display updates
-    const levelInputs = container.querySelectorAll<HTMLInputElement>(CHARACTER_FIELD_PATTERNS.LEVEL_ALL);
-    levelInputs.forEach((levelInput) => {
-        levelInput.addEventListener('input', (event: Event) => {
-            const input = event.target as HTMLInputElement;
-            const match = input.name.match(/characters\.([^.]+)\.level/);
-            
-            if (match) {
-                const characterId = match[1];
-                const treasureBundlesSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.TREASURE_BUNDLES);
-                const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
-                const characterLevel = parseInt(input.value, 10);
-                updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
-            }
-        });
-    });
+    // Earned income related listeners
+    attachEarnedIncomeListeners(container);
     
-    // XP Earned dropdown change handler for reactive downtime days display updates
-    // Requirements: earned-income-calculation 2.4, 2.5, 7.3
-    const xpEarnedSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.XP_EARNED);
-    xpEarnedSelect?.addEventListener('change', (event: Event) => {
-        const select = event.target as HTMLSelectElement;
-        const xpEarned = parseInt(select.value, 10) || 0;
-        updateDowntimeDaysDisplay(xpEarned, container);
-    });
+    // Button listeners
+    attachSaveButtonListener(container, partyActors);
+    attachClearButtonListener(container, partyActors, partySheet);
+    attachGenerateButtonListener(container, partyActors);
     
-    // Treasure Bundles dropdown change handler for reactive downtime days display updates
-    // (needed for Series 1 Quest detection: 1 XP + 2.5 TB = 2 downtime days)
-    // Requirements: earned-income-calculation 2.4, 2.5, 7.3
-    treasureBundlesSelect?.addEventListener('change', (event: Event) => {
-        const xpEarnedSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.XP_EARNED);
-        const xpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
-        updateDowntimeDaysDisplay(xpEarned, container);
-    });
+    // Portrait and file picker listeners
+    attachPortraitListeners(container, partyActors);
+    attachFilePickerListener(container, partyActors);
     
-    // Downtime days dropdown change handler for reactive earned income display updates
-    // Requirements: earned-income-calculation 7.3
-    const downtimeDaysSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.DOWNTIME_DAYS);
-    downtimeDaysSelect?.addEventListener('change', (event: Event) => {
-        const select = event.target as HTMLSelectElement;
-        const downtimeDays = parseInt(select.value, 10) || 1;
-        updateAllEarnedIncomeDisplays(downtimeDays, container);
-    });
-    
-    // Task level dropdown change handlers for reactive earned income display updates
-    // Requirements: earned-income-calculation 7.3
-    const taskLevelSelects = container.querySelectorAll<HTMLSelectElement>(CHARACTER_FIELD_PATTERNS.TASK_LEVEL_ALL);
-    taskLevelSelects.forEach((select) => {
-        select.addEventListener('change', createEarnedIncomeChangeHandler(container));
-    });
-    
-    // Success level dropdown change handlers for reactive earned income display updates
-    // Requirements: earned-income-calculation 7.3
-    const successLevelSelects = container.querySelectorAll<HTMLSelectElement>(CHARACTER_FIELD_PATTERNS.SUCCESS_LEVEL_ALL);
-    successLevelSelects.forEach((select) => {
-        select.addEventListener('change', createEarnedIncomeChangeHandler(container));
-    });
-    
-    // Proficiency rank dropdown change handlers for reactive earned income display updates
-    // Requirements: earned-income-calculation 7.3
-    const proficiencyRankSelects = container.querySelectorAll<HTMLSelectElement>(CHARACTER_FIELD_PATTERNS.PROFICIENCY_RANK_ALL);
-    proficiencyRankSelects.forEach((select) => {
-        select.addEventListener('change', createEarnedIncomeChangeHandler(container));
-    });
-    
-    // Save button handler
-    const saveButton = container.querySelector(BUTTON_SELECTORS.SAVE_DATA);
-    saveButton?.addEventListener('click', async (event: Event) => {
-        event.preventDefault();
-        await saveFormData(container, partyActors);
-        ui.notifications?.info('Chronicle data saved successfully');
-    });
-    
-    // Clear button handler
-    const clearButton = container.querySelector(BUTTON_SELECTORS.CLEAR_DATA);
-    clearButton?.addEventListener('click', async (event: Event) => {
-        event.preventDefault();
-        
-        const confirmed = await foundry.applications.api.DialogV2.confirm({
-            window: { title: 'Clear Chronicle Data' },
-            content: '<p>Are you sure you want to clear all saved chronicle data? This cannot be undone.</p>',
-            rejectClose: false,
-            modal: true
-        });
-
-        if (confirmed) {
-            // Get current values to preserve
-            const gmPfsNumber = (container.querySelector(SHARED_FIELD_SELECTORS.GM_PFS_NUMBER) as HTMLInputElement)?.value || '';
-            const scenarioName = (container.querySelector(SHARED_FIELD_SELECTORS.SCENARIO_NAME) as HTMLInputElement)?.value || '';
-            const eventCode = (container.querySelector(SHARED_FIELD_SELECTORS.EVENT_CODE) as HTMLInputElement)?.value || '';
-            const chroniclePath = (container.querySelector(SHARED_FIELD_SELECTORS.BLANK_CHRONICLE_PATH) as HTMLInputElement)?.value || '';
-            const seasonSelect = container.querySelector(SHARED_FIELD_SELECTORS.SEASON) as HTMLSelectElement;
-            const layoutSelect = container.querySelector(SHARED_FIELD_SELECTORS.LAYOUT) as HTMLSelectElement;
-            const seasonId = seasonSelect?.value || '';
-            const layoutId = layoutSelect?.value || '';
-            
-            // Determine adventure type based on scenario name (case-insensitive)
-            const scenarioNameLower = scenarioName.toLowerCase();
-            const isBounty = scenarioNameLower.includes('bounty');
-            const isQuest = scenarioNameLower.includes('quest');
-            
-            // Set smart defaults based on adventure type
-            // Bounty: 1 XP, Quest: 2 XP, Scenario: 4 XP (default)
-            const defaultXp = isBounty ? 1 : (isQuest ? 2 : 4);
-            const defaultTreasureBundles = isBounty ? 2 : (isQuest ? 4 : 8);
-            const defaultDowntimeDays = isBounty ? 0 : (isQuest ? 4 : 8);
-            const defaultChosenFactionRep = isBounty ? 1 : (isQuest ? 2 : 4);
-            
-            // Clear all data first
-            await clearPartyChronicleData();
-            
-            // Create new data with preserved values and smart defaults
-            const newData: any = {
-                shared: {
-                    gmPfsNumber,
-                    scenarioName,
-                    eventCode,
-                    eventDate: '',
-                    xpEarned: defaultXp,
-                    treasureBundles: defaultTreasureBundles,
-                    downtimeDays: defaultDowntimeDays,
-                    layoutId,
-                    seasonId,
-                    blankChroniclePath: chroniclePath,
-                    adventureSummaryCheckboxes: [],
-                    strikeoutItems: [],
-                    chosenFactionReputation: defaultChosenFactionRep,
-                    reputationValues: {
-                        EA: 0,
-                        GA: 0,
-                        HH: 0,
-                        VS: 0,
-                        RO: 0,
-                        VW: 0
-                    }
-                },
-                characters: {}
-            };
-            
-            // Set default earned income values for each character
-            partyActors.forEach((actor: any) => {
-                if (actor?.id) {
-                    const characterLevel = actor.system?.details?.level?.value || 1;
-                    const defaultTaskLevel = Math.max(0, characterLevel - 2);
-                    
-                    console.log('[PFS Chronicle] Setting defaults for character:', actor.name, {
-                        characterLevel,
-                        defaultTaskLevel
-                    });
-                    
-                    newData.characters[actor.id] = {
-                        characterName: actor.name || '',
-                        societyId: '',
-                        level: characterLevel,
-                        taskLevel: defaultTaskLevel,
-                        successLevel: 'success',
-                        proficiencyRank: 'trained',
-                        earnedIncome: 0,
-                        goldSpent: 0,
-                        notes: ''
-                    };
-                }
-            });
-            
-            // Save the new data with defaults
-            console.log('[PFS Chronicle] Saving new data with defaults:', newData);
-            await savePartyChronicleData(newData);
-            
-            ui.notifications?.info('Chronicle data cleared and defaults set');
-            console.log('[PFS Chronicle] Re-rendering form after clear');
-            await renderPartyChronicleForm(container, partyActors, partySheet);
-            
-            console.log("[PFS Chronicle] Update chronicle path visibility after re-rendering")
-            await updateChroniclePathVisibility(chroniclePath, container, layoutId);
-        }
-    });
-    
-    // Generate Chronicles button handler
-    const generateButton = container.querySelector(BUTTON_SELECTORS.GENERATE_CHRONICLES);
-    generateButton?.addEventListener('click', async (event: Event) => {
-        event.preventDefault();
-        const formData = extractFormData(container, partyActors);
-        await generateChroniclesFromPartyData(formData, partyActors);
-    });
-    
-    // Portrait click handler
-    const portraits = container.querySelectorAll('.actor-image img.actor-link');
-    portraits.forEach((img) => {
-        img.addEventListener('click', (event: Event) => {
-            handlePortraitClick(event as MouseEvent, partyActors);
-        });
-    });
-    
-    // Chronicle path file picker button handler
-    const filePickerButton = container.querySelector(SHARED_FIELD_SELECTORS.CHRONICLE_PATH_FILE_PICKER);
-    filePickerButton?.addEventListener('click', async (event: Event) => {
-        await handleChroniclePathFilePicker(event, container, partyActors);
-    });
-    
-    // Collapsible section header click handlers
-    const collapsibleHeaders = container.querySelectorAll('.collapsible-header');
-    collapsibleHeaders.forEach((header) => {
-        header.addEventListener('click', (event: Event) => {
-            handleSectionHeaderClick(event as MouseEvent, container);
-        });
-        header.addEventListener('keydown', (event: Event) => {
-            handleSectionHeaderKeydown(event as KeyboardEvent, container);
-        });
-    });
+    // Collapsible section listeners
+    attachCollapsibleSectionListeners(container);
 }
 
 /**
@@ -549,7 +339,7 @@ function attachEventListeners(
  */
 async function initializeForm(
     container: HTMLElement,
-    partyActors: any[]
+    partyActors: PartyActor[]
 ): Promise<void> {
     // Initial population of layout-specific fields
     const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
@@ -606,7 +396,11 @@ async function initializeForm(
  * 
  * Requirements: party-chronicle-filling 1.1, 1.2, 1.3, 1.4, multi-line-reputation-tracking 7.1, 7.2, 7.3, 7.4, code-standards-refactoring 1.1, 4.1, 4.2, 4.3, 4.4, 4.5
  */
-async function renderPartyChronicleForm(container: HTMLElement, partyActors: any[], partySheet: any) {
+export async function renderPartyChronicleForm(
+    container: HTMLElement, 
+    partyActors: PartyActor[], 
+    partySheet: unknown
+): Promise<void> {
     try {
         // Prepare context using PartyChronicleApp
         const chronicleApp = new PartyChronicleApp(partyActors);
