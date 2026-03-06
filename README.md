@@ -10,6 +10,34 @@
 
 </div>
 
+## 📦 Installation
+
+### Method 1: Install from Foundry VTT (Recommended)
+
+1. Open Foundry VTT and navigate to the **Add-on Modules** tab
+2. Click **Install Module**
+3. Search for "Pathfinder Society Chronicle Generator"
+4. Click **Install**
+
+### Method 2: Install via Manifest URL
+
+1. Open Foundry VTT and navigate to the **Add-on Modules** tab
+2. Click **Install Module**
+3. Paste the following manifest URL into the field at the bottom:
+   ```
+   https://github.com/scooper4711/pfs-chronicle-generator/releases/latest/download/module.json
+   ```
+4. Click **Install**
+
+> The manifest URL always points to the latest release, so Foundry VTT can automatically check for updates.
+
+### Requirements
+
+- **Foundry VTT**: Version 12 or higher (verified compatible with v13)
+- **Game System**: Pathfinder 2e (PF2e)
+
+---
+
 ## ✨ Features
 
 <table>
@@ -91,6 +119,10 @@ If your scenario isn't in the list, you can:
 
 The form has several sections:
 
+<table>
+<tr>
+<td width="50%" valign="top">
+
 <details open>
 <summary><b>📝 Event Information</b></summary>
 
@@ -102,6 +134,20 @@ The form has several sections:
 
 </details>
 
+</td>
+<td width="50%" valign="top">
+
+<details>
+<summary><img src="docs/screenshots/chronicle-form.png" alt="Chronicle Form" style="max-height: 150px; width: auto; cursor: pointer;"></summary>
+<img src="docs/screenshots/chronicle-form.png" alt="Chronicle Form - Full Size" style="width: 100%;">
+</details>
+
+</td>
+</tr>
+
+<tr>
+<td width="50%" valign="top">
+
 <details open>
 <summary><b>💰 Rewards</b> (automatically calculated based on scenario type)</summary>
 
@@ -111,6 +157,20 @@ The form has several sections:
 
 </details>
 
+</td>
+<td width="50%" valign="top">
+
+<details>
+<summary><img src="docs/screenshots/shared-rewards.png" alt="Shared Rewards" style="max-height: 120px; width: auto; cursor: pointer;"></summary>
+<img src="docs/screenshots/shared-rewards.png" alt="Shared Rewards - Full Size" style="width: 100%;">
+</details>
+
+</td>
+</tr>
+
+<tr>
+<td width="50%" valign="top">
+
 <details open>
 <summary><b>⭐ Reputation</b> (automatically calculated)</summary>
 
@@ -118,6 +178,20 @@ The form has several sections:
 - Bonus reputation for completing faction specific goals
 
 </details>
+
+</td>
+<td width="50%" valign="top">
+
+<details>
+<summary><img src="docs/screenshots/reputation.png" alt="Reputation" style="max-height: 100px; width: auto; cursor: pointer;"></summary>
+<img src="docs/screenshots/reputation.png" alt="Reputation - Full Size" style="width: 100%;">
+</details>
+
+</td>
+</tr>
+
+<tr>
+<td width="50%" valign="top">
 
 <details open>
 <summary><b>👤 Character-Specific Information</b></summary>
@@ -130,6 +204,20 @@ The form has several sections:
 
 </details>
 
+</td>
+<td width="50%" valign="top">
+
+<details>
+<summary><img src="docs/screenshots/chronicle-form.png" alt="Character Information" style="max-height: 150px; width: auto; cursor: pointer;"></summary>
+<img src="docs/screenshots/chronicle-form.png" alt="Character Information - Full Size" style="width: 100%;">
+</details>
+
+</td>
+</tr>
+
+<tr>
+<td width="50%" valign="top">
+
 <details open>
 <summary><b>✅ Adventure Summary</b></summary>
 
@@ -138,6 +226,20 @@ The form has several sections:
 - Uses the lead text immediately following the checkbox
 
 </details>
+
+</td>
+<td width="50%" valign="top">
+
+<details>
+<summary><img src="docs/screenshots/adventure-summary.png" alt="Adventure Summary" style="max-height: 120px; width: auto; cursor: pointer;"></summary>
+<img src="docs/screenshots/adventure-summary.png" alt="Adventure Summary - Full Size" style="width: 100%;">
+</details>
+
+</td>
+</tr>
+
+<tr>
+<td width="50%" valign="top">
 
 <details open>
 <summary><b>❌ Items to Strike Out</b></summary>
@@ -148,6 +250,18 @@ The form has several sections:
 - Uses the text of the item on the form
 
 </details>
+
+</td>
+<td width="50%" valign="top">
+
+<details>
+<summary><img src="docs/screenshots/strike-out.png" alt="Strike Out Items" style="max-height: 120px; width: auto; cursor: pointer;"></summary>
+<img src="docs/screenshots/strike-out.png" alt="Strike Out Items - Full Size" style="width: 100%;">
+</details>
+
+</td>
+</tr>
+</table>
 
 ### 5️⃣ Generate Chronicles
 
