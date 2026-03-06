@@ -142,11 +142,12 @@ export interface TaskLevelOption {
 
 /**
  * Calculates task level options for a character
- * Returns array of 5 options: ["-", level-3, level-2, level-1, level]
- * All numeric options are floored at 0
+ * Returns array of up to 5 options: ["-", level-3, level-2, level-1, level]
+ * All numeric options are floored at 0, duplicates are removed
+ * The level-2 option is marked as "(PFS default)"
  * 
  * @param characterLevel - Character level (1-20)
- * @returns Array of 5 task level options with labels and DCs
+ * @returns Array of task level options with labels and DCs (duplicates removed)
  * 
  * Requirements: earned-income-calculation 1.1, 1.2, 1.4, 1.5, 1.8, 1.9, 8.1, 8.4
  */
@@ -159,17 +160,36 @@ export function calculateTaskLevelOptions(characterLevel: number): TaskLevelOpti
   // Calculate the four character-relative task levels, floored at 0
   const taskLevels = [
     Math.max(characterLevel - 3, 0),  // Infamy
-    Math.max(characterLevel - 2, 0),  // Default
+    Math.max(characterLevel - 2, 0),  // Default (PFS default)
     Math.max(characterLevel - 1, 0),  // Feat/boon
     characterLevel                     // Feat/boon
   ];
   
-  // Add each task level with its DC
-  for (const taskLevel of taskLevels) {
+  // Track which task levels we've already added to avoid duplicates
+  const addedLevels = new Set<number>();
+  
+  // Track which task level value should get the PFS default label
+  const pfsDefaultLevel = Math.max(characterLevel - 2, 0);
+  
+  // Add each task level with its DC, skipping duplicates
+  for (let i = 0; i < taskLevels.length; i++) {
+    const taskLevel = taskLevels[i];
+    
+    // Skip if we've already added this level
+    if (addedLevels.has(taskLevel)) {
+      continue;
+    }
+    
+    addedLevels.add(taskLevel);
     const dc = getDCForLevel(taskLevel);
+    
+    // Add PFS default label if this is the level-2 option
+    const isPfsDefault = taskLevel === pfsDefaultLevel;
+    const defaultLabel = isPfsDefault ? ' (PFS default)' : '';
+    
     options.push({
       value: taskLevel,
-      label: `Level ${taskLevel} (DC ${dc})`,
+      label: `Level ${taskLevel} (DC ${dc})${defaultLabel}`,
       dc: dc
     });
   }

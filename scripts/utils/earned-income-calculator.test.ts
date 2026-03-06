@@ -89,7 +89,7 @@ describe('Earned Income Calculator Unit Tests', () => {
   });
 
   describe('calculateTaskLevelOptions', () => {
-    it('should return exactly 5 options', () => {
+    it('should return exactly 5 options for high-level characters with no duplicates', () => {
       const options = calculateTaskLevelOptions(10);
       expect(options).toHaveLength(5);
     });
@@ -108,8 +108,8 @@ describe('Earned Income Calculator Unit Tests', () => {
       expect(options[1].label).toBe('Level 7 (DC 23)');
       expect(options[1].dc).toBe(23);
       
-      expect(options[2].value).toBe(8);  // 10 - 2
-      expect(options[2].label).toBe('Level 8 (DC 24)');
+      expect(options[2].value).toBe(8);  // 10 - 2 (PFS default)
+      expect(options[2].label).toBe('Level 8 (DC 24) (PFS default)');
       expect(options[2].dc).toBe(24);
       
       expect(options[3].value).toBe(9);  // 10 - 1
@@ -121,36 +121,45 @@ describe('Earned Income Calculator Unit Tests', () => {
       expect(options[4].dc).toBe(27);
     });
 
-    it('should floor task levels at 0 for level 1 character', () => {
+    it('should remove duplicate task levels for level 1 character', () => {
       const options = calculateTaskLevelOptions(1);
       
-      expect(options[1].value).toBe(0);  // max(1 - 3, 0) = 0
-      expect(options[1].label).toBe('Level 0 (DC 14)');
+      // Should only have 3 options: "-", 0 (PFS default), 1
+      expect(options).toHaveLength(3);
       
-      expect(options[2].value).toBe(0);  // max(1 - 2, 0) = 0
-      expect(options[2].label).toBe('Level 0 (DC 14)');
+      expect(options[0].value).toBe('-');
+      expect(options[0].label).toBe('-');
       
-      expect(options[3].value).toBe(0);  // max(1 - 1, 0) = 0
-      expect(options[3].label).toBe('Level 0 (DC 14)');
+      expect(options[1].value).toBe(0);  // max(1 - 2, 0) = 0 (first occurrence, PFS default)
+      expect(options[1].label).toBe('Level 0 (DC 14) (PFS default)');
       
-      expect(options[4].value).toBe(1);  // 1
-      expect(options[4].label).toBe('Level 1 (DC 15)');
+      expect(options[2].value).toBe(1);  // 1
+      expect(options[2].label).toBe('Level 1 (DC 15)');
     });
 
-    it('should floor task levels at 0 for level 2 character', () => {
+    it('should remove duplicate task levels for level 2 character', () => {
       const options = calculateTaskLevelOptions(2);
       
-      expect(options[1].value).toBe(0);  // max(2 - 3, 0) = 0
-      expect(options[2].value).toBe(0);  // max(2 - 2, 0) = 0
-      expect(options[3].value).toBe(1);  // max(2 - 1, 0) = 1
-      expect(options[4].value).toBe(2);  // 2
+      // Should only have 4 options: "-", 0 (PFS default), 1, 2
+      expect(options).toHaveLength(4);
+      
+      expect(options[0].value).toBe('-');
+      expect(options[1].value).toBe(0);  // max(2 - 2, 0) = 0 (first occurrence, PFS default)
+      expect(options[1].label).toBe('Level 0 (DC 14) (PFS default)');
+      expect(options[2].value).toBe(1);  // max(2 - 1, 0) = 1
+      expect(options[3].value).toBe(2);  // 2
     });
 
-    it('should floor task levels at 0 for level 3 character', () => {
+    it('should remove duplicate task levels for level 3 character', () => {
       const options = calculateTaskLevelOptions(3);
       
+      // Should have 5 options: "-", 0, 1 (PFS default), 2, 3
+      expect(options).toHaveLength(5);
+      
+      expect(options[0].value).toBe('-');
       expect(options[1].value).toBe(0);  // max(3 - 3, 0) = 0
-      expect(options[2].value).toBe(1);  // max(3 - 2, 0) = 1
+      expect(options[2].value).toBe(1);  // max(3 - 2, 0) = 1 (PFS default)
+      expect(options[2].label).toBe('Level 1 (DC 15) (PFS default)');
       expect(options[3].value).toBe(2);  // max(3 - 1, 0) = 2
       expect(options[4].value).toBe(3);  // 3
     });
@@ -158,8 +167,10 @@ describe('Earned Income Calculator Unit Tests', () => {
     it('should calculate correct task levels for level 20 character', () => {
       const options = calculateTaskLevelOptions(20);
       
+      expect(options).toHaveLength(5);
       expect(options[1].value).toBe(17); // 20 - 3
-      expect(options[2].value).toBe(18); // 20 - 2
+      expect(options[2].value).toBe(18); // 20 - 2 (PFS default)
+      expect(options[2].label).toBe('Level 18 (DC 38) (PFS default)');
       expect(options[3].value).toBe(19); // 20 - 1
       expect(options[4].value).toBe(20); // 20
     });

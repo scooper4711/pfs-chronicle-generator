@@ -22,13 +22,16 @@ describe('Earned Income Calculator Property-Based Tests', () => {
   // Feature: earned-income-calculation, Property 1: Task Level Options Generation
   // **Validates: Requirements 1.2, 1.4, 1.5, 1.8, 1.9, 8.1, 8.4**
   describe('Property 1: Task Level Options Generation', () => {
-    it('should generate exactly 5 options for any character level 1-20', () => {
+    it('should generate between 2 and 5 options for any character level 1-20', () => {
       fc.assert(
         fc.property(
           fc.integer({ min: 1, max: 20 }),
           (characterLevel) => {
             const options = calculateTaskLevelOptions(characterLevel);
-            expect(options).toHaveLength(5);
+            // Minimum 2 options: "-" and at least one task level
+            // Maximum 5 options: "-" and 4 unique task levels
+            expect(options.length).toBeGreaterThanOrEqual(2);
+            expect(options.length).toBeLessThanOrEqual(5);
           }
         ),
         { numRuns: 100 }
@@ -57,7 +60,7 @@ describe('Earned Income Calculator Property-Based Tests', () => {
           (characterLevel) => {
             const options = calculateTaskLevelOptions(characterLevel);
             
-            // Check all numeric options (indices 1-4)
+            // Check all numeric options (indices 1+)
             for (let i = 1; i < options.length; i++) {
               expect(options[i].value).toBeGreaterThanOrEqual(0);
               expect(typeof options[i].value).toBe('number');
@@ -68,37 +71,57 @@ describe('Earned Income Calculator Property-Based Tests', () => {
       );
     });
 
-    it('should generate correct task level values for any character level', () => {
+    it('should not contain duplicate task level values', () => {
       fc.assert(
         fc.property(
           fc.integer({ min: 1, max: 20 }),
           (characterLevel) => {
             const options = calculateTaskLevelOptions(characterLevel);
             
-            // Verify the four character-relative task levels
-            expect(options[1].value).toBe(Math.max(characterLevel - 3, 0));
-            expect(options[2].value).toBe(Math.max(characterLevel - 2, 0));
-            expect(options[3].value).toBe(Math.max(characterLevel - 1, 0));
-            expect(options[4].value).toBe(characterLevel);
+            // Extract numeric values (skip the "-" option)
+            const numericValues = options.slice(1).map(opt => opt.value);
+            
+            // Check for duplicates
+            const uniqueValues = new Set(numericValues);
+            expect(uniqueValues.size).toBe(numericValues.length);
           }
         ),
         { numRuns: 100 }
       );
     });
 
-    it('should format numeric options as "Level X (DC Y)" for any character level', () => {
+    it('should include PFS default label on the level-2 option', () => {
       fc.assert(
         fc.property(
           fc.integer({ min: 1, max: 20 }),
           (characterLevel) => {
             const options = calculateTaskLevelOptions(characterLevel);
             
-            // Check all numeric options (indices 1-4)
+            // Find the option with value = max(characterLevel - 2, 0)
+            const pfsDefaultLevel = Math.max(characterLevel - 2, 0);
+            const pfsDefaultOption = options.find(opt => opt.value === pfsDefaultLevel);
+            
+            expect(pfsDefaultOption).toBeDefined();
+            expect(pfsDefaultOption!.label).toContain('(PFS default)');
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    it('should format numeric options with correct DC values', () => {
+      fc.assert(
+        fc.property(
+          fc.integer({ min: 1, max: 20 }),
+          (characterLevel) => {
+            const options = calculateTaskLevelOptions(characterLevel);
+            
+            // Check all numeric options (indices 1+)
             for (let i = 1; i < options.length; i++) {
               const taskLevel = options[i].value as number;
               const expectedDC = getDCForLevel(taskLevel);
               
-              expect(options[i].label).toBe(`Level ${taskLevel} (DC ${expectedDC})`);
+              expect(options[i].label).toContain(`Level ${taskLevel} (DC ${expectedDC})`);
               expect(options[i].dc).toBe(expectedDC);
             }
           }
