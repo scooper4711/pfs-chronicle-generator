@@ -43,8 +43,7 @@
 
 .sheet.party [data-tab=pfs] .activities .member-activity .actor-image img {
     width: 64px;
-    height: 64px;
-    border-radius: 4px;
+    border: 0px;
     object-fit: cover;
 }
 

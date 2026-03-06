@@ -175,6 +175,51 @@ Once layouts are generated, you can use them in Foundry VTT:
 5. Fill in character details and select items to strike out
 6. Click **Generate Chronicle** to create a filled PDF
 
+## Development
+
+### Setup
+
+```bash
+npm install
+```
+
+### Building
+
+```bash
+npm run build        # Build once
+npm run watch        # Build and watch for changes
+```
+
+### Testing
+
+```bash
+npm test             # Run unit tests
+npm run test:all     # Run tests + code quality checks
+```
+
+### Code Quality
+
+This project enforces code quality standards for maintainability:
+
+```bash
+npm run check:quality        # Run all quality checks
+npm run check:complexity     # Check cyclomatic complexity and file size
+npm run check:duplication    # Check code duplication (DRY principle)
+```
+
+**Standards:**
+- **Cyclomatic Complexity**: Functions must have CCN < 15
+- **File Size**: Files must be < 500 lines (excluding comments/blanks)
+- **Code Duplication**: Must be < 20% (target: < 5%)
+
+See [CODE_QUALITY.md](CODE_QUALITY.md) for detailed documentation on code quality standards and how to fix violations.
+
+### Linting
+
+```bash
+npm run lint         # Run ESLint
+```
+
 ## Submitting Changes
 
 Once your layout or fix is complete, please submit a pull request to this repository. We'll review it and merge it as soon as possible.
