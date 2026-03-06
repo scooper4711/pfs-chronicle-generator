@@ -6,6 +6,8 @@
 
 *A Foundry VTT module that streamlines chronicle generation for Pathfinder Society GMs*
 
+*Written with AI assistance.*
+
 ---
 
 </div>
