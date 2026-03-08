@@ -30,15 +30,15 @@ function truncateText(text: string, maxLength: number = MAX_SUMMARY_LENGTH): str
 /**
  * Generates summary text for Event Details section
  * 
- * Format: "Event Details - {scenario name from layout dropdown}"
- * Empty scenario: "Event Details (No scenario)"
+ * Format: "<icon> Event Details - {scenario name from layout dropdown}"
+ * Empty scenario: "<icon> Event Details (No scenario)"
  * Truncates with ellipsis if too long
  * 
  * Note: This uses the layout/scenario name (e.g., "5-05 The Island of..."),
  * not the event name field (e.g., "GenCon", "Bradenton PFS").
  * 
  * @param container - HTMLElement wrapping the form container
- * @returns Formatted summary text
+ * @returns Formatted summary HTML with icon
  * 
  * Requirements: collapsible-shared-sections 1.5, 1.6, 1.7
  */
@@ -48,24 +48,24 @@ export function generateEventDetailsSummary(container: HTMLElement): string {
   const layoutName = selectedOption?.text?.trim() || '';
   
   if (!layoutName) {
-    return 'Event Details (No scenario)';
+    return '<i class="fas fa-calendar-alt"></i> Event Details (No scenario)';
   }
   
-  const summary = `Event Details - ${layoutName}`;
+  const summary = `<i class="fas fa-calendar-alt"></i> Event Details - ${layoutName}`;
   return truncateText(summary);
 }
 
 /**
  * Generates summary text for Reputation section
  * 
- * Format: "Reputation - +{chosen} ; EA: +{ea} ; GA: +{ga}"
+ * Format: "<icon> Reputation - +{chosen} ; EA: +{ea} ; GA: +{ga}"
  * Only includes non-zero faction values
  * Semicolons separate multiple values
- * If all factions zero: "Reputation - +{chosen}"
+ * If all factions zero: "<icon> Reputation - +{chosen}"
  * Truncates with ellipsis if too long
  * 
  * @param container - HTMLElement wrapping the form container
- * @returns Formatted summary text
+ * @returns Formatted summary HTML with icon
  * 
  * Requirements: collapsible-shared-sections 2.5, 2.6, 2.7, 2.8, 2.9
  */
@@ -73,7 +73,7 @@ export function generateReputationSummary(container: HTMLElement): string {
   const chosenInput = container.querySelector('#chosenFactionReputation') as HTMLInputElement;
   const chosenValue = parseInt(chosenInput?.value) || 2;
   
-  const parts: string[] = [`Reputation - +${chosenValue}`];
+  const parts: string[] = [`<i class="fas fa-star"></i> Reputation - +${chosenValue}`];
   
   // Faction codes to check
   const factions = ['EA', 'GA', 'HH', 'VS', 'RO', 'VW'];
@@ -94,12 +94,12 @@ export function generateReputationSummary(container: HTMLElement): string {
 /**
  * Generates summary text for Shared Rewards section
  * 
- * Format: "Shared Rewards - {xp} XP; {tb} TB"
- * Example: "Shared Rewards - 4 XP; 3 TB"
+ * Format: "<icon> Shared Rewards - {xp} XP; {tb} TB"
+ * Example: "<icon> Shared Rewards - 4 XP; 3 TB"
  * Truncates with ellipsis if too long
  * 
  * @param container - HTMLElement wrapping the form container
- * @returns Formatted summary text
+ * @returns Formatted summary HTML with icon
  * 
  * Requirements: collapsible-shared-sections 3.5, 3.6
  */
@@ -110,6 +110,6 @@ export function generateSharedRewardsSummary(container: HTMLElement): string {
   const xpValue = parseInt(xpInput?.value) || 0;
   const tbValue = parseInt(tbInput?.value) || 0;
   
-  const summary = `Shared Rewards - ${xpValue} XP; ${tbValue} TB`;
+  const summary = `<i class="fas fa-gift"></i> Shared Rewards - ${xpValue} XP; ${tbValue} TB`;
   return truncateText(summary);
 }

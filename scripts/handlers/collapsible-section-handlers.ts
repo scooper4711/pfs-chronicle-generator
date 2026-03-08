@@ -237,7 +237,7 @@ export function updateSectionSummary(
   }
   
   // Update summary text element
-  summaryElement.textContent = summaryText;
+  summaryElement.innerHTML = summaryText;
 }
 
 /**

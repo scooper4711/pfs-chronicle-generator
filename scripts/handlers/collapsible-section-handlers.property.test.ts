@@ -51,8 +51,13 @@ describe('collapsible-section-handlers property tests', () => {
             // Generate expected summary using the same function
             const expectedSummary = generateEventDetailsSummary(container);
             
-            // Verify summary was updated regardless of collapse state
-            expect(summaryElement.textContent).toBe(expectedSummary);
+            // Create a temporary element to extract text content from expected HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = expectedSummary;
+            const expectedText = tempDiv.textContent || '';
+            
+            // Verify summary was updated regardless of collapse state (compare text content to avoid HTML escaping issues)
+            expect(summaryElement.textContent).toBe(expectedText);
             expect(summaryElement.textContent).toContain('Event Details');
             
             // Verify collapse state was not changed
@@ -108,8 +113,13 @@ describe('collapsible-section-handlers property tests', () => {
             // Generate expected summary using the same function
             const expectedSummary = generateReputationSummary(container);
             
-            // Verify summary was updated regardless of collapse state
-            expect(summaryElement.textContent).toBe(expectedSummary);
+            // Create a temporary element to extract text content from expected HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = expectedSummary;
+            const expectedText = tempDiv.textContent || '';
+            
+            // Verify summary was updated regardless of collapse state (compare text content to avoid HTML escaping issues)
+            expect(summaryElement.textContent).toBe(expectedText);
             expect(summaryElement.textContent).toContain('Reputation');
             expect(summaryElement.textContent).toContain(`+${chosenValue}`);
             
@@ -154,8 +164,13 @@ describe('collapsible-section-handlers property tests', () => {
             // Generate expected summary using the same function
             const expectedSummary = generateSharedRewardsSummary(container);
             
-            // Verify summary was updated regardless of collapse state
-            expect(summaryElement.textContent).toBe(expectedSummary);
+            // Create a temporary element to extract text content from expected HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = expectedSummary;
+            const expectedText = tempDiv.textContent || '';
+            
+            // Verify summary was updated regardless of collapse state (compare text content to avoid HTML escaping issues)
+            expect(summaryElement.textContent).toBe(expectedText);
             expect(summaryElement.textContent).toContain('Shared Rewards');
             expect(summaryElement.textContent).toContain(`${xpValue} XP`);
             expect(summaryElement.textContent).toContain(`${tbValue} TB`);
@@ -231,11 +246,12 @@ describe('collapsible-section-handlers property tests', () => {
             updateSectionSummary('reputation', container);
             updateSectionSummary('shared-rewards', container);
             
-            // Verify all summaries were updated
+            // Verify all summaries were updated (using innerHTML since summaries contain icon HTML)
             const eventDetailsSummary = container.querySelector('[data-section-id="event-details"] .section-summary') as HTMLElement;
             const reputationSummary = container.querySelector('[data-section-id="reputation"] .section-summary') as HTMLElement;
             const sharedRewardsSummary = container.querySelector('[data-section-id="shared-rewards"] .section-summary') as HTMLElement;
             
+            // Use textContent for .toContain() checks (strips HTML)
             expect(eventDetailsSummary.textContent).toContain('Event Details');
             expect(reputationSummary.textContent).toContain('Reputation');
             expect(reputationSummary.textContent).toContain(`+${chosenValue}`);

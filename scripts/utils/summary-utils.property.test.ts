@@ -32,13 +32,13 @@ describe('summary-utils property tests', () => {
             // The implementation trims the layout name, so we need to account for that
             const trimmedLayoutName = layoutName.trim();
             
-            // Summary should start with "Event Details - "
-            expect(summary).toMatch(/^Event Details - /);
+            // Summary should start with icon and "Event Details - "
+            expect(summary).toMatch(/^<i class="fas fa-calendar-alt"><\/i> Event Details - /);
             
             // Summary should contain the trimmed layout name (or truncated version)
-            if (trimmedLayoutName.length <= 44) {
-              // 44 chars + "Event Details - " (16 chars) = 60 total
-              expect(summary).toBe(`Event Details - ${trimmedLayoutName}`);
+            if (trimmedLayoutName.length <= 8) {
+              // Icon (36 chars) + "Event Details - " (16 chars) + 8 chars name = 60 total
+              expect(summary).toBe(`<i class="fas fa-calendar-alt"></i> Event Details - ${trimmedLayoutName}`);
             } else {
               // Should be truncated to 60 characters with ellipsis
               expect(summary).toHaveLength(60);
@@ -71,7 +71,7 @@ describe('summary-utils property tests', () => {
             
             const summary = generateEventDetailsSummary(container);
             
-            expect(summary).toBe('Event Details (No scenario)');
+            expect(summary).toBe('<i class="fas fa-calendar-alt"></i> Event Details (No scenario)');
           }
         ),
         { numRuns: 100 }
@@ -99,8 +99,8 @@ describe('summary-utils property tests', () => {
             
             const summary = generateReputationSummary(container);
             
-            // Summary should start with "Reputation - +{chosen}"
-            expect(summary).toMatch(new RegExp(`^Reputation - \\+${chosenValue}`));
+            // Summary should start with icon and "Reputation - +{chosen}"
+            expect(summary).toMatch(new RegExp(`^<i class="fas fa-star"><\\/i> Reputation - \\+${chosenValue}`));
           }
         ),
         { numRuns: 100 }
@@ -134,8 +134,8 @@ describe('summary-utils property tests', () => {
             
             const summary = generateReputationSummary(container);
             
-            // Summary should start with chosen faction value
-            expect(summary).toMatch(new RegExp(`^Reputation - \\+${chosenValue}`));
+            // Summary should start with icon and chosen faction value
+            expect(summary).toMatch(new RegExp(`^<i class="fas fa-star"><\\/i> Reputation - \\+${chosenValue}`));
             
             // Check that non-zero faction values are included (if not truncated)
             const factions = ['EA', 'GA', 'HH', 'VS', 'RO', 'VW'];
@@ -184,8 +184,8 @@ describe('summary-utils property tests', () => {
             
             const summary = generateReputationSummary(container);
             
-            // Summary should be exactly "Reputation - +{chosen}"
-            expect(summary).toBe(`Reputation - +${chosenValue}`);
+            // Summary should be exactly icon + "Reputation - +{chosen}"
+            expect(summary).toBe(`<i class="fas fa-star"></i> Reputation - +${chosenValue}`);
           }
         ),
         { numRuns: 100 }
@@ -209,8 +209,8 @@ describe('summary-utils property tests', () => {
             
             const summary = generateSharedRewardsSummary(container);
             
-            // Summary should match the format "Shared Rewards - {xp} XP; {tb} TB"
-            expect(summary).toBe(`Shared Rewards - ${xpValue} XP; ${tbValue} TB`);
+            // Summary should match the format with icon "Shared Rewards - {xp} XP; {tb} TB"
+            expect(summary).toBe(`<i class="fas fa-gift"></i> Shared Rewards - ${xpValue} XP; ${tbValue} TB`);
           }
         ),
         { numRuns: 100 }
@@ -235,8 +235,8 @@ describe('summary-utils property tests', () => {
             expect(summary).toContain(`${xpValue} XP`);
             expect(summary).toContain(`${tbValue} TB`);
             
-            // Summary should start with "Shared Rewards - "
-            expect(summary).toMatch(/^Shared Rewards - /);
+            // Summary should start with icon and "Shared Rewards - "
+            expect(summary).toMatch(/^<i class="fas fa-gift"><\/i> Shared Rewards - /);
           }
         ),
         { numRuns: 100 }

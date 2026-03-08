@@ -24,19 +24,22 @@ describe('summary-utils', () => {
         </select>
       `;
       const summary = generateEventDetailsSummary(container);
-      expect(summary).toBe('Event Details - 5-05 The Island of the Vibrant Dead');
+      // This exceeds 60 characters so it will be truncated
+      expect(summary).toHaveLength(60);
+      expect(summary).toMatch(/^<i class="fas fa-calendar-alt"><\/i> Event Details - 5-05 /);
+      expect(summary).toMatch(/\.\.\.$/);
     });
 
     it('should return default text when no layout is selected', () => {
       container.innerHTML = '<select id="layout"></select>';
       const summary = generateEventDetailsSummary(container);
-      expect(summary).toBe('Event Details (No scenario)');
+      expect(summary).toBe('<i class="fas fa-calendar-alt"></i> Event Details (No scenario)');
     });
 
     it('should return default text when layout select is missing', () => {
       container.innerHTML = '';
       const summary = generateEventDetailsSummary(container);
-      expect(summary).toBe('Event Details (No scenario)');
+      expect(summary).toBe('<i class="fas fa-calendar-alt"></i> Event Details (No scenario)');
     });
 
     it('should truncate long layout names with ellipsis', () => {
@@ -49,12 +52,12 @@ describe('summary-utils', () => {
       const summary = generateEventDetailsSummary(container);
       expect(summary).toHaveLength(60);
       expect(summary).toMatch(/\.\.\.$/);
-      expect(summary).toMatch(/^Event Details - A+\.\.\.$/);
+      expect(summary).toContain('<i class="fas fa-calendar-alt"></i> Event Details - A');
     });
 
     it('should not truncate layout names at exactly 60 characters', () => {
-      // "Event Details - " is 16 characters, so 44 character name = 60 total
-      const exactName = 'A'.repeat(44);
+      // Icon + "Event Details - " is 52 characters, so 8 character name = 60 total
+      const exactName = 'A'.repeat(8);
       container.innerHTML = `
         <select id="layout">
           <option value="1" selected>${exactName}</option>
@@ -78,7 +81,7 @@ describe('summary-utils', () => {
         <input id="reputation-VW" value="0" />
       `;
       const summary = generateReputationSummary(container);
-      expect(summary).toBe('Reputation - +2');
+      expect(summary).toBe('<i class="fas fa-star"></i> Reputation - +2');
     });
 
     it('should include non-zero faction values in summary', () => {
@@ -92,7 +95,7 @@ describe('summary-utils', () => {
         <input id="reputation-VW" value="0" />
       `;
       const summary = generateReputationSummary(container);
-      expect(summary).toBe('Reputation - +2 ; EA: +1');
+      expect(summary).toBe('<i class="fas fa-star"></i> Reputation - +2 ; EA: +1');
     });
 
     it('should include multiple non-zero faction values separated by semicolons', () => {
@@ -106,7 +109,10 @@ describe('summary-utils', () => {
         <input id="reputation-VW" value="0" />
       `;
       const summary = generateReputationSummary(container);
-      expect(summary).toBe('Reputation - +2 ; EA: +1 ; GA: +2 ; VS: +3');
+      // This exceeds 60 characters so it will be truncated
+      expect(summary).toHaveLength(60);
+      expect(summary).toMatch(/^<i class="fas fa-star"><\/i> Reputation - \+2 ; EA: \+1 ; GA/);
+      expect(summary).toMatch(/\.\.\.$/);
     });
 
     it('should use default chosen faction value of 2 when input is missing', () => {
@@ -119,7 +125,7 @@ describe('summary-utils', () => {
         <input id="reputation-VW" value="0" />
       `;
       const summary = generateReputationSummary(container);
-      expect(summary).toBe('Reputation - +2');
+      expect(summary).toBe('<i class="fas fa-star"></i> Reputation - +2');
     });
 
     it('should use default chosen faction value of 2 when input is invalid', () => {
@@ -133,7 +139,7 @@ describe('summary-utils', () => {
         <input id="reputation-VW" value="0" />
       `;
       const summary = generateReputationSummary(container);
-      expect(summary).toBe('Reputation - +2');
+      expect(summary).toBe('<i class="fas fa-star"></i> Reputation - +2');
     });
 
     it('should treat missing faction inputs as zero', () => {
@@ -141,7 +147,7 @@ describe('summary-utils', () => {
         <input id="chosenFactionReputation" value="2" />
       `;
       const summary = generateReputationSummary(container);
-      expect(summary).toBe('Reputation - +2');
+      expect(summary).toBe('<i class="fas fa-star"></i> Reputation - +2');
     });
 
     it('should truncate long reputation summaries with ellipsis', () => {
@@ -168,7 +174,7 @@ describe('summary-utils', () => {
         <input id="treasureBundles" value="3" />
       `;
       const summary = generateSharedRewardsSummary(container);
-      expect(summary).toBe('Shared Rewards - 4 XP; 3 TB');
+      expect(summary).toBe('<i class="fas fa-gift"></i> Shared Rewards - 4 XP; 3 TB');
     });
 
     it('should use zero for XP when input is missing', () => {
@@ -176,7 +182,7 @@ describe('summary-utils', () => {
         <input id="treasureBundles" value="3" />
       `;
       const summary = generateSharedRewardsSummary(container);
-      expect(summary).toBe('Shared Rewards - 0 XP; 3 TB');
+      expect(summary).toBe('<i class="fas fa-gift"></i> Shared Rewards - 0 XP; 3 TB');
     });
 
     it('should use zero for treasure bundles when input is missing', () => {
@@ -184,13 +190,13 @@ describe('summary-utils', () => {
         <input id="xpEarned" value="4" />
       `;
       const summary = generateSharedRewardsSummary(container);
-      expect(summary).toBe('Shared Rewards - 4 XP; 0 TB');
+      expect(summary).toBe('<i class="fas fa-gift"></i> Shared Rewards - 4 XP; 0 TB');
     });
 
     it('should use zero for both when inputs are missing', () => {
       container.innerHTML = '';
       const summary = generateSharedRewardsSummary(container);
-      expect(summary).toBe('Shared Rewards - 0 XP; 0 TB');
+      expect(summary).toBe('<i class="fas fa-gift"></i> Shared Rewards - 0 XP; 0 TB');
     });
 
     it('should use zero for invalid XP value', () => {
@@ -199,7 +205,7 @@ describe('summary-utils', () => {
         <input id="treasureBundles" value="3" />
       `;
       const summary = generateSharedRewardsSummary(container);
-      expect(summary).toBe('Shared Rewards - 0 XP; 3 TB');
+      expect(summary).toBe('<i class="fas fa-gift"></i> Shared Rewards - 0 XP; 3 TB');
     });
 
     it('should use zero for invalid treasure bundles value', () => {
@@ -208,7 +214,7 @@ describe('summary-utils', () => {
         <input id="treasureBundles" value="invalid" />
       `;
       const summary = generateSharedRewardsSummary(container);
-      expect(summary).toBe('Shared Rewards - 4 XP; 0 TB');
+      expect(summary).toBe('<i class="fas fa-gift"></i> Shared Rewards - 4 XP; 0 TB');
     });
 
     it('should handle large XP and treasure bundle values', () => {
@@ -217,7 +223,7 @@ describe('summary-utils', () => {
         <input id="treasureBundles" value="999" />
       `;
       const summary = generateSharedRewardsSummary(container);
-      expect(summary).toBe('Shared Rewards - 999 XP; 999 TB');
+      expect(summary).toBe('<i class="fas fa-gift"></i> Shared Rewards - 999 XP; 999 TB');
     });
 
     it('should truncate if summary exceeds maximum length', () => {
