@@ -245,7 +245,7 @@
     </div>
     
     <header class="content-header">
-        <h3>Character-Specific Information</h3>
+        <h3><i class="fas fa-users"></i> Character-Specific Information</h3>
         <div class="buttons">
             <button type="button" id="clearData" class="icon fa-solid fa-trash" data-tooltip aria-label="Clear Data"></button>
             <button type="submit" id="generateChronicles" class="icon fa-solid fa-file-pdf" data-tooltip aria-label="Generate Chronicles"></button>
@@ -273,8 +273,6 @@
                 <div class="character-fields">
                     {{!-- Earned Income Section --}}
                     <div class="earned-income-section">
-                        <h4>Earned Income</h4>
-                        
                         <div class="form-group">
                             <label for="taskLevel-{{this.id}}">
                                 Task Level
@@ -290,7 +288,7 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="successLevel-{{this.id}}">Success Level</label>
+                            <label for="successLevel-{{this.id}}"><i class="fas fa-dice-d20"></i> Success Level</label>
                             <select id="successLevel-{{this.id}}" name="characters.{{this.id}}.successLevel">
                                 <option value="critical_failure" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'critical_failure')}}selected{{/if}}>Critical Failure</option>
                                 <option value="failure" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'failure')}}selected{{/if}}>Failure</option>
@@ -300,7 +298,7 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="proficiencyRank-{{this.id}}">Proficiency Rank</label>
+                            <label for="proficiencyRank-{{this.id}}"><i class="fas fa-medal"></i> Proficiency Rank</label>
                             <select id="proficiencyRank-{{this.id}}" name="characters.{{this.id}}.proficiencyRank">
                                 <option value="trained" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'trained')}}selected{{/if}}>Trained</option>
                                 <option value="expert" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'expert')}}selected{{/if}}>Expert</option>
@@ -310,7 +308,7 @@
                         </div>
                         
                         <div class="form-group">
-                            <label>Earned Income</label>
+                            <label><i class="fas fa-coins"></i> Earned Income</label>
                             <div class="earned-income-value">0.00 gp</div>
                             <input type="hidden" name="characters.{{this.id}}.earnedIncome" value="0" class="earned-income-hidden">
                         </div>
@@ -318,17 +316,17 @@
                     
                     {{!-- Treasure Bundle Value display (read-only, calculated from treasure bundles × level) --}}
                     <div class="form-group">
-                        <label>Treasure Bundles</label>
+                        <label><i class="fas fa-treasure-chest"></i> Treasure Bundles</label>
                         <div class="treasure-bundle-value">0.00 gp</div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="goldSpent-{{this.id}}">Gold Spent</label>
+                        <label for="goldSpent-{{this.id}}"><i class="fas fa-money-bill-wave"></i> Gold Spent</label>
                         <input type="number" id="goldSpent-{{this.id}}" name="characters.{{this.id}}.goldSpent" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'goldSpent'}}{{else}}0{{/if}}" step="0.01">
                     </div>
                     
                     <div class="form-group full-width">
-                        <label for="notes-{{this.id}}">Notes:</label>
+                        <label for="notes-{{this.id}}"><i class="fas fa-note-sticky"></i> Notes:</label>
                         <textarea id="notes-{{this.id}}" name="characters.{{this.id}}.notes" rows="3">{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'notes'}}{{/if}}</textarea>
                     </div>
                 </div>
