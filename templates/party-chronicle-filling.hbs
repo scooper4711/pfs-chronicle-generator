@@ -278,7 +278,7 @@
                                 Task Level
                                 <span class="fas fa-question-circle" data-tooltip="The default task level in PFS is PC Level - 2. <br/>Select '-' if the character chose not to earn income, e.g. the chronicle won't be immediately applied or the PC will be doing a different downtime activity. <br/>PC Level - 1 or PC Level may be used if the character has a feat or boon that allows it. <br/><em style='font-size: 0.9em;'>Note: PCs with infamy are treated as one level lower (PC Level - 3).</em>"></span>
                             </label>
-                            <select id="taskLevel-{{this.id}}" name="characters.{{this.id}}.taskLevel" data-character-level="{{this.level}}">
+                            <select id="taskLevel-{{this.id}}" name="characters.{{this.id}}.taskLevel" data-character-level="{{this.level}}" data-tooltip="The default task level in PFS is PC Level - 2. <br/>Select '-' if the character chose not to earn income, e.g. the chronicle won't be immediately applied or the PC will be doing a different downtime activity. <br/>PC Level - 1 or PC Level may be used if the character has a feat or boon that allows it. <br/><em style='font-size: 0.9em;'>Note: PCs with infamy are treated as one level lower (PC Level - 3).</em>">
                                 {{#each (calculateTaskLevelOptions this.level (lookup (lookup ../savedData.characters this.id) 'taskLevel'))}}
                                     <option value="{{value}}" {{#if selected}}selected{{/if}}>
                                         {{label}}
@@ -298,8 +298,8 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="proficiencyRank-{{this.id}}"><i class="fas fa-medal"></i> Proficiency Rank</label>
-                            <select id="proficiencyRank-{{this.id}}" name="characters.{{this.id}}.proficiencyRank">
+                            <label for="proficiencyRank-{{this.id}}" data-tooltip="For most PCs, Downtime will be spent Earning Income by rolling a <b>Crafting</b>, <b>Performance</b>, or <b>Lore</b> check."><i class="fas fa-medal"></i> Proficiency Rank</label>
+                            <select id="proficiencyRank-{{this.id}}" name="characters.{{this.id}}.proficiencyRank"  data-tooltip="For most PCs, Downtime will be spent Earning Income by rolling a <b>Crafting</b>, <b>Performance</b>, or <b>Lore</b> check.">
                                 <option value="trained" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'trained')}}selected{{/if}}>Trained</option>
                                 <option value="expert" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'expert')}}selected{{/if}}>Expert</option>
                                 <option value="master" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'master')}}selected{{/if}}>Master</option>
@@ -321,12 +321,12 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="goldSpent-{{this.id}}"><i class="fas fa-money-bill-wave"></i> Gold Spent</label>
+                        <label for="goldSpent-{{this.id}}" data-tooltip="Optionally record gold spent during the adventure. If left at zero, the field will be left blank for the player to fill in."><i class="fas fa-money-bill-wave"></i> Gold Spent</label>
                         <input type="number" id="goldSpent-{{this.id}}" name="characters.{{this.id}}.goldSpent" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'goldSpent'}}{{else}}0{{/if}}" step="0.01">
                     </div>
                     
                     <div class="form-group full-width">
-                        <label for="notes-{{this.id}}"><i class="fas fa-note-sticky"></i> Notes:</label>
+                        <label for="notes-{{this.id}}" data-tooltip="GMs are encouraged to add notes to Chronicles about interesting events that occur during the adventure."><i class="fas fa-note-sticky"></i> Notes:</label>
                         <textarea id="notes-{{this.id}}" name="characters.{{this.id}}.notes" rows="3">{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'notes'}}{{/if}}</textarea>
                     </div>
                 </div>
