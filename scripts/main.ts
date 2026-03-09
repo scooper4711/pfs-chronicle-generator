@@ -113,6 +113,12 @@ Hooks.on('init', async () => {
     console.log('[PFS Chronicle] calculateTaskLevelOptions returned:', optionsWithSelected);
     return optionsWithSelected;
   });
+  
+  // Register Handlebars helper for treasure bundle value per TB
+  Handlebars.registerHelper('getTreasureBundleValue', function(level: number) {
+    const { getTreasureBundleValue } = require('./utils/treasure-bundle-calculator.js');
+    return getTreasureBundleValue(level);
+  });
 });
 
 // Hidden settings registered and initialized on ready
