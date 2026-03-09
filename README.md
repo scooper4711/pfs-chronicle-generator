@@ -444,6 +444,12 @@ We welcome contributions! If you want to add a new layout or fix a bug, please s
 
 ---
 
+## 🙏 Acknowledgments
+
+Special thanks to [razanur37's PFS Chronicle Filler](https://razanur37.github.io/pfscf/) for inspiration and the foundation this module was built upon. The layout file format, the concept of automated chronicle generation, and many of the layout files for earlier seasons and adventure paths came from that project.
+
+---
+
 ## 📄 License
 
 This module is licensed under the MIT License.
