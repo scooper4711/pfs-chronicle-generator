@@ -907,3 +907,67 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
 - Use the kebab-case directory name from `.kiro/specs/`
 - Examples: `treasure-bundle-calculation`, `party-chronicle-filling`, `multi-line-reputation-tracking`
 - For bugfix specs, use the directory name (e.g., `retain-society-tab-focus`)
+
+### Git Commit Standards
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/) combined with the [seven rules of a great Git commit message](https://cbea.ms/git-commit/).
+
+**Commit Message Format**:
+```
+<type>: <subject>
+
+[optional body]
+```
+
+**Type Prefixes** (Conventional Commits):
+- `feat:` — A new feature
+- `fix:` — A bug fix
+- `refactor:` — Code change that neither fixes a bug nor adds a feature
+- `docs:` — Documentation only changes
+- `chore:` — Maintenance tasks (dependency updates, file cleanup, etc.)
+- `test:` — Adding or updating tests
+- `style:` — Formatting, whitespace, etc. (no code logic change)
+
+**Subject Line Rules**:
+1. Capitalize the first word after the type prefix
+2. Use the imperative mood ("Add feature" not "Added feature")
+3. Do not end with a period
+4. Limit to 72 characters (aim for 50)
+5. The subject should complete: "If applied, this commit will ___"
+
+**Body Rules** (when needed):
+1. Separate from subject with a blank line
+2. Wrap at 72 characters
+3. Explain what and why, not how
+4. Use bullet points if listing multiple changes
+
+**Branch Naming**:
+- Feature work: `feat/<feature-name>`
+- Refactoring: `refactor/<scope>`
+- Bugfixes: `fix/<bug-name>`
+
+**Examples**:
+
+Good:
+```
+refactor: Extract shared utilities into common module
+
+Move find_layout_file and transform_canvas_coordinates into
+a shared layout_utils module to eliminate duplication between
+chronicle2layout.py and clip_canvas.py.
+```
+
+```
+chore: Remove obsolete Season 4 content extraction script
+```
+
+```
+docs: Update README to reflect refactored module structure
+```
+
+Bad:
+```
+updated files          ❌ Not imperative, no type, vague
+refactor: updated files.  ❌ Not imperative, ends with period
+REFACTOR: EXTRACT UTILS   ❌ All caps
+```
