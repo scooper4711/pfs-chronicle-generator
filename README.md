@@ -6,7 +6,7 @@
 
 *A Foundry VTT module that streamlines chronicle generation for Pathfinder Society GMs*
 
-*Written with AI assistance.*
+*Written with AI assistance. See below for a statement about the use of AI in this project*
 
 ![GitHub Release](https://img.shields.io/github/v/release/scooper4711/pfs-chronicle-generator)
 ![GitHub Downloads](https://img.shields.io/github/downloads/scooper4711/pfs-chronicle-generator/total)
@@ -454,7 +454,17 @@ We welcome contributions! If you want to add a new layout or fix a bug, please s
 
 ---
 
+## 🦾 Regarding the use of AI:
+
+I used AI as a coding assistant while building this. I'm a software engineer with over 35 years of professional experience. I could have written every line myself, but AI let me move faster. I drove the architecture and design decisions, followed industry best practices for code quality, and made sure everything is human-readable and maintainable. I have SonarCloud.io quality gates which must be met prior to releasing a new version.
+
+If you don't want to use tools written by AI, then I respect that decsion. That's why I'm transparent about it. You can make up your own mind.
+
+---
+
 ## 🙏 Acknowledgments
+
+Thank you to [SonarCloud](https://sonarcloud.io) for helping the open source community by making their product free for open source projects like mine.
 
 Special thanks to [razanur37's PFS Chronicle Filler](https://razanur37.github.io/pfscf/) for inspiration and the foundation this module was built upon. The layout file format, the concept of automated chronicle generation, and many of the layout files for earlier seasons and adventure paths came from that project.
 
