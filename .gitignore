@@ -9,6 +9,8 @@ grid-output.pdf
 filled-output.pdf
 __pycache__
 *.pyc
+.hypothesis
 .vscode
 .env
 *debug*
+.venv
