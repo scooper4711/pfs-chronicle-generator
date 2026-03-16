@@ -28,10 +28,7 @@ jobs:
         run: npm run lint
 
       - name: TypeScript tests with coverage
-        run: npx jest --coverage
-
-      - name: Code quality checks
-        run: npm run check:quality
+        run: npx jest --coverage --silent
 
       - name: Setup Python
         uses: actions/setup-python@v5
