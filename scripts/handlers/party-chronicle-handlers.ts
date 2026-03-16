@@ -519,21 +519,21 @@ export async function handleChroniclePathFilePicker(
     
     const filePicker = new foundry.applications.apps.FilePicker.implementation({
         type: 'any',
-        callback: async (path: string) => {
+        callback: (path: string) => {
             // Update input field
             const input = container.querySelector('#blankChroniclePath') as HTMLInputElement;
             if (input) {
                 input.value = path;
                 
-                // Trigger auto-save
-                await saveFormData(container, partyActors);
-                
                 // Get current layout ID to check if it has a default
                 const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
                 const layoutId = layoutSelect?.value;
                 
-                // Update visibility
-                await updateChroniclePathVisibility(path, container, layoutId);
+                // Trigger auto-save then update visibility
+                // Uses .catch() instead of async callback to avoid unresolved promise (SonarCloud S6544)
+                saveFormData(container, partyActors)
+                    .then(() => updateChroniclePathVisibility(path, container, layoutId))
+                    .catch(error => console.error('[PFS Chronicle] File picker callback failed:', error));
             }
         }
     });
