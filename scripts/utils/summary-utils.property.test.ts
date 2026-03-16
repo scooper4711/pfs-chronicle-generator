@@ -29,8 +29,8 @@ describe('summary-utils property tests', () => {
             
             const summary = generateEventDetailsSummary(container);
             
-            // The implementation trims the layout name, so we need to account for that
-            const trimmedLayoutName = layoutName.trim();
+            // The DOM normalizes whitespace: trim + collapse internal runs of whitespace to single spaces
+            const trimmedLayoutName = layoutName.trim().replace(/\s+/g, ' ');
             
             // Summary should start with icon and "Event Details - "
             expect(summary).toMatch(/^<i class="fas fa-calendar-alt"><\/i> Event Details - /);
