@@ -68,7 +68,7 @@ export function handleSectionHeaderClick(
     return;
   }
   
-  const sectionId = section.getAttribute('data-section-id');
+  const sectionId = section.dataset.sectionId;
   if (!sectionId) {
     console.warn('Section header click: section missing data-section-id attribute');
     return;
@@ -109,7 +109,7 @@ export function handleSectionHeaderKeydown(
     return;
   }
   
-  const sectionId = section.getAttribute('data-section-id');
+  const sectionId = section.dataset.sectionId;
   if (!sectionId) {
     console.warn('Section header keydown: section missing data-section-id attribute');
     return;

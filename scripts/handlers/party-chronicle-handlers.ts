@@ -46,10 +46,10 @@ export function handlePortraitClick(event: MouseEvent, partyActors: any[]): void
     console.log('[PFS Chronicle] Portrait clicked!', event.target);
     event.preventDefault();
     
-    const memberActivity = (event.target as HTMLElement).closest('.member-activity');
+    const memberActivity = (event.target as HTMLElement).closest('.member-activity') as HTMLElement | null;
     console.log('[PFS Chronicle] Member activity element:', memberActivity);
     
-    const characterId = memberActivity?.getAttribute('data-character-id');
+    const characterId = memberActivity?.dataset.characterId;
     console.log('[PFS Chronicle] Character ID:', characterId);
     
     if (!characterId) {
@@ -117,7 +117,7 @@ export function updateAllTreasureBundleDisplays(
   const memberActivities = container.querySelectorAll('.member-activity');
   
   memberActivities.forEach((activity) => {
-    const characterId = activity.getAttribute('data-character-id');
+    const characterId = (activity as HTMLElement).dataset.characterId;
     const levelInput = activity.querySelector<HTMLInputElement>('input[name$=".level"]');
     
     if (characterId && levelInput) {
@@ -249,7 +249,7 @@ export function updateAllEarnedIncomeDisplays(
   console.log('[PFS Chronicle] Found member activities:', memberActivities.length);
   
   memberActivities.forEach((activity) => {
-    const characterId = activity.getAttribute('data-character-id');
+    const characterId = (activity as HTMLElement).dataset.characterId;
     const taskLevelSelect = activity.querySelector<HTMLSelectElement>('select[name$=".taskLevel"]');
     const successLevelSelect = activity.querySelector<HTMLSelectElement>('select[name$=".successLevel"]');
     const proficiencyRankSelect = activity.querySelector<HTMLSelectElement>('select[name$=".proficiencyRank"]');
