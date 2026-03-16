@@ -389,6 +389,94 @@ function processTypeA(data: any, options: any) {
 - Generated code is exempt
 - If an exception is truly necessary, document the reason in comments
 
+## Property-Based Testing Best Practices
+
+Property-based tests (PBT) use random input generation to find edge cases. This power comes with pitfalls that can cause flaky tests. Follow these guidelines to write robust property tests.
+
+**Use `fc.uniqueArray` for Keyed Data**:
+When generating arrays of records that will be used as object keys (e.g., actor IDs, character IDs), use `fc.uniqueArray` with a `selector` to prevent duplicate key collisions:
+
+```typescript
+// BAD - Can generate duplicate actorIds, causing key collisions
+fc.array(
+  fc.record({
+    actorId: fc.string({ minLength: 1, maxLength: 20 }),
+    proficiencyRank: proficiencyRankArbitrary,
+  }),
+  { minLength: 1, maxLength: 6 }
+)
+
+// GOOD - Guarantees unique actorIds
+fc.uniqueArray(
+  fc.record({
+    actorId: fc.string({ minLength: 1, maxLength: 20 }),
+    proficiencyRank: proficiencyRankArbitrary,
+  }),
+  { minLength: 1, maxLength: 6, selector: (r) => r.actorId }
+)
+```
+
+**Avoid `not.toBe` Between Independently Generated Values**:
+Never assert that two independently generated values are different. Random generation can produce coincidental matches, causing flaky failures:
+
+```typescript
+// BAD - initialShared and updatedShared are independently generated
+// They could coincidentally have the same gmPfsNumber
+fc.asyncProperty(
+  sharedFieldsArbitrary,  // generates initialShared
+  sharedFieldsArbitrary,  // generates updatedShared
+  async (initialShared, updatedShared) => {
+    // ...
+    expect(chronicleData.gmid).not.toBe(initialShared.gmPfsNumber); // FLAKY!
+  }
+)
+
+// GOOD - Use positive assertions only
+fc.asyncProperty(
+  sharedFieldsArbitrary,
+  sharedFieldsArbitrary,
+  async (initialShared, updatedShared) => {
+    // ...
+    expect(chronicleData.gmid).toBe(updatedShared.gmPfsNumber); // Proves the property
+  }
+)
+```
+
+**When `not.toBe` IS Acceptable**:
+- Comparing computed outputs that SHOULD differ (e.g., `unfixedFilename` vs `fixedFilename`)
+- Checking a value is not empty: `expect(result).not.toBe('')`
+- Checking a value doesn't contain a substring: `expect(filename).not.toContain(wrongPath)`
+- When `fc.pre()` explicitly guards against the specific equality being tested
+
+**Use `fc.pre()` for Preconditions**:
+Use `fc.pre()` to filter out invalid input combinations, but ensure your assertions don't depend on the filtered properties:
+
+```typescript
+// GOOD - fc.pre guards against all fields being equal
+fc.pre(initialShared.gmPfsNumber !== updatedShared.gmPfsNumber ||
+       initialShared.scenarioName !== updatedShared.scenarioName);
+
+// But DON'T then assert individual fields are different - they still could be!
+// The fc.pre only guarantees AT LEAST ONE field differs, not all of them.
+```
+
+**Prefer Positive Assertions**:
+Positive assertions ("X equals Y") are more robust than negative assertions ("X doesn't equal Z"):
+
+```typescript
+// GOOD - Proves the property directly
+expect(chronicleData.gmid).toBe(shared.gmPfsNumber);
+
+// AVOID - Doesn't prove the property, just that it's not one specific wrong value
+expect(chronicleData.gmid).not.toBe(someOtherValue);
+```
+
+**Common Flaky Test Patterns to Avoid**:
+1. `fc.array` with records containing ID fields → Use `fc.uniqueArray` with `selector`
+2. `not.toBe` between two independently generated values → Remove or use positive assertions
+3. Assertions that depend on `fc.pre` filtering individual fields → The filter is OR-based, not AND-based
+4. Comparing generated strings for inequality → Strings can coincidentally match
+
 ## Pre-Push Testing Requirements
 
 Before any `git push`, all tests MUST pass. Do NOT push code with failing tests.

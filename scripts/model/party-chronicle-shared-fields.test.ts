@@ -193,11 +193,6 @@ describe('Party Chronicle Shared Field Property Tests', () => {
               expect(chronicleData.eventcode).toBe(outsideShared.eventCode);
               expect(chronicleData.date).toBe(outsideShared.eventDate);
               expect(chronicleData.xp_gained).toBe(outsideShared.xpEarned);
-
-              // Verify outside characters don't have party shared fields
-              expect(chronicleData.gmid).not.toBe(partyShared.gmPfsNumber);
-              expect(chronicleData.event).not.toBe(partyShared.scenarioName);
-              expect(chronicleData.eventcode).not.toBe(partyShared.eventCode);
             });
           }
         ),
@@ -347,14 +342,13 @@ describe('Party Chronicle Shared Field Property Tests', () => {
             });
 
             // Property: After update, all characters should have updated shared values
+            // Note: We only use positive assertions here. The not.toBe assertions were removed
+            // because initialShared and updatedShared are independently generated, and individual
+            // fields could coincidentally match even when fc.pre guards against all fields matching.
             updatedChronicles.forEach(chronicleData => {
               expect(chronicleData.gmid).toBe(updatedShared.gmPfsNumber);
               expect(chronicleData.event).toBe(updatedShared.scenarioName);
               expect(chronicleData.eventcode).toBe(updatedShared.eventCode);
-              
-              // Verify they don't have the old values
-              expect(chronicleData.gmid).not.toBe(initialShared.gmPfsNumber);
-              expect(chronicleData.event).not.toBe(initialShared.scenarioName);
             });
           }
         ),
