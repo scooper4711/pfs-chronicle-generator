@@ -193,12 +193,12 @@ describe('Earned Income Data Persistence - Property Tests', () => {
     it('should persist and restore task level correctly for all characters', async () => {
       await fc.assert(
         fc.asyncProperty(
-          fc.array(
+          fc.uniqueArray(
             fc.record({
               actorId: fc.string({ minLength: 1, maxLength: 20 }),
               taskLevel: taskLevelArbitrary,
             }),
-            { minLength: 1, maxLength: 6 }
+            { minLength: 1, maxLength: 6, selector: (r) => r.actorId }
           ),
           async (characters) => {
             // Create party chronicle data with multiple characters
@@ -257,12 +257,12 @@ describe('Earned Income Data Persistence - Property Tests', () => {
     it('should persist and restore success level correctly for all characters', async () => {
       await fc.assert(
         fc.asyncProperty(
-          fc.array(
+          fc.uniqueArray(
             fc.record({
               actorId: fc.string({ minLength: 1, maxLength: 20 }),
               successLevel: successLevelArbitrary,
             }),
-            { minLength: 1, maxLength: 6 }
+            { minLength: 1, maxLength: 6, selector: (r) => r.actorId }
           ),
           async (characters) => {
             // Create party chronicle data with multiple characters
@@ -321,12 +321,12 @@ describe('Earned Income Data Persistence - Property Tests', () => {
     it('should persist and restore proficiency rank correctly for all characters', async () => {
       await fc.assert(
         fc.asyncProperty(
-          fc.array(
+          fc.uniqueArray(
             fc.record({
               actorId: fc.string({ minLength: 1, maxLength: 20 }),
               proficiencyRank: proficiencyRankArbitrary,
             }),
-            { minLength: 1, maxLength: 6 }
+            { minLength: 1, maxLength: 6, selector: (r) => r.actorId }
           ),
           async (characters) => {
             // Create party chronicle data with multiple characters
