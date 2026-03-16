@@ -135,8 +135,8 @@ Refactor the `chronicle2layout` Python codebase to meet coding standards: extrac
   - Use a small set of fixture PDFs covering multiple seasons and layout variants
   - **Validates: Requirements 2.6**
 
-- [ ] 8. Update generate_layouts.py with CLI arguments
-  - [ ] 8.1 Replace hardcoded paths with CLI arguments
+- [x] 8. Update generate_layouts.py with CLI arguments
+  - [x] 8.1 Replace hardcoded paths with CLI arguments
     - Add `--base-dir` argument (default: parent of `chronicle2layout/` directory)
     - Add `--python` argument (default: `sys.executable`)
     - Derive `MODULES_DIR`, `LAYOUTS_DIR`, `DEBUG_DIR` from the provided base directory
@@ -144,50 +144,50 @@ Refactor the `chronicle2layout` Python codebase to meet coding standards: extrac
     - Remove hardcoded python executable path
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-  - [ ] 8.2 Update `generate_layouts.py` to import `find_layout_file` from `shared_utils` if used
+  - [x] 8.2 Update `generate_layouts.py` to import `find_layout_file` from `shared_utils` if used
     - Ensure any shared utility usage comes from `shared_utils`
     - _Requirements: 1.5_
 
-  - [ ] 8.3 Write property test for base directory path derivation
+  - [x] 8.3 Write property test for base directory path derivation
     - **Property 3: Base directory path derivation**
     - Generate random valid `Path` objects
     - Verify `MODULES_DIR == base_dir / "modules"`, `LAYOUTS_DIR == base_dir / "layouts" / "pfs2"`, `DEBUG_DIR == base_dir / "debug"`
     - **Validates: Requirements 6.2**
 
-  - [ ] 8.4 Write unit tests for generate_layouts CLI argument defaults
+  - [x] 8.4 Write unit tests for generate_layouts CLI argument defaults
     - Verify `--base-dir` defaults to parent of `chronicle2layout/`
     - Verify `--python` defaults to `sys.executable`
     - _Requirements: 6.4, 6.5_
 
-- [ ] 9. Clean up tools/ directory
-  - [ ] 9.1 Delete throwaway and obsolete scripts
+- [x] 9. Clean up tools/ directory
+  - [x] 9.1 Delete throwaway and obsolete scripts
     - Delete `tools/temp_reputation.py`
     - Delete `tools/extract_season4_content.py` (old version)
     - Rename `tools/extract_season4_content_v2.py` to `tools/extract_season4_content.py`
     - _Requirements: 7.1, 7.2_
 
-  - [ ] 9.2 Add `render_page_to_image`, `words_positions`, and `find_grey_boxes` to `shared_utils.py`
+  - [x] 9.2 Add `render_page_to_image`, `words_positions`, and `find_grey_boxes` to `shared_utils.py`
     - Extract these functions from `extract_season4_canvases.py` and `extract_season4_content_v2.py`
     - Add type hints and docstrings
     - _Requirements: 7.3, 1.2, 5.1_
 
-  - [ ] 9.3 Update tools scripts to import from `shared_utils`
+  - [x] 9.3 Update tools scripts to import from `shared_utils`
     - Update `extract_season4_canvases.py` to import `render_page_to_image` and `words_positions` from `shared_utils`
     - Update `extract_season4_content.py` (renamed) to import `render_page_to_image`, `words_positions`, and `find_grey_boxes` from `shared_utils`
     - Remove duplicated function definitions from both files
     - _Requirements: 7.3_
 
-  - [ ] 9.4 Extract TEMPLATE dict from `build_season4_layout.py` into JSON
+  - [x] 9.4 Extract TEMPLATE dict from `build_season4_layout.py` into JSON
     - Create `tools/season4_template.json` containing the TEMPLATE dict
     - Update `build_season4_layout.py` to load template from JSON file
     - Use `Path(__file__)` for relative path resolution
     - _Requirements: 7.4_
 
-  - [ ] 9.5 Replace hardcoded paths in tools scripts with `Path(__file__)`-relative paths
+  - [x] 9.5 Replace hardcoded paths in tools scripts with `Path(__file__)`-relative paths
     - Update all tools scripts to derive paths relative to script location
     - _Requirements: 7.5_
 
-- [ ] 10. Checkpoint - Verify tools cleanup
+- [-] 10. Checkpoint - Verify tools cleanup
   - Ensure all tests pass, ask the user if questions arise.
   - Verify deleted files are gone, renamed files are correct, imports work.
   - Commit:
