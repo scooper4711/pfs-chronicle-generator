@@ -1,0 +1,156 @@
+# Creates a draft GitHub release with an auto-generated changelog
+# when a version tag (v*) is pushed.
+#
+# Workflow:
+#   1. Push a tag: git tag v1.2.3 && git push origin v1.2.3
+#   2. This workflow creates a draft release with changelog
+#   3. Review the draft, edit if needed, then publish
+#   4. Publishing triggers the existing release.yml workflow
+#      which builds and attaches module.zip + module.json
+#
+name: Draft Release With Changelog
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  draft-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Previous Tag
+        id: prev_tag
+        run: |
+          PREV_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sed -n '2p')
+          echo "tag=${PREV_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Generate Changelog
+        id: changelog
+        run: |
+          TAG="${{ github.ref_name }}"
+          PREV_TAG="${{ steps.prev_tag.outputs.tag }}"
+
+          if [ -z "$PREV_TAG" ]; then
+            RANGE="HEAD"
+          else
+            RANGE="${PREV_TAG}..HEAD"
+          fi
+
+          # Collect commits grouped by conventional commit type
+          FEATURES=""
+          FIXES=""
+          REFACTORS=""
+          DOCS=""
+          CHORES=""
+          TESTS=""
+          OTHER=""
+
+          while IFS= read -r line; do
+            # Extract the subject (skip merge commits)
+            if echo "$line" | grep -qE '^Merge '; then
+              continue
+            fi
+
+            if echo "$line" | grep -qE '^feat(\(.+\))?:'; then
+              FEATURES="${FEATURES}
+          - ${line}"
+            elif echo "$line" | grep -qE '^fix(\(.+\))?:'; then
+              FIXES="${FIXES}
+          - ${line}"
+            elif echo "$line" | grep -qE '^refactor(\(.+\))?:'; then
+              REFACTORS="${REFACTORS}
+          - ${line}"
+            elif echo "$line" | grep -qE '^docs(\(.+\))?:'; then
+              DOCS="${DOCS}
+          - ${line}"
+            elif echo "$line" | grep -qE '^chore(\(.+\))?:'; then
+              CHORES="${CHORES}
+          - ${line}"
+            elif echo "$line" | grep -qE '^test(\(.+\))?:'; then
+              TESTS="${TESTS}
+          - ${line}"
+            elif echo "$line" | grep -qE '^style(\(.+\))?:'; then
+              : # Skip style-only commits from changelog
+            else
+              OTHER="${OTHER}
+          - ${line}"
+            fi
+          done <<< "$(git log --format='%s' "$RANGE")"
+
+          # Build the changelog body
+          BODY=""
+
+          if [ -n "$FEATURES" ]; then
+            BODY="${BODY}## ✨ Features
+          ${FEATURES}
+
+          "
+          fi
+
+          if [ -n "$FIXES" ]; then
+            BODY="${BODY}## 🐛 Bug Fixes
+          ${FIXES}
+
+          "
+          fi
+
+          if [ -n "$REFACTORS" ]; then
+            BODY="${BODY}## ♻️ Refactoring
+          ${REFACTORS}
+
+          "
+          fi
+
+          if [ -n "$DOCS" ]; then
+            BODY="${BODY}## 📝 Documentation
+          ${DOCS}
+
+          "
+          fi
+
+          if [ -n "$TESTS" ]; then
+            BODY="${BODY}## 🧪 Tests
+          ${TESTS}
+
+          "
+          fi
+
+          if [ -n "$CHORES" ]; then
+            BODY="${BODY}## 🔧 Maintenance
+          ${CHORES}
+
+          "
+          fi
+
+          if [ -n "$OTHER" ]; then
+            BODY="${BODY}## Other Changes
+          ${OTHER}
+
+          "
+          fi
+
+          if [ -z "$BODY" ]; then
+            BODY="No notable changes in this release."
+          fi
+
+          # Write to file to preserve multiline content
+          echo "$BODY" > changelog.md
+
+      - name: Create Draft Release
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          name: "Release ${{ github.ref_name }}"
+          bodyFile: changelog.md
+          tag: ${{ github.ref_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
