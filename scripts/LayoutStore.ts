@@ -89,7 +89,7 @@ class LayoutStore {
             // Handle Season N -> sN conversion
             dirFormat = parent.replace(/^Season (\d+)$/i, 's$1');
             // Handle spaces -> underscores for other names
-            dirFormat = dirFormat.toLowerCase().replace(/ /g, '_');
+            dirFormat = dirFormat.toLowerCase().replaceAll(' ', '_');
         }
 
         console.log('[PFS Chronicle] Looking for layouts with dirFormat:', dirFormat);
