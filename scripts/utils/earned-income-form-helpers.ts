@@ -41,17 +41,17 @@ export function extractEarnedIncomeParams(
 ): EarnedIncomeParams {
     // Get shared fields (XP and treasure bundles) to calculate downtime days
     const xpEarnedSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.XP_EARNED);
-    const xpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
+    const xpEarned = Number.parseInt(xpEarnedSelect?.value || '0', 10);
     
     const treasureBundlesSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.TREASURE_BUNDLES);
-    const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
+    const treasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
     
     const downtimeDays = calculateDowntimeDays(xpEarned, treasureBundles);
     
     // Get character-specific fields
     const taskLevelSelect = container.querySelector<HTMLSelectElement>(CHARACTER_FIELD_SELECTORS.TASK_LEVEL(characterId));
     const taskLevelValue = taskLevelSelect?.value || '0';
-    const taskLevel = taskLevelValue === '-' ? '-' : parseInt(taskLevelValue, 10);
+    const taskLevel = taskLevelValue === '-' ? '-' : Number.parseInt(taskLevelValue, 10);
     
     const successLevelSelect = container.querySelector<HTMLSelectElement>(CHARACTER_FIELD_SELECTORS.SUCCESS_LEVEL(characterId));
     const successLevel = successLevelSelect?.value || 'success';

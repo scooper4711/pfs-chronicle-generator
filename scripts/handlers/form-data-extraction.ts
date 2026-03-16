@@ -36,9 +36,9 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
         scenarioName: (container.querySelector('#scenarioName') as HTMLInputElement)?.value || '',
         eventCode: (container.querySelector('#eventCode') as HTMLInputElement)?.value || '',
         eventDate: (container.querySelector('#eventDate') as HTMLInputElement)?.value || '',
-        xpEarned: parseInt((container.querySelector('#xpEarned') as HTMLInputElement)?.value) || 0,
-        treasureBundles: parseInt((container.querySelector('#treasureBundles') as HTMLInputElement)?.value) || 0,
-        downtimeDays: parseInt((container.querySelector('#downtimeDays') as HTMLInputElement)?.value) || 0,
+        xpEarned: Number.parseInt((container.querySelector('#xpEarned') as HTMLInputElement)?.value) || 0,
+        treasureBundles: Number.parseInt((container.querySelector('#treasureBundles') as HTMLInputElement)?.value) || 0,
+        downtimeDays: Number.parseInt((container.querySelector('#downtimeDays') as HTMLInputElement)?.value) || 0,
         layoutId: (container.querySelector('#layout') as HTMLSelectElement)?.value || '',
         seasonId: (container.querySelector('#season') as HTMLSelectElement)?.value || '',
         blankChroniclePath: (container.querySelector('#blankChroniclePath') as HTMLInputElement)?.value || '',
@@ -48,14 +48,14 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
         strikeoutItems: Array.from(
             container.querySelectorAll('input[name="shared.strikeoutItems"]:checked')
         ).map((el) => (el as HTMLInputElement).value),
-        chosenFactionReputation: parseInt((container.querySelector('#chosenFactionReputation') as HTMLInputElement)?.value) || 2,
+        chosenFactionReputation: Number.parseInt((container.querySelector('#chosenFactionReputation') as HTMLInputElement)?.value) || 2,
         reputationValues: {
-            EA: parseInt((container.querySelector('#reputation-EA') as HTMLInputElement)?.value) || 0,
-            GA: parseInt((container.querySelector('#reputation-GA') as HTMLInputElement)?.value) || 0,
-            HH: parseInt((container.querySelector('#reputation-HH') as HTMLInputElement)?.value) || 0,
-            VS: parseInt((container.querySelector('#reputation-VS') as HTMLInputElement)?.value) || 0,
-            RO: parseInt((container.querySelector('#reputation-RO') as HTMLInputElement)?.value) || 0,
-            VW: parseInt((container.querySelector('#reputation-VW') as HTMLInputElement)?.value) || 0,
+            EA: Number.parseInt((container.querySelector('#reputation-EA') as HTMLInputElement)?.value) || 0,
+            GA: Number.parseInt((container.querySelector('#reputation-GA') as HTMLInputElement)?.value) || 0,
+            HH: Number.parseInt((container.querySelector('#reputation-HH') as HTMLInputElement)?.value) || 0,
+            VS: Number.parseInt((container.querySelector('#reputation-VS') as HTMLInputElement)?.value) || 0,
+            RO: Number.parseInt((container.querySelector('#reputation-RO') as HTMLInputElement)?.value) || 0,
+            VW: Number.parseInt((container.querySelector('#reputation-VW') as HTMLInputElement)?.value) || 0,
         },
     };
     
@@ -68,20 +68,20 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
         // Get task level value (can be "-" or a number)
         const taskLevelSelect = container.querySelector(`select[name="characters.${actorId}.taskLevel"]`) as HTMLSelectElement;
         const taskLevelValue = taskLevelSelect?.value || '-';
-        const taskLevel = taskLevelValue === '-' ? '-' : parseInt(taskLevelValue, 10);
+        const taskLevel = taskLevelValue === '-' ? '-' : Number.parseInt(taskLevelValue, 10);
         
         characters[actorId] = {
             // Read from hidden fields (non-editable)
             characterName: (container.querySelector(`input[name="characters.${actorId}.characterName"]`) as HTMLInputElement)?.value || actor.name,
             societyId: (container.querySelector(`input[name="characters.${actorId}.societyId"]`) as HTMLInputElement)?.value || '',
-            level: parseInt((container.querySelector(`input[name="characters.${actorId}.level"]`) as HTMLInputElement)?.value) || actor.level || 1,
+            level: Number.parseInt((container.querySelector(`input[name="characters.${actorId}.level"]`) as HTMLInputElement)?.value) || actor.level || 1,
             // Read earned income input fields
             taskLevel: taskLevel,
             successLevel: (container.querySelector(`select[name="characters.${actorId}.successLevel"]`) as HTMLSelectElement)?.value || 'success',
             proficiencyRank: (container.querySelector(`select[name="characters.${actorId}.proficiencyRank"]`) as HTMLSelectElement)?.value || 'trained',
-            earnedIncome: parseFloat((container.querySelector(`input[name="characters.${actorId}.earnedIncome"]`) as HTMLInputElement)?.value) || 0,
+            earnedIncome: Number.parseFloat((container.querySelector(`input[name="characters.${actorId}.earnedIncome"]`) as HTMLInputElement)?.value) || 0,
             // Read from visible editable fields
-            goldSpent: parseFloat((container.querySelector(`#goldSpent-${actorId}`) as HTMLInputElement)?.value) || 0,
+            goldSpent: Number.parseFloat((container.querySelector(`#goldSpent-${actorId}`) as HTMLInputElement)?.value) || 0,
             notes: (container.querySelector(`#notes-${actorId}`) as HTMLTextAreaElement)?.value || '',
         };
     });

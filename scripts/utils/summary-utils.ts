@@ -71,7 +71,7 @@ export function generateEventDetailsSummary(container: HTMLElement): string {
  */
 export function generateReputationSummary(container: HTMLElement): string {
   const chosenInput = container.querySelector('#chosenFactionReputation') as HTMLInputElement;
-  const chosenValue = parseInt(chosenInput?.value) || 2;
+  const chosenValue = Number.parseInt(chosenInput?.value) || 2;
   
   const parts: string[] = [`<i class="fas fa-star"></i> Reputation - +${chosenValue}`];
   
@@ -80,7 +80,7 @@ export function generateReputationSummary(container: HTMLElement): string {
   
   for (const faction of factions) {
     const factionInput = container.querySelector(`#reputation-${faction}`) as HTMLInputElement;
-    const factionValue = parseInt(factionInput?.value) || 0;
+    const factionValue = Number.parseInt(factionInput?.value) || 0;
     
     if (factionValue !== 0) {
       parts.push(`${faction}: +${factionValue}`);
@@ -107,8 +107,8 @@ export function generateSharedRewardsSummary(container: HTMLElement): string {
   const xpInput = container.querySelector('#xpEarned') as HTMLInputElement;
   const tbInput = container.querySelector('#treasureBundles') as HTMLInputElement;
   
-  const xpValue = parseInt(xpInput?.value) || 0;
-  const tbValue = parseInt(tbInput?.value) || 0;
+  const xpValue = Number.parseInt(xpInput?.value) || 0;
+  const tbValue = Number.parseInt(tbInput?.value) || 0;
   
   const summary = `<i class="fas fa-gift"></i> Shared Rewards - ${xpValue} XP; ${tbValue} TB`;
   return truncateText(summary);

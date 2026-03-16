@@ -227,10 +227,10 @@ export function getIncomePerDay(
     return 0;
   }
   
-  const level = typeof taskLevel === 'string' ? parseInt(taskLevel, 10) : taskLevel;
+  const level = typeof taskLevel === 'string' ? Number.parseInt(taskLevel, 10) : taskLevel;
   
   // Validate task level range
-  if (isNaN(level) || level < 0 || level > 20) {
+  if (Number.isNaN(level) || level < 0 || level > 20) {
     return 0;
   }
   

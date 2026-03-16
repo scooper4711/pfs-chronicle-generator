@@ -187,7 +187,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
             const byteCharacters = atob(chroniclePdf);
             const byteNumbers = new Array(byteCharacters.length);
             for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
+                byteNumbers[i] = byteCharacters.codePointAt(i);
             }
             const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], {type: 'application/pdf'});
@@ -358,20 +358,20 @@ async function initializeForm(
     
     // Initialize treasure bundle displays on initial render
     const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
-    const initialTreasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
+    const initialTreasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
     updateAllTreasureBundleDisplays(initialTreasureBundles, container);
     
     // Initialize downtime days display based on XP earned
     // Requirements: earned-income-calculation 2.4, 2.5, 7.3
     const xpEarnedSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
-    const initialXpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
+    const initialXpEarned = Number.parseInt(xpEarnedSelect?.value || '0', 10);
     updateDowntimeDaysDisplay(initialXpEarned, container);
     
     // Initialize earned income displays on initial render
     // Requirements: earned-income-calculation 7.3
     console.log('[PFS Chronicle] Initializing earned income displays...');
     const downtimeDaysSelect = container.querySelector<HTMLSelectElement>('#downtimeDays');
-    const initialDowntimeDays = parseInt(downtimeDaysSelect?.value || '1', 10);
+    const initialDowntimeDays = Number.parseInt(downtimeDaysSelect?.value || '1', 10);
     console.log('[PFS Chronicle] Initial downtime days:', initialDowntimeDays, 'from select:', downtimeDaysSelect?.value);
     updateAllEarnedIncomeDisplays(initialDowntimeDays, container);
     

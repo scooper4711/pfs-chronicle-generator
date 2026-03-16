@@ -44,7 +44,7 @@ export function validateDateFormat(date: string | undefined | null, fieldName: s
   
   // Check if date is a valid calendar date
   const dateObj = new Date(date);
-  if (isNaN(dateObj.getTime())) {
+  if (Number.isNaN(dateObj.getTime())) {
     errors.push(`${fieldName} is not a valid date`);
   }
   

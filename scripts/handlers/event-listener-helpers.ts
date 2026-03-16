@@ -106,7 +106,7 @@ export function attachTreasureBundleListeners(container: HTMLElement): void {
     // Treasure bundles change handler for reactive display updates
     treasureBundlesSelect?.addEventListener('change', (event: Event) => {
         const select = event.target as HTMLSelectElement;
-        const treasureBundles = parseFloat(select.value) || 0;
+        const treasureBundles = Number.parseFloat(select.value) || 0;
         updateAllTreasureBundleDisplays(treasureBundles, container);
     });
     
@@ -122,8 +122,8 @@ export function attachTreasureBundleListeners(container: HTMLElement): void {
                 const treasureBundlesSelect = container.querySelector<HTMLSelectElement>(
                     SHARED_FIELD_SELECTORS.TREASURE_BUNDLES
                 );
-                const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
-                const characterLevel = parseInt(input.value, 10);
+                const treasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
+                const characterLevel = Number.parseInt(input.value, 10);
                 updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
             }
         });
@@ -145,7 +145,7 @@ export function attachDowntimeDaysListeners(container: HTMLElement): void {
     // XP Earned change handler for reactive downtime days display updates
     xpEarnedSelect?.addEventListener('change', (event: Event) => {
         const select = event.target as HTMLSelectElement;
-        const xpEarned = parseInt(select.value, 10) || 0;
+        const xpEarned = Number.parseInt(select.value, 10) || 0;
         updateDowntimeDaysDisplay(xpEarned, container);
     });
     
@@ -153,7 +153,7 @@ export function attachDowntimeDaysListeners(container: HTMLElement): void {
     // (needed for Series 1 Quest detection: 1 XP + 2.5 TB = 2 downtime days)
     treasureBundlesSelect?.addEventListener('change', () => {
         const xpEarnedSelect = container.querySelector<HTMLSelectElement>(SHARED_FIELD_SELECTORS.XP_EARNED);
-        const xpEarned = parseInt(xpEarnedSelect?.value || '0', 10);
+        const xpEarned = Number.parseInt(xpEarnedSelect?.value || '0', 10);
         updateDowntimeDaysDisplay(xpEarned, container);
     });
 }
@@ -171,7 +171,7 @@ export function attachEarnedIncomeListeners(container: HTMLElement): void {
     );
     downtimeDaysSelect?.addEventListener('change', (event: Event) => {
         const select = event.target as HTMLSelectElement;
-        const downtimeDays = parseInt(select.value, 10) || 1;
+        const downtimeDays = Number.parseInt(select.value, 10) || 1;
         updateAllEarnedIncomeDisplays(downtimeDays, container);
     });
     

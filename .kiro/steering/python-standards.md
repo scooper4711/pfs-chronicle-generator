@@ -115,3 +115,28 @@ MAX_PAREN_GROUPS_PER_ITEM: int = 2  # Finalize item after this many complete par
 Y_COORDINATE_GROUPING_TOLERANCE: float = 2.0
 CHECKBOX_CHARS: list[str] = ['□', '☐', '☑', '☒']
 ```
+
+## File Size and Complexity
+
+The same principles from the TypeScript coding standards apply to Python code. SonarCloud enforces these on both languages.
+
+**File Size Limit**:
+- Production files SHOULD be kept under 300 lines
+- Production files MUST be kept under 500 lines
+
+**Cyclomatic Complexity**:
+- Functions SHOULD maintain cyclomatic complexity below 5
+- Functions MUST maintain cyclomatic complexity below 15
+- Use early returns, guard clauses, and helper functions to reduce complexity
+- Extract complex conditionals into well-named helper functions
+
+**When high CCN is acceptable** (same nuance as TypeScript):
+- Flat dictionary lookups, simple if/elif chains with straightforward cases
+- Add a `# noqa` or SonarCloud suppression comment with an explanation
+
+**How to Reduce Complexity in Python**:
+1. Use early returns and guard clauses
+2. Extract complex conditionals into helper functions
+3. Use dictionary dispatch instead of long if/elif chains
+4. Break large functions into smaller, single-purpose functions
+5. Use comprehensions instead of nested loops where readable

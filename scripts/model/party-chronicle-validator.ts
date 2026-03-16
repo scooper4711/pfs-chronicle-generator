@@ -168,8 +168,8 @@ function validateTaskLevelFields(unique: Partial<UniqueFields>, prefix: string):
     return errors;
   }
 
-  const taskLevelNum = typeof unique.taskLevel === 'number' ? unique.taskLevel : parseInt(unique.taskLevel as string);
-  if (isNaN(taskLevelNum) || taskLevelNum < 0 || taskLevelNum > 20) {
+  const taskLevelNum = typeof unique.taskLevel === 'number' ? unique.taskLevel : Number.parseInt(unique.taskLevel as string);
+  if (Number.isNaN(taskLevelNum) || taskLevelNum < 0 || taskLevelNum > 20) {
     errors.push(`${prefix}Task Level must be between 0 and 20 or "-"`);
   }
 

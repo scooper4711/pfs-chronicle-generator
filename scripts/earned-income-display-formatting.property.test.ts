@@ -38,7 +38,7 @@ describe('Earned Income Display Formatting - Property Tests', () => {
             
             // The numeric part should match the input rounded to 2 decimals
             if (match) {
-              const numericPart = parseFloat(match[1]);
+              const numericPart = Number.parseFloat(match[1]);
               const expectedValue = Math.round(incomeValue * 100) / 100;
               expect(numericPart).toBeCloseTo(expectedValue, 2);
             }
@@ -98,7 +98,7 @@ describe('Earned Income Display Formatting - Property Tests', () => {
             expect(match).not.toBeNull();
             
             if (match) {
-              const numericPart = parseFloat(match[1]);
+              const numericPart = Number.parseFloat(match[1]);
               
               // Should have at most 2 decimal places
               const decimalPart = match[1].split('.')[1];
@@ -132,7 +132,7 @@ describe('Earned Income Display Formatting - Property Tests', () => {
         const formatted = formatIncomeValue(value);
         expect(formatted).toMatch(/^\d+\.\d{2} gp$/);
         
-        const numericPart = parseFloat(formatted.replace(' gp', ''));
+        const numericPart = Number.parseFloat(formatted.replace(' gp', ''));
         expect(numericPart).toBeCloseTo(value, 2);
       });
     });
@@ -150,7 +150,7 @@ describe('Earned Income Display Formatting - Property Tests', () => {
             expect(formatted).toMatch(/^\d+\.\d{2} gp$/);
             
             // Extract numeric part and verify it matches the calculation
-            const numericPart = parseFloat(formatted.replace(' gp', ''));
+            const numericPart = Number.parseFloat(formatted.replace(' gp', ''));
             const expectedValue = Math.round(totalIncome * 100) / 100;
             expect(numericPart).toBeCloseTo(expectedValue, 2);
           }
@@ -170,7 +170,7 @@ describe('Earned Income Display Formatting - Property Tests', () => {
             expect(formatted).not.toMatch(/^-/);
             
             // Numeric part should be non-negative
-            const numericPart = parseFloat(formatted.replace(' gp', ''));
+            const numericPart = Number.parseFloat(formatted.replace(' gp', ''));
             expect(numericPart).toBeGreaterThanOrEqual(0);
           }
         ),

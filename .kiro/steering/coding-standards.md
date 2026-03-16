@@ -94,6 +94,11 @@ This project follows the principles from Robert C. Martin's "Clean Code". These 
   - When `any` is necessary, add a comment explaining why and document the expected shape
   - Prefer `unknown` over `any` when the type is truly unknown - it forces type checking before use
   - Use proper type definitions or interfaces instead of `any` whenever possible
+- **Prefer `Number` methods over global equivalents**:
+  - Use `Number.parseInt()` instead of `parseInt()`
+  - Use `Number.isNaN()` instead of `isNaN()`
+  - Use `Number.parseFloat()` instead of `parseFloat()`
+- **Prefer `String#codePointAt()` over `String#charCodeAt()`** for proper Unicode support
 - Encapsulate conditionals: `if (isValid())` is better than `if (value > 0 && value < 100)`
 - Avoid negative conditionals: `if (isValid())` is clearer than `if (!isInvalid())`
 - Don't repeat yourself (DRY) - avoid repeated code and duplication
@@ -380,6 +385,18 @@ function processTypeA(data: any, options: any) {
 - Configuration files and type definition files are exempt
 - Generated code is exempt
 - If an exception is truly necessary, document the reason in comments
+
+## Pre-Push Testing Requirements
+
+Before any `git push`, all tests MUST pass. Do NOT push code with failing tests.
+
+**Required steps before pushing**:
+1. Run `npm run lint` and verify no lint errors
+2. Run `npx jest --silent` and verify all tests pass
+3. If lint or tests fail, fix them before committing/pushing
+4. Only push when both lint and the full test suite are green
+
+**This is a hard rule** — no exceptions. Broken tests on main break CI for everyone.
 
 ## Git Commit Standards
 

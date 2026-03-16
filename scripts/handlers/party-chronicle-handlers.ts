@@ -121,7 +121,7 @@ export function updateAllTreasureBundleDisplays(
     const levelInput = activity.querySelector<HTMLInputElement>('input[name$=".level"]');
     
     if (characterId && levelInput) {
-      const characterLevel = parseInt(levelInput.value, 10);
+      const characterLevel = Number.parseInt(levelInput.value, 10);
       updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
     }
   });
@@ -147,7 +147,7 @@ export function updateDowntimeDaysDisplay(
 ): void {
   // Get treasure bundles value to detect Series 1 Quest
   const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
-  const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
+  const treasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
   
   // Calculate downtime days based on XP earned and treasure bundles
   const downtimeDays = calculateDowntimeDays(xpEarned, treasureBundles);
@@ -429,7 +429,7 @@ export async function handleFieldChange(
     
     // If treasure bundles changed, update all treasure bundle displays
     if (fieldName === 'shared.treasureBundles') {
-        const treasureBundles = parseFloat(input.value) || 0;
+        const treasureBundles = Number.parseFloat(input.value) || 0;
         updateAllTreasureBundleDisplays(treasureBundles, container);
     }
     
@@ -439,15 +439,15 @@ export async function handleFieldChange(
         if (match) {
             const characterId = match[1];
             const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
-            const treasureBundles = parseFloat(treasureBundlesSelect?.value || '0');
-            const characterLevel = parseInt(input.value, 10);
+            const treasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
+            const characterLevel = Number.parseInt(input.value, 10);
             updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
         }
     }
     
     // If downtime days changed, update all earned income displays
     if (fieldName === 'shared.downtimeDays') {
-        const downtimeDays = parseInt(input.value, 10) || 0;
+        const downtimeDays = Number.parseInt(input.value, 10) || 0;
         updateAllEarnedIncomeDisplays(downtimeDays, container);
     }
     
@@ -457,7 +457,7 @@ export async function handleFieldChange(
         if (match) {
             const characterId = match[1];
             const downtimeDaysInput = container.querySelector<HTMLInputElement>('#downtimeDays');
-            const downtimeDays = parseInt(downtimeDaysInput?.value || '0', 10);
+            const downtimeDays = Number.parseInt(downtimeDaysInput?.value || '0', 10);
             
             const memberActivity = container.querySelector(`.member-activity[data-character-id="${characterId}"]`);
             if (memberActivity) {

@@ -69,13 +69,13 @@ class LayoutStore {
             .map(([id, name]) => ({ id, name }))
             .sort((a, b) => {
                 // Put numbered seasons first
-                const aNum = parseInt(a.id);
-                const bNum = parseInt(b.id);
-                if (!isNaN(aNum) && !isNaN(bNum)) {
+                const aNum = Number.parseInt(a.id);
+                const bNum = Number.parseInt(b.id);
+                if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
                     return aNum - bNum;
                 }
-                if (!isNaN(aNum)) return -1;
-                if (!isNaN(bNum)) return 1;
+                if (!Number.isNaN(aNum)) return -1;
+                if (!Number.isNaN(bNum)) return 1;
                 return a.name.localeCompare(b.name);
             });
     }
