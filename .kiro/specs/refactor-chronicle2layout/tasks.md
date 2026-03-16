@@ -187,7 +187,7 @@ Refactor the `chronicle2layout` Python codebase to meet coding standards: extrac
     - Update all tools scripts to derive paths relative to script location
     - _Requirements: 7.5_
 
-- [-] 10. Checkpoint - Verify tools cleanup
+- [x] 10. Checkpoint - Verify tools cleanup
   - Ensure all tests pass, ask the user if questions arise.
   - Verify deleted files are gone, renamed files are correct, imports work.
   - Commit:
@@ -197,25 +197,25 @@ Refactor the `chronicle2layout` Python codebase to meet coding standards: extrac
     - `refactor: Extract TEMPLATE dict into season4_template.json`
     - `refactor: Replace hardcoded paths with Path(__file__)-relative paths`
 
-- [ ] 11. Update requirements.txt and add documentation
-  - [ ] 11.1 Update `requirements.txt`
+- [x] 11. Update requirements.txt and add documentation
+  - [x] 11.1 Update `requirements.txt`
     - Remove `PyPDF2` and `opencv-python-headless`
     - Add `Pillow>=9.0.0` and `PyYAML>=6.0`
     - Keep `PyMuPDF>=1.22.0` and `numpy>=1.21.0`
     - _Requirements: 9.1, 9.2, 9.3, 9.4_
 
-  - [ ] 11.2 Add docstrings to all modules and public functions
+  - [x] 11.2 Add docstrings to all modules and public functions
     - Ensure every new module has a module-level docstring
     - Ensure every public function has a docstring with Args/Returns sections where applicable
     - Review existing functions in `chronicle2layout.py` and add missing docstrings
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-  - [ ] 11.3 Update `README.md` to reflect refactored module structure
+  - [x] 11.3 Update `README.md` to reflect refactored module structure
     - Document the new module structure and file responsibilities
     - Update usage instructions if needed
     - _Requirements: 8.6_
 
-  - [ ] 11.4 Create `chronicle2layout/ARCHITECTURE.md` documentation
+  - [x] 11.4 Create `chronicle2layout/ARCHITECTURE.md` documentation
     - Explain the overall purpose of chronicle2layout (PDF chronicle sheet → layout JSON)
     - Document the processing pipeline: PDF input → text extraction → item segmentation → checkbox detection → layout JSON output
     - Describe each module's role (`chronicle2layout.py`, `shared_utils.py`, `item_segmenter.py`, `checkbox_extractor.py`, `layout_generator.py`, `clip_canvas.py`)
@@ -225,7 +225,7 @@ Refactor the `chronicle2layout` Python codebase to meet coding standards: extrac
     - Describe the tools/ directory scripts and when to use them
     - _Requirements: 8.6_
 
-- [ ] 12. Final checkpoint - Ensure all tests pass
+- [x] 12. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
   - Verify all files are under 300 lines.
   - Verify all functions have type hints and docstrings.
