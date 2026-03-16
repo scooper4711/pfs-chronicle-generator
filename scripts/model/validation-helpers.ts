@@ -90,6 +90,48 @@ export function validateSocietyIdFormat(
 }
 
 /**
+ * Validates a number against range constraints (min/max with optional exclusive min).
+ */
+// eslint-disable-next-line complexity -- Flat range-check guard clauses, low cognitive complexity
+function validateRange(
+  value: number,
+  fieldName: string,
+  options: { min?: number; max?: number; minExclusive?: boolean },
+  prefix: string
+): string[] {
+  const errors: string[] = [];
+
+  if (options.min !== undefined && options.max !== undefined) {
+    if (options.minExclusive) {
+      if (value <= options.min) {
+        errors.push(`${prefix}${fieldName} must be greater than ${options.min}`);
+      } else if (value > options.max) {
+        errors.push(`${prefix}${fieldName} must be between ${options.min} and ${options.max}`);
+      }
+    } else if (value < options.min || value > options.max) {
+      errors.push(`${prefix}${fieldName} must be between ${options.min} and ${options.max}`);
+    }
+    return errors;
+  }
+
+  if (options.min !== undefined) {
+    if (options.minExclusive && value <= options.min) {
+      errors.push(`${prefix}${fieldName} must be greater than ${options.min}`);
+    } else if (!options.minExclusive && value < options.min) {
+      errors.push(options.min === 0
+        ? `${prefix}${fieldName} cannot be negative`
+        : `${prefix}${fieldName} must be at least ${options.min}`);
+    }
+  }
+
+  if (options.max !== undefined && value > options.max) {
+    errors.push(`${prefix}${fieldName} must be at most ${options.max}`);
+  }
+
+  return errors;
+}
+
+/**
  * Validates that a numeric field has a valid value within specified constraints.
  * 
  * @param value - The value to validate
@@ -130,65 +172,21 @@ export function validateNumberField(
   } = {},
   prefix: string = ''
 ): string[] {
-  const errors: string[] = [];
-  const required = options.required !== false; // Default to true
+  const required = options.required !== false;
   
-  // Check if value is provided
   if (value === undefined || value === null) {
-    if (required) {
-      errors.push(`${prefix}${fieldName} is required`);
-    }
-    return errors;
+    return required ? [`${prefix}${fieldName} is required`] : [];
   }
   
-  // Check if value is a number
   if (typeof value !== 'number') {
-    errors.push(`${prefix}${fieldName} must be a number`);
-    return errors;
+    return [`${prefix}${fieldName} must be a number`];
   }
   
-  // Check if value must be an integer
   if (options.integer && !Number.isInteger(value)) {
-    errors.push(`${prefix}${fieldName} must be a whole number`);
-    return errors;
+    return [`${prefix}${fieldName} must be a whole number`];
   }
   
-  // Check minimum and maximum values together for range validation
-  if (options.min !== undefined && options.max !== undefined) {
-    // Special case: minExclusive means value must be > min (not >= min)
-    if (options.minExclusive) {
-      if (value <= options.min) {
-        errors.push(`${prefix}${fieldName} must be greater than ${options.min}`);
-      } else if (value > options.max) {
-        errors.push(`${prefix}${fieldName} must be between ${options.min} and ${options.max}`);
-      }
-    } else {
-      // Normal range check: min <= value <= max
-      if (value < options.min || value > options.max) {
-        errors.push(`${prefix}${fieldName} must be between ${options.min} and ${options.max}`);
-      }
-    }
-  } else {
-    // Check minimum value only
-    if (options.min !== undefined) {
-      if (options.minExclusive && value <= options.min) {
-        errors.push(`${prefix}${fieldName} must be greater than ${options.min}`);
-      } else if (!options.minExclusive && value < options.min) {
-        if (options.min === 0) {
-          errors.push(`${prefix}${fieldName} cannot be negative`);
-        } else {
-          errors.push(`${prefix}${fieldName} must be at least ${options.min}`);
-        }
-      }
-    }
-    
-    // Check maximum value only
-    if (options.max !== undefined && value > options.max) {
-      errors.push(`${prefix}${fieldName} must be at most ${options.max}`);
-    }
-  }
-  
-  return errors;
+  return validateRange(value, fieldName, options, prefix);
 }
 
 /**

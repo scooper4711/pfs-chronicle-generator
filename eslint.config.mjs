@@ -4,7 +4,7 @@ import tsparser from '@typescript-eslint/parser';
 export default [
   {
     files: ['scripts/**/*.ts'],
-    ignores: ['dist/**', 'node_modules/**', '**/*.test.ts'],
+    ignores: ['dist/**', 'node_modules/**', '**/*.test.ts', '**/*.pbt.test.ts', '**/*.property.test.ts'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {
@@ -29,5 +29,19 @@ export default [
         skipComments: true
       }]
     }
+  },
+  {
+    files: ['**/*.test.ts', '**/*.pbt.test.ts', '**/*.property.test.ts'],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        ecmaVersion: 2020,
+        sourceType: 'module',
+      }
+    },
+    plugins: {
+      '@typescript-eslint': tseslint
+    },
+    rules: {}
   }
 ];

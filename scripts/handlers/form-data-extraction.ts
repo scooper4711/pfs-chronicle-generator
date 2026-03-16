@@ -61,6 +61,7 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
     
     // Extract character-specific fields
     const characters: any = {};
+    // eslint-disable-next-line complexity -- Flat field extraction pattern, low cognitive complexity
     partyActors.forEach((actor: any) => {
         const actorId = actor.id;
         

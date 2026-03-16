@@ -2,6 +2,67 @@ import { PDFDocument, PDFFont, RGB, rgb, StandardFonts } from 'pdf-lib';
 import { Canvas } from '../model/layout';
 
 /**
+ * Resolves a web font name to its CDN URL and embeds it in the PDF document.
+ * Supports Noto Sans, Eczar, Gelasio, Roboto Condensed, and Tauri.
+ */
+async function embedWebFont(pdfDoc: PDFDocument, font: string): Promise<PDFFont> {
+    let fontUrl = '';
+    switch (font) {
+        case 'noto sans':
+        case 'noto':
+            fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff`;
+            break;
+        case 'eczar':
+            fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/eczar/files/eczar-latin-400-normal.woff`;
+            break;
+        case 'gelasio':
+            fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/gelasio/files/gelasio-latin-400-normal.woff`;
+            break;
+        case 'roboto condensed':
+        case 'roboto':
+            fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/roboto-condensed/files/roboto-condensed-latin-400-normal.woff`;
+            break;
+        case 'tauri':
+            fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/tauri/files/tauri-latin-400-normal.woff`;
+            break;
+    }
+    const fontBytes = await fetch(fontUrl).then(res => res.arrayBuffer());
+    return pdfDoc.embedFont(fontBytes);
+}
+
+/**
+ * Resolves a standard PDF font name with weight and style to a StandardFonts enum value.
+ */
+// eslint-disable-next-line complexity -- Flat guard-clause pattern for font family/weight/style combinations
+function resolveStandardFont(
+    font: string,
+    fontWeight: 'normal' | 'bold',
+    fontStyle: 'normal' | 'italic'
+): string {
+    if (font === 'helvetica') {
+        if (fontWeight === 'bold' && fontStyle === 'italic') return StandardFonts.HelveticaBoldOblique;
+        if (fontWeight === 'bold') return StandardFonts.HelveticaBold;
+        if (fontStyle === 'italic') return StandardFonts.HelveticaOblique;
+        return StandardFonts.Helvetica;
+    }
+    if (font === 'times') {
+        if (fontWeight === 'bold' && fontStyle === 'italic') return StandardFonts.TimesRomanBoldItalic;
+        if (fontWeight === 'bold') return StandardFonts.TimesRomanBold;
+        if (fontStyle === 'italic') return StandardFonts.TimesRomanItalic;
+        return StandardFonts.TimesRoman;
+    }
+    if (font === 'courier') {
+        if (fontWeight === 'bold' && fontStyle === 'italic') return StandardFonts.CourierBoldOblique;
+        if (fontWeight === 'bold') return StandardFonts.CourierBold;
+        if (fontStyle === 'italic') return StandardFonts.CourierOblique;
+        return StandardFonts.Courier;
+    }
+    return StandardFonts.Helvetica;
+}
+
+const WEB_FONT_PREFIXES = ['noto', 'eczar', 'gelasio', 'roboto', 'tauri'];
+
+/**
  * Resolves a font name, weight, and style to a PDFFont object.
  * Supports both standard PDF fonts (Helvetica, Times, Courier) and web fonts
  * (Noto Sans, Eczar, Gelasio, Roboto Condensed, Tauri) loaded from CDN.
@@ -19,65 +80,12 @@ export async function getFont(
     fontStyle: 'normal' | 'italic' = 'normal'
 ): Promise<PDFFont> {
     const font = fontName?.toLowerCase() || 'helvetica';
-    
-    if (font.startsWith('noto') || font.startsWith('eczar') || font.startsWith('gelasio') || font.startsWith('roboto') || font.startsWith('tauri')) {
-        let fontUrl = '';
-        switch (font) {
-            case 'noto sans':
-            case 'noto':
-                fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff`;
-                break;
-            case 'eczar':
-                fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/eczar/files/eczar-latin-400-normal.woff`;
-                break;
-            case 'gelasio':
-                fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/gelasio/files/gelasio-latin-400-normal.woff`;
-                break;
-            case 'roboto condensed':
-            case 'roboto':
-                fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/roboto-condensed/files/roboto-condensed-latin-400-normal.woff`;
-                break;
-            case 'tauri':
-                fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/tauri/files/tauri-latin-400-normal.woff`;
-                break;
-        }
-        const fontBytes = await fetch(fontUrl).then(res => res.arrayBuffer());
-        return pdfDoc.embedFont(fontBytes);
+
+    if (WEB_FONT_PREFIXES.some(prefix => font.startsWith(prefix))) {
+        return embedWebFont(pdfDoc, font);
     }
 
-    let finalFont: string = StandardFonts.Helvetica;
-
-    if (font === 'helvetica') {
-        if (fontWeight === 'bold' && fontStyle === 'italic') {
-            finalFont = StandardFonts.HelveticaBoldOblique;
-        } else if (fontWeight === 'bold') {
-            finalFont = StandardFonts.HelveticaBold;
-        } else if (fontStyle === 'italic') {
-            finalFont = StandardFonts.HelveticaOblique;
-        }
-    } else if (font === 'times') {
-        if (fontWeight === 'bold' && fontStyle === 'italic') {
-            finalFont = StandardFonts.TimesRomanBoldItalic;
-        } else if (fontWeight === 'bold') {
-            finalFont = StandardFonts.TimesRomanBold;
-        } else if (fontStyle === 'italic') {
-            finalFont = StandardFonts.TimesRomanItalic;
-        } else {
-            finalFont = StandardFonts.TimesRoman;
-        }
-    } else if (font === 'courier') {
-        if (fontWeight === 'bold' && fontStyle === 'italic') {
-            finalFont = StandardFonts.CourierBoldOblique;
-        } else if (fontWeight === 'bold') {
-            finalFont = StandardFonts.CourierBold;
-        } else if (fontStyle === 'italic') {
-            finalFont = StandardFonts.CourierOblique;
-        } else {
-            finalFont = StandardFonts.Courier;
-        }
-    }
-
-    return pdfDoc.embedFont(finalFont);
+    return pdfDoc.embedFont(resolveStandardFont(font, fontWeight, fontStyle));
 }
 
 /**

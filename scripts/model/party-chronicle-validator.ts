@@ -13,6 +13,7 @@ import {
   validateDateFormat,
   validateNumberField,
   validateRequiredString,
+  validateSocietyIdFormat,
   validateOptionalArray
 } from './validation-helpers.js';
 
@@ -154,6 +155,34 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
  * 
  * Validates: Requirements party-chronicle-filling 6.2, 6.3, treasure-bundle-calculation 11.1, 11.2, 11.3, 11.4, earned-income-calculation 9.5, 9.6, 9.7
  */
+const VALID_SUCCESS_LEVELS = ['critical_failure', 'failure', 'success', 'critical_success'];
+const VALID_PROFICIENCY_RANKS = ['trained', 'expert', 'master', 'legendary'];
+
+/**
+ * Validates task level and its dependent fields (success level, proficiency rank).
+ */
+function validateTaskLevelFields(unique: Partial<UniqueFields>, prefix: string): string[] {
+  const errors: string[] = [];
+
+  if (unique.taskLevel === undefined || unique.taskLevel === '-') {
+    return errors;
+  }
+
+  const taskLevelNum = typeof unique.taskLevel === 'number' ? unique.taskLevel : parseInt(unique.taskLevel as string);
+  if (isNaN(taskLevelNum) || taskLevelNum < 0 || taskLevelNum > 20) {
+    errors.push(`${prefix}Task Level must be between 0 and 20 or "-"`);
+  }
+
+  if (!unique.successLevel) {
+    errors.push(`${prefix}Success Level is required when Task Level is not "-"`);
+  }
+  if (!unique.proficiencyRank) {
+    errors.push(`${prefix}Proficiency Rank is required when Task Level is not "-"`);
+  }
+
+  return errors;
+}
+
 export function validateUniqueFields(
   unique: Partial<UniqueFields>,
   characterName?: string
@@ -165,16 +194,7 @@ export function validateUniqueFields(
   errors.push(...validateRequiredString(unique.characterName, 'Character Name', prefix));
   
   // Validate Society ID with format check
-  const societyIdErrors = validateRequiredString(unique.societyId, 'Society ID', prefix);
-  if (societyIdErrors.length === 0) {
-    // Only check format if the field is not empty
-    const societyIdRegex = /^\d+-\d+$/;
-    if (unique.societyId && !societyIdRegex.test(unique.societyId)) {
-      errors.push(`${prefix}Society ID must be in format "playerNumber-characterNumber" (e.g., "12345-01")`);
-    }
-  } else {
-    errors.push(...societyIdErrors);
-  }
+  errors.push(...validateSocietyIdFormat(unique.societyId, 'Society ID', prefix));
   
   // Validate Level
   errors.push(...validateNumberField(unique.level, 'Level', { 
@@ -191,29 +211,16 @@ export function validateUniqueFields(
     min: 0 
   }, prefix));
   
-  // Validate Task Level
-  if (unique.taskLevel !== undefined && unique.taskLevel !== '-') {
-    const taskLevelNum = typeof unique.taskLevel === 'number' ? unique.taskLevel : parseInt(unique.taskLevel as string);
-    if (isNaN(taskLevelNum) || taskLevelNum < 0 || taskLevelNum > 20) {
-      errors.push(`${prefix}Task Level must be between 0 and 20 or "-"`);
-    }
-    
-    // If task level is not "-", require success level and proficiency rank
-    if (!unique.successLevel) {
-      errors.push(`${prefix}Success Level is required when Task Level is not "-"`);
-    }
-    if (!unique.proficiencyRank) {
-      errors.push(`${prefix}Proficiency Rank is required when Task Level is not "-"`);
-    }
-  }
+  // Validate Task Level and dependent fields
+  errors.push(...validateTaskLevelFields(unique, prefix));
   
   // Validate Success Level (if provided)
-  if (unique.successLevel && !['critical_failure', 'failure', 'success', 'critical_success'].includes(unique.successLevel)) {
+  if (unique.successLevel && !VALID_SUCCESS_LEVELS.includes(unique.successLevel)) {
     errors.push(`${prefix}Success Level must be critical_failure, failure, success, or critical_success`);
   }
   
   // Validate Proficiency Rank (if provided)
-  if (unique.proficiencyRank && !['trained', 'expert', 'master', 'legendary'].includes(unique.proficiencyRank)) {
+  if (unique.proficiencyRank && !VALID_PROFICIENCY_RANKS.includes(unique.proficiencyRank)) {
     errors.push(`${prefix}Proficiency Rank must be trained, expert, master, or legendary`);
   }
   

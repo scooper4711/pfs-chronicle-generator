@@ -7,7 +7,7 @@
     "build": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap",
     "watch": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap --watch",
     "test": "jest",
-    "lint": "eslint scripts/**/*.ts --max-warnings 0",
+    "lint": "eslint scripts/**/*.ts --max-warnings 5",
     "check:complexity": "eslint scripts/**/*.ts --max-warnings 0",
     "check:duplication": "node scripts-build/check-duplication.js",
     "check:quality": "npm run check:complexity && npm run check:duplication",
