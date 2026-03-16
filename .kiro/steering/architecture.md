@@ -971,3 +971,10 @@ updated files          ❌ Not imperative, no type, vague
 refactor: updated files.  ❌ Not imperative, ends with period
 REFACTOR: EXTRACT UTILS   ❌ All caps
 ```
+
+**Merge Strategy**:
+- Use merge commits (`git merge --no-ff`) when integrating feature, refactor, and bugfix branches into main
+- Do NOT use fast-forward merges — branches should be preserved in the commit graph so their history is visible
+- The merge commit message should follow Conventional Commits format and reference the branch purpose
+- Example: `Merge branch 'refactor/chronicle2layout'`
+- This preserves the context of grouped work (e.g., a multi-commit refactoring) and makes `git log --graph` useful
