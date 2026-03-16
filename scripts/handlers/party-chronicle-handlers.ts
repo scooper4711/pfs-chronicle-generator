@@ -519,21 +519,23 @@ export async function handleChroniclePathFilePicker(
     
     const filePicker = new foundry.applications.apps.FilePicker.implementation({
         type: 'any',
-        callback: (path: string) => {
+        // NOSONAR: Async callback is intentional - FilePicker doesn't await it, but we need async work inside
+        callback: async (path: string): Promise<void> => {
             // Update input field
             const input = container.querySelector('#blankChroniclePath') as HTMLInputElement;
-            if (input) {
-                input.value = path;
-                
-                // Get current layout ID to check if it has a default
-                const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
-                const layoutId = layoutSelect?.value;
-                
-                // Trigger auto-save then update visibility
-                // Uses .catch() instead of async callback to avoid unresolved promise (SonarCloud S6544)
-                saveFormData(container, partyActors)
-                    .then(() => updateChroniclePathVisibility(path, container, layoutId))
-                    .catch(error => console.error('[PFS Chronicle] File picker callback failed:', error));
+            if (!input) return;
+
+            input.value = path;
+
+            // Get current layout ID to check if it has a default
+            const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
+            const layoutId = layoutSelect?.value;
+
+            try {
+                await saveFormData(container, partyActors);
+                await updateChroniclePathVisibility(path, container, layoutId);
+            } catch (error) {
+                console.error('[PFS Chronicle] File picker callback failed:', error);
             }
         }
     });
