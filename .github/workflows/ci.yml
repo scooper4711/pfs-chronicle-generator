@@ -44,6 +44,6 @@ jobs:
         run: pytest --cov=chronicle2layout/src --cov-report=xml:coverage-python.xml chronicle2layout/tests/
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
