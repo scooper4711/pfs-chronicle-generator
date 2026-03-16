@@ -8,6 +8,11 @@
 
 *Written with AI assistance.*
 
+![GitHub Release](https://img.shields.io/github/v/release/scooper4711/pfs-chronicle-generator)
+![GitHub Downloads](https://img.shields.io/github/downloads/scooper4711/pfs-chronicle-generator/total)
+![License](https://img.shields.io/github/license/scooper4711/pfs-chronicle-generator)
+![Foundry v13](https://img.shields.io/badge/Foundry-v13-informational)
+
 ---
 
 </div>
@@ -35,7 +40,7 @@
 
 ### Requirements
 
-- **Foundry VTT**: Version 12 or higher (verified compatible with v13)
+- **Foundry VTT**: Version 13
 - **Game System**: Pathfinder 2e (PF2e)
 
 ---

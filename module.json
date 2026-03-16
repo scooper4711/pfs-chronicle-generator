@@ -4,7 +4,7 @@
   "description": "A module to fill-in Pathfinder and Starfinder Society Chronicles.",
   "version": "#{VERSION}#",
   "compatibility": {
-    "minimum": "12",
+    "minimum": "13",
     "verified": "13"
   },
   "authors": [
