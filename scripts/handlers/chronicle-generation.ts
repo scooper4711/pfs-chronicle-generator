@@ -239,7 +239,7 @@ async function generateSingleCharacterPdf(
     let binary = '';
     const len = modifiedPdfBytes.byteLength;
     for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(modifiedPdfBytes[i]);
+      binary += String.fromCodePoint(modifiedPdfBytes[i]);
     }
     const base64String = btoa(binary);
 

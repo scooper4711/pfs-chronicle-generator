@@ -99,6 +99,7 @@ This project follows the principles from Robert C. Martin's "Clean Code". These 
   - Use `Number.isNaN()` instead of `isNaN()`
   - Use `Number.parseFloat()` instead of `parseFloat()`
 - **Prefer `String#codePointAt()` over `String#charCodeAt()`** for proper Unicode support
+- **Prefer `String.fromCodePoint()` over `String.fromCharCode()`** for proper Unicode support
 - **Prefer `.dataset` over `getAttribute('data-...')`** for accessing data attributes (SonarCloud S7761)
 - **Prefer `String#replaceAll()` over `String#replace()` with global regex** (SonarCloud S7781)
 - Encapsulate conditionals: `if (isValid())` is better than `if (value > 0 && value < 100)`
