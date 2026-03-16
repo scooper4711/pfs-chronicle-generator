@@ -17,7 +17,7 @@ FORCE_BUMP="${1:-}"
 # Get the latest semver tag
 LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
 
-if [ -z "$LATEST_TAG" ]; then
+if [[ -z "$LATEST_TAG" ]]; then
   echo "No existing version tags found. Starting at v0.1.0"
   NEXT_TAG="v0.1.0"
 else
@@ -29,7 +29,7 @@ else
 
   echo "Current version: $LATEST_TAG"
 
-  if [ -n "$FORCE_BUMP" ]; then
+  if [[ -n "$FORCE_BUMP" ]]; then
     BUMP="$FORCE_BUMP"
     echo "Forced bump type: $BUMP"
   else
@@ -72,7 +72,7 @@ fi
 # Show what will happen
 echo ""
 echo "Commits since ${LATEST_TAG:-beginning}:"
-if [ -n "$LATEST_TAG" ]; then
+if [[ -n "$LATEST_TAG" ]]; then
   git log "${LATEST_TAG}..HEAD" --oneline
 else
   git log --oneline
