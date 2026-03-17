@@ -135,8 +135,7 @@ The form has several sections:
 <tr>
 <td width="50%" valign="top">
 
-<details open>
-<summary><b>📝 Event Information</b></summary>
+**📝 Event Information**
 
 - GM PFS Number
 - Season
@@ -144,15 +143,10 @@ The form has several sections:
 - Event Code
 - Event Date
 
-</details>
-
 </td>
 <td width="50%" valign="top">
 
-<details>
-<summary><img src="docs/screenshots/chronicle-form.png" alt="Chronicle Form" style="max-height: 150px; width: auto; cursor: pointer;"></summary>
-<img src="docs/screenshots/chronicle-form.png" alt="Chronicle Form - Full Size" style="width: 100%;">
-</details>
+![Event Information](docs/screenshots/layout-selection.png)
 
 </td>
 </tr>
@@ -160,22 +154,16 @@ The form has several sections:
 <tr>
 <td width="50%" valign="top">
 
-<details open>
-<summary><b>💰 Rewards</b> (automatically calculated based on scenario type)</summary>
+**💰 Rewards** (automatically calculated based on scenario type)
 
 - XP Earned
 - Treasure Bundles
 - Downtime Days
 
-</details>
-
 </td>
 <td width="50%" valign="top">
 
-<details>
-<summary><img src="docs/screenshots/shared-rewards.png" alt="Shared Rewards" style="max-height: 120px; width: auto; cursor: pointer;"></summary>
-<img src="docs/screenshots/shared-rewards.png" alt="Shared Rewards - Full Size" style="width: 100%;">
-</details>
+![Shared Rewards](docs/screenshots/shared-rewards.png)
 
 </td>
 </tr>
@@ -183,21 +171,15 @@ The form has several sections:
 <tr>
 <td width="50%" valign="top">
 
-<details open>
-<summary><b>⭐ Reputation</b> (automatically calculated)</summary>
+**⭐ Reputation** (automatically calculated)
 
 - Base reputation for the player's chosen faction
 - Bonus reputation for completing faction specific goals
 
-</details>
-
 </td>
 <td width="50%" valign="top">
 
-<details>
-<summary><img src="docs/screenshots/reputation.png" alt="Reputation" style="max-height: 100px; width: auto; cursor: pointer;"></summary>
-<img src="docs/screenshots/reputation.png" alt="Reputation - Full Size" style="width: 100%;">
-</details>
+![Reputation](docs/screenshots/reputation.png)
 
 </td>
 </tr>
@@ -205,8 +187,7 @@ The form has several sections:
 <tr>
 <td width="50%" valign="top">
 
-<details open>
-<summary><b>👤 Character-Specific Information</b></summary>
+**👤 Character-Specific Information**
 
 - Society ID (entered on the Actor sheet)
 - Level (entered on the Actor sheet)
@@ -214,15 +195,10 @@ The form has several sections:
 - Gold Spent (optional)
 - Notes (optional)
 
-</details>
-
 </td>
 <td width="50%" valign="top">
 
-<details>
-<summary><img src="docs/screenshots/chronicle-form.png" alt="Character Information" style="max-height: 150px; width: auto; cursor: pointer;"></summary>
-<img src="docs/screenshots/chronicle-form.png" alt="Character Information - Full Size" style="width: 100%;">
-</details>
+![Character Information](docs/screenshots/chronicle-form.png)
 
 </td>
 </tr>
@@ -230,22 +206,16 @@ The form has several sections:
 <tr>
 <td width="50%" valign="top">
 
-<details open>
-<summary><b>✅ Adventure Summary</b></summary>
+**✅ Adventure Summary**
 
 - Fill in the checkboxes from the adventure summary to track what the party accomplished
 - Only displayed if there are checkboxes to fill in
 - Uses the lead text immediately following the checkbox
 
-</details>
-
 </td>
 <td width="50%" valign="top">
 
-<details>
-<summary><img src="docs/screenshots/adventure-summary.png" alt="Adventure Summary" style="max-height: 120px; width: auto; cursor: pointer;"></summary>
-<img src="docs/screenshots/adventure-summary.png" alt="Adventure Summary - Full Size" style="width: 100%;">
-</details>
+![Adventure Summary](docs/screenshots/adventure-summary.png)
 
 </td>
 </tr>
@@ -253,23 +223,17 @@ The form has several sections:
 <tr>
 <td width="50%" valign="top">
 
-<details open>
-<summary><b>❌ Items to Strike Out</b></summary>
+**❌ Items to Strike Out**
 
 - Black out the items from the higher level tier if running on the lower level
 - Black out items not encountered
 - Only displayed if there are items that can be struck out
 - Uses the text of the item on the form
 
-</details>
-
 </td>
 <td width="50%" valign="top">
 
-<details>
-<summary><img src="docs/screenshots/strike-out.png" alt="Strike Out Items" style="max-height: 120px; width: auto; cursor: pointer;"></summary>
-<img src="docs/screenshots/strike-out.png" alt="Strike Out Items - Full Size" style="width: 100%;">
-</details>
+![Strike Out Items](docs/screenshots/strike-out.png)
 
 </td>
 </tr>
