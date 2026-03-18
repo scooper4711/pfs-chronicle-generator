@@ -101,6 +101,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
       earnedIncome: fc.double({ min: 0, max: 1000, noNaN: true }),
       goldSpent: fc.double({ min: 0, max: 1000, noNaN: true }),
       notes: fc.string({ maxLength: 200 }),
+      consumeReplay: fc.boolean(),
     });
 
     /**
@@ -129,6 +130,11 @@ describe('Earned Income Data Persistence - Property Tests', () => {
           RO: fc.integer({ min: 0, max: 9 }),
           VW: fc.integer({ min: 0, max: 9 }),
         }),
+        reportingA: fc.boolean(),
+        reportingB: fc.boolean(),
+        reportingC: fc.boolean(),
+        reportingD: fc.boolean(),
+        chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW'),
       }),
       characters: fc.dictionary(
         fc.string({ minLength: 1, maxLength: 20 }), // actor IDs
@@ -159,6 +165,11 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 strikeoutItems: [],
                 chosenFactionReputation: 2,
                 reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: '',
               },
               characters: {
                 actor1: {
@@ -171,6 +182,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                   earnedIncome: 0,
                   goldSpent: 0,
                   notes: '',
+                  consumeReplay: false,
                 },
               },
             };
@@ -233,6 +245,11 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 strikeoutItems: [],
                 chosenFactionReputation: 2,
                 reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: '',
               },
               characters: charactersData,
             };
@@ -297,6 +314,11 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 strikeoutItems: [],
                 chosenFactionReputation: 2,
                 reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: '',
               },
               characters: charactersData,
             };
@@ -361,6 +383,11 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 strikeoutItems: [],
                 chosenFactionReputation: 2,
                 reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: '',
               },
               characters: charactersData,
             };
@@ -436,6 +463,11 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 strikeoutItems: [],
                 chosenFactionReputation: 2,
                 reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: '',
               },
               characters: {
                 actor1: {
@@ -448,6 +480,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                   earnedIncome: 0,
                   goldSpent: 0,
                   notes: '',
+                  consumeReplay: false,
                 },
               },
             };
@@ -532,6 +565,11 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 strikeoutItems: [],
                 chosenFactionReputation: 2,
                 reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: '',
               },
               characters: {
                 actor1: {
@@ -544,6 +582,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                   earnedIncome: 0,
                   goldSpent: 0,
                   notes: '',
+                  consumeReplay: false,
                 },
               },
             };

@@ -179,7 +179,12 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
                   VS: 0,
                   RO: 0,
                   VW: 0
-                }
+                },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: ''
               },
               characters: {
                 'char1': {
@@ -191,7 +196,8 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
                   proficiencyRank: 'trained',
                   earnedIncome: 50,
                   goldSpent: 10,
-                  notes: 'Test notes'
+                  notes: 'Test notes',
+                  consumeReplay: false
                 }
               }
             };
@@ -235,7 +241,12 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
                   VS: 0,
                   RO: 0,
                   VW: 0
-                }
+                },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: ''
               },
               characters: {
                 'char1': {
@@ -247,7 +258,8 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
                   proficiencyRank: 'trained',
                   earnedIncome: 0,
                   goldSpent: 0,
-                  notes: ''
+                  notes: '',
+                  consumeReplay: false
                 }
               }
             };
@@ -340,7 +352,12 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
             adventureSummaryCheckboxes: [],
             strikeoutItems: [],
             chosenFactionReputation: 4,
-            reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+            reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+            reportingA: false,
+            reportingB: false,
+            reportingC: false,
+            reportingD: false,
+            chosenFaction: ''
           },
           characters: {}
         };
@@ -370,7 +387,12 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
             adventureSummaryCheckboxes: [],
             strikeoutItems: [],
             chosenFactionReputation: 4,
-            reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+            reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+            reportingA: false,
+            reportingB: false,
+            reportingC: false,
+            reportingD: false,
+            chosenFaction: ''
           },
           characters: {}
         };
@@ -443,7 +465,12 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
                 adventureSummaryCheckboxes: [],
                 strikeoutItems: [],
                 chosenFactionReputation: 4,
-                reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+                reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: ''
               },
               characters: {}
             };
@@ -471,7 +498,12 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
                 adventureSummaryCheckboxes: [],
                 strikeoutItems: [],
                 chosenFactionReputation: 4,
-                reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+                reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: ''
               },
               characters: {}
             };

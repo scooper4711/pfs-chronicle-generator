@@ -42,7 +42,12 @@ const sharedFieldsArbitrary = fc.record({
     RO: fc.integer({ min: 0, max: 9 }),
     VW: fc.integer({ min: 0, max: 9 })
   }),
-  downtimeDays: fc.integer({ min: 0, max: 8 })
+  downtimeDays: fc.integer({ min: 0, max: 8 }),
+  reportingA: fc.boolean(),
+  reportingB: fc.boolean(),
+  reportingC: fc.boolean(),
+  reportingD: fc.boolean(),
+  chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
 });
 
 /**
@@ -62,6 +67,7 @@ const uniqueFieldsArbitrary = fc.record({
   earnedIncome: fc.integer({ min: 0, max: 1000 }),
   goldSpent: fc.integer({ min: 0, max: 1000 }),
   notes: fc.string({ maxLength: 200 }),
+  consumeReplay: fc.boolean(),
 });
 
 /**

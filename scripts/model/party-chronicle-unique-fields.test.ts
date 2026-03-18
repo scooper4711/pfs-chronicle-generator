@@ -29,7 +29,8 @@ const uniqueFieldsArbitrary = fc.record({
   proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
   earnedIncome: fc.integer({ min: 0, max: 1000 }),
   goldSpent: fc.integer({ min: 0, max: 1000 }),
-  notes: fc.string({ maxLength: 200 })
+  notes: fc.string({ maxLength: 200 }),
+  consumeReplay: fc.boolean()
 });
 
 /**
@@ -63,7 +64,12 @@ const sharedFieldsArbitrary = fc.record({
     RO: fc.integer({ min: 0, max: 9 }),
     VW: fc.integer({ min: 0, max: 9 })
   }),
-  downtimeDays: fc.integer({ min: 0, max: 8 })
+  downtimeDays: fc.integer({ min: 0, max: 8 }),
+  reportingA: fc.boolean(),
+  reportingB: fc.boolean(),
+  reportingC: fc.boolean(),
+  reportingD: fc.boolean(),
+  chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
 });
 
 /**
@@ -339,7 +345,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 proficiencyRank: 'trained',
                 earnedIncome: Math.floor(Math.random() * 100),
                 goldSpent: Math.floor(Math.random() * 1000),
-                notes: `Notes for ${actorId.substring(0, 8)}`
+                notes: `Notes for ${actorId.substring(0, 8)}`,
+                consumeReplay: false
               };
             });
 
@@ -408,7 +415,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 proficiencyRank: 'trained',
                 earnedIncome: index * 10,
                 goldSpent: index * 50,
-                notes: `Notes ${index + 1}`
+                notes: `Notes ${index + 1}`,
+                consumeReplay: false
               };
             });
 
@@ -447,7 +455,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 proficiencyRank: 'trained',
                 earnedIncome: 10,
                 goldSpent: 20,
-                notes: 'Test notes'
+                notes: 'Test notes',
+                consumeReplay: false
               };
             });
 

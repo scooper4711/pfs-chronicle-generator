@@ -12,6 +12,7 @@ import fc from 'fast-check';
 import { mapToCharacterData } from './model/party-chronicle-mapper';
 import { SharedFields, UniqueFields } from './model/party-chronicle-types';
 import { calculateEarnedIncome } from './utils/earned-income-calculator';
+import { createSharedFields, createUniqueFields } from './model/test-helpers';
 
 describe('Earned Income PDF Generation Integration - Property-Based Tests', () => {
   const createMockActor = (actorId: string, currentFaction: string | null = null) => ({
@@ -37,35 +38,23 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
           fc.integer({ min: 0, max: 10 }), // treasureBundles
           (downtimeDays, characterLevel, taskLevel, successLevel, proficiencyRank, treasureBundles) => {
             // Create shared fields with downtime days
-            const shared: SharedFields = {
-              gmPfsNumber: '12345',
-              scenarioName: 'Test Scenario',
-              eventCode: 'TEST-001',
-              eventDate: '2024-01-15',
-              xpEarned: 4,
-              adventureSummaryCheckboxes: [],
-              strikeoutItems: [],
+            const shared: SharedFields = createSharedFields({
               treasureBundles,
-              layoutId: 'layout-1',
-              seasonId: 'season-5',
-              blankChroniclePath: '/path/to/chronicle.pdf',
               chosenFactionReputation: 0,
               reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
               downtimeDays
-            };
+            });
 
             // Create unique fields with earned income inputs
-            const unique: UniqueFields = {
-              characterName: 'Test Character',
-              societyId: '12345-01',
+            const unique: UniqueFields = createUniqueFields({
               level: characterLevel,
               taskLevel,
               successLevel,
               proficiencyRank,
-              earnedIncome: 0, // This will be recalculated
+              earnedIncome: 0,
               goldSpent: 0,
               notes: ''
-            };
+            });
 
             const actor = createMockActor('test-actor', 'EA');
             const result = mapToCharacterData(shared, unique, actor);
@@ -109,26 +98,14 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
           fc.constantFrom('trained', 'expert', 'master', 'legendary'), // proficiencyRank
           fc.integer({ min: 0, max: 10 }), // treasureBundles
           (downtimeDays, characterLevel, taskLevel, successLevel, proficiencyRank, treasureBundles) => {
-            const shared: SharedFields = {
-              gmPfsNumber: '12345',
-              scenarioName: 'Test Scenario',
-              eventCode: 'TEST-001',
-              eventDate: '2024-01-15',
-              xpEarned: 4,
-              adventureSummaryCheckboxes: [],
-              strikeoutItems: [],
+            const shared: SharedFields = createSharedFields({
               treasureBundles,
-              layoutId: 'layout-1',
-              seasonId: 'season-5',
-              blankChroniclePath: '/path/to/chronicle.pdf',
               chosenFactionReputation: 0,
               reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
               downtimeDays
-            };
+            });
 
-            const unique: UniqueFields = {
-              characterName: 'Test Character',
-              societyId: '12345-01',
+            const unique: UniqueFields = createUniqueFields({
               level: characterLevel,
               taskLevel,
               successLevel,
@@ -136,7 +113,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
               earnedIncome: 0,
               goldSpent: 0,
               notes: ''
-            };
+            });
 
             const actor = createMockActor('test-actor', 'EA');
             const result = mapToCharacterData(shared, unique, actor);
@@ -172,26 +149,14 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
           fc.constantFrom('failure', 'success', 'critical_success'), // successLevel (no critical_failure)
           fc.constantFrom('trained', 'expert', 'master', 'legendary'), // proficiencyRank
           (downtimeDays, characterLevel, taskLevel, successLevel, proficiencyRank) => {
-            const shared: SharedFields = {
-              gmPfsNumber: '12345',
-              scenarioName: 'Test Scenario',
-              eventCode: 'TEST-001',
-              eventDate: '2024-01-15',
-              xpEarned: 4,
-              adventureSummaryCheckboxes: [],
-              strikeoutItems: [],
+            const shared: SharedFields = createSharedFields({
               treasureBundles: 0,
-              layoutId: 'layout-1',
-              seasonId: 'season-5',
-              blankChroniclePath: '/path/to/chronicle.pdf',
               chosenFactionReputation: 0,
               reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
               downtimeDays
-            };
+            });
 
-            const unique: UniqueFields = {
-              characterName: 'Test Character',
-              societyId: '12345-01',
+            const unique: UniqueFields = createUniqueFields({
               level: characterLevel,
               taskLevel,
               successLevel,
@@ -199,7 +164,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
               earnedIncome: 0,
               goldSpent: 0,
               notes: ''
-            };
+            });
 
             const actor = createMockActor('test-actor', 'EA');
             const result = mapToCharacterData(shared, unique, actor);
@@ -229,34 +194,20 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
           fc.integer({ min: 0, max: 10 }), // treasureBundles
           (characterLevel, treasureBundles) => {
             // Test with task level "-" (opt-out)
-            const shared: SharedFields = {
-              gmPfsNumber: '12345',
-              scenarioName: 'Test Scenario',
-              eventCode: 'TEST-001',
-              eventDate: '2024-01-15',
-              xpEarned: 4,
-              adventureSummaryCheckboxes: [],
-              strikeoutItems: [],
+            const shared: SharedFields = createSharedFields({
               treasureBundles,
-              layoutId: 'layout-1',
-              seasonId: 'season-5',
-              blankChroniclePath: '/path/to/chronicle.pdf',
               chosenFactionReputation: 0,
               reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
               downtimeDays: 4
-            };
+            });
 
-            const unique: UniqueFields = {
-              characterName: 'Test Character',
-              societyId: '12345-01',
+            const unique: UniqueFields = createUniqueFields({
               level: characterLevel,
               taskLevel: '-',
-              successLevel: 'success',
-              proficiencyRank: 'trained',
               earnedIncome: 0,
               goldSpent: 0,
               notes: ''
-            };
+            });
 
             const actor = createMockActor('test-actor', 'EA');
             const result = mapToCharacterData(shared, unique, actor);
@@ -282,26 +233,14 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
             // Use character level as task level for simplicity
             const taskLevel = characterLevel;
             
-            const shared: SharedFields = {
-              gmPfsNumber: '12345',
-              scenarioName: 'Test Scenario',
-              eventCode: 'TEST-001',
-              eventDate: '2024-01-15',
-              xpEarned: 4,
-              adventureSummaryCheckboxes: [],
-              strikeoutItems: [],
+            const shared: SharedFields = createSharedFields({
               treasureBundles: 0,
-              layoutId: 'layout-1',
-              seasonId: 'season-5',
-              blankChroniclePath: '/path/to/chronicle.pdf',
               chosenFactionReputation: 0,
               reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
               downtimeDays
-            };
+            });
 
-            const unique: UniqueFields = {
-              characterName: 'Test Character',
-              societyId: '12345-01',
+            const unique: UniqueFields = createUniqueFields({
               level: characterLevel,
               taskLevel,
               successLevel: 'critical_success',
@@ -309,7 +248,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
               earnedIncome: 0,
               goldSpent: 0,
               notes: ''
-            };
+            });
 
             const actor = createMockActor('test-actor', 'EA');
             const result = mapToCharacterData(shared, unique, actor);
@@ -337,26 +276,14 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
           fc.integer({ min: 0, max: 8 }), // downtimeDays
           fc.constantFrom('trained', 'expert', 'master', 'legendary'), // proficiencyRank
           (downtimeDays, proficiencyRank) => {
-            const shared: SharedFields = {
-              gmPfsNumber: '12345',
-              scenarioName: 'Test Scenario',
-              eventCode: 'TEST-001',
-              eventDate: '2024-01-15',
-              xpEarned: 4,
-              adventureSummaryCheckboxes: [],
-              strikeoutItems: [],
+            const shared: SharedFields = createSharedFields({
               treasureBundles: 0,
-              layoutId: 'layout-1',
-              seasonId: 'season-5',
-              blankChroniclePath: '/path/to/chronicle.pdf',
               chosenFactionReputation: 0,
               reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
               downtimeDays
-            };
+            });
 
-            const unique: UniqueFields = {
-              characterName: 'Test Character',
-              societyId: '12345-01',
+            const unique: UniqueFields = createUniqueFields({
               level: 20,
               taskLevel: 20,
               successLevel: 'critical_success',
@@ -364,7 +291,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
               earnedIncome: 0,
               goldSpent: 0,
               notes: ''
-            };
+            });
 
             const actor = createMockActor('test-actor', 'EA');
             const result = mapToCharacterData(shared, unique, actor);
@@ -409,26 +336,14 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
           fc.constantFrom('failure', 'success', 'critical_success'), // successLevel
           fc.constantFrom('trained', 'expert', 'master', 'legendary'), // proficiencyRank
           (downtimeDays, characterLevel, taskLevel, successLevel, proficiencyRank) => {
-            const shared: SharedFields = {
-              gmPfsNumber: '12345',
-              scenarioName: 'Test Scenario',
-              eventCode: 'TEST-001',
-              eventDate: '2024-01-15',
-              xpEarned: 4,
-              adventureSummaryCheckboxes: [],
-              strikeoutItems: [],
+            const shared: SharedFields = createSharedFields({
               treasureBundles: 2,
-              layoutId: 'layout-1',
-              seasonId: 'season-5',
-              blankChroniclePath: '/path/to/chronicle.pdf',
               chosenFactionReputation: 0,
               reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
               downtimeDays
-            };
+            });
 
-            const unique: UniqueFields = {
-              characterName: 'Test Character',
-              societyId: '12345-01',
+            const unique: UniqueFields = createUniqueFields({
               level: characterLevel,
               taskLevel,
               successLevel,
@@ -436,7 +351,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
               earnedIncome: 0,
               goldSpent: 0,
               notes: ''
-            };
+            });
 
             const actor = createMockActor('test-actor', 'EA');
             

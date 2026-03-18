@@ -57,6 +57,11 @@ const sharedFieldsWithReputationArbitrary = fc.record({
   layoutId: 'test-layout',
   seasonId: 'season-6',
   blankChroniclePath: 'path/to/blank.pdf',
+  reportingA: false,
+  reportingB: false,
+  reportingC: false,
+  reportingD: false,
+  chosenFaction: '',
 }));
 
 /**

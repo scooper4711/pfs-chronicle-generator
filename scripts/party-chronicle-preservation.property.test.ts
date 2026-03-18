@@ -96,7 +96,12 @@ describe('Party Chronicle Form Preservation Tests', () => {
                 adventureSummaryCheckboxes: [],
                 strikeoutItems: [],
                 chosenFactionReputation: 2,
-                reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+                reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: ''
               },
               characters: {
                 'char1': {
@@ -108,7 +113,8 @@ describe('Party Chronicle Form Preservation Tests', () => {
                   proficiencyRank: 'trained',
                   earnedIncome: 50,
                   goldSpent: formData.goldSpent,
-                  notes: formData.notes
+                  notes: formData.notes,
+                  consumeReplay: false
                 }
               }
             };
@@ -180,7 +186,12 @@ describe('Party Chronicle Form Preservation Tests', () => {
                 adventureSummaryCheckboxes: ['checkbox1'],
                 strikeoutItems: ['item1'],
                 chosenFactionReputation: 4,
-                reputationValues: { EA: 2, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+                reputationValues: { EA: 2, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: ''
               },
               characters: {
                 'char1': {
@@ -192,7 +203,8 @@ describe('Party Chronicle Form Preservation Tests', () => {
                   proficiencyRank: 'expert',
                   earnedIncome: 50,
                   goldSpent: testData.goldSpent,
-                  notes: testData.notes
+                  notes: testData.notes,
+                  consumeReplay: false
                 }
               }
             };
@@ -218,7 +230,12 @@ describe('Party Chronicle Form Preservation Tests', () => {
                 adventureSummaryCheckboxes: [],
                 strikeoutItems: [],
                 chosenFactionReputation: 4,
-                reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+                reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: ''
               },
               characters: {
                 'char1': {
@@ -230,7 +247,8 @@ describe('Party Chronicle Form Preservation Tests', () => {
                   proficiencyRank: 'trained',
                   earnedIncome: 0,
                   goldSpent: 0,
-                  notes: ''
+                  notes: '',
+                  consumeReplay: false
                 }
               }
             };
@@ -290,7 +308,12 @@ describe('Party Chronicle Form Preservation Tests', () => {
                 adventureSummaryCheckboxes: [],
                 strikeoutItems: [],
                 chosenFactionReputation: 9,
-                reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+                reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: ''
               },
               characters: {}
             };
@@ -315,7 +338,12 @@ describe('Party Chronicle Form Preservation Tests', () => {
                 adventureSummaryCheckboxes: [],
                 strikeoutItems: [],
                 chosenFactionReputation: adventureType.rep,
-                reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }
+                reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+                reportingA: false,
+                reportingB: false,
+                reportingC: false,
+                reportingD: false,
+                chosenFaction: ''
               },
               characters: {}
             };

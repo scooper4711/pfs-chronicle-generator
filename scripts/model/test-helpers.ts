@@ -36,6 +36,11 @@ export function createSharedFields(overrides: Partial<SharedFields> = {}): Share
       VW: 0
     },
     downtimeDays: 8,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: '',
     ...overrides
   };
 }
@@ -57,6 +62,7 @@ export function createUniqueFields(overrides: Partial<UniqueFields> = {}): Uniqu
     earnedIncome: 0,
     goldSpent: 5,
     notes: 'Test notes',
+    consumeReplay: false,
     ...overrides
   };
 }

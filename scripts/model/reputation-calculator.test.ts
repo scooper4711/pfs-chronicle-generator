@@ -35,7 +35,12 @@ function createSharedFields(
       VS: reputationValues.VS ?? 0,
       RO: reputationValues.RO ?? 0,
       VW: reputationValues.VW ?? 0,
-    }
+    },
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: ''
   };
 }
 

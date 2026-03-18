@@ -17,6 +17,7 @@ import fc from 'fast-check';
 import { describe, it, expect } from '@jest/globals';
 import { mapToCharacterData } from './model/party-chronicle-mapper';
 import { SharedFields, UniqueFields } from './model/party-chronicle-types';
+import { createSharedFields, createUniqueFields } from './model/test-helpers';
 
 /**
  * Property 1: Fault Condition - Strikeout Items Passed to PDF Generation
@@ -54,35 +55,22 @@ describe('Strikeout Items Bug Condition Exploration', () => {
             const extractedStrikeoutItems = [strikeoutItem];
             
             // Step 2: Verify strikeout items are included in SharedFields
-            const sharedFields: SharedFields = {
-              gmPfsNumber: '12345',
-              scenarioName: 'Test Scenario',
-              eventCode: 'PFS-001',
-              eventDate: '2024-01-15',
-              xpEarned: 4,
-              adventureSummaryCheckboxes: [],
-              strikeoutItems: extractedStrikeoutItems, // Should be included
-              treasureBundles: 2,
-              layoutId: 'layout-1',
-              seasonId: 'season-5',
-              blankChroniclePath: '/path/to/chronicle.pdf',
+            const sharedFields: SharedFields = createSharedFields({
+              strikeoutItems: extractedStrikeoutItems,
               chosenFactionReputation: 2,
               reputationValues: { EA: 2, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-              downtimeDays: 8
-            };
+            });
             
             // Step 3: Map to ChronicleData using mapToCharacterData
-            const uniqueFields: UniqueFields = {
+            const uniqueFields: UniqueFields = createUniqueFields({
               characterName: 'Valeros',
               societyId: '12345-01',
               level: 3,
               taskLevel: 1,
-              successLevel: 'success',
-              proficiencyRank: 'trained',
               earnedIncome: 8,
               goldSpent: 10,
               notes: 'Test notes'
-            };
+            });
             
             const mockActor = {
               id: 'actor-1',
@@ -127,35 +115,22 @@ describe('Strikeout Items Bug Condition Exploration', () => {
             const extractedStrikeoutItems = strikeoutItems;
             
             // Step 2: Verify strikeout items are included in SharedFields
-            const sharedFields: SharedFields = {
-              gmPfsNumber: '12345',
-              scenarioName: 'Test Scenario',
-              eventCode: 'PFS-001',
-              eventDate: '2024-01-15',
-              xpEarned: 4,
-              adventureSummaryCheckboxes: [],
-              strikeoutItems: extractedStrikeoutItems, // Should be included
-              treasureBundles: 2,
-              layoutId: 'layout-1',
-              seasonId: 'season-5',
-              blankChroniclePath: '/path/to/chronicle.pdf',
+            const sharedFields: SharedFields = createSharedFields({
+              strikeoutItems: extractedStrikeoutItems,
               chosenFactionReputation: 2,
               reputationValues: { EA: 2, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-              downtimeDays: 8
-            };
+            });
             
             // Step 3: Map to ChronicleData using mapToCharacterData
-            const uniqueFields: UniqueFields = {
+            const uniqueFields: UniqueFields = createUniqueFields({
               characterName: 'Valeros',
               societyId: '12345-01',
               level: 3,
               taskLevel: 1,
-              successLevel: 'success',
-              proficiencyRank: 'trained',
               earnedIncome: 8,
               goldSpent: 10,
               notes: 'Test notes'
-            };
+            });
             
             const mockActor = {
               id: 'actor-1',
@@ -188,34 +163,21 @@ describe('Strikeout Items Bug Condition Exploration', () => {
      */
     it('handles empty strikeout items array correctly', () => {
       // When no strikeout items are selected, the array should be empty
-      const sharedFields: SharedFields = {
-        gmPfsNumber: '12345',
-        scenarioName: 'Test Scenario',
-        eventCode: 'PFS-001',
-        eventDate: '2024-01-15',
-        xpEarned: 4,
-        adventureSummaryCheckboxes: [],
-        strikeoutItems: [], // No items selected
-        treasureBundles: 2,
-        layoutId: 'layout-1',
-        seasonId: 'season-5',
-        blankChroniclePath: '/path/to/chronicle.pdf',
+      const sharedFields: SharedFields = createSharedFields({
+        strikeoutItems: [],
         chosenFactionReputation: 2,
         reputationValues: { EA: 2, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-        downtimeDays: 8
-      };
+      });
       
-      const uniqueFields: UniqueFields = {
+      const uniqueFields: UniqueFields = createUniqueFields({
         characterName: 'Valeros',
         societyId: '12345-01',
         level: 3,
         taskLevel: 1,
-        successLevel: 'success',
-        proficiencyRank: 'trained',
         earnedIncome: 8,
         goldSpent: 10,
         notes: 'Test notes'
-      };
+      });
       
       const mockActor = {
         id: 'actor-1',
@@ -245,34 +207,21 @@ describe('Strikeout Items Bug Condition Exploration', () => {
           ),
           (strikeoutItems) => {
             // Test with arbitrary string values to ensure no transformation occurs
-            const sharedFields: SharedFields = {
-              gmPfsNumber: '12345',
-              scenarioName: 'Test Scenario',
-              eventCode: 'PFS-001',
-              eventDate: '2024-01-15',
-              xpEarned: 4,
-              adventureSummaryCheckboxes: [],
+            const sharedFields: SharedFields = createSharedFields({
               strikeoutItems: strikeoutItems,
-              treasureBundles: 2,
-              layoutId: 'layout-1',
-              seasonId: 'season-5',
-              blankChroniclePath: '/path/to/chronicle.pdf',
               chosenFactionReputation: 2,
               reputationValues: { EA: 2, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-              downtimeDays: 8
-            };
+            });
             
-            const uniqueFields: UniqueFields = {
+            const uniqueFields: UniqueFields = createUniqueFields({
               characterName: 'Valeros',
               societyId: '12345-01',
               level: 3,
               taskLevel: 1,
-              successLevel: 'success',
-              proficiencyRank: 'trained',
               earnedIncome: 8,
               goldSpent: 10,
               notes: 'Test notes'
-            };
+            });
             
             const mockActor = {
               id: 'actor-1',
@@ -315,34 +264,21 @@ describe('Strikeout Items Bug Condition Exploration', () => {
             expect(bugCondition.pdfGenerated).toBe(true);
             
             // Simulate the data flow
-            const sharedFields: SharedFields = {
-              gmPfsNumber: '12345',
-              scenarioName: 'Test Scenario',
-              eventCode: 'PFS-001',
-              eventDate: '2024-01-15',
-              xpEarned: 4,
-              adventureSummaryCheckboxes: [],
+            const sharedFields: SharedFields = createSharedFields({
               strikeoutItems: bugCondition.strikeoutItems,
-              treasureBundles: 2,
-              layoutId: 'layout-1',
-              seasonId: 'season-5',
-              blankChroniclePath: '/path/to/chronicle.pdf',
               chosenFactionReputation: 2,
               reputationValues: { EA: 2, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-              downtimeDays: 8
-            };
+            });
             
-            const uniqueFields: UniqueFields = {
+            const uniqueFields: UniqueFields = createUniqueFields({
               characterName: 'Valeros',
               societyId: '12345-01',
               level: 3,
               taskLevel: 1,
-              successLevel: 'success',
-              proficiencyRank: 'trained',
               earnedIncome: 8,
               goldSpent: 10,
               notes: 'Test notes'
-            };
+            });
             
             const mockActor = {
               id: 'actor-1',
@@ -385,34 +321,22 @@ describe('Strikeout Items Bug Condition Exploration', () => {
             )
           }),
           (checkboxData) => {
-            const sharedFields: SharedFields = {
-              gmPfsNumber: '12345',
-              scenarioName: 'Test Scenario',
-              eventCode: 'PFS-001',
-              eventDate: '2024-01-15',
-              xpEarned: 4,
+            const sharedFields: SharedFields = createSharedFields({
               adventureSummaryCheckboxes: checkboxData.adventureSummaryCheckboxes,
               strikeoutItems: checkboxData.strikeoutItems,
-              treasureBundles: 2,
-              layoutId: 'layout-1',
-              seasonId: 'season-5',
-              blankChroniclePath: '/path/to/chronicle.pdf',
               chosenFactionReputation: 2,
               reputationValues: { EA: 2, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-              downtimeDays: 8
-            };
+            });
             
-            const uniqueFields: UniqueFields = {
+            const uniqueFields: UniqueFields = createUniqueFields({
               characterName: 'Valeros',
               societyId: '12345-01',
               level: 3,
               taskLevel: 1,
-              successLevel: 'success',
-              proficiencyRank: 'trained',
               earnedIncome: 8,
               goldSpent: 10,
               notes: 'Test notes'
-            };
+            });
             
             const mockActor = {
               id: 'actor-1',
@@ -450,34 +374,21 @@ describe('Strikeout Items Bug Condition Exploration', () => {
       };
       
       // Simulate the complete data flow
-      const sharedFields: SharedFields = {
-        gmPfsNumber: '12345',
-        scenarioName: 'Test Scenario',
-        eventCode: 'PFS-001',
-        eventDate: '2024-01-15',
-        xpEarned: 4,
-        adventureSummaryCheckboxes: [],
+      const sharedFields: SharedFields = createSharedFields({
         strikeoutItems: bugScenario.strikeoutItemsSelected,
-        treasureBundles: 2,
-        layoutId: 'layout-1',
-        seasonId: 'season-5',
-        blankChroniclePath: '/path/to/chronicle.pdf',
         chosenFactionReputation: 2,
         reputationValues: { EA: 2, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-        downtimeDays: 8
-      };
+      });
       
-      const uniqueFields: UniqueFields = {
+      const uniqueFields: UniqueFields = createUniqueFields({
         characterName: 'Valeros',
         societyId: '12345-01',
         level: 3,
         taskLevel: 1,
-        successLevel: 'success',
-        proficiencyRank: 'trained',
         earnedIncome: 8,
         goldSpent: 10,
         notes: 'Test notes'
-      };
+      });
       
       const mockActor = {
         id: 'actor-1',

@@ -159,7 +159,12 @@ function extractCharacterChronicleData(
       RO: Number(data.shared?.reputationValues?.RO) || 0,
       VW: Number(data.shared?.reputationValues?.VW) || 0
     },
-    downtimeDays: Number(data.shared?.downtimeDays) || 0
+    downtimeDays: Number(data.shared?.downtimeDays) || 0,
+    reportingA: Boolean(data.shared?.reportingA),
+    reportingB: Boolean(data.shared?.reportingB),
+    reportingC: Boolean(data.shared?.reportingC),
+    reportingD: Boolean(data.shared?.reportingD),
+    chosenFaction: data.shared?.chosenFaction || ''
   };
 
   // Extract unique fields for this character
@@ -173,7 +178,8 @@ function extractCharacterChronicleData(
     proficiencyRank: uniqueFields.proficiencyRank || 'trained',
     earnedIncome: Number(uniqueFields.earnedIncome) || 0,
     goldSpent: Number(uniqueFields.goldSpent) || 0,
-    notes: uniqueFields.notes || ''
+    notes: uniqueFields.notes || '',
+    consumeReplay: Boolean(uniqueFields.consumeReplay)
   };
 
   // Map to chronicle data format

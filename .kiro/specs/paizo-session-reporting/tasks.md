@@ -6,26 +6,26 @@ Implement a "Copy Session Report" button for the Party Chronicle form that assem
 
 ## Tasks
 
-- [-] 1. Create feature branch and commit spec files
+- [x] 1. Create feature branch and commit spec files
   - Create git branch `feat/paizo-session-reporting` from current HEAD
   - Stage and commit `requirements.md`, `design.md`, and `tasks.md` from `.kiro/specs/paizo-session-reporting/`
   - Use commit message: `docs: Add spec files for paizo-session-reporting feature`
   - _Requirements: N/A (project workflow)_
 
 - [ ] 2. Define session report types and extend existing data models
-  - [ ] 2.1 Create `scripts/model/session-report-types.ts` with `SessionReport`, `SignUp`, and `BonusRep` interfaces
+  - [x] 2.1 Create `scripts/model/session-report-types.ts` with `SessionReport`, `SignUp`, and `BonusRep` interfaces
     - `SessionReport` must include `gameDate`, `gameSystem` (literal `'PFS2E'`), `generateGmChronicle` (literal `false`), `gmOrgPlayNumber`, `repEarned` (literal `0`), `reportingA`–`reportingD`, `scenario`, `signUps`, `bonusRepEarned`
     - `SignUp` must include `isGM` (literal `false`), `orgPlayNumber`, `characterNumber`, `characterName`, `consumeReplay`, `repEarned`, `faction`
     - `BonusRep` must include `faction` (string) and `reputation` (number)
     - _Requirements: 4.1–4.11_
-  - [ ] 2.2 Extend `SharedFields` in `scripts/model/party-chronicle-types.ts`
+  - [x] 2.2 Extend `SharedFields` in `scripts/model/party-chronicle-types.ts`
     - Add `reportingA`, `reportingB`, `reportingC`, `reportingD` (boolean) fields
     - Add `chosenFaction` (string) field for the faction abbreviation code
     - _Requirements: 10.1, 1.2_
-  - [ ] 2.3 Extend `UniqueFields` in `scripts/model/party-chronicle-types.ts`
+  - [x] 2.3 Extend `UniqueFields` in `scripts/model/party-chronicle-types.ts`
     - Add `consumeReplay` (boolean) field
     - _Requirements: 10.2, 3.2_
-  - [ ] 2.4 Run lint and tests, then commit
+  - [x] 2.4 Run lint and tests, then commit
     - Run `npm run lint` and `npx jest --silent` to verify no regressions
     - Commit message: `feat: Define session report types and extend data models`
 
