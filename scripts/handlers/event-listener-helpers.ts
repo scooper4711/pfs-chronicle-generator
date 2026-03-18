@@ -36,6 +36,7 @@ import {
 import { createEarnedIncomeChangeHandler } from '../utils/earned-income-form-helpers.js';
 import { clearPartyChronicleData, savePartyChronicleData } from '../model/party-chronicle-storage.js';
 import { PartyChronicleData, UniqueFields } from '../model/party-chronicle-types.js';
+import { handleCopySessionReport } from './session-report-handler.js';
 
 /**
  * Actor type definition for party members
@@ -383,7 +384,8 @@ function createDefaultChronicleData(
                 proficiencyRank: 'trained',
                 earnedIncome: 0,
                 goldSpent: 0,
-                notes: ''
+                notes: '',
+                consumeReplay: false
             };
         }
     });
@@ -410,7 +412,12 @@ function createDefaultChronicleData(
                 VS: 0,
                 RO: 0,
                 VW: 0
-            }
+            },
+            reportingA: false,
+            reportingB: false,
+            reportingC: false,
+            reportingD: false,
+            chosenFaction: ''
         },
         characters
     };
@@ -433,6 +440,28 @@ export function attachGenerateButtonListener(
         await generateChroniclesFromPartyData(formData, partyActors);
     });
 }
+
+/**
+ * Attaches Copy Session Report button event listener
+ *
+ * @param container - Form container element
+ * @param partyActors - Array of party member actors
+ *
+ * Requirements: paizo-session-reporting 1.3, 3.3, 10.3, 10.4
+ */
+export function attachCopySessionReportListener(
+    container: HTMLElement,
+    partyActors: PartyActor[]
+): void {
+    const copyButton = container.querySelector(BUTTON_SELECTORS.COPY_SESSION_REPORT);
+    copyButton?.addEventListener('click', async (event: Event) => {
+        event.preventDefault();
+        const layoutSelect = container.querySelector(SHARED_FIELD_SELECTORS.LAYOUT) as HTMLSelectElement;
+        const layoutId = layoutSelect?.value || '';
+        await handleCopySessionReport(container, partyActors, layoutId, event as MouseEvent);
+    });
+}
+
 
 /**
  * Attaches portrait click event listeners

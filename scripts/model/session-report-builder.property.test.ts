@@ -66,7 +66,7 @@ function buildParams(overrides: {
   const actor: SessionReportActor = {
     id: actorId,
     name: 'Test Character',
-    system: { pfs: { orgPlayNumber: 12345, characterNumber: 1, currentFaction: 'EA' } },
+    system: { pfs: { playerNumber: 12345, characterNumber: 1, currentFaction: 'EA' } },
   };
 
   return {
@@ -197,7 +197,7 @@ describe('Session Report Builder Properties', () => {
     /** Arbitrary for a single party member's actor data. */
     const partyMemberArbitrary = fc.record({
       actorId: fc.stringMatching(/^[a-zA-Z0-9]{1,20}$/),
-      orgPlayNumber: fc.integer({ min: 1, max: 9999999 }),
+      playerNumber: fc.integer({ min: 1, max: 9999999 }),
       characterNumber: fc.integer({ min: 1, max: 99 }),
       characterName: fc.string({ minLength: 1, maxLength: 40 }),
       currentFaction: factionCodeArbitrary,
@@ -207,7 +207,7 @@ describe('Session Report Builder Properties', () => {
     /**
      * For any valid party of 1–6 members, each with unique actor IDs,
      * the assembled signUps array has exactly one entry per party member,
-     * and each entry has isGM === false, the correct orgPlayNumber and
+     * and each entry has isGM === false, the correct playerNumber and
      * characterNumber from the actor, the correct characterName, the
      * correct consumeReplay flag, repEarned equal to the shared chosen
      * faction reputation value, and faction equal to the full faction
@@ -232,7 +232,7 @@ describe('Session Report Builder Properties', () => {
               name: member.characterName,
               system: {
                 pfs: {
-                  orgPlayNumber: member.orgPlayNumber,
+                  playerNumber: member.playerNumber,
                   characterNumber: member.characterNumber,
                   currentFaction: member.currentFaction,
                 },
@@ -265,7 +265,7 @@ describe('Session Report Builder Properties', () => {
               const signUp = report.signUps[i];
 
               expect(signUp.isGM).toBe(false);
-              expect(signUp.orgPlayNumber).toBe(member.orgPlayNumber);
+              expect(signUp.orgPlayNumber).toBe(member.playerNumber);
               expect(signUp.characterNumber).toBe(member.characterNumber);
               expect(signUp.characterName).toBe(member.characterName);
               expect(signUp.consumeReplay).toBe(member.consumeReplay);

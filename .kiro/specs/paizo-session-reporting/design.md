@@ -145,7 +145,7 @@ interface SessionReport {
 
 interface SignUp {
   isGM: false;                  // Constant
-  orgPlayNumber: number;        // Read from actor.system.pfs.orgPlayNumber
+  orgPlayNumber: number;        // Read from actor.system.pfs.playerNumber
   characterNumber: number;      // Read from actor.system.pfs.characterNumber
   characterName: string;
   consumeReplay: boolean;
@@ -203,7 +203,7 @@ consumeReplay: boolean;  // Per-character consume replay checkbox
 
 ### Property 4: SignUp entry correctness
 
-*For any* valid party of 1–6 members, each with an orgPlayNumber, characterNumber, character name, faction, and consume replay flag from the actor data, the assembled `signUps` array should have exactly one entry per party member, and each entry should have `isGM === false`, the correct `orgPlayNumber` and `characterNumber` read directly from the actor, the correct `characterName`, the correct `consumeReplay` flag, `repEarned` equal to the shared chosen faction reputation value, and `faction` equal to the full faction name from `actor.system.pfs.currentFaction`.
+*For any* valid party of 1–6 members, each with a playerNumber, characterNumber, character name, faction, and consume replay flag from the actor data, the assembled `signUps` array should have exactly one entry per party member, and each entry should have `isGM === false`, the correct `orgPlayNumber` (read from `actor.system.pfs.playerNumber`) and `characterNumber` read directly from the actor, the correct `characterName`, the correct `consumeReplay` flag, `repEarned` equal to the shared chosen faction reputation value, and `faction` equal to the full faction name from `actor.system.pfs.currentFaction`.
 
 **Validates: Requirements 4.9, 4.10**
 

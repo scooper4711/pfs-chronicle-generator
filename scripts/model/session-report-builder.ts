@@ -17,14 +17,14 @@ import type { BonusRep, SessionReport, SignUp } from './session-report-types.js'
  * Minimal actor shape required by the session report builder.
  *
  * Extends the base PartyActor with PFS-specific fields needed to
- * populate SignUp entries (orgPlayNumber, characterNumber, currentFaction).
+ * populate SignUp entries (playerNumber, characterNumber, currentFaction).
  */
 export interface SessionReportActor {
   id: string;
   name: string;
   system?: {
     pfs?: {
-      orgPlayNumber?: number;
+      playerNumber?: number;
       characterNumber?: number;
       currentFaction?: string;
     };
@@ -65,7 +65,7 @@ function buildSignUp(
 
   return {
     isGM: false,
-    orgPlayNumber: actor.system?.pfs?.orgPlayNumber ?? 0,
+    orgPlayNumber: actor.system?.pfs?.playerNumber ?? 0,
     characterNumber: actor.system?.pfs?.characterNumber ?? 0,
     characterName: characterFields.characterName,
     consumeReplay: characterFields.consumeReplay,

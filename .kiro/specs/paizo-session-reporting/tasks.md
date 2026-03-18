@@ -118,32 +118,32 @@ Implement a "Copy Session Report" button for the Party Chronicle form that assem
     - Extract per-character consume replay checkbox value into unique fields
     - _Requirements: 10.3, 10.4_
 
-- [-] 8. Update Handlebars template for UI changes
-  - [ ] 8.1 Rename "Event Details" section to "Session Reporting" in `templates/party-chronicle-filling.hbs`
+- [x] 8. Update Handlebars template for UI changes
+  - [x] 8.1 Rename "Event Details" section to "Session Reporting" in `templates/party-chronicle-filling.hbs`
     - Change section title text from "Event Details" to "Session Reporting"
     - Add four reporting flag checkboxes (A, B, C, D) at the bottom of the section
     - _Requirements: 1.1, 1.2_
-  - [ ] 8.2 Add chosen faction dropdown to the Reputation section
+  - [x] 8.2 Add chosen faction dropdown to the Reputation section
     - Add a `<select>` for chosen faction with options mapping abbreviation codes to full names
     - _Requirements: 9.2_
-  - [ ] 8.3 Create Actions section and reorganize buttons
+  - [x] 8.3 Create Actions section and reorganize buttons
     - Add a new "Actions" section above the "Character-Specific Information" section
     - Move Clear Data and Generate Chronicles buttons into the Actions section
     - Add Copy Session Report button to the Actions section
     - Remove buttons from the Character-Specific Information header
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
-  - [ ] 8.4 Add per-character faction display and consume replay checkbox
+  - [x] 8.4 Add per-character faction display and consume replay checkbox
     - Display character faction as read-only text below the level text, read from actor data
     - Add "Consume Replay" checkbox per character
     - _Requirements: 3.1, 3.2_
-  - [ ] 8.5 Run lint and tests, then commit
+  - [x] 8.5 Run lint and tests, then commit
     - Run `npm run lint` and `npx jest --silent` to verify all tests pass
     - Commit message: `feat: Update UI for session reporting fields and actions section`
 
 > **Visual checkpoint:** After task 8, open the Party Chronicle form in FoundryVTT and verify the renamed "Session Reporting" section, reporting flag checkboxes, chosen faction dropdown, Actions section with reorganized buttons, and per-character faction display and consume replay checkbox all render correctly.
 
-- [ ] 9. Implement session report click handler and wire everything together
-  - [ ] 9.1 Create `scripts/handlers/session-report-handler.ts`
+- [x] 9. Implement session report click handler and wire everything together
+  - [x] 9.1 Create `scripts/handlers/session-report-handler.ts`
     - Implement `handleCopySessionReport(container, partyActors, layoutId, event)` function
     - Orchestrate: validate → build → serialize → clipboard copy → notify
     - Detect Option/Alt key on click event to toggle `skipBase64`
@@ -152,15 +152,15 @@ Implement a "Copy Session Report" button for the Party Chronicle form that assem
     - Display error notification via `ui.notifications.error()` on clipboard failure
     - Display validation errors in the `#validationErrors` panel on validation failure
     - _Requirements: 4.1, 6.5, 7.1, 7.2, 7.3, 7.4, 8.5_
-  - [ ] 9.2 Wire event listeners in `scripts/main.ts`
+  - [x] 9.2 Wire event listeners in `scripts/main.ts`
     - Attach click handler for Copy Session Report button
     - Attach change handlers for new fields (reporting flags, consume replay, chosen faction) to trigger auto-save
     - _Requirements: 1.3, 3.3, 10.3, 10.4_
-  - [ ] 9.3 Update data persistence in `scripts/handlers/form-data-extraction.ts` and `scripts/model/party-chronicle-storage.ts`
+  - [x] 9.3 Update data persistence in `scripts/handlers/form-data-extraction.ts` and `scripts/model/party-chronicle-storage.ts`
     - Ensure new shared fields (reporting flags, chosen faction) are saved and restored
     - Ensure new unique field (consume replay) is saved and restored per character
     - _Requirements: 10.1, 10.2, 10.3, 10.4_
-  - [ ] 9.4 Run lint and tests, then commit
+  - [x] 9.4 Run lint and tests, then commit
     - Run `npm run lint` and `npx jest --silent` to verify all tests pass
     - Commit message: `feat: Implement session report handler and wire event listeners`
 

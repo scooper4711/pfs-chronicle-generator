@@ -33,6 +33,7 @@ import {
     attachSaveButtonListener,
     attachClearButtonListener,
     attachGenerateButtonListener,
+    attachCopySessionReportListener,
     attachPortraitListeners,
     attachFilePickerListener,
     attachCollapsibleSectionListeners
@@ -322,6 +323,7 @@ function attachEventListeners(
     attachSaveButtonListener(container, partyActors);
     attachClearButtonListener(container, partyActors, partySheet);
     attachGenerateButtonListener(container, partyActors);
+    attachCopySessionReportListener(container, partyActors);
     
     // Portrait and file picker listeners
     attachPortraitListeners(container, partyActors);

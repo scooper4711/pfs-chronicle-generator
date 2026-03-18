@@ -19,7 +19,7 @@ export interface SignUp {
   /** Always false — GM chronicle is handled separately */
   isGM: false;
 
-  /** Player's Paizo organized play number from actor.system.pfs.orgPlayNumber */
+  /** Player's Paizo organized play number from actor.system.pfs.playerNumber */
   orgPlayNumber: number;
 
   /** Character number under the player's org play number */

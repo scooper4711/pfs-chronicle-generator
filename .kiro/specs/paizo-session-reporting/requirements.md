@@ -75,7 +75,7 @@ The feature reuses existing form data (GM PFS number, event date, scenario selec
 7. THE Session_Report SHALL include the four Reporting_Flag boolean values (reportingA through reportingD) from the checkboxes labeled "A", "B", "C", "D"
 8. THE Session_Report SHALL include the scenario value constructed from the existing scenario selector (not a free text input)
 9. THE Session_Report SHALL include a signUps array with one Sign_Up entry per party member
-10. FOR EACH Sign_Up entry, THE Session_Report_Builder SHALL include isGM set to false, the player's Org_Play_Number read from actor.system.pfs.orgPlayNumber, the Character_Number read from actor.system.pfs.characterNumber, the character name, the Consume_Replay flag, the repEarned value read from the shared "Reputation, Chosen Faction" input field (same value for all players), and the character's faction full name read from actor.system.pfs.currentFaction
+10. FOR EACH Sign_Up entry, THE Session_Report_Builder SHALL include isGM set to false, the player's Org_Play_Number read from actor.system.pfs.playerNumber, the Character_Number read from actor.system.pfs.characterNumber, the character name, the Consume_Replay flag, the repEarned value read from the shared "Reputation, Chosen Faction" input field (same value for all players), and the character's faction full name read from actor.system.pfs.currentFaction
 11. THE Session_Report SHALL include a session-level bonusRepEarned array assembled from the shared Reputation section, containing entries for each faction where the reputation value is non-zero AND the faction is not the "Chosen Faction" selected in the shared Reputation section
 
 ### Requirement 5: Scenario Identifier Construction

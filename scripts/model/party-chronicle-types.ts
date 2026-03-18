@@ -152,6 +152,9 @@ export interface PartyMember {
   
   /** Society ID */
   societyId: string;
+
+  /** Faction full name from actor.system.pfs.currentFaction */
+  faction: string;
 }
 
 /**
