@@ -101,76 +101,69 @@ async function loadLayoutConfiguration(
 }
 
 /**
- * Extracts and transforms character chronicle data from raw form data
- *
- * This helper function extracts SharedFields and character-specific UniqueFields
- * from raw form data, then transforms them into the chronicle data format using
- * mapToCharacterData. This reduces complexity in generateChroniclesFromPartyData
- * by isolating data transformation logic.
- *
- * CCN Complexity Note: This function has a cyclomatic complexity of 56, which exceeds
- * the standard limit of 15. However, this is acceptable per architecture guidelines
- * because the complexity comes from flat, repetitive null-coalescing patterns
- * (|| defaultValue) and ternary operators for array normalization. The cognitive
- * complexity is low and refactoring would create unnecessary abstraction without
- * improving readability.
- *
- * @param data - Raw form data containing shared and character-specific fields
- * @param actor - The actor (character) to extract data for
- * @param layoutId - The selected layout ID
+ * Extracts shared fields from raw form data into a typed SharedFields object
+ * 
+ * Handles coercion of raw values (strings, numbers, booleans) and provides
+ * defaults for missing fields. Array fields (checkboxes, strikeout items)
+ * are normalized to arrays regardless of input shape.
+ * 
+ * @param rawShared - Raw shared data from form extraction
+ * @param layoutId - Currently selected layout ID
  * @param blankChroniclePath - Path to the blank chronicle PDF
- * @returns Structured chronicle data ready for PDF generation
- *
- * Requirements: code-standards-refactoring 2.6, 2.7, 2.8, 3.1, 3.6
+ * @returns Typed SharedFields object with all fields populated
  */
-// eslint-disable-next-line complexity -- Flat null-coalescing pattern is clearer than extraction
-function extractCharacterChronicleData(
-  data: any,
-  actor: any,
-  layoutId: string,
-  blankChroniclePath: string
-): any {
-  const characterId = actor.id;
-  const characterName = actor.name;
-
-  // Extract shared fields
-  const sharedFields: SharedFields = {
-    gmPfsNumber: data.shared?.gmPfsNumber || '',
-    scenarioName: data.shared?.scenarioName || '',
-    eventCode: data.shared?.eventCode || '',
-    eventDate: data.shared?.eventDate || '',
-    xpEarned: Number(data.shared?.xpEarned) || 0,
-    adventureSummaryCheckboxes: Array.isArray(data.shared?.adventureSummaryCheckboxes)
-      ? data.shared.adventureSummaryCheckboxes
-      : (data.shared?.adventureSummaryCheckboxes ? [data.shared.adventureSummaryCheckboxes] : []),
-    strikeoutItems: Array.isArray(data.shared?.strikeoutItems)
-      ? data.shared.strikeoutItems
-      : (data.shared?.strikeoutItems ? [data.shared.strikeoutItems] : []),
-    treasureBundles: Number(data.shared?.treasureBundles) || 0,
+// eslint-disable-next-line complexity -- Flat null-coalescing pattern, low cognitive complexity
+function extractSharedFields(rawShared: any, layoutId: string, blankChroniclePath: string): SharedFields {
+  return {
+    gmPfsNumber: rawShared?.gmPfsNumber || '',
+    scenarioName: rawShared?.scenarioName || '',
+    eventCode: rawShared?.eventCode || '',
+    eventDate: rawShared?.eventDate || '',
+    xpEarned: Number(rawShared?.xpEarned) || 0,
+    adventureSummaryCheckboxes: Array.isArray(rawShared?.adventureSummaryCheckboxes)
+      ? rawShared.adventureSummaryCheckboxes
+      : (rawShared?.adventureSummaryCheckboxes ? [rawShared.adventureSummaryCheckboxes] : []),
+    strikeoutItems: Array.isArray(rawShared?.strikeoutItems)
+      ? rawShared.strikeoutItems
+      : (rawShared?.strikeoutItems ? [rawShared.strikeoutItems] : []),
+    treasureBundles: Number(rawShared?.treasureBundles) || 0,
     layoutId: layoutId,
-    seasonId: data.shared?.seasonId || '',
+    seasonId: rawShared?.seasonId || '',
     blankChroniclePath: blankChroniclePath,
-    chosenFactionReputation: Number(data.shared?.chosenFactionReputation) || 2,
+    chosenFactionReputation: Number(rawShared?.chosenFactionReputation) || 2,
     reputationValues: {
-      EA: Number(data.shared?.reputationValues?.EA) || 0,
-      GA: Number(data.shared?.reputationValues?.GA) || 0,
-      HH: Number(data.shared?.reputationValues?.HH) || 0,
-      VS: Number(data.shared?.reputationValues?.VS) || 0,
-      RO: Number(data.shared?.reputationValues?.RO) || 0,
-      VW: Number(data.shared?.reputationValues?.VW) || 0
+      EA: Number(rawShared?.reputationValues?.EA) || 0,
+      GA: Number(rawShared?.reputationValues?.GA) || 0,
+      HH: Number(rawShared?.reputationValues?.HH) || 0,
+      VS: Number(rawShared?.reputationValues?.VS) || 0,
+      RO: Number(rawShared?.reputationValues?.RO) || 0,
+      VW: Number(rawShared?.reputationValues?.VW) || 0
     },
-    downtimeDays: Number(data.shared?.downtimeDays) || 0,
-    reportingA: Boolean(data.shared?.reportingA),
-    reportingB: Boolean(data.shared?.reportingB),
-    reportingC: Boolean(data.shared?.reportingC),
-    reportingD: Boolean(data.shared?.reportingD),
-    chosenFaction: data.shared?.chosenFaction || ''
+    downtimeDays: Number(rawShared?.downtimeDays) || 0,
+    reportingA: Boolean(rawShared?.reportingA),
+    reportingB: Boolean(rawShared?.reportingB),
+    reportingC: Boolean(rawShared?.reportingC),
+    reportingD: Boolean(rawShared?.reportingD),
+    chosenFaction: rawShared?.chosenFaction || ''
   };
+}
 
-  // Extract unique fields for this character
-  const uniqueFields = data.characters?.[characterId] || {};
-  const characterData: UniqueFields = {
-    characterName: uniqueFields.characterName || characterName,
+/**
+ * Extracts unique fields for a single character from raw form data
+ * 
+ * Reads character-specific data from the raw form extraction and coerces
+ * values to the correct types. Falls back to actor data for character name
+ * and level when form values are missing.
+ * 
+ * @param rawCharacters - Raw character data keyed by actor ID
+ * @param actor - The actor object for fallback values
+ * @returns Typed UniqueFields object for this character
+ */
+// eslint-disable-next-line complexity -- Flat null-coalescing pattern, low cognitive complexity
+function extractUniqueFields(rawCharacters: any, actor: any): UniqueFields {
+  const uniqueFields = rawCharacters?.[actor.id] || {};
+  return {
+    characterName: uniqueFields.characterName || actor.name,
     societyId: uniqueFields.societyId || '',
     level: Number(uniqueFields.level) || actor.system?.details?.level?.value || 1,
     taskLevel: uniqueFields.taskLevel !== undefined ? uniqueFields.taskLevel : (Number(uniqueFields.level) || 1) - 2,
@@ -181,11 +174,29 @@ function extractCharacterChronicleData(
     notes: uniqueFields.notes || '',
     consumeReplay: Boolean(uniqueFields.consumeReplay)
   };
+}
 
-  // Map to chronicle data format
-  const mappedData = mapToCharacterData(sharedFields, characterData, actor);
-  
-  return mappedData;
+/**
+ * Extracts and maps a single character's chronicle data from raw form data
+ * 
+ * Combines shared fields and character-specific fields, then maps them
+ * to the chronicle data format used by the PDF generator.
+ * 
+ * @param data - Raw form data containing shared and character-specific fields
+ * @param actor - The actor to extract data for
+ * @param layoutId - Currently selected layout ID
+ * @param blankChroniclePath - Path to the blank chronicle PDF
+ * @returns Mapped chronicle data ready for PDF generation
+ */
+function extractCharacterChronicleData(
+  data: any,
+  actor: any,
+  layoutId: string,
+  blankChroniclePath: string
+): any {
+  const sharedFields = extractSharedFields(data.shared, layoutId, blankChroniclePath);
+  const characterData = extractUniqueFields(data.characters, actor);
+  return mapToCharacterData(sharedFields, characterData, actor);
 }
 
 /**
