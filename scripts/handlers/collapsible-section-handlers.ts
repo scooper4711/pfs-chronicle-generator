@@ -179,7 +179,7 @@ export function toggleSectionCollapse(
  * 
  * Generates new summary text based on current field values and updates the
  * summary text element in the section header. Only updates sections that have
- * summary text (Event Details, Reputation, Shared Rewards).
+ * summary text (Session Reporting, Reputation, Shared Rewards).
  * 
  * @param sectionId - The unique identifier for the section
  * @param container - HTMLElement wrapping the form container

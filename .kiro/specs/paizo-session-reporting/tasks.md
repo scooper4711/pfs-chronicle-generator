@@ -30,25 +30,25 @@ Implement a "Copy Session Report" button for the Party Chronicle form that assem
     - Commit message: `feat: Define session report types and extend data models`
 
 - [ ] 3. Implement scenario identifier construction with tests
-  - [ ] 3.1 Create `scripts/model/scenario-identifier.ts` with `buildScenarioIdentifier(layoutId: string): string`
+  - [x] 3.1 Create `scripts/model/scenario-identifier.ts` with `buildScenarioIdentifier(layoutId: string): string`
     - Parse layout ID format `"pfs2.sN-MM"` to produce `"PFS2E N-MM"`
     - Handle edge cases (non-standard layout IDs) with a fallback
     - _Requirements: 5.1, 5.2, 4.8_
-  - [ ] 3.2 Write property test for scenario identifier construction
+  - [x] 3.2 Write property test for scenario identifier construction
     - Create `scripts/model/scenario-identifier.property.test.ts`
     - **Property 1: Scenario identifier construction**
     - **Validates: Requirements 5.1, 4.8**
-  - [ ] 3.3 Write unit tests for scenario identifier edge cases
+  - [x] 3.3 Write unit tests for scenario identifier edge cases
     - Create `scripts/model/scenario-identifier.test.ts`
     - Test specific layout ID examples: `"pfs2.s5-18"` → `"PFS2E 5-18"`, `"pfs2.s7-03"` → `"PFS2E 7-03"`
     - Test non-standard layout IDs (bounties, quests) and fallback behavior
     - _Requirements: 5.1, 5.2_
-  - [ ] 3.4 Run lint and tests, then commit
+  - [x] 3.4 Run lint and tests, then commit
     - Run `npm run lint` and `npx jest --silent` to verify all tests pass
     - Commit message: `feat: Implement scenario identifier construction`
 
 - [ ] 4. Implement session report builder with tests
-  - [ ] 4.1 Create `scripts/model/session-report-builder.ts` with `buildSessionReport(params: SessionReportBuildParams): SessionReport`
+  - [x] 4.1 Create `scripts/model/session-report-builder.ts` with `buildSessionReport(params: SessionReportBuildParams): SessionReport`
     - Define `SessionReportBuildParams` interface with `shared`, `characters`, `partyActors`, `layoutId`
     - Assemble constant fields (`gameSystem`, `generateGmChronicle`, `repEarned`)
     - Map `gameDate`, `gmOrgPlayNumber`, `reportingA`–`reportingD` from shared fields
@@ -56,69 +56,69 @@ Implement a "Copy Session Report" button for the Party Chronicle form that assem
     - Call `buildScenarioIdentifier` for the `scenario` field
     - Assemble `bonusRepEarned` from `reputationValues` excluding the chosen faction and zero values, using `FACTION_NAMES` for full names
     - _Requirements: 4.1–4.11, 9.1–9.6_
-  - [ ] 4.2 Write property test for constant fields invariant
+  - [x] 4.2 Write property test for constant fields invariant
     - Add to `scripts/model/session-report-builder.property.test.ts`
     - **Property 2: Session report constant fields invariant**
     - **Validates: Requirements 4.3, 4.4, 4.6**
-  - [ ] 4.3 Write property test for field mapping
+  - [x] 4.3 Write property test for field mapping
     - Add to `scripts/model/session-report-builder.property.test.ts`
     - **Property 3: Session report field mapping**
     - **Validates: Requirements 4.2, 4.5, 4.7**
-  - [ ] 4.4 Write property test for SignUp entry correctness
+  - [x] 4.4 Write property test for SignUp entry correctness
     - Add to `scripts/model/session-report-builder.property.test.ts`
     - **Property 4: SignUp entry correctness**
     - Use `fc.uniqueArray` with `selector` for generating party members with unique actor IDs
     - **Validates: Requirements 4.9, 4.10**
-  - [ ] 4.5 Write property test for bonus reputation assembly
+  - [x] 4.5 Write property test for bonus reputation assembly
     - Add to `scripts/model/session-report-builder.property.test.ts`
     - **Property 5: Bonus reputation assembly**
     - **Validates: Requirements 4.11, 9.1, 9.2, 9.3, 9.4, 9.5, 9.6**
-  - [ ] 4.6 Run lint and tests, then commit
+  - [x] 4.6 Run lint and tests, then commit
     - Run `npm run lint` and `npx jest --silent` to verify all tests pass
     - Commit message: `feat: Implement session report builder`
 
 - [ ] 5. Implement session report serializer with tests
-  - [ ] 5.1 Create `scripts/model/session-report-serializer.ts` with `serializeSessionReport(report: SessionReport, skipBase64?: boolean): string`
+  - [x] 5.1 Create `scripts/model/session-report-serializer.ts` with `serializeSessionReport(report: SessionReport, skipBase64?: boolean): string`
     - Serialize `SessionReport` to JSON string via `JSON.stringify`
     - Base64-encode via `btoa` unless `skipBase64` is true
     - _Requirements: 6.1, 6.2, 6.5_
-  - [ ] 5.2 Write property test for serialization round-trip
+  - [x] 5.2 Write property test for serialization round-trip
     - Create `scripts/model/session-report-serializer.property.test.ts`
     - **Property 6: Serialization round-trip**
     - **Validates: Requirements 6.1, 6.2, 6.3, 6.4**
-  - [ ] 5.3 Run lint and tests, then commit
+  - [x] 5.3 Run lint and tests, then commit
     - Run `npm run lint` and `npx jest --silent` to verify all tests pass
     - Commit message: `feat: Implement session report serializer`
 
-- [ ] 6. Add session report validation with tests
-  - [ ] 6.1 Add session-report-specific validation to `scripts/model/party-chronicle-validator.ts`
+- [x] 6. Add session report validation with tests
+  - [x] 6.1 Add session-report-specific validation to `scripts/model/party-chronicle-validator.ts`
     - Create a new `validateSessionReportFields` function
     - Validate event date is populated, scenario is selected (layoutId not empty), GM PFS number is populated
     - Validate each party member has a faction value from actor data
     - Return `ValidationResult` with collected errors
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
-  - [ ] 6.2 Write property test for validation rejects missing required fields
+  - [x] 6.2 Write property test for validation rejects missing required fields
     - Create `scripts/model/session-report-validation.property.test.ts`
     - **Property 7: Validation rejects missing required fields**
     - **Validates: Requirements 8.1, 8.2, 8.3, 8.4**
-  - [ ] 6.3 Run lint and tests, then commit
+  - [x] 6.3 Run lint and tests, then commit
     - Run `npm run lint` and `npx jest --silent` to verify all tests pass
     - Commit message: `feat: Add session report validation`
 
-- [ ] 7. Update DOM selectors and form data extraction
-  - [ ] 7.1 Add new selectors to `scripts/constants/dom-selectors.ts`
+- [x] 7. Update DOM selectors and form data extraction
+  - [x] 7.1 Add new selectors to `scripts/constants/dom-selectors.ts`
     - Add selectors for reporting flag checkboxes (`#reportingA` through `#reportingD`)
     - Add selector for chosen faction dropdown (`#chosenFaction`)
     - Add selector for Copy Session Report button (`#copySessionReport`)
     - Add character-level selectors for consume replay checkbox and faction display
     - _Requirements: 1.2, 2.4, 3.1, 3.2_
-  - [ ] 7.2 Extend `extractFormData` in `scripts/handlers/form-data-extraction.ts`
+  - [x] 7.2 Extend `extractFormData` in `scripts/handlers/form-data-extraction.ts`
     - Extract reporting flag checkbox values (`reportingA`–`reportingD`) into shared fields
     - Extract chosen faction dropdown value into shared fields
     - Extract per-character consume replay checkbox value into unique fields
     - _Requirements: 10.3, 10.4_
 
-- [ ] 8. Update Handlebars template for UI changes
+- [-] 8. Update Handlebars template for UI changes
   - [ ] 8.1 Rename "Event Details" section to "Session Reporting" in `templates/party-chronicle-filling.hbs`
     - Change section title text from "Event Details" to "Session Reporting"
     - Add four reporting flag checkboxes (A, B, C, D) at the bottom of the section

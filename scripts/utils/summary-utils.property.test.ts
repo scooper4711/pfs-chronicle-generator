@@ -12,7 +12,7 @@ import {
 
 describe('summary-utils property tests', () => {
   describe('generateEventDetailsSummary', () => {
-    // Feature: collapsible-shared-sections, Property 5: Event Details summary contains scenario name
+    // Feature: collapsible-shared-sections, Property 5: Session Reporting summary contains scenario name
     it('should format summary with layout/scenario name for any non-empty layout name', () => {
       fc.assert(
         fc.property(
@@ -32,13 +32,13 @@ describe('summary-utils property tests', () => {
             // The DOM normalizes whitespace: trim + collapse internal runs of whitespace to single spaces
             const trimmedLayoutName = layoutName.trim().replace(/\s+/g, ' ');
             
-            // Summary should start with icon and "Event Details - "
-            expect(summary).toMatch(/^<i class="fas fa-calendar-alt"><\/i> Event Details - /);
+            // Summary should start with icon and "Session Reporting - "
+            expect(summary).toMatch(/^<i class="fas fa-calendar-alt"><\/i> Session Reporting - /);
             
             // Summary should contain the trimmed layout name (or truncated version)
-            if (trimmedLayoutName.length <= 8) {
-              // Icon (36 chars) + "Event Details - " (16 chars) + 8 chars name = 60 total
-              expect(summary).toBe(`<i class="fas fa-calendar-alt"></i> Event Details - ${trimmedLayoutName}`);
+            if (trimmedLayoutName.length <= 4) {
+              // Icon (36 chars) + "Session Reporting - " (20 chars) + 4 chars name = 60 total
+              expect(summary).toBe(`<i class="fas fa-calendar-alt"></i> Session Reporting - ${trimmedLayoutName}`);
             } else {
               // Should be truncated to 60 characters with ellipsis
               expect(summary).toHaveLength(60);
@@ -71,7 +71,7 @@ describe('summary-utils property tests', () => {
             
             const summary = generateEventDetailsSummary(container);
             
-            expect(summary).toBe('<i class="fas fa-calendar-alt"></i> Event Details (No scenario)');
+            expect(summary).toBe('<i class="fas fa-calendar-alt"></i> Session Reporting (No scenario)');
           }
         ),
         { numRuns: 100 }

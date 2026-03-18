@@ -26,20 +26,20 @@ describe('summary-utils', () => {
       const summary = generateEventDetailsSummary(container);
       // This exceeds 60 characters so it will be truncated
       expect(summary).toHaveLength(60);
-      expect(summary).toMatch(/^<i class="fas fa-calendar-alt"><\/i> Event Details - 5-05 /);
+      expect(summary).toMatch(/^<i class="fas fa-calendar-alt"><\/i> Session Reporting - 5/);
       expect(summary).toMatch(/\.\.\.$/);
     });
 
     it('should return default text when no layout is selected', () => {
       container.innerHTML = '<select id="layout"></select>';
       const summary = generateEventDetailsSummary(container);
-      expect(summary).toBe('<i class="fas fa-calendar-alt"></i> Event Details (No scenario)');
+      expect(summary).toBe('<i class="fas fa-calendar-alt"></i> Session Reporting (No scenario)');
     });
 
     it('should return default text when layout select is missing', () => {
       container.innerHTML = '';
       const summary = generateEventDetailsSummary(container);
-      expect(summary).toBe('<i class="fas fa-calendar-alt"></i> Event Details (No scenario)');
+      expect(summary).toBe('<i class="fas fa-calendar-alt"></i> Session Reporting (No scenario)');
     });
 
     it('should truncate long layout names with ellipsis', () => {
@@ -52,12 +52,12 @@ describe('summary-utils', () => {
       const summary = generateEventDetailsSummary(container);
       expect(summary).toHaveLength(60);
       expect(summary).toMatch(/\.\.\.$/);
-      expect(summary).toContain('<i class="fas fa-calendar-alt"></i> Event Details - A');
+      expect(summary).toContain('<i class="fas fa-calendar-alt"></i> Session Reporting - A');
     });
 
     it('should not truncate layout names at exactly 60 characters', () => {
-      // Icon + "Event Details - " is 52 characters, so 8 character name = 60 total
-      const exactName = 'A'.repeat(8);
+      // Icon + "Session Reporting - " is 56 characters, so 4 character name = 60 total
+      const exactName = 'A'.repeat(4);
       container.innerHTML = `
         <select id="layout">
           <option value="1" selected>${exactName}</option>

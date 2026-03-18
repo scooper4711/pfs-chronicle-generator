@@ -19,19 +19,19 @@ import {
 describe('collapsible-section-handlers property tests', () => {
   describe('updateSectionSummary', () => {
     // Feature: collapsible-shared-sections, Property 14: Summary updates regardless of collapse state
-    it('should update Event Details summary regardless of collapse state', () => {
+    it('should update Session Reporting summary regardless of collapse state', () => {
       fc.assert(
         fc.property(
           fc.boolean(), // Random collapse state
           fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0), // Random layout/scenario name
           (isCollapsed, layoutName) => {
-            // Create container with Event Details section
+            // Create container with Session Reporting section
             const container = document.createElement('div');
             container.innerHTML = `
               <div class="collapsible-section ${isCollapsed ? 'collapsed' : ''}" data-section-id="event-details">
                 <header class="collapsible-header" role="button" tabindex="0" aria-expanded="${!isCollapsed}">
                   <span class="chevron"></span>
-                  <span class="section-title">Event Details</span>
+                  <span class="section-title">Session Reporting</span>
                   <span class="section-summary"></span>
                 </header>
                 <div class="collapsible-content" id="event-details-content">
@@ -58,7 +58,7 @@ describe('collapsible-section-handlers property tests', () => {
             
             // Verify summary was updated regardless of collapse state (compare text content to avoid HTML escaping issues)
             expect(summaryElement.textContent).toBe(expectedText);
-            expect(summaryElement.textContent).toContain('Event Details');
+            expect(summaryElement.textContent).toContain('Session Reporting');
             
             // Verify collapse state was not changed
             const section = container.querySelector('.collapsible-section') as HTMLElement;
@@ -203,7 +203,7 @@ describe('collapsible-section-handlers property tests', () => {
               <div class="collapsible-section ${collapseStates.eventDetails ? 'collapsed' : ''}" data-section-id="event-details">
                 <header class="collapsible-header" role="button" tabindex="0" aria-expanded="${!collapseStates.eventDetails}">
                   <span class="chevron"></span>
-                  <span class="section-title">Event Details</span>
+                  <span class="section-title">Session Reporting</span>
                   <span class="section-summary"></span>
                 </header>
                 <div class="collapsible-content" id="event-details-content">
@@ -252,7 +252,7 @@ describe('collapsible-section-handlers property tests', () => {
             const sharedRewardsSummary = container.querySelector('[data-section-id="shared-rewards"] .section-summary') as HTMLElement;
             
             // Use textContent for .toContain() checks (strips HTML)
-            expect(eventDetailsSummary.textContent).toContain('Event Details');
+            expect(eventDetailsSummary.textContent).toContain('Session Reporting');
             expect(reputationSummary.textContent).toContain('Reputation');
             expect(reputationSummary.textContent).toContain(`+${chosenValue}`);
             expect(sharedRewardsSummary.textContent).toContain('Shared Rewards');
