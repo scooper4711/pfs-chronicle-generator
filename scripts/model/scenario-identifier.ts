@@ -23,7 +23,7 @@ const SCENARIO_PATTERN = /^pfs2\.s(\d+-\d+)$/;
  * Requirements: paizo-session-reporting 5.1, 5.2, 4.8
  */
 export function buildScenarioIdentifier(layoutId: string): string {
-  const match = layoutId.match(SCENARIO_PATTERN);
+  const match = SCENARIO_PATTERN.exec(layoutId);
   if (match) {
     return `PFS2E ${match[1]}`;
   }
