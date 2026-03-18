@@ -24,6 +24,11 @@ export const SHARED_FIELD_SELECTORS = {
   TREASURE_BUNDLES: '#treasureBundles',
   DOWNTIME_DAYS: '#downtimeDays',
   CHOSEN_FACTION_REPUTATION: '#chosenFactionReputation',
+  REPORTING_A: '#reportingA',
+  REPORTING_B: '#reportingB',
+  REPORTING_C: '#reportingC',
+  REPORTING_D: '#reportingD',
+  CHOSEN_FACTION: '#chosenFaction',
 } as const;
 
 /**
@@ -37,6 +42,8 @@ export const CHARACTER_FIELD_SELECTORS = {
   PROFICIENCY_RANK: (characterId: string) => `select[name="characters.${characterId}.proficiencyRank"]`,
   EARNED_INCOME_DISPLAY: (characterId: string) => `#earnedIncomeDisplay-${characterId}`,
   TREASURE_BUNDLE_DISPLAY: (characterId: string) => `#treasureBundleGpDisplay-${characterId}`,
+  CONSUME_REPLAY: (characterId: string) => `input[name="characters.${characterId}.consumeReplay"]`,
+  FACTION_DISPLAY: (characterId: string) => `#factionDisplay-${characterId}`,
 } as const;
 
 /**
@@ -56,6 +63,7 @@ export const BUTTON_SELECTORS = {
   SAVE_DATA: '#saveData',
   CLEAR_DATA: '#clearData',
   GENERATE_CHRONICLES: '#generateChronicles',
+  COPY_SESSION_REPORT: '#copySessionReport',
 } as const;
 
 /**

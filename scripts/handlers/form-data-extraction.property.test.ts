@@ -103,6 +103,13 @@ describe('Form Data Extraction Property Tests', () => {
       <input type="number" id="reputation-RO" value="0">
       <input type="number" id="reputation-VW" value="0">
       
+      <!-- Session reporting fields -->
+      <input type="checkbox" id="reportingA">
+      <input type="checkbox" id="reportingB">
+      <input type="checkbox" id="reportingC">
+      <input type="checkbox" id="reportingD">
+      <select id="chosenFaction"><option value="" selected></option></select>
+      
       <!-- Character-specific fields -->
       <input type="text" name="characters.actor1.characterName" value="Character 1">
       <input type="text" name="characters.actor1.societyId" value="12345-2001">
@@ -113,6 +120,7 @@ describe('Form Data Extraction Property Tests', () => {
       <input type="number" id="earnedIncome-actor1" value="10.5">
       <input type="number" id="goldSpent-actor1" value="5.0">
       <textarea id="notes-actor1">Test notes 1</textarea>
+      <input type="checkbox" name="characters.actor1.consumeReplay">
       
       <input type="text" name="characters.actor2.characterName" value="Character 2">
       <input type="text" name="characters.actor2.societyId" value="12345-2002">
@@ -123,6 +131,7 @@ describe('Form Data Extraction Property Tests', () => {
       <input type="number" id="earnedIncome-actor2" value="8.0">
       <input type="number" id="goldSpent-actor2" value="3.5">
       <textarea id="notes-actor2">Test notes 2</textarea>
+      <input type="checkbox" name="characters.actor2.consumeReplay">
     `;
     
     container.innerHTML = formHtml;
