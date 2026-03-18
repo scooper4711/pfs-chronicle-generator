@@ -81,7 +81,9 @@ This project follows the principles from Robert C. Martin's "Clean Code". These 
   - Self-Validating: Tests should have boolean output (pass/fail)
   - Timely: Write tests before production code (TDD)
 - One assert per test (or one concept per test)
-- Test code is as important as production code - keep it clean
+- Test code is production code that must be maintained — it must adhere to all coding standards including DRY, meaningful names, clean functions, and consistent formatting
+- The only exemptions for test files are file length and function length limits (tests often need to be longer)
+- Use shared test helpers and factory functions to avoid duplicating setup logic across test files
 - Use descriptive test names that explain what is being tested
 
 **General Rules**:
@@ -384,7 +386,7 @@ function processTypeA(data: any, options: any) {
 - Consider complexity during design phase
 
 **Exceptions**:
-- Test files are exempt from these limits (they often need to be longer)
+- Test files are exempt from file size and function length limits only (they often need to be longer) — all other coding standards (DRY, naming, formatting, etc.) still apply
 - Configuration files and type definition files are exempt
 - Generated code is exempt
 - If an exception is truly necessary, document the reason in comments
