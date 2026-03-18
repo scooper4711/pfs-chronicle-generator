@@ -71,14 +71,36 @@
 .sheet.party [data-tab=pfs] .activities .member-activity .character-fields {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 0.25rem;
     align-items: start;
+    min-width: 0;
 }
 
+/* Prevent grid children from overflowing their cells */
+.sheet.party [data-tab=pfs] .activities .member-activity .character-fields > *,
+.sheet.party [data-tab=pfs] .activities .member-activity .character-fields .form-group {
+    min-width: 0;
+}
+
+/* Form groups in character fields: label and input/value side by side */
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group {
     margin-bottom: 0;
-    align-items: baseline;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+
+/* Checkbox form groups: center-align checkbox with label text */
+.sheet.party [data-tab=pfs] .activities .member-activity .form-group:has(.checkbox-label) {
+    align-items: center;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group.full-width {
@@ -97,18 +119,29 @@
 }
 
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group label {
-    display: block;
     font-size: var(--font-size-12);
     font-weight: 600;
-    margin-bottom: 0.1rem;
-    padding-right: 0.5rem;
+    padding-right: 0.25rem;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group input,
+.sheet.party [data-tab=pfs] .activities .member-activity .form-group select,
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group textarea {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
     box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Checkboxes should not stretch */
+.sheet.party [data-tab=pfs] .activities .member-activity .form-group input[type="checkbox"] {
+    flex: none;
+    width: auto;
+    min-width: auto;
 }
 
 /* Sidebar form field styling */
@@ -279,6 +312,45 @@
     margin-bottom: 0.25rem;
 }
 
+/* Actions section - action bar with title left, buttons right */
+.sheet.party [data-tab=pfs] .actions-section {
+    display: flex;
+    align-items: center;
+    background-color: var(--sub, #5c4033);
+    color: var(--color-text-light-0, #fff);
+    padding: 0.25rem 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 3px;
+}
+
+.sheet.party [data-tab=pfs] .actions-section h3 {
+    margin: 0;
+    font-size: var(--font-size-16);
+    color: inherit;
+}
+
+.sheet.party [data-tab=pfs] .actions-section .buttons {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: auto;
+}
+
+.sheet.party [data-tab=pfs] .actions-section .buttons button {
+    color: var(--color-text-light-0, #fff);
+}
+
+/* Character-Specific Information header - compact styling */
+.sheet.party [data-tab=pfs] .content-header {
+    padding: 0.15rem 0.5rem;
+    line-height: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.sheet.party [data-tab=pfs] .content-header h3 {
+    margin: 0;
+    font-size: var(--font-size-13);
+}
+
 /* Invalid field styling */
 .sheet.party [data-tab=pfs] .form-group.has-error input,
 .sheet.party [data-tab=pfs] .form-group.has-error select,
@@ -304,8 +376,8 @@
     font-size: var(--font-size-12);
     color: #333;
     text-align: right;
-    min-width: 80px;
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     box-sizing: border-box;
 }
 
@@ -325,8 +397,8 @@
     font-size: var(--font-size-12);
     color: #333;
     text-align: right;
-    min-width: 80px;
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     box-sizing: border-box;
 }
 
