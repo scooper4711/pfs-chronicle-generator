@@ -118,10 +118,10 @@ function updateGenerateButton(container: HTMLElement, errors: string[]): void {
     
     if (errors.length > 0) {
         generateButton.disabled = true;
-        generateButton.setAttribute('data-tooltip', 'Please correct validation errors before generating chronicles');
+        generateButton.dataset.tooltip = 'Please correct validation errors before generating chronicles';
     } else {
         generateButton.disabled = false;
-        generateButton.setAttribute('data-tooltip', 'Generate Chronicles');
+        generateButton.dataset.tooltip = 'Generate Chronicles';
     }
 }
 
@@ -196,7 +196,7 @@ function addFieldError(container: HTMLElement, fieldId: string, errorText: strin
         const errorSpan = document.createElement('span');
         errorSpan.className = 'field-error';
         errorSpan.textContent = errorText;
-        label.insertAdjacentElement('afterend', errorSpan);
+        label.after(errorSpan);
     }
 }
 
