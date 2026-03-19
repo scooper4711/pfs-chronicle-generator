@@ -130,23 +130,18 @@ export function getAllContentElements(elements: ContentElement[] | Record<string
  * @returns The found content element, or undefined if not found
  */
 export function findContentElement(elements: ContentElement[] | Record<string, ContentElement[]>, name: string): ContentElement | undefined {
-    if (Array.isArray(elements)) {
-        for (const element of elements) {
+    const arrays = Array.isArray(elements)
+        ? [elements]
+        : Object.values(elements);
+
+    for (const array of arrays) {
+        for (const element of array) {
             if (element.value === name) {
                 return element;
             }
             if (element.content) {
                 const found = findContentElement(element.content, name);
-                if (found) {
-                    return found;
-                }
-            }
-        }
-    } else if (typeof elements === 'object') {
-        for (const key in elements) {
-            const found = findContentElement(elements[key], name);
-            if (found) {
-                return found;
+                if (found) return found;
             }
         }
     }
