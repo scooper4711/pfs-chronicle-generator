@@ -10,10 +10,10 @@ import {
 } from './utils/pdf-element-utils';
 
 export class PdfGenerator {
-    private pdfDoc: PDFDocument;
-    private layout: Layout;
-    private data: any;
-    private page: PDFPage;
+    private readonly pdfDoc: PDFDocument;
+    private readonly layout: Layout;
+    private readonly data: any;
+    private readonly page: PDFPage;
 
     constructor(pdfDoc: PDFDocument, layout: Layout, data: any) {
         this.pdfDoc = pdfDoc;
@@ -395,9 +395,9 @@ export class PdfGenerator {
         const textWidth = pdfFont.widthOfTextAtSize(String(value), textSize);
 
         let textX = boxX;
-        if (align && align.includes('C')) {
+        if (align?.includes('C')) {
             textX = boxX + (boxWidth - textWidth) / 2;
-        } else if (align && align.includes('R')) {
+        } else if (align?.includes('R')) {
             textX = boxX + boxWidth - textWidth;
         }
 
@@ -407,9 +407,9 @@ export class PdfGenerator {
             const boxHeight = ((y2 - y) / 100) * canvasRect.height;
             const textHeight = pdfFont.heightAtSize(textSize);
             let textYFromBaselineFromTop = boxYFromTop + textHeight; // Default to top alignment
-            if (align && align.includes('M')) {
+            if (align?.includes('M')) {
                 textYFromBaselineFromTop = boxYFromTop + boxHeight / 2 + textHeight / 2;
-            } else if (align && align.includes('B')) {
+            } else if (align?.includes('B')) {
                 textYFromBaselineFromTop = boxYFromTop + boxHeight;
             }
             finalY = this.page.getHeight() - (canvasRect.y + textYFromBaselineFromTop);
@@ -461,9 +461,9 @@ export class PdfGenerator {
             const textWidth = pdfFont.widthOfTextAtSize(line, textSize);
 
             let textX = boxX;
-            if (align && align.includes('C')) {
+            if (align?.includes('C')) {
                 textX = boxX + (boxWidth - textWidth) / 2;
-            } else if (align && align.includes('R')) {
+            } else if (align?.includes('R')) {
                 textX = boxX + boxWidth - textWidth;
             }
 

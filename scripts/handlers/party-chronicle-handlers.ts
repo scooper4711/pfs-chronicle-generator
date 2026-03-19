@@ -434,7 +434,7 @@ export async function handleFieldChange(
     }
     
     // If a character's level changed, update that character's treasure bundle display
-    if (fieldName && fieldName.includes('.level')) {
+    if (fieldName?.includes('.level')) {
         const match = fieldName.match(/characters\.([^.]+)\.level/);
         if (match) {
             const characterId = match[1];

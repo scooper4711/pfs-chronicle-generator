@@ -25,7 +25,7 @@ import { loadPartyChronicleData } from '../model/party-chronicle-storage.js';
  */
 export function findCheckboxChoices(layout: Layout): string[] {
   const params = layout?.parameters?.Checkboxes?.summary_checkbox;
-  if (params && params.choices && Array.isArray(params.choices)) {
+  if (params?.choices && Array.isArray(params.choices)) {
     return params.choices as string[];
   }
   return [];
@@ -42,7 +42,7 @@ export function findCheckboxChoices(layout: Layout): string[] {
  */
 export function findStrikeoutChoices(layout: Layout): string[] {
   const params = layout?.parameters?.Items?.strikeout_item_lines;
-  if (params && params.choices && Array.isArray(params.choices)) {
+  if (params?.choices && Array.isArray(params.choices)) {
     return params.choices as string[];
   }
   return [];

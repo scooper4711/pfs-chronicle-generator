@@ -268,7 +268,7 @@ Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, data: any) => {
 
         // Get party actors and filter to character actors only
         const partyActors = app.actor?.members || [];
-        const characterActors = partyActors.filter((actor: any) => actor && actor.type === 'character');
+        const characterActors = partyActors.filter((actor: any) => actor?.type === 'character');
         
         if (characterActors.length === 0) {
             pfsTab.html(`

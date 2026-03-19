@@ -90,7 +90,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       // Extract party member data - filter to only include character actors
       // Exclude: null actors, familiars, and NPCs
       const partyMembers: PartyMember[] = this.partyActors
-        .filter(actor => actor && actor.type === 'character')
+        .filter(actor => actor?.type === 'character')
         .map(actor => ({
           id: actor.id,
           name: actor.name,
