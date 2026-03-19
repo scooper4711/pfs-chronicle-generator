@@ -29,7 +29,7 @@ graph LR
 | Module | Role |
 |--------|------|
 | `main.ts` | Foundry `Hooks.on('init')` and `Hooks.on('ready')` entry point. Registers settings, initializes `LayoutStore`, injects the party chronicle form into the party sheet via `renderPartyChronicleForm()`, and wires up all event listeners. |
-| `LayoutDesignerApp.ts` | Foundry ApplicationV2 dialog for selecting season, layout, and blank chronicle PDF. Provides a grid/box preview mode for layout debugging. |
+| `LayoutDesignerApp.ts` | Foundry ApplicationV2 dialog for fine-tuning chronicle layout JSON files. Draws content-element bounding boxes and percentage grids onto canvases for visual debugging. Also persists season, layout, and blank chronicle PDF selections to Foundry settings. |
 | `PartyChronicleApp.ts` | Prepares the Handlebars template context for the party chronicle form. Loads saved data, maps party actors to form fields, and resolves layout-specific options. |
 
 ### Handlers (`scripts/handlers/`)

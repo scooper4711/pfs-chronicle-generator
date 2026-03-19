@@ -87,8 +87,8 @@ Hooks.on('init', async () => {
     // Hidden settings are registered on 'ready' (managed via Select Layout menu)
 
     game.settings.registerMenu("pfs-chronicle-generator", "layoutDesigner", {
-        name: "Select Layout",
-        label: "Select Layout",
+        name: "Design Layout",
+        label: "Design Layout",
     hint: "Open the layout designer to create and edit chronicle layouts.",
     icon: "fas fa-ruler-combined",
     type: LayoutDesignerApp,
