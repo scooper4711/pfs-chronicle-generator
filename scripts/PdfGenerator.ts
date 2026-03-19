@@ -173,68 +173,89 @@ export class PdfGenerator {
 
 
     private async drawElement(element: ContentElement) {
-        const props: ResolvedElement = resolvePresets(element, this.layout.presets);
-        console.log('[PFS Chronicle] Drawing element:', { type: props.type, choices: props.choices });
+            const props: ResolvedElement = resolvePresets(element, this.layout.presets);
+            console.log('[PFS Chronicle] Drawing element:', { type: props.type, choices: props.choices });
 
-        switch (props.type) {
-            case 'text':
-                await this.drawText(props);
-                break;
-            case 'multiline':
-                await this.drawMultilineText(props);
-                break;
-            case 'trigger':
-                if (props.trigger && this.data[props.trigger.substring(6)]) {
-                    if (Array.isArray(props.content)) {
-                        for (const contentElement of props.content) {
-                            await this.drawElement(contentElement);
-                        }
-                    } else if (typeof props.content === 'object') {
-                        for (const key in props.content) {
-                            const contentElements = (props.content as Record<string, ContentElement[]>)[key];
-                            for (const contentElement of contentElements) {
-                                await this.drawElement(contentElement);
-                            }
-                        }
-                    }
-                }
-                break;
-            case 'choice':
-                if (props.choices && props.content && typeof props.content === 'object' && !Array.isArray(props.content)) {
-                    const value = resolveValue(props.choices as string, this.data, 'choice');
-                    // Split on ||| delimiter (used for arrays), or treat as single value if no delimiter
-                    // DO NOT split on comma, as choice values may contain commas
-                    const choices = value?.includes('|||') ? value.split('|||') : (value ? [value] : []);
-                    console.log('[PFS Chronicle] Split choices:', { value, choices });
-                    console.log('[PFS Chronicle] Processing choices:', { 
-                        paramValue: resolveValue(props.choices as string, this.data, 'choice'),
-                        choices, 
-                        content: props.content,
-                        data: this.data
-                    });
-                    
-                    for (const choice of choices) {
-                        const contentElements = (props.content as Record<string, ContentElement[]>)[choice];
-                        if (contentElements) {
-                            for (const contentElement of contentElements) {
-                                await this.drawElement(contentElement);
-                            }
-                        }
-                    }
-                }
-                break;
-            case 'strikeout':
-                await this.drawRedaction(props);
-                break;
-            case 'checkbox':
-                await this.drawCheckbox(props);
-                break;
-            case 'line':
-                await this.drawLineElement(props);
-                break;
-            // TODO: Handle other element types
+            switch (props.type) {
+                case 'text':
+                    await this.drawText(props);
+                    break;
+                case 'multiline':
+                    await this.drawMultilineText(props);
+                    break;
+                case 'trigger':
+                    await this.drawTriggerElement(props);
+                    break;
+                case 'choice':
+                    await this.drawChoiceElement(props);
+                    break;
+                case 'strikeout':
+                    await this.drawRedaction(props);
+                    break;
+                case 'checkbox':
+                    await this.drawCheckbox(props);
+                    break;
+                case 'line':
+                    await this.drawLineElement(props);
+                    break;
+                // TODO: Handle other element types
+            }
         }
-    }
+
+        /**
+         * Draws all child content elements from a content structure.
+         * Handles both array and object (keyed) content formats.
+         */
+        private async drawContentElements(content: ContentElement[] | Record<string, ContentElement[]> | undefined): Promise<void> {
+            if (!content) return;
+
+            const arrays = Array.isArray(content)
+                ? [content]
+                : Object.values(content);
+
+            for (const array of arrays) {
+                for (const contentElement of array) {
+                    await this.drawElement(contentElement);
+                }
+            }
+        }
+
+        /**
+         * Handles 'trigger' type elements: draws child content when the trigger param is truthy.
+         */
+        private async drawTriggerElement(props: ResolvedElement): Promise<void> {
+            if (!props.trigger || !this.data[props.trigger.substring(6)]) return;
+            await this.drawContentElements(props.content);
+        }
+
+        /**
+         * Handles 'choice' type elements: resolves the choice value and draws matching content branches.
+         */
+        private async drawChoiceElement(props: ResolvedElement): Promise<void> {
+            if (!props.choices || !props.content || Array.isArray(props.content) || typeof props.content !== 'object') return;
+
+            const value = resolveValue(props.choices as string, this.data, 'choice');
+            // Split on ||| delimiter (used for arrays), or treat as single value if no delimiter
+            // DO NOT split on comma, as choice values may contain commas
+            const choices = value?.includes('|||') ? value.split('|||') : (value ? [value] : []);
+            console.log('[PFS Chronicle] Split choices:', { value, choices });
+            console.log('[PFS Chronicle] Processing choices:', { 
+                paramValue: resolveValue(props.choices as string, this.data, 'choice'),
+                choices, 
+                content: props.content,
+                data: this.data
+            });
+
+            const contentMap = props.content as Record<string, ContentElement[]>;
+            for (const choice of choices) {
+                const contentElements = contentMap[choice];
+                if (contentElements) {
+                    for (const contentElement of contentElements) {
+                        await this.drawElement(contentElement);
+                    }
+                }
+            }
+        }
 
     private async drawLineElement(props: ResolvedElement) {
         const { canvas, x = 0, y = 0, x2 = 0, linewidth = 1, color } = props;

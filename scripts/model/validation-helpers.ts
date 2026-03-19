@@ -92,43 +92,76 @@ export function validateSocietyIdFormat(
 /**
  * Validates a number against range constraints (min/max with optional exclusive min).
  */
-// eslint-disable-next-line complexity -- Flat range-check guard clauses, low cognitive complexity
+/**
+ * Validates a number against a minimum constraint.
+ */
+/**
+ * Validates a number against a minimum-only constraint.
+ */
+function validateMinOnly(
+  value: number,
+  fieldName: string,
+  min: number | undefined,
+  minExclusive: boolean,
+  prefix: string
+): string[] {
+  if (min === undefined) return [];
+  if (minExclusive && value <= min) {
+    return [`${prefix}${fieldName} must be greater than ${min}`];
+  }
+  if (!minExclusive && value < min) {
+    return [min === 0
+      ? `${prefix}${fieldName} cannot be negative`
+      : `${prefix}${fieldName} must be at least ${min}`];
+  }
+  return [];
+}
+
+/**
+ * Validates a number against a maximum-only constraint.
+ */
+function validateMaxOnly(
+  value: number,
+  fieldName: string,
+  max: number | undefined,
+  prefix: string
+): string[] {
+  if (max === undefined || value <= max) return [];
+  return [`${prefix}${fieldName} must be at most ${max}`];
+}
+
+/**
+ * Validates a number against range constraints (min/max with optional exclusive min).
+ */
+/**
+ * Validates a number against range constraints (min/max with optional exclusive min).
+ */
 function validateRange(
   value: number,
   fieldName: string,
   options: { min?: number; max?: number; minExclusive?: boolean },
   prefix: string
 ): string[] {
-  const errors: string[] = [];
+  const { min, max, minExclusive } = options;
 
-  if (options.min !== undefined && options.max !== undefined) {
-    if (options.minExclusive) {
-      if (value <= options.min) {
-        errors.push(`${prefix}${fieldName} must be greater than ${options.min}`);
-      } else if (value > options.max) {
-        errors.push(`${prefix}${fieldName} must be between ${options.min} and ${options.max}`);
-      }
-    } else if (value < options.min || value > options.max) {
-      errors.push(`${prefix}${fieldName} must be between ${options.min} and ${options.max}`);
+  // When both bounds are set, use a unified "between" message for out-of-range
+  if (min !== undefined && max !== undefined) {
+    if (minExclusive && value <= min) {
+      return [`${prefix}${fieldName} must be greater than ${min}`];
     }
-    return errors;
-  }
-
-  if (options.min !== undefined) {
-    if (options.minExclusive && value <= options.min) {
-      errors.push(`${prefix}${fieldName} must be greater than ${options.min}`);
-    } else if (!options.minExclusive && value < options.min) {
-      errors.push(options.min === 0
-        ? `${prefix}${fieldName} cannot be negative`
-        : `${prefix}${fieldName} must be at least ${options.min}`);
+    if (!minExclusive && (value < min || value > max)) {
+      return [`${prefix}${fieldName} must be between ${min} and ${max}`];
     }
+    if (minExclusive && value > max) {
+      return [`${prefix}${fieldName} must be between ${min} and ${max}`];
+    }
+    return [];
   }
 
-  if (options.max !== undefined && value > options.max) {
-    errors.push(`${prefix}${fieldName} must be at most ${options.max}`);
-  }
-
-  return errors;
+  return [
+    ...validateMinOnly(value, fieldName, min, minExclusive ?? false, prefix),
+    ...validateMaxOnly(value, fieldName, max, prefix),
+  ];
 }
 
 /**

@@ -33,31 +33,31 @@ async function embedWebFont(pdfDoc: PDFDocument, font: string): Promise<PDFFont>
 /**
  * Resolves a standard PDF font name with weight and style to a StandardFonts enum value.
  */
-// eslint-disable-next-line complexity -- Flat guard-clause pattern for font family/weight/style combinations
+/** Lookup table mapping font family → weight → style to StandardFonts values. */
+const STANDARD_FONT_MAP: Record<string, Record<string, Record<string, string>>> = {
+    helvetica: {
+        bold:   { italic: StandardFonts.HelveticaBoldOblique, normal: StandardFonts.HelveticaBold },
+        normal: { italic: StandardFonts.HelveticaOblique,     normal: StandardFonts.Helvetica },
+    },
+    times: {
+        bold:   { italic: StandardFonts.TimesRomanBoldItalic, normal: StandardFonts.TimesRomanBold },
+        normal: { italic: StandardFonts.TimesRomanItalic,     normal: StandardFonts.TimesRoman },
+    },
+    courier: {
+        bold:   { italic: StandardFonts.CourierBoldOblique, normal: StandardFonts.CourierBold },
+        normal: { italic: StandardFonts.CourierOblique,     normal: StandardFonts.Courier },
+    },
+};
+
+/**
+ * Resolves a standard PDF font name with weight and style to a StandardFonts enum value.
+ */
 function resolveStandardFont(
     font: string,
     fontWeight: 'normal' | 'bold',
     fontStyle: 'normal' | 'italic'
 ): string {
-    if (font === 'helvetica') {
-        if (fontWeight === 'bold' && fontStyle === 'italic') return StandardFonts.HelveticaBoldOblique;
-        if (fontWeight === 'bold') return StandardFonts.HelveticaBold;
-        if (fontStyle === 'italic') return StandardFonts.HelveticaOblique;
-        return StandardFonts.Helvetica;
-    }
-    if (font === 'times') {
-        if (fontWeight === 'bold' && fontStyle === 'italic') return StandardFonts.TimesRomanBoldItalic;
-        if (fontWeight === 'bold') return StandardFonts.TimesRomanBold;
-        if (fontStyle === 'italic') return StandardFonts.TimesRomanItalic;
-        return StandardFonts.TimesRoman;
-    }
-    if (font === 'courier') {
-        if (fontWeight === 'bold' && fontStyle === 'italic') return StandardFonts.CourierBoldOblique;
-        if (fontWeight === 'bold') return StandardFonts.CourierBold;
-        if (fontStyle === 'italic') return StandardFonts.CourierOblique;
-        return StandardFonts.Courier;
-    }
-    return StandardFonts.Helvetica;
+    return STANDARD_FONT_MAP[font]?.[fontWeight]?.[fontStyle] ?? StandardFonts.Helvetica;
 }
 
 const WEB_FONT_PREFIXES = ['noto', 'eczar', 'gelasio', 'roboto', 'tauri'];
