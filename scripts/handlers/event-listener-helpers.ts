@@ -52,6 +52,11 @@ export interface PartyActor {
                 value: number;
             };
         };
+        pfs?: {
+            playerNumber?: number;
+            characterNumber?: number;
+            currentFaction?: string;
+        };
     };
 }
 
