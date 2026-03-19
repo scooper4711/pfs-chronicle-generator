@@ -1,17 +1,11 @@
 import { layoutStore } from './LayoutStore.js';
 import { LayoutDesignerApp } from './LayoutDesignerApp.js';
 import { PartyChronicleApp } from './PartyChronicleApp.js';
-import { savePartyChronicleData } from './model/party-chronicle-storage.js';
 import { generateChronicleFilename } from './utils/filename-utils.js';
 import { updateLayoutSpecificFields } from './utils/layout-utils.js';
 import { updateValidationDisplay } from './handlers/validation-display.js';
 import { PartyChronicleContext } from './model/party-chronicle-types.js';
 import { calculateTaskLevelOptions } from './utils/earned-income-calculator.js';
-import { 
-    SHARED_FIELD_SELECTORS,
-    BUTTON_SELECTORS,
-    GENERAL_SELECTORS
-} from './constants/dom-selectors.js';
 import { 
     extractFormData,
     saveFormData,
@@ -39,87 +33,60 @@ import {
     attachCollapsibleSectionListeners
 } from './handlers/event-listener-helpers.js';
 
-Hooks.on('init', async () => {
-  // Register default settings for GM and event information
-  game.settings.register('pfs-chronicle-generator','gmName', {
-        name: 'Default GM Name',
-        hint: 'The default name of the Game Master (can be overridden when generating chronicles).',
-        scope: 'world',
-        config: true,
-        type: String,
-        default: '',
-  });
-  game.settings.register('pfs-chronicle-generator','gmPfsNumber', {
-        name: 'Default GM PFS Number',
-        hint: 'The default Pathfinder Society number of the Game Master (can be overridden when generating chronicles).',
-        scope: 'world',
-        config: true,
-        type: String,
-        default: '',
-  });
-  game.settings.register('pfs-chronicle-generator','eventName', {
-        name: 'Default Event Name',
-        hint: 'The default name of the event (can be overridden when generating chronicles).',
-        scope: 'world',
-        config: true,
-        type: String,
-        default: '',
-  });
-  game.settings.register('pfs-chronicle-generator','eventcode', {
-        name: 'Default Event Code',
-        hint: 'The default event code (can be overridden when generating chronicles).',
-        scope: 'world',
-        config: true,
-        type: String,
-        default: '',
-  });
-  
-  // Register party chronicle data storage (hidden setting)
-  game.settings.register('pfs-chronicle-generator', 'partyChronicleData', {
-        name: 'Party Chronicle Data',
-        hint: 'Temporary storage for party chronicle data being filled out.',
-        scope: 'world',
-        config: false,
-        type: Object,
-        default: undefined,
-  });
-  
-    // Hidden settings are registered on 'ready' (managed via Select Layout menu)
+/** Registers world-scoped Foundry settings shown in the module config. */
+function registerSettings(): void {
+  const MODULE_ID = 'pfs-chronicle-generator';
 
-    game.settings.registerMenu("pfs-chronicle-generator", "layoutDesigner", {
-        name: "Design Layout",
-        label: "Design Layout",
-    hint: "Open the layout designer to create and edit chronicle layouts.",
-    icon: "fas fa-ruler-combined",
-    type: LayoutDesignerApp,
-    restricted: true,
+  const visibleSettings: Array<{ key: string; name: string; hint: string }> = [
+    { key: 'gmName', name: 'Default GM Name', hint: 'The default name of the Game Master (can be overridden when generating chronicles).' },
+    { key: 'gmPfsNumber', name: 'Default GM PFS Number', hint: 'The default Pathfinder Society number of the Game Master (can be overridden when generating chronicles).' },
+    { key: 'eventName', name: 'Default Event Name', hint: 'The default name of the event (can be overridden when generating chronicles).' },
+    { key: 'eventcode', name: 'Default Event Code', hint: 'The default event code (can be overridden when generating chronicles).' },
+  ];
+
+  for (const setting of visibleSettings) {
+    game.settings.register(MODULE_ID, setting.key, {
+      name: setting.name, hint: setting.hint,
+      scope: 'world', config: true, type: String, default: '',
+    });
+  }
+
+  // Hidden setting for party chronicle data storage
+  game.settings.register(MODULE_ID, 'partyChronicleData', {
+    name: 'Party Chronicle Data',
+    hint: 'Temporary storage for party chronicle data being filled out.',
+    scope: 'world', config: false, type: Object, default: undefined,
   });
 
-  game.modules.get('pfs-chronicle-generator').api = {
-    LayoutDesignerApp
-  };
-  
-  // Register Handlebars helper for task level options
+  game.settings.registerMenu(MODULE_ID, 'layoutDesigner', {
+    name: 'Design Layout', label: 'Design Layout',
+    hint: 'Open the layout designer to create and edit chronicle layouts.',
+    icon: 'fas fa-ruler-combined', type: LayoutDesignerApp, restricted: true,
+  });
+
+  game.modules.get(MODULE_ID).api = { LayoutDesignerApp };
+}
+
+/** Registers Handlebars helpers used by party chronicle templates. */
+function registerHandlebarsHelpers(): void {
   // Requirements: earned-income-calculation 1.1, 1.2, 1.4, 1.5, 1.8, 1.9
-  Handlebars.registerHelper('calculateTaskLevelOptions', function(characterLevel: number, savedTaskLevel: any) {
-    console.log('[PFS Chronicle] calculateTaskLevelOptions called with level:', characterLevel, 'savedTaskLevel:', savedTaskLevel, 'types:', typeof characterLevel, typeof savedTaskLevel);
+  Handlebars.registerHelper('calculateTaskLevelOptions', function(characterLevel: number, savedTaskLevel: unknown) {
     const options = calculateTaskLevelOptions(characterLevel);
-    
-    // Mark the saved option as selected
-    const optionsWithSelected = options.map(opt => ({
+    return options.map(opt => ({
       ...opt,
-      selected: opt.value === savedTaskLevel || (typeof opt.value === 'number' && opt.value === Number(savedTaskLevel))
+      selected: opt.value === savedTaskLevel || (typeof opt.value === 'number' && opt.value === Number(savedTaskLevel)),
     }));
-    
-    console.log('[PFS Chronicle] calculateTaskLevelOptions returned:', optionsWithSelected);
-    return optionsWithSelected;
   });
-  
-  // Register Handlebars helper for treasure bundle value per TB
+
   Handlebars.registerHelper('getTreasureBundleValue', function(level: number) {
     const { getTreasureBundleValue } = require('./utils/treasure-bundle-calculator.js');
     return getTreasureBundleValue(level);
   });
+}
+
+Hooks.on('init', async () => {
+  registerSettings();
+  registerHandlebarsHelpers();
 });
 
 // Hidden settings registered and initialized on ready
