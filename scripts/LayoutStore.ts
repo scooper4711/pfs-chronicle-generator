@@ -3,9 +3,9 @@ import { Layout } from './model/layout';
 const LAYOUT_PATH = 'modules/pfs-chronicle-generator/layouts/';
 
 class LayoutStore {
-    private layouts: Map<string, Layout> = new Map();
-    private layoutInfo: Map<string, { path: string, description: string }> = new Map();
-    private seasonDirectories: Map<string, string> = new Map(); // key: directory name, value: display name
+    private readonly layouts: Map<string, Layout> = new Map();
+    private readonly layoutInfo: Map<string, { path: string, description: string }> = new Map();
+    private readonly seasonDirectories: Map<string, string> = new Map(); // key: directory name, value: display name
 
     public async initialize() {
         await this.findAllLayouts({ source: "data", target: LAYOUT_PATH });
