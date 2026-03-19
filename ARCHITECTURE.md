@@ -264,14 +264,6 @@ sequenceDiagram
     participant CG as chronicle-generation
     participant PCV as party-chronicle-validator
     participant LS as LayoutStore
-    participant PCM as party-chronicle-mapper
-    participant RC as reputation-calculator
-    participant TBC as treasure-bundle-calculator
-    participant EIC as earned-income-calculator
-    participant PG as PdfGenerator
-    participant PEU as pdf-element-utils
-    participant PU as pdf-utils
-    participant ACT as Foundry Actor
 
     GM->>ELH: click #generateChronicles
     ELH->>FDE: extractFormData(container, partyActors)
@@ -286,7 +278,24 @@ sequenceDiagram
     CG->>LS: getLayout(layoutId)
     LS-->>CG: Layout (with parent merge if needed)
 
-    note over CG: Step 3: Loop over party members
+    note over CG: Step 3: processAllPartyMembers (see next diagram)
+    note over CG: Step 4: Notify
+    CG->>CG: displayGenerationResults(results)
+    CG-->>GM: ui.notifications (success/failure summary)
+```
+
+#### Per-Character Processing (processAllPartyMembers)
+
+```mermaid
+sequenceDiagram
+    participant CG as chronicle-generation
+    participant PCM as party-chronicle-mapper
+    participant RC as reputation-calculator
+    participant TBC as treasure-bundle-calculator
+    participant EIC as earned-income-calculator
+    participant PG as PdfGenerator
+    participant ACT as Foundry Actor
+
     loop For each actor in partyActors
         note over CG: Extract & map character data
         CG->>CG: extractSharedFields(data.shared)
@@ -305,42 +314,53 @@ sequenceDiagram
         CG->>CG: fetch(blankChroniclePath)
         CG->>CG: PDFDocument.load(pdfBytes)
 
-        note over CG,PG: Render filled PDF
+        note over CG,PG: Render filled PDF (see next diagram)
         CG->>PG: new PdfGenerator(pdfDoc, layout, chronicleData)
         CG->>PG: generate()
-        loop For each ContentElement in layout.content
-            PG->>PEU: resolvePresets(element, layout.presets)
-            PEU-->>PG: ResolvedElement
-            alt type = text
-                PG->>PEU: resolveValue(value, data)
-                PG->>PU: getFont(pdfDoc, fontName, weight, style)
-                PG->>PU: getCanvasRect(canvas, canvasConfig, w, h)
-                PG->>PG: page.drawText(...)
-            else type = checkbox
-                PG->>PEU: resolveValue(trigger, data)
-                PG->>PU: getFont / getCanvasRect
-                PG->>PG: page.drawText("✓", ...)
-            else type = strikeout
-                PG->>PEU: resolveValue(trigger, data)
-                PG->>PU: getCanvasRect
-                PG->>PG: page.drawRectangle(...)
-            else type = choice
-                PG->>PEU: resolveValue(choices, data)
-                PG->>PG: drawElement(contentMap[choice])
-            else type = trigger
-                PG->>PG: drawContentElements(content)
-            end
-        end
         PG-->>CG: (rendering complete)
 
         note over CG: Save filled PDF
         CG->>CG: pdfDoc.save() → base64
         CG->>ACT: setFlag('chroniclePdf', base64String)
     end
+```
 
-    note over CG: Step 4: Notify
-    CG->>CG: displayGenerationResults(results)
-    CG-->>GM: ui.notifications (success/failure summary)
+#### PdfGenerator.generate() Detail
+
+```mermaid
+sequenceDiagram
+    participant CG as chronicle-generation
+    participant PG as PdfGenerator
+    participant PEU as pdf-element-utils
+    participant PU as pdf-utils
+
+    CG->>PG: generate()
+
+    loop For each ContentElement in layout.content
+        PG->>PEU: resolvePresets(element, layout.presets)
+        PEU-->>PG: ResolvedElement
+        alt type = text
+            PG->>PEU: resolveValue(value, data)
+            PG->>PU: getFont(pdfDoc, fontName, weight, style)
+            PG->>PU: getCanvasRect(canvas, canvasConfig, w, h)
+            PG->>PG: page.drawText(...)
+        else type = checkbox
+            PG->>PEU: resolveValue(trigger, data)
+            PG->>PU: getFont / getCanvasRect
+            PG->>PG: page.drawText("✓", ...)
+        else type = strikeout
+            PG->>PEU: resolveValue(trigger, data)
+            PG->>PU: getCanvasRect
+            PG->>PG: page.drawRectangle(...)
+        else type = choice
+            PG->>PEU: resolveValue(choices, data)
+            PG->>PG: drawElement(contentMap[choice])
+        else type = trigger
+            PG->>PG: drawContentElements(content)
+        end
+    end
+
+    PG-->>CG: (rendering complete)
 ```
 
 ### Session Report Export
