@@ -197,7 +197,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
             const blankChroniclePath = chronicleData?.blankChroniclePath 
                 || game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
             const filename = generateChronicleFilename(sheet.actor.name, blankChroniclePath);
-            var FileSaver = require('file-saver');
+            const FileSaver = require('file-saver');
             FileSaver.saveAs(blob, filename);
         }
     });
