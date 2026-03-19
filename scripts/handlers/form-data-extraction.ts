@@ -16,11 +16,12 @@
  * This function is exported for use in main.ts (Generate Chronicles button)
  * and is also used internally by the handlers.
  * 
- * CCN Complexity Note: This function has a cyclomatic complexity of 18, which exceeds
- * the standard limit of 15. However, this is acceptable per architecture guidelines
+ * CCN Complexity Note: This function has high cyclomatic complexity and exceeds the
+ * max-lines-per-function limit. However, this is acceptable per architecture guidelines
  * because the complexity comes from flat, repetitive null-coalescing patterns
- * (|| defaultValue) rather than nested conditionals. The cognitive complexity is low
- * and refactoring would create unnecessary abstraction without improving readability.
+ * (|| defaultValue) and checkbox/select reads rather than nested conditionals.
+ * The cognitive complexity is low and refactoring would create unnecessary abstraction
+ * without improving readability.
  * 
  * @param container - HTMLElement wrapping the form container
  * @param partyActors - Array of party member actors
@@ -28,7 +29,7 @@
  * 
  * Requirements: party-chronicle-filling 4.5, multi-line-reputation-tracking 1.2, 1.3, 4.1, 4.2, earned-income-calculation 10.1, 10.2, 10.3, 10.4, 10.5, 10.6
  */
-// eslint-disable-next-line complexity
+// eslint-disable-next-line complexity, max-lines-per-function
 export function extractFormData(container: HTMLElement, partyActors: any[]): any {
     // Extract shared fields
     const shared: any = {
@@ -57,6 +58,11 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
             RO: Number.parseInt((container.querySelector('#reputation-RO') as HTMLInputElement)?.value) || 0,
             VW: Number.parseInt((container.querySelector('#reputation-VW') as HTMLInputElement)?.value) || 0,
         },
+        reportingA: (container.querySelector('#reportingA') as HTMLInputElement)?.checked || false,
+        reportingB: (container.querySelector('#reportingB') as HTMLInputElement)?.checked || false,
+        reportingC: (container.querySelector('#reportingC') as HTMLInputElement)?.checked || false,
+        reportingD: (container.querySelector('#reportingD') as HTMLInputElement)?.checked || false,
+        chosenFaction: (container.querySelector('#chosenFaction') as HTMLSelectElement)?.value || '',
     };
     
     // Extract character-specific fields
@@ -83,6 +89,8 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
             // Read from visible editable fields
             goldSpent: Number.parseFloat((container.querySelector(`#goldSpent-${actorId}`) as HTMLInputElement)?.value) || 0,
             notes: (container.querySelector(`#notes-${actorId}`) as HTMLTextAreaElement)?.value || '',
+            // Read session reporting fields
+            consumeReplay: (container.querySelector(`input[name="characters.${actorId}.consumeReplay"]`) as HTMLInputElement)?.checked || false,
         };
     });
     

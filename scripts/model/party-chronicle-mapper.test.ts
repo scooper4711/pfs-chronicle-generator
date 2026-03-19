@@ -33,6 +33,11 @@ describe('mapToCharacterData', () => {
     chosenFactionReputation: 0,
     reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
     downtimeDays: 0,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: '',
     ...overrides
   });
 
@@ -47,6 +52,7 @@ describe('mapToCharacterData', () => {
     earnedIncome: 0,
     goldSpent: 0,
     notes: '',
+    consumeReplay: false,
     ...overrides
   });
 
@@ -330,6 +336,11 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
     chosenFactionReputation: 0,
     reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
     downtimeDays: 0,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: '',
     ...overrides
   });
 
@@ -344,6 +355,7 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
     earnedIncome: 0,
     goldSpent: 0,
     notes: '',
+    consumeReplay: false,
     ...overrides
   });
 
@@ -704,7 +716,12 @@ describe('Property 6: Data Combination Correctness', () => {
         RO: fc.integer({ min: 0, max: 9 }),
         VW: fc.integer({ min: 0, max: 9 })
       }),
-      downtimeDays: fc.integer({ min: 0, max: 8 })
+      downtimeDays: fc.integer({ min: 0, max: 8 }),
+      reportingA: fc.boolean(),
+      reportingB: fc.boolean(),
+      reportingC: fc.boolean(),
+      reportingD: fc.boolean(),
+      chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
     });
 
     const uniqueFieldsArb = fc.record({
@@ -717,6 +734,7 @@ describe('Property 6: Data Combination Correctness', () => {
       earnedIncome: fc.integer({ min: 0, max: 1000 }),
       goldSpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.string({ maxLength: 500 }),
+      consumeReplay: fc.boolean(),
     });
 
     fc.assert(
@@ -774,7 +792,12 @@ describe('Property 6: Data Combination Correctness', () => {
         RO: fc.integer({ min: 0, max: 9 }),
         VW: fc.integer({ min: 0, max: 9 })
       }),
-      downtimeDays: fc.integer({ min: 0, max: 8 })
+      downtimeDays: fc.integer({ min: 0, max: 8 }),
+      reportingA: fc.boolean(),
+      reportingB: fc.boolean(),
+      reportingC: fc.boolean(),
+      reportingD: fc.boolean(),
+      chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
     });
 
     const uniqueFieldsArb = fc.record({
@@ -787,6 +810,7 @@ describe('Property 6: Data Combination Correctness', () => {
       earnedIncome: fc.integer({ min: 0, max: 1000 }),
       goldSpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.string({ maxLength: 500 }),
+      consumeReplay: fc.boolean(),
     });
 
     fc.assert(
@@ -847,7 +871,12 @@ describe('Property 6: Data Combination Correctness', () => {
         RO: 0,
         VW: 0
       }),
-      downtimeDays: fc.integer({ min: 0, max: 8 })
+      downtimeDays: fc.integer({ min: 0, max: 8 }),
+      reportingA: fc.boolean(),
+      reportingB: fc.boolean(),
+      reportingC: fc.boolean(),
+      reportingD: fc.boolean(),
+      chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
     });
 
     const uniqueFieldsArb = fc.record({
@@ -859,7 +888,8 @@ describe('Property 6: Data Combination Correctness', () => {
       proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
       earnedIncome: fc.integer({ min: 0, max: 1000 }),
       goldSpent: fc.integer({ min: 0, max: 10000 }),
-      notes: fc.constant('')
+      notes: fc.constant(''),
+      consumeReplay: fc.boolean()
     });
 
     fc.assert(
@@ -910,7 +940,12 @@ describe('Property 6: Data Combination Correctness', () => {
         RO: fc.integer({ min: 0, max: 9 }),
         VW: fc.integer({ min: 0, max: 9 })
       }),
-      downtimeDays: fc.integer({ min: 0, max: 8 })
+      downtimeDays: fc.integer({ min: 0, max: 8 }),
+      reportingA: fc.boolean(),
+      reportingB: fc.boolean(),
+      reportingC: fc.boolean(),
+      reportingD: fc.boolean(),
+      chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
     });
 
     const uniqueFieldsArb = fc.record({
@@ -923,6 +958,7 @@ describe('Property 6: Data Combination Correctness', () => {
       earnedIncome: fc.constant(0),
       goldSpent: fc.constant(0),
       notes: fc.string({ maxLength: 500 }),
+      consumeReplay: fc.boolean(),
     });
 
     fc.assert(
@@ -968,7 +1004,12 @@ describe('Property 6: Data Combination Correctness', () => {
         RO: fc.integer({ min: 0, max: 9 }),
         VW: fc.integer({ min: 0, max: 9 })
       }),
-      downtimeDays: fc.integer({ min: 0, max: 8 })
+      downtimeDays: fc.integer({ min: 0, max: 8 }),
+      reportingA: fc.boolean(),
+      reportingB: fc.boolean(),
+      reportingC: fc.boolean(),
+      reportingD: fc.boolean(),
+      chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
     });
 
     const uniqueFieldsArb = fc.record({
@@ -981,6 +1022,7 @@ describe('Property 6: Data Combination Correctness', () => {
       earnedIncome: fc.integer({ min: 0, max: 1000 }),
       goldSpent: fc.integer({ min: 0, max: 10000 }),
       notes: stringArb,
+      consumeReplay: fc.boolean(),
     });
 
     fc.assert(

@@ -287,3 +287,59 @@ export function validateAllFields(
     errors: allErrors
   };
 }
+
+/**
+ * Parameters for session report validation.
+ *
+ * Groups the data sources needed to validate that a session report
+ * can be assembled: shared form fields and party actor data.
+ */
+export interface SessionReportValidationParams {
+  /** Shared form fields containing event date, GM PFS number, and layout ID */
+  shared: Partial<SharedFields>;
+  /** Party actors with PFS data including currentFaction */
+  partyActors: Array<{
+    id: string;
+    name: string;
+    system?: {
+      pfs?: {
+        currentFaction?: string;
+      };
+    };
+  }>;
+}
+
+/**
+ * Validates fields required for session report assembly.
+ *
+ * Checks that the event date is populated, a scenario is selected
+ * (layoutId not empty), the GM PFS number is populated, and each
+ * party member has a faction value available from actor data.
+ * Returns a ValidationResult with collected errors.
+ *
+ * @param params - The validation parameters containing shared fields and party actors
+ * @returns ValidationResult with valid flag and array of error messages
+ *
+ * Requirements: paizo-session-reporting 8.1, 8.2, 8.3, 8.4, 8.5
+ */
+export function validateSessionReportFields(params: SessionReportValidationParams): ValidationResult {
+  const errors: string[] = [];
+  const { shared, partyActors } = params;
+
+  errors.push(...validateRequiredString(shared.eventDate, 'Event Date'));
+  errors.push(...validateRequiredString(shared.layoutId, 'Scenario selection'));
+  errors.push(...validateRequiredString(shared.gmPfsNumber, 'GM PFS Number'));
+
+  for (const actor of partyActors) {
+    const faction = actor.system?.pfs?.currentFaction;
+    if (!faction || faction.trim() === '') {
+      errors.push(`${actor.name}: Faction is required for session reporting`);
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+

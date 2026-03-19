@@ -28,10 +28,10 @@ function truncateText(text: string, maxLength: number = MAX_SUMMARY_LENGTH): str
 }
 
 /**
- * Generates summary text for Event Details section
+ * Generates summary text for Session Reporting section
  * 
- * Format: "<icon> Event Details - {scenario name from layout dropdown}"
- * Empty scenario: "<icon> Event Details (No scenario)"
+ * Format: "<icon> Session Reporting - {scenario name from layout dropdown}"
+ * Empty scenario: "<icon> Session Reporting (No scenario)"
  * Truncates with ellipsis if too long
  * 
  * Note: This uses the layout/scenario name (e.g., "5-05 The Island of..."),
@@ -48,10 +48,10 @@ export function generateEventDetailsSummary(container: HTMLElement): string {
   const layoutName = selectedOption?.text?.trim() || '';
   
   if (!layoutName) {
-    return '<i class="fas fa-calendar-alt"></i> Event Details (No scenario)';
+    return '<i class="fas fa-calendar-alt"></i> Session Reporting (No scenario)';
   }
   
-  const summary = `<i class="fas fa-calendar-alt"></i> Event Details - ${layoutName}`;
+  const summary = `<i class="fas fa-calendar-alt"></i> Session Reporting - ${layoutName}`;
   return truncateText(summary);
 }
 

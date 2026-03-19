@@ -111,7 +111,12 @@ describe('Party Chronicle Storage', () => {
           blankChroniclePath: '/path',
           chosenFactionReputation: 0,
           reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-          downtimeDays: 0
+          downtimeDays: 0,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: ''
         },
         characters: {}
       };
@@ -140,7 +145,12 @@ describe('Party Chronicle Storage', () => {
           blankChroniclePath: '/path/to/chronicle.pdf',
           chosenFactionReputation: 0,
           reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-          downtimeDays: 0
+          downtimeDays: 0,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: ''
         },
         characters: {}
       };
@@ -168,7 +178,12 @@ describe('Party Chronicle Storage', () => {
           blankChroniclePath: '/path',
           chosenFactionReputation: 0,
           reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-          downtimeDays: 0
+          downtimeDays: 0,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: ''
         },
         characters: {}
       };
@@ -329,7 +344,12 @@ describe('Party Chronicle Storage', () => {
           blankChroniclePath: '/path/to/chronicle.pdf',
           chosenFactionReputation: 0,
           reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-          downtimeDays: 0
+          downtimeDays: 0,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: ''
         },
         characters: {}
       };
@@ -443,7 +463,12 @@ describe('Party Chronicle Storage', () => {
           blankChroniclePath: '/path',
           chosenFactionReputation: 0,
           reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-          downtimeDays: 0
+          downtimeDays: 0,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: ''
         },
         characters: {}
       };
@@ -513,7 +538,12 @@ describe('Party Chronicle Storage', () => {
           blankChroniclePath: '/path',
           chosenFactionReputation: 0,
           reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-          downtimeDays: 0
+          downtimeDays: 0,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: ''
         },
         characters: {}
       };
@@ -549,7 +579,12 @@ describe('Party Chronicle Storage', () => {
           blankChroniclePath: '/path',
           chosenFactionReputation: 0,
           reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-          downtimeDays: 0
+          downtimeDays: 0,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: ''
         },
         characters: {}
       };
@@ -603,7 +638,12 @@ describe('Party Chronicle Storage', () => {
           blankChroniclePath: '/path1',
           chosenFactionReputation: 0,
           reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-          downtimeDays: 0
+          downtimeDays: 0,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: ''
         },
         characters: {}
       };
@@ -623,7 +663,12 @@ describe('Party Chronicle Storage', () => {
           blankChroniclePath: '/path2',
           chosenFactionReputation: 0,
           reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-          downtimeDays: 0
+          downtimeDays: 0,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    chosenFaction: ''
         },
         characters: {}
       };
@@ -658,7 +703,8 @@ describe('Party Chronicle Storage', () => {
         proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
         earnedIncome: fc.float({ min: 0, max: 1000, noNaN: true }),
         goldSpent: fc.integer({ min: 0, max: 10000 }),
-        notes: fc.string({ maxLength: 500 })
+        notes: fc.string({ maxLength: 500 }),
+        consumeReplay: fc.boolean()
       });
 
       const sharedDataArb = fc.record({
@@ -682,7 +728,12 @@ describe('Party Chronicle Storage', () => {
           RO: fc.integer({ min: 0, max: 9 }),
           VW: fc.integer({ min: 0, max: 9 })
         }),
-        downtimeDays: fc.integer({ min: 0, max: 8 })
+        downtimeDays: fc.integer({ min: 0, max: 8 }),
+        reportingA: fc.boolean(),
+        reportingB: fc.boolean(),
+        reportingC: fc.boolean(),
+        reportingD: fc.boolean(),
+        chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
       });
 
       const partyChronicleDataArb = fc.record({
@@ -742,7 +793,12 @@ describe('Party Chronicle Storage', () => {
           RO: fc.integer({ min: 0, max: 9 }),
           VW: fc.integer({ min: 0, max: 9 })
         }),
-        downtimeDays: fc.integer({ min: 0, max: 8 })
+        downtimeDays: fc.integer({ min: 0, max: 8 }),
+        reportingA: fc.boolean(),
+        reportingB: fc.boolean(),
+        reportingC: fc.boolean(),
+        reportingD: fc.boolean(),
+        chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
       });
 
       await fc.assert(
@@ -787,7 +843,8 @@ describe('Party Chronicle Storage', () => {
         proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
         earnedIncome: fc.integer({ min: 0, max: 1000 }),
         goldSpent: fc.integer({ min: 0, max: 10000 }),
-        notes: stringArb
+        notes: stringArb,
+        consumeReplay: fc.boolean()
       });
 
       const sharedDataArb = fc.record({
@@ -811,7 +868,12 @@ describe('Party Chronicle Storage', () => {
           VS: fc.integer({ min: 0, max: 9 }),
           RO: fc.integer({ min: 0, max: 9 }),
           VW: fc.integer({ min: 0, max: 9 })
-        })
+        }),
+        reportingA: fc.boolean(),
+        reportingB: fc.boolean(),
+        reportingC: fc.boolean(),
+        reportingD: fc.boolean(),
+        chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
       });
 
       const partyChronicleDataArb = fc.record({

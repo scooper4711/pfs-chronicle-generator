@@ -179,7 +179,12 @@ describe('Chronicle Path Persistence Property Tests', () => {
           VS: 0,
           RO: 0,
           VW: 0
-        }
+        },
+        reportingA: false,
+        reportingB: false,
+        reportingC: false,
+        reportingD: false,
+        chosenFaction: ''
       },
       characters: {
         actor1: {
@@ -191,7 +196,8 @@ describe('Chronicle Path Persistence Property Tests', () => {
           proficiencyRank: 'trained',
           earnedIncome: 10.5,
           goldSpent: 5.0,
-          notes: 'Test notes 1'
+          notes: 'Test notes 1',
+          consumeReplay: false
         },
         actor2: {
           characterName: 'Character 2',
@@ -202,7 +208,8 @@ describe('Chronicle Path Persistence Property Tests', () => {
           proficiencyRank: 'trained',
           earnedIncome: 8.0,
           goldSpent: 3.5,
-          notes: 'Test notes 2'
+          notes: 'Test notes 2',
+          consumeReplay: false
         }
       }
     };

@@ -5,7 +5,7 @@
             <header class="collapsible-header" role="button" tabindex="0" 
                     aria-expanded="false" aria-controls="event-details-content">
                 <span class="chevron"></span>
-                <span class="section-title"><i class="fas fa-calendar-alt"></i> Event Details</span>
+                <span class="section-title"><i class="fas fa-calendar-alt"></i> Session Reporting</span>
                 <span class="section-summary"></span>
             </header>
             <div class="summary-data collapsible-content" id="event-details-content">
@@ -54,6 +54,16 @@
                         <button type="button" class="file-picker-button" id="chroniclePathFilePicker"><i class="fas fa-folder-open"></i></button>
                     </div>
                 </div>
+                
+                <div class="form-group reporting-flags">
+                    <label>Reporting Flags</label>
+                    <div class="form-fields">
+                        <label class="checkbox-label"><input type="checkbox" id="reportingA" name="shared.reportingA" {{#if shared.reportingA}}checked{{/if}}> A</label>
+                        <label class="checkbox-label"><input type="checkbox" id="reportingB" name="shared.reportingB" {{#if shared.reportingB}}checked{{/if}}> B</label>
+                        <label class="checkbox-label"><input type="checkbox" id="reportingC" name="shared.reportingC" {{#if shared.reportingC}}checked{{/if}}> C</label>
+                        <label class="checkbox-label"><input type="checkbox" id="reportingD" name="shared.reportingD" {{#if shared.reportingD}}checked{{/if}}> D</label>
+                    </div>
+                </div>
             </div>
         </li>
         
@@ -75,6 +85,19 @@
                         <option value="4" {{#if (eq shared.chosenFactionReputation 4)}}selected{{/if}}>+4</option>
                         <option value="5" {{#if (eq shared.chosenFactionReputation 5)}}selected{{/if}}>+5</option>
                         <option value="6" {{#if (eq shared.chosenFactionReputation 6)}}selected{{/if}}>+6</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="chosenFaction">Faction</label>
+                    <select id="chosenFaction" name="shared.chosenFaction">
+                        <option value="" {{#unless shared.chosenFaction}}selected{{/unless}}>—</option>
+                        <option value="EA" {{#if (eq shared.chosenFaction "EA")}}selected{{/if}}>Envoy's Alliance</option>
+                        <option value="GA" {{#if (eq shared.chosenFaction "GA")}}selected{{/if}}>Grand Archive</option>
+                        <option value="HH" {{#if (eq shared.chosenFaction "HH")}}selected{{/if}}>Horizon Hunters</option>
+                        <option value="VS" {{#if (eq shared.chosenFaction "VS")}}selected{{/if}}>Vigilant Seal</option>
+                        <option value="RO" {{#if (eq shared.chosenFaction "RO")}}selected{{/if}}>Radiant Oath</option>
+                        <option value="VW" {{#if (eq shared.chosenFaction "VW")}}selected{{/if}}>Verdant Wheel</option>
                     </select>
                 </div>
                 
@@ -244,12 +267,18 @@
         <ul id="validationErrorList"></ul>
     </div>
     
-    <header class="content-header">
-        <h3><i class="fas fa-users"></i> Character-Specific Information</h3>
+    {{!-- Actions section --}}
+    <div class="actions-section">
+        <h3><i class="fas fa-bolt"></i> Actions</h3>
         <div class="buttons">
             <button type="button" id="clearData" class="icon fa-solid fa-trash" data-tooltip aria-label="Clear Data"></button>
             <button type="submit" id="generateChronicles" class="icon fa-solid fa-file-pdf" data-tooltip aria-label="Generate Chronicles"></button>
+            <button type="button" id="copySessionReport" class="icon fa-solid fa-clipboard" data-tooltip aria-label="Copy Session Report"></button>
         </div>
+    </div>
+    
+    <header class="content-header">
+        <h3><i class="fas fa-users"></i> Character-Specific Information</h3>
     </header>
     
     <div class="activities">
@@ -263,6 +292,7 @@
                         <div class="character-name">{{this.name}}</div>
                         <div class="character-society-id">{{#if this.societyId}}{{this.societyId}}{{else}}<em>No Society ID</em>{{/if}}</div>
                         <div class="character-level">Level {{this.level}}</div>
+                        <div class="character-faction" id="factionDisplay-{{this.id}}">{{#if this.faction}}{{this.faction}}{{else}}<em>No Faction</em>{{/if}}</div>
                     </div>
                     {{!-- Hidden fields to preserve data --}}
                     <input type="hidden" name="characters.{{this.id}}.characterName" value="{{this.name}}">
@@ -331,6 +361,14 @@
                     <div class="form-group full-width">
                         <label for="notes-{{this.id}}" data-tooltip="GMs are encouraged to add notes to Chronicles about interesting events that occur during the adventure."><i class="fas fa-note-sticky"></i> Notes:</label>
                         <textarea id="notes-{{this.id}}" name="characters.{{this.id}}.notes" rows="3">{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'notes'}}{{/if}}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="characters.{{this.id}}.consumeReplay"
+                                {{#if (lookup (lookup ../savedData.characters this.id) 'consumeReplay')}}checked{{/if}}>
+                            Consume Replay
+                        </label>
                     </div>
                 </div>
             </section>

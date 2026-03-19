@@ -81,7 +81,8 @@ const actorArbitrary = fc.record({
     pfs: fc.option(
       fc.record({
         playerNumber: fc.integer({ min: 100000, max: 999999 }),
-        characterNumber: fc.integer({ min: 1001, max: 9999 })
+        characterNumber: fc.integer({ min: 1001, max: 9999 }),
+        currentFaction: fc.constantFrom('EA', 'GA', 'HH', 'VS', 'RO', 'VW')
       }),
       { nil: undefined }
     )

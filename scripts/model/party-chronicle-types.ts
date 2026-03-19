@@ -58,6 +58,21 @@ export interface SharedFields {
   
   /** Number of downtime days granted by the scenario (0-8) */
   downtimeDays: number;
+
+  /** Reporting flag A checkbox (paizo-session-reporting 10.1, 1.2) */
+  reportingA: boolean;
+
+  /** Reporting flag B checkbox (paizo-session-reporting 10.1, 1.2) */
+  reportingB: boolean;
+
+  /** Reporting flag C checkbox (paizo-session-reporting 10.1, 1.2) */
+  reportingC: boolean;
+
+  /** Reporting flag D checkbox (paizo-session-reporting 10.1, 1.2) */
+  reportingD: boolean;
+
+  /** Faction abbreviation code for the chosen faction (paizo-session-reporting 10.1, 1.2) */
+  chosenFaction: string;
 }
 
 /**
@@ -100,6 +115,9 @@ export interface UniqueFields {
   
   /** Additional notes for this character */
   notes: string;
+
+  /** Whether the player is consuming a replay for this session (paizo-session-reporting 10.2, 3.2) */
+  consumeReplay: boolean;
 }
 
 /**
@@ -134,6 +152,9 @@ export interface PartyMember {
   
   /** Society ID */
   societyId: string;
+
+  /** Faction full name from actor.system.pfs.currentFaction */
+  faction: string;
 }
 
 /**

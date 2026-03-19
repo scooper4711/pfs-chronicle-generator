@@ -33,7 +33,7 @@ jest.mock('../model/collapse-state-storage', () => ({
 
 // Mock the summary utils module
 jest.mock('../utils/summary-utils', () => ({
-  generateEventDetailsSummary: jest.fn(() => 'Event Details - Test Scenario'),
+  generateEventDetailsSummary: jest.fn(() => 'Session Reporting - Test Scenario'),
   generateReputationSummary: jest.fn(() => 'Reputation - +2'),
   generateSharedRewardsSummary: jest.fn(() => 'Shared Rewards - 4 XP; 3 TB')
 }));
@@ -173,7 +173,7 @@ describe('collapsible-section-handlers', () => {
       
       updateSectionSummary('event-details', container);
       
-      expect(summaryElement.textContent).toBe('Event Details - Test Scenario');
+      expect(summaryElement.textContent).toBe('Session Reporting - Test Scenario');
     });
 
     it('should update summary text for reputation section', () => {
@@ -202,7 +202,7 @@ describe('collapsible-section-handlers', () => {
       const eventDetailsSummary = container.querySelector('[data-section-id="event-details"] .section-summary') as HTMLElement;
       const reputationSummary = container.querySelector('[data-section-id="reputation"] .section-summary') as HTMLElement;
       
-      expect(eventDetailsSummary.textContent).toBe('Event Details - Test Scenario');
+      expect(eventDetailsSummary.textContent).toBe('Session Reporting - Test Scenario');
       expect(reputationSummary.textContent).toBe('Reputation - +2');
     });
   });
@@ -231,7 +231,7 @@ describe('collapsible-section-handlers', () => {
       const eventDetailsSummary = container.querySelector('[data-section-id="event-details"] .section-summary') as HTMLElement;
       const reputationSummary = container.querySelector('[data-section-id="reputation"] .section-summary') as HTMLElement;
       
-      expect(eventDetailsSummary.textContent).toBe('Event Details - Test Scenario');
+      expect(eventDetailsSummary.textContent).toBe('Session Reporting - Test Scenario');
       expect(reputationSummary.textContent).toBe('Reputation - +2');
     });
   });

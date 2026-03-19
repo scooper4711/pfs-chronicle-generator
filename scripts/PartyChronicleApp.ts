@@ -10,6 +10,7 @@
 
 import { layoutStore } from './LayoutStore.js';
 import { loadPartyChronicleData } from './model/party-chronicle-storage.js';
+import { FACTION_NAMES } from './model/faction-names.js';
 import { 
   PartyMember,
   SharedFields,
@@ -97,7 +98,8 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
           level: actor.system?.details?.level?.value ?? 1,
           societyId: actor.system?.pfs?.playerNumber && actor.system?.pfs?.characterNumber
             ? `${actor.system.pfs.playerNumber}-${actor.system.pfs.characterNumber}`
-            : ''
+            : '',
+          faction: FACTION_NAMES[actor.system?.pfs?.currentFaction] ?? ''
         }));
 
       // Load saved party chronicle data from world flags
@@ -236,6 +238,11 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
         RO: 0,
         VW: 0
       },
+      reportingA: savedData?.shared?.reportingA ?? false,
+      reportingB: savedData?.shared?.reportingB ?? false,
+      reportingC: savedData?.shared?.reportingC ?? false,
+      reportingD: savedData?.shared?.reportingD ?? false,
+      chosenFaction: savedData?.shared?.chosenFaction ?? '',
     };
   }
 

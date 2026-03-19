@@ -5,10 +5,11 @@
 import { describe, it, expect } from '@jest/globals';
 import { validateSharedFields, validateUniqueFields, validateAllFields } from './party-chronicle-validator';
 import { SharedFields, UniqueFields } from './party-chronicle-types';
+import { createSharedFields, createUniqueFields } from './test-helpers';
 
 describe('validateSharedFields', () => {
   it('should pass validation for valid shared fields', () => {
-    const shared: SharedFields = {
+    const shared: SharedFields = createSharedFields({
       gmPfsNumber: '12345',
       scenarioName: 'The Blackwood Lost',
       eventCode: 'PFS-001',
@@ -30,7 +31,7 @@ describe('validateSharedFields', () => {
         RO: 0,
         VW: 0
       }
-    };
+    });
 
     const result = validateSharedFields(shared);
 
@@ -1007,7 +1008,7 @@ describe('validateSharedFields', () => {
 
 describe('validateUniqueFields', () => {
   it('should pass validation for valid unique fields', () => {
-    const unique: UniqueFields = {
+    const unique: UniqueFields = createUniqueFields({
       characterName: 'Valeros',
       societyId: '12345-01',
       level: 3,
@@ -1017,7 +1018,7 @@ describe('validateUniqueFields', () => {
       successLevel: 'success',
       proficiencyRank: 'trained',
       earnedIncome: 0.8
-    };
+    });
 
     const result = validateUniqueFields(unique);
 
@@ -1143,7 +1144,7 @@ describe('validateUniqueFields', () => {
   });
 
   it('should accept zero values for numeric fields', () => {
-    const unique: UniqueFields = {
+    const unique: UniqueFields = createUniqueFields({
       characterName: 'Valeros',
       societyId: '12345-01',
       level: 1,
@@ -1153,7 +1154,7 @@ describe('validateUniqueFields', () => {
       successLevel: 'success',
       proficiencyRank: 'trained',
       earnedIncome: 0
-    };
+    });
 
     const result = validateUniqueFields(unique);
 
@@ -1162,7 +1163,7 @@ describe('validateUniqueFields', () => {
   });
 
   it('should accept empty strings for optional fields', () => {
-    const unique: UniqueFields = {
+    const unique: UniqueFields = createUniqueFields({
       characterName: 'Valeros',
       societyId: '12345-01',
       level: 3,
@@ -1172,7 +1173,7 @@ describe('validateUniqueFields', () => {
       successLevel: 'success',
       proficiencyRank: 'trained',
       earnedIncome: 0.8
-    };
+    });
 
     const result = validateUniqueFields(unique);
 
@@ -1211,7 +1212,7 @@ describe('validateUniqueFields', () => {
 
 describe('validateAllFields', () => {
   it('should pass validation when all fields are valid', () => {
-    const shared: SharedFields = {
+    const shared: SharedFields = createSharedFields({
       gmPfsNumber: '12345',
       scenarioName: 'Test',
       eventCode: 'TEST-001',
@@ -1233,7 +1234,7 @@ describe('validateAllFields', () => {
         RO: 0,
         VW: 0
       }
-    };
+    });
 
     const characters = {
       'actor-1': {
@@ -1301,7 +1302,7 @@ describe('validateAllFields', () => {
   });
 
   it('should validate multiple characters', () => {
-    const shared: SharedFields = {
+    const shared: SharedFields = createSharedFields({
       gmPfsNumber: '12345',
       scenarioName: 'Test',
       eventCode: 'TEST-001',
@@ -1323,7 +1324,7 @@ describe('validateAllFields', () => {
         RO: 0,
         VW: 0
       }
-    };
+    });
 
     const characters = {
       'actor-1': {
@@ -1349,7 +1350,7 @@ describe('validateAllFields', () => {
   });
 
   it('should use character names from map when provided', () => {
-    const shared: SharedFields = {
+    const shared: SharedFields = createSharedFields({
       gmPfsNumber: '12345',
       scenarioName: 'Test',
       eventCode: 'TEST-001',
@@ -1371,7 +1372,7 @@ describe('validateAllFields', () => {
         RO: 0,
         VW: 0
       }
-    };
+    });
 
     const characters = {
       'actor-1': {
