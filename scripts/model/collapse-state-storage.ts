@@ -8,6 +8,8 @@
  * Requirements: collapsible-shared-sections 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7
  */
 
+import { warn } from '../utils/logger.js';
+
 /**
  * Storage structure for collapse states.
  * Maps section IDs to their collapse state (true = collapsed, false = expanded).
@@ -48,7 +50,7 @@ export function saveCollapseState(sectionId: string, isCollapsed: boolean): void
     allStates[sectionId] = isCollapsed;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(allStates));
   } catch (error) {
-    console.warn(`Failed to save collapse state for section "${sectionId}":`, error);
+    warn(`Failed to save collapse state for section "${sectionId}":`, error);
   }
 }
 
@@ -65,7 +67,7 @@ export function loadCollapseState(sectionId: string): boolean | null {
     const allStates = loadAllCollapseStates();
     return allStates[sectionId] ?? null;
   } catch (error) {
-    console.warn(`Failed to load collapse state for section "${sectionId}":`, error);
+    warn(`Failed to load collapse state for section "${sectionId}":`, error);
     return null;
   }
 }
@@ -100,12 +102,12 @@ export function loadAllCollapseStates(): CollapseStateStorage {
     }
     const parsed = JSON.parse(stored);
     if (typeof parsed !== 'object' || parsed === null) {
-      console.warn('Invalid collapse state data in localStorage, using defaults');
+      warn('Invalid collapse state data in localStorage, using defaults');
       return {};
     }
     return parsed;
   } catch (error) {
-    console.warn('Failed to load collapse states from localStorage:', error);
+    warn('Failed to load collapse states from localStorage:', error);
     return {};
   }
 }

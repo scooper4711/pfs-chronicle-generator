@@ -110,7 +110,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
           ),
           async (shared, characterPairs) => {
             // Create party chronicle data with multiple characters
-            const partyData: PartyChronicleData = {
+            const _partyData: PartyChronicleData = {
               shared,
               characters: Object.fromEntries(
                 characterPairs.map(([actorId, unique]) => [actorId, unique])
@@ -238,7 +238,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
           actorIdArbitrary,
           uniqueFieldsArbitrary,
           async (shared, actorId, unique) => {
-            const partyData: PartyChronicleData = {
+            const _partyData: PartyChronicleData = {
               shared,
               characters: {
                 [actorId]: unique
@@ -470,7 +470,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
 
             // Simulate removing a character
             const removedActorId = actorIds[0];
-            const { [removedActorId]: removed, ...remainingCharacters } = partyData.characters;
+            const { [removedActorId]: _removed, ...remainingCharacters } = partyData.characters;
             
             partyData = {
               ...partyData,
@@ -520,7 +520,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               'notes'
             ];
 
-            Object.entries(partyData.characters).forEach(([actorId, uniqueFields]) => {
+            Object.entries(partyData.characters).forEach(([_actorId, uniqueFields]) => {
               requiredFields.forEach(field => {
                 expect(uniqueFields).toHaveProperty(field);
                 expect(uniqueFields[field]).toBeDefined();

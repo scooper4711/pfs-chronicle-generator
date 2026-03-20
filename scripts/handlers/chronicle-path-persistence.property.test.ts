@@ -33,7 +33,7 @@ jest.mock('../LayoutStore', () => ({
       { id: 'pfs2-season7', name: 'Season 7' },
       { id: 'pfs2-season6', name: 'Season 6' }
     ]),
-    getLayoutsByParent: jest.fn((seasonId: string) => [
+    getLayoutsByParent: jest.fn((_seasonId: string) => [
       { id: 'test-layout', description: 'Test Layout' }
     ]),
     getLayout: jest.fn(async (layoutId: string) => ({

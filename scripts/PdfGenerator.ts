@@ -8,6 +8,7 @@ import {
     getAllContentElements, 
     findContentElement 
 } from './utils/pdf-element-utils';
+import { debug } from './utils/logger.js';
 
 export class PdfGenerator {
     private readonly pdfDoc: PDFDocument;
@@ -174,7 +175,7 @@ export class PdfGenerator {
 
     private async drawElement(element: ContentElement) {
             const props: ResolvedElement = resolvePresets(element, this.layout.presets);
-            console.log('[PFS Chronicle] Drawing element:', { type: props.type, choices: props.choices });
+            debug('Drawing element:', { type: props.type, choices: props.choices });
 
             switch (props.type) {
                 case 'text':
@@ -238,8 +239,8 @@ export class PdfGenerator {
             // Split on ||| delimiter (used for arrays), or treat as single value if no delimiter
             // DO NOT split on comma, as choice values may contain commas
             const choices = value?.includes('|||') ? value.split('|||') : (value ? [value] : []);
-            console.log('[PFS Chronicle] Split choices:', { value, choices });
-            console.log('[PFS Chronicle] Processing choices:', { 
+            debug('Split choices:', { value, choices });
+            debug('Processing choices:', { 
                 paramValue: resolveValue(props.choices as string, this.data, 'choice'),
                 choices, 
                 content: props.content,
@@ -368,7 +369,7 @@ export class PdfGenerator {
     private async drawText(props: ResolvedElement) {
         const value = resolveValue(props.value, this.data, 'text');
         if (!value) {
-            console.log("[PFS Chronicle] Value is undefined:", { 
+            debug("Value is undefined:", { 
                 requestedValue: props.value,
                 resolvedValue: resolveValue(props.value, this.data, 'text'),
                 allData: this.data

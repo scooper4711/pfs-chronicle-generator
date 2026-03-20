@@ -1,47 +1,56 @@
-import tseslint from '@typescript-eslint/eslint-plugin';
-import tsparser from '@typescript-eslint/parser';
+import eslint from '@eslint/js';
+import { defineConfig } from 'eslint/config';
+import tseslint from 'typescript-eslint';
 
-export default [
+export default defineConfig(
+  {
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**'],
+  },
+
+  // Production TypeScript files
   {
     files: ['scripts/**/*.ts'],
-    ignores: ['dist/**', 'node_modules/**', '**/*.test.ts', '**/*.pbt.test.ts', '**/*.property.test.ts'],
+    ignores: ['**/*.test.ts', '**/*.pbt.test.ts', '**/*.property.test.ts'],
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+    ],
     languageOptions: {
-      parser: tsparser,
       parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: 'module',
-        project: './tsconfig.json'
-      }
-    },
-    plugins: {
-      '@typescript-eslint': tseslint
+        project: './tsconfig.json',
+      },
     },
     rules: {
+      // MUST rules (error) — hard limits
       'complexity': ['error', { max: 15 }],
-      'max-lines': ['error', { 
-        max: 500, 
-        skipBlankLines: true, 
-        skipComments: true 
+      'max-lines': ['error', { max: 500, skipBlankLines: true, skipComments: true }],
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
       }],
-      'max-lines-per-function': ['warn', {
-        max: 50,
-        skipBlankLines: true,
-        skipComments: true
-      }]
-    }
+
+      // SHOULD rules (warn) — soft limits
+      'max-lines-per-function': ['warn', { max: 50, skipBlankLines: true, skipComments: true }],
+      '@typescript-eslint/no-explicit-any': 'off',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+    },
   },
+
+  // Test files — exempt from file size and function length limits
   {
     files: ['**/*.test.ts', '**/*.pbt.test.ts', '**/*.property.test.ts'],
-    languageOptions: {
-      parser: tsparser,
-      parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: 'module',
-      }
+    extends: [
+      eslint.configs.recommended,
+      ...tseslint.configs.recommended,
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      }],
     },
-    plugins: {
-      '@typescript-eslint': tseslint
-    },
-    rules: {}
-  }
-];
+  },
+);

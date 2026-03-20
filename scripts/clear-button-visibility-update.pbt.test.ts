@@ -38,12 +38,12 @@ import { jest } from '@jest/globals';
 // Mock Foundry VTT game global
 (global as any).game = {
   settings: {
-    get: (module: string, key: string) => {
+    get: (_module: string, key: string) => {
       if (key === 'season') return 'season-6';
       if (key === 'layout') return '6-01';
       return '';
     },
-    set: async (module: string, key: string, value: any) => {
+    set: async (_module: string, _key: string, _value: any) => {
       return Promise.resolve();
     }
   },
@@ -112,7 +112,6 @@ jest.mock('./model/party-chronicle-storage', () => {
 
 // Now import after mocking
 import { savePartyChronicleData, clearPartyChronicleData } from './model/party-chronicle-storage';
-import { layoutStore } from './LayoutStore';
 
 /**
  * Property 1: Fault Condition - Chronicle Path Visibility Not Updated After Clear

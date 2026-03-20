@@ -1,4 +1,5 @@
 import { Layout } from './model/layout';
+import { debug, warn, error } from './utils/logger.js';
 
 const LAYOUT_PATH = 'modules/pfs-chronicle-generator/layouts/';
 
@@ -92,10 +93,10 @@ class LayoutStore {
             dirFormat = dirFormat.toLowerCase().replaceAll(' ', '_');
         }
 
-        console.log('[PFS Chronicle] Looking for layouts with dirFormat:', dirFormat);
+        debug('Looking for layouts with dirFormat:', dirFormat);
         
         const layouts = Array.from(this.layoutInfo.entries())
-            .filter(([id, info]) => {
+            .filter(([id, _info]) => {
                 const idParts = id.split('.');
                 return idParts.length > 1 && idParts[1].startsWith(dirFormat);
             })
@@ -109,9 +110,9 @@ class LayoutStore {
 
     private async findAllLayouts(source: { source: string, target: string }) {
         try {
-            console.log(`[PFS Chronicle] Browsing for layouts in ${source.target}`);
+            debug(`Browsing for layouts in ${source.target}`);
             const browseResult = await foundry.applications.apps.FilePicker.browse(source.source, source.target);
-            console.log(`[PFS Chronicle] Found ${browseResult.files.length} files and ${browseResult.dirs.length} directories.`);
+            debug(`Found ${browseResult.files.length} files and ${browseResult.dirs.length} directories.`);
             
             // Store directory as a season if it contains layouts
             const dirName = source.target.split('/').pop();
@@ -135,13 +136,13 @@ class LayoutStore {
                     const description = jsonData.description;
 
                     if (!id || !description) {
-                        console.warn(`Layout file ${file} missing required fields (id or description)`);
+                        warn(`Layout file ${file} missing required fields (id or description)`);
                         continue;
                     }
                     
                     this.layoutInfo.set(id, { path: file, description: description });
-                } catch (error) {
-                    console.warn(`Failed to parse JSON layout file ${file}:`, error);
+                } catch (parseError) {
+                    warn(`Failed to parse JSON layout file ${file}:`, parseError);
                     continue;
                 }
             }
@@ -150,12 +151,12 @@ class LayoutStore {
             await Promise.all(browseResult.dirs.map(dir => 
                 this.findAllLayouts({ source: source.source, target: dir })
             ));
-        } catch (error) {
+        } catch (loadError) {
             if (game.isGM())
-                console.error(`PFS Chronicle Generator | Failed to load layouts from ${source.target}`, error);
+                error(`Failed to load layouts from ${source.target}`, loadError);
             else
-                console.error(`PFS Chronicle Generator | Non-GM user shouldn't initialize the LayoutStore`);
-            throw error;
+                error(`Non-GM user shouldn't initialize the LayoutStore`);
+            throw loadError;
         }
     }
 

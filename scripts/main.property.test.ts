@@ -51,7 +51,7 @@ describe('Society Tab Focus Bug Condition Exploration', () => {
                   currentActiveTab = tabId;
                 }
               }],
-              render: (force: boolean) => {
+              render: (_force: boolean) => {
                 // Simulate render behavior: resets to first tab
                 currentActiveTab = 'members'; // First tab in party sheet
                 
@@ -96,7 +96,7 @@ describe('Society Tab Focus Bug Condition Exploration', () => {
         fc.asyncProperty(
           fc.integer({ min: 1, max: 5 }), // Number of chronicle generations
           async (numGenerations) => {
-            let currentActiveTab: string = 'pfs';
+            let currentActiveTab: string;
             const mockPartySheet = {
               _tabs: [{
                 active: 'pfs',
@@ -104,7 +104,7 @@ describe('Society Tab Focus Bug Condition Exploration', () => {
                   currentActiveTab = tabId;
                 }
               }],
-              render: (force: boolean) => {
+              render: (_force: boolean) => {
                 // Render resets to first tab
                 currentActiveTab = 'members';
                 return Promise.resolve();
@@ -170,7 +170,7 @@ describe('Society Tab Focus Bug Condition Exploration', () => {
                   currentActiveTab = tabId;
                 }
               }],
-              render: (force: boolean) => {
+              render: (_force: boolean) => {
                 // Render resets tab
                 currentActiveTab = 'members';
                 return Promise.resolve();
@@ -212,9 +212,9 @@ describe('Society Tab Focus Bug Condition Exploration', () => {
         fc.asyncProperty(
           fc.constantFrom('members', 'inventory', 'effects'),
           async (otherTab) => {
-            let currentActiveTab: string = otherTab;
-            const mockPartySheet = {
-              render: (force: boolean) => {
+            const currentActiveTab: string = otherTab;
+            const _mockPartySheet = {
+              render: (_force: boolean) => {
                 // Even with the bug, if we're not on 'pfs' tab,
                 // the bug condition doesn't apply
                 // (There's no "Generate Chronicles" button on other tabs)
@@ -254,7 +254,7 @@ describe('Society Tab Focus Bug Condition Exploration', () => {
             currentActiveTab = tabId;
           }
         }],
-        render: (force: boolean) => {
+        render: (_force: boolean) => {
           // Render behavior (resets tab)
           currentActiveTab = 'members';
           return Promise.resolve();
@@ -401,7 +401,7 @@ describe('Tab Navigation Preservation Tests', () => {
           async (activeTab) => {
             // Mock party sheet with tab tracking
             let currentActiveTab: string = activeTab;
-            const mockPartySheet = {
+            const _mockPartySheet = {
               _tabs: [{
                 active: activeTab,
                 activate: (tabId: string) => {
@@ -449,7 +449,7 @@ describe('Tab Navigation Preservation Tests', () => {
           async (activeTab) => {
             // Mock party sheet with tab tracking
             let currentActiveTab: string = activeTab;
-            const mockPartySheet = {
+            const _mockPartySheet = {
               _tabs: [{
                 active: activeTab,
                 activate: (tabId: string) => {
@@ -582,7 +582,7 @@ describe('Tab Navigation Preservation Tests', () => {
           async (buttonId) => {
             // Mock party sheet with Society tab active
             let currentActiveTab: string = 'pfs';
-            const mockPartySheet = {
+            const _mockPartySheet = {
               _tabs: [{
                 active: 'pfs',
                 activate: (tabId: string) => {
@@ -636,7 +636,7 @@ describe('Tab Navigation Preservation Tests', () => {
           async (scenario) => {
             // Mock party sheet with tab tracking
             let currentActiveTab: string = scenario.activeTab;
-            const mockPartySheet = {
+            const _mockPartySheet = {
               _tabs: [{
                 active: scenario.activeTab,
                 activate: (tabId: string) => {

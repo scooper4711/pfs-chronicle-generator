@@ -1,4 +1,5 @@
-import { ContentElement, Preset, Layout } from '../model/layout';
+import { ContentElement, Preset } from '../model/layout';
+import { debug } from './logger.js';
 
 /**
  * A resolved element combines preset properties with the element's own properties.
@@ -89,7 +90,7 @@ export function resolveValue(value: string | undefined, data: any, elementType?:
     }
 
     const paramName = value.substring(6);
-    console.log('[PFS Chronicle] Resolving param:', {
+    debug('Resolving param:', {
         paramName,
         value: data[paramName],
         isArray: Array.isArray(data[paramName]),

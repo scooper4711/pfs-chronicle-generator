@@ -26,6 +26,8 @@ import {
   generateSharedRewardsSummary
 } from '../utils/summary-utils.js';
 
+import { warn } from '../utils/logger.js';
+
 /**
  * Valid section IDs for collapsible sections
  */
@@ -64,13 +66,13 @@ export function handleSectionHeaderClick(
   const section = header.closest('.collapsible-section') as HTMLElement;
   
   if (!section) {
-    console.warn('Section header click: could not find parent section element');
+    warn('Section header click: could not find parent section element');
     return;
   }
   
   const sectionId = section.dataset.sectionId;
   if (!sectionId) {
-    console.warn('Section header click: section missing data-section-id attribute');
+    warn('Section header click: section missing data-section-id attribute');
     return;
   }
   
@@ -105,13 +107,13 @@ export function handleSectionHeaderKeydown(
   const section = header.closest('.collapsible-section') as HTMLElement;
   
   if (!section) {
-    console.warn('Section header keydown: could not find parent section element');
+    warn('Section header keydown: could not find parent section element');
     return;
   }
   
   const sectionId = section.dataset.sectionId;
   if (!sectionId) {
-    console.warn('Section header keydown: section missing data-section-id attribute');
+    warn('Section header keydown: section missing data-section-id attribute');
     return;
   }
   
@@ -135,7 +137,7 @@ export function toggleSectionCollapse(
 ): void {
   // Validate section ID
   if (!VALID_SECTION_IDS.includes(sectionId as any)) {
-    console.warn(`Invalid section ID: "${sectionId}"`);
+    warn(`Invalid section ID: "${sectionId}"`);
     return;
   }
   
@@ -145,7 +147,7 @@ export function toggleSectionCollapse(
   ) as HTMLElement;
   
   if (!section) {
-    console.warn(`Could not find section element for ID: "${sectionId}"`);
+    warn(`Could not find section element for ID: "${sectionId}"`);
     return;
   }
   
@@ -153,7 +155,7 @@ export function toggleSectionCollapse(
   const header = section.querySelector('.collapsible-header') as HTMLElement;
   
   if (!header) {
-    console.warn(`Could not find header element for section: "${sectionId}"`);
+    warn(`Could not find header element for section: "${sectionId}"`);
     return;
   }
   
@@ -201,7 +203,7 @@ export function updateSectionSummary(
   ) as HTMLElement;
   
   if (!section) {
-    console.warn(`Could not find section element for ID: "${sectionId}"`);
+    warn(`Could not find section element for ID: "${sectionId}"`);
     return;
   }
   
@@ -209,12 +211,12 @@ export function updateSectionSummary(
   const summaryElement = section.querySelector('.section-summary') as HTMLElement;
   
   if (!summaryElement) {
-    console.warn(`Could not find summary element for section: "${sectionId}"`);
+    warn(`Could not find summary element for section: "${sectionId}"`);
     return;
   }
   
   // Generate summary text based on section type
-  let summaryText = '';
+  let summaryText: string;
   
   try {
     switch (sectionId) {
@@ -228,11 +230,11 @@ export function updateSectionSummary(
         summaryText = generateSharedRewardsSummary(container);
         break;
       default:
-        console.warn(`No summary generator for section: "${sectionId}"`);
+        warn(`No summary generator for section: "${sectionId}"`);
         return;
     }
   } catch (error) {
-    console.warn(`Failed to generate summary for section "${sectionId}":`, error);
+    warn(`Failed to generate summary for section "${sectionId}":`, error);
     return;
   }
   
@@ -276,7 +278,7 @@ export function initializeCollapseSections(container: HTMLElement): void {
     ) as HTMLElement;
     
     if (!section) {
-      console.warn(`Could not find section element for ID: "${sectionId}"`);
+      warn(`Could not find section element for ID: "${sectionId}"`);
       continue;
     }
     
@@ -284,7 +286,7 @@ export function initializeCollapseSections(container: HTMLElement): void {
     const header = section.querySelector('.collapsible-header') as HTMLElement;
     
     if (!header) {
-      console.warn(`Missing header for section: "${sectionId}"`);
+      warn(`Missing header for section: "${sectionId}"`);
       continue;
     }
     

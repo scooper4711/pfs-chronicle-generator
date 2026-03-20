@@ -9,9 +9,8 @@
  * Requirements: treasure-bundle-calculation 2.1, 2.2, 2.3, 2.4, 4.1, 4.2, 4.3, 4.4, 5.3, 5.4, 8.1, 8.2, 8.3, 8.4, 8.5
  */
 
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals';
 import { mapToCharacterData } from './model/party-chronicle-mapper';
-import { SharedFields, UniqueFields } from './model/party-chronicle-types';
 import { createSharedFields, createUniqueFields, createMockActor } from './model/test-helpers';
 import { calculateTreasureBundlesGp, calculateGpGained } from './utils/treasure-bundle-calculator';
 import { calculateEarnedIncome } from './utils/earned-income-calculator';
@@ -106,9 +105,6 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
 
     it('should add income earned correctly to treasure bundle gold', () => {
       // Requirement 3.1, 3.2: Calculate gp_gained as treasure_bundles_gp + income_earned
-      const shared = createSharedFields({
-        treasureBundles: 2
-      });
 
       const testCases = [
         { level: 5, taskLevel: '-', successLevel: 'success', proficiencyRank: 'trained', downtimeDays: 0, expectedIncomeEarned: 0, expectedTreasureBundlesGp: 20, expectedGpGained: 20 },
@@ -248,10 +244,6 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
   describe('Edge Cases and Boundary Conditions', () => {
     it('should handle party with mixed levels and treasure bundles', () => {
       // Realistic scenario: party with characters at different levels
-      const shared = createSharedFields({
-        treasureBundles: 4,
-        scenarioName: 'Mixed Level Party Test'
-      });
 
       const partyMembers = [
         { level: 3, taskLevel: 1, successLevel: 'success', proficiencyRank: 'trained', downtimeDays: 4, expectedIncomeEarned: 0.8, expectedTreasureBundlesGp: 15.2, expectedGpGained: 16 },

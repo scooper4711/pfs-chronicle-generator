@@ -9,10 +9,11 @@
 
 // --- Capture Hooks callbacks ---
 
-const hooksCallbacks: Record<string, Function[]> = {};
+type HookCallback = (...args: unknown[]) => void;
+const hooksCallbacks: Record<string, HookCallback[]> = {};
 
 (global as any).Hooks = {
-  on: jest.fn((event: string, callback: Function) => {
+  on: jest.fn((event: string, callback: HookCallback) => {
     if (!hooksCallbacks[event]) hooksCallbacks[event] = [];
     hooksCallbacks[event].push(callback);
   }),
@@ -155,7 +156,6 @@ import {
   attachSeasonAndLayoutListeners,
   attachFormFieldListeners,
   attachSaveButtonListener,
-  attachClearButtonListener,
   attachGenerateButtonListener,
 } from './handlers/event-listener-helpers';
 import { updateValidationDisplay } from './handlers/validation-display';
@@ -187,16 +187,16 @@ describe('main.ts', () => {
   });
 
   describe('Hooks.on("init")', () => {
-    it('registers four visible world settings', async () => {
+    it('registers five visible world settings', async () => {
       await fireHook('init');
 
       const visibleCalls = mockRegister.mock.calls.filter(
         (call: unknown[]) => (call[2] as Record<string, unknown>).config === true
       );
-      expect(visibleCalls).toHaveLength(4);
+      expect(visibleCalls).toHaveLength(5);
 
       const keys = visibleCalls.map((call: unknown[]) => call[1]);
-      expect(keys).toEqual(['gmName', 'gmPfsNumber', 'eventName', 'eventcode']);
+      expect(keys).toEqual(['gmName', 'gmPfsNumber', 'eventName', 'eventcode', 'debugMode']);
     });
 
     it('registers the hidden partyChronicleData setting', async () => {

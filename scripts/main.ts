@@ -1,4 +1,5 @@
 import { layoutStore } from './LayoutStore.js';
+import { debug, error } from './utils/logger.js';
 import { LayoutDesignerApp } from './LayoutDesignerApp.js';
 import { PartyChronicleApp } from './PartyChronicleApp.js';
 import { generateChronicleFilename } from './utils/filename-utils.js';
@@ -51,6 +52,15 @@ function registerSettings(): void {
     });
   }
 
+  game.settings.register(MODULE_ID, 'debugMode', {
+    name: 'Enable Debug Logging',
+    hint: 'When enabled, verbose debug messages are printed to the browser console. Useful for troubleshooting.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false,
+  });
+
   // Hidden setting for party chronicle data storage
   game.settings.register(MODULE_ID, 'partyChronicleData', {
     name: 'Party Chronicle Data',
@@ -79,6 +89,7 @@ function registerHandlebarsHelpers(): void {
   });
 
   Handlebars.registerHelper('getTreasureBundleValue', function(level: number) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- Synchronous require needed inside Handlebars helper (no top-level await)
     const { getTreasureBundleValue } = require('./utils/treasure-bundle-calculator.js');
     return getTreasureBundleValue(level);
   });
@@ -137,7 +148,7 @@ Hooks.on('ready', async () => {
     }
 });
 
-Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) => {
+Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, _data: any) => {
     const pfsTab = html.find('.tab[data-tab="pfs"]');
     if (pfsTab.length === 0) {
         return;
@@ -164,6 +175,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
             const blankChroniclePath = chronicleData?.blankChroniclePath 
                 || game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
             const filename = generateChronicleFilename(sheet.actor.name, blankChroniclePath);
+            // eslint-disable-next-line @typescript-eslint/no-require-imports -- Synchronous require needed inside click handler (dynamic import not viable here)
             const FileSaver = require('file-saver');
             FileSaver.saveAs(blob, filename);
         }
@@ -201,7 +213,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
  * 
  * Requirements: party-chronicle-filling 1.1, 1.2
  */
-Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, data: any) => {
+Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, _data: any) => {
     // Only show PFS tab to GMs
     if (!game.user.isGM) return;
 
@@ -338,10 +350,10 @@ async function initializeForm(
     
     // Initialize earned income displays on initial render
     // Requirements: earned-income-calculation 7.3
-    console.log('[PFS Chronicle] Initializing earned income displays...');
+    debug('Initializing earned income displays...');
     const downtimeDaysSelect = container.querySelector<HTMLSelectElement>('#downtimeDays');
     const initialDowntimeDays = Number.parseInt(downtimeDaysSelect?.value || '1', 10);
-    console.log('[PFS Chronicle] Initial downtime days:', initialDowntimeDays, 'from select:', downtimeDaysSelect?.value);
+    debug('Initial downtime days:', initialDowntimeDays, 'from select:', downtimeDaysSelect?.value);
     updateAllEarnedIncomeDisplays(initialDowntimeDays, container);
     
     // Initialize collapsible sections
@@ -391,9 +403,9 @@ export async function renderPartyChronicleForm(
         
         // Initialize form state
         await initializeForm(container, partyActors);
-    } catch (error) {
-        console.error('[PFS Chronicle] Error rendering form:', error);
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    } catch (renderError) {
+        error('Error rendering form:', renderError);
+        const errorMessage = renderError instanceof Error ? renderError.message : 'Unknown error';
         container.innerHTML = `
             <div style="padding: 2rem; text-align: center; color: red;">
                 <p>Error loading party chronicle form. Check console for details.</p>

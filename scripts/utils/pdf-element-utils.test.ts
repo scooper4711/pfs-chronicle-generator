@@ -9,9 +9,12 @@ import {
   resolveValue,
   getAllContentElements,
   findContentElement,
-  ResolvedElement,
 } from './pdf-element-utils';
 import { ContentElement, Preset } from '../model/layout';
+
+jest.mock('./logger.js', () => ({
+  debug: jest.fn(),
+}));
 
 describe('resolvePresets', () => {
   it('should return element properties when no presets are defined', () => {
@@ -96,14 +99,6 @@ describe('resolvePresets', () => {
 });
 
 describe('resolveValue', () => {
-  beforeEach(() => {
-    jest.spyOn(console, 'log').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it('should return undefined for undefined value', () => {
     expect(resolveValue(undefined, {})).toBeUndefined();
   });

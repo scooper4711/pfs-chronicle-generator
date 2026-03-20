@@ -293,7 +293,7 @@ describe('Chronicle Path File Picker Handler Tests', () => {
       await expect(callback(testPath)).resolves.not.toThrow();
       
       // Verify the error was logged (console.error was called)
-      expect(console.error).toHaveBeenCalledWith('[PFS Chronicle] Auto-save failed:', expect.any(Error));
+      expect(console.error).toHaveBeenCalledWith('[PFS Chronicle]', 'Auto-save failed:', expect.any(Error));
     });
   });
 

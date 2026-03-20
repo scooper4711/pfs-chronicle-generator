@@ -96,7 +96,10 @@ describe('collapsible-section-handlers', () => {
       
       toggleSectionCollapse('invalid-section', container);
       
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Invalid section ID'));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        expect.stringContaining('Invalid section ID')
+      );
       consoleSpy.mockRestore();
     });
 
@@ -105,7 +108,27 @@ describe('collapsible-section-handlers', () => {
       
       toggleSectionCollapse('adventure-summary', container);
       
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Could not find section element'));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        expect.stringContaining('Could not find section element')
+      );
+      consoleSpy.mockRestore();
+    });
+
+    it('should handle missing header element gracefully', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      // Create a section with valid ID but no header
+      const sectionNoHeader = document.createElement('div');
+      sectionNoHeader.className = 'collapsible-section';
+      sectionNoHeader.setAttribute('data-section-id', 'shared-rewards');
+      container.appendChild(sectionNoHeader);
+
+      toggleSectionCollapse('shared-rewards', container);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        'Could not find header element for section: "shared-rewards"'
+      );
       consoleSpy.mockRestore();
     });
   });
@@ -122,6 +145,44 @@ describe('collapsible-section-handlers', () => {
       handleSectionHeaderClick(event, container);
       
       expect(section.classList.contains('collapsed')).toBe(false);
+    });
+
+    it('should warn when parent section element is not found', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const orphanHeader = document.createElement('header');
+      orphanHeader.className = 'collapsible-header';
+
+      const event = new MouseEvent('click', { bubbles: true });
+      Object.defineProperty(event, 'currentTarget', { value: orphanHeader, writable: false });
+
+      handleSectionHeaderClick(event, container);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        'Section header click: could not find parent section element'
+      );
+      consoleSpy.mockRestore();
+    });
+
+    it('should warn when section is missing data-section-id', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const sectionNoId = document.createElement('div');
+      sectionNoId.className = 'collapsible-section';
+      const headerNoId = document.createElement('header');
+      headerNoId.className = 'collapsible-header';
+      sectionNoId.appendChild(headerNoId);
+      container.appendChild(sectionNoId);
+
+      const event = new MouseEvent('click', { bubbles: true });
+      Object.defineProperty(event, 'currentTarget', { value: headerNoId, writable: false });
+
+      handleSectionHeaderClick(event, container);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        'Section header click: section missing data-section-id attribute'
+      );
+      consoleSpy.mockRestore();
     });
   });
 
@@ -164,6 +225,44 @@ describe('collapsible-section-handlers', () => {
       
       expect(section.classList.contains('collapsed')).toBe(true);
     });
+
+    it('should warn when parent section element is not found on keydown', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const orphanHeader = document.createElement('header');
+      orphanHeader.className = 'collapsible-header';
+
+      const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+      Object.defineProperty(event, 'currentTarget', { value: orphanHeader, writable: false });
+
+      handleSectionHeaderKeydown(event, container);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        'Section header keydown: could not find parent section element'
+      );
+      consoleSpy.mockRestore();
+    });
+
+    it('should warn when section is missing data-section-id on keydown', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const sectionNoId = document.createElement('div');
+      sectionNoId.className = 'collapsible-section';
+      const headerNoId = document.createElement('header');
+      headerNoId.className = 'collapsible-header';
+      sectionNoId.appendChild(headerNoId);
+      container.appendChild(sectionNoId);
+
+      const event = new KeyboardEvent('keydown', { key: ' ', bubbles: true });
+      Object.defineProperty(event, 'currentTarget', { value: headerNoId, writable: false });
+
+      handleSectionHeaderKeydown(event, container);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        'Section header keydown: section missing data-section-id attribute'
+      );
+      consoleSpy.mockRestore();
+    });
   });
 
   describe('updateSectionSummary', () => {
@@ -191,6 +290,56 @@ describe('collapsible-section-handlers', () => {
       updateSectionSummary('adventure-summary', container);
       
       // Should not throw or log warnings for sections without summary
+      consoleSpy.mockRestore();
+    });
+
+    it('should warn when section element is not found', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      // 'shared-rewards' has summary but no DOM element in our container
+      updateSectionSummary('shared-rewards', container);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        'Could not find section element for ID: "shared-rewards"'
+      );
+      consoleSpy.mockRestore();
+    });
+
+    it('should warn when summary element is not found in section', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      // Create a shared-rewards section without a summary element
+      const section = document.createElement('div');
+      section.className = 'collapsible-section';
+      section.setAttribute('data-section-id', 'shared-rewards');
+      container.appendChild(section);
+
+      updateSectionSummary('shared-rewards', container);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        'Could not find summary element for section: "shared-rewards"'
+      );
+      consoleSpy.mockRestore();
+    });
+
+    it('should warn when summary generator throws an error', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      // Override the mock to throw
+      const summaryUtils = require('../utils/summary-utils');
+      summaryUtils.generateEventDetailsSummary.mockImplementationOnce(() => {
+        throw new Error('test error');
+      });
+
+      updateSectionSummary('event-details', container);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        'Failed to generate summary for section "event-details":',
+        expect.any(Error)
+      );
       consoleSpy.mockRestore();
     });
   });
@@ -233,6 +382,57 @@ describe('collapsible-section-handlers', () => {
       
       expect(eventDetailsSummary.textContent).toBe('Session Reporting - Test Scenario');
       expect(reputationSummary.textContent).toBe('Reputation - +2');
+    });
+
+    it('should warn and skip when section element is not found in loop', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      // Use an empty container — no sections exist
+      const emptyContainer = document.createElement('div');
+      initializeCollapseSections(emptyContainer);
+
+      // Should warn for each VALID_SECTION_ID that's missing
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        'Could not find section element for ID: "event-details"'
+      );
+      consoleSpy.mockRestore();
+    });
+
+    it('should warn and skip when header is missing in a section', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      // Create a section without a header
+      const sectionNoHeader = document.createElement('div');
+      sectionNoHeader.className = 'collapsible-section';
+      sectionNoHeader.setAttribute('data-section-id', 'adventure-summary');
+      container.appendChild(sectionNoHeader);
+
+      initializeCollapseSections(container);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        'Missing header for section: "adventure-summary"'
+      );
+      consoleSpy.mockRestore();
+    });
+
+    it('should apply expanded state for sections that default to not collapsed', () => {
+      // adventure-summary defaults to false (not collapsed)
+      const section = document.createElement('div');
+      section.className = 'collapsible-section collapsed'; // start collapsed
+      section.setAttribute('data-section-id', 'adventure-summary');
+      const header = document.createElement('header');
+      header.className = 'collapsible-header';
+      header.setAttribute('aria-expanded', 'false');
+      section.appendChild(header);
+      container.appendChild(section);
+
+      initializeCollapseSections(container);
+
+      // adventure-summary defaults to NOT collapsed, so collapsed class should be removed
+      expect(section.classList.contains('collapsed')).toBe(false);
+      expect(header.getAttribute('aria-expanded')).toBe('true');
     });
   });
 });

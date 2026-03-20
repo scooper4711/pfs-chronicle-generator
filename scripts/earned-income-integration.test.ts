@@ -12,11 +12,10 @@
  *               7.1, 7.2, 7.3, 7.4, 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 12.1, 12.2, 12.3
  */
 
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals';
 import { mapToCharacterData } from './model/party-chronicle-mapper';
-import { SharedFields, UniqueFields } from './model/party-chronicle-types';
 import { createSharedFields, createUniqueFields, createMockActor } from './model/test-helpers';
-import { calculateEarnedIncome, formatIncomeValue } from './utils/earned-income-calculator';
+import { formatIncomeValue } from './utils/earned-income-calculator';
 
 describe('Earned Income Calculation - Integration Tests', () => {
   describe('Complete Workflow: Enter downtime days → select inputs → see calculated income → generate PDFs', () => {
@@ -366,7 +365,7 @@ describe('Earned Income Calculation - Integration Tests', () => {
         }
       ];
 
-      testCases.forEach(({ name, downtimeDays, taskLevel, successLevel, proficiencyRank, expectedIncome }) => {
+      testCases.forEach(({ downtimeDays, taskLevel, successLevel, proficiencyRank, expectedIncome }) => {
         const shared = createSharedFields({ downtimeDays });
         const unique = createUniqueFields({
           level: 5,

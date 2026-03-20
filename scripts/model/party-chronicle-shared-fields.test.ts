@@ -8,7 +8,7 @@
  */
 
 import fc from 'fast-check';
-import { PartyChronicleData, SharedFields, UniqueFields } from './party-chronicle-types';
+import { PartyChronicleData } from './party-chronicle-types';
 import { mapToCharacterData } from './party-chronicle-mapper';
 
 /**
@@ -96,16 +96,8 @@ describe('Party Chronicle Shared Field Property Tests', () => {
           ),
           async (shared, characterPairs) => {
             // Create party chronicle data with multiple characters
-            const partyData: PartyChronicleData = {
-              shared,
-              characters: Object.fromEntries(
-                characterPairs.map(([actorId, unique]) => [actorId, unique])
-              )
-            };
-
             // Map each character to chronicle data
-            const chronicleDataList = characterPairs.map(([actorId, unique]) => ({
-              actorId,
+            const chronicleDataList = characterPairs.map(([_actorId, unique]) => ({
               unique,
               chronicleData: mapToCharacterData(shared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
             }));
@@ -164,7 +156,7 @@ describe('Party Chronicle Shared Field Property Tests', () => {
                    partyShared.eventCode !== outsideShared.eventCode);
 
             // Create party data with party-specific shared fields
-            const partyData: PartyChronicleData = {
+            const _partyData: PartyChronicleData = {
               shared: partyShared,
               characters: Object.fromEntries(
                 partyCharacters.map(([actorId, unique]) => [actorId, unique])
@@ -213,7 +205,7 @@ describe('Party Chronicle Shared Field Property Tests', () => {
           actorIdArbitrary,
           uniqueFieldsArbitrary,
           async (shared, actorId, unique) => {
-            const partyData: PartyChronicleData = {
+            const _partyData: PartyChronicleData = {
               shared,
               characters: {
                 [actorId]: unique
@@ -246,7 +238,7 @@ describe('Party Chronicle Shared Field Property Tests', () => {
             { minLength: 10, maxLength: 10 }
           ),
           async (shared, characterPairs) => {
-            const partyData: PartyChronicleData = {
+            const _partyData: PartyChronicleData = {
               shared,
               characters: Object.fromEntries(
                 characterPairs.map(([actorId, unique]) => [actorId, unique])
@@ -254,7 +246,7 @@ describe('Party Chronicle Shared Field Property Tests', () => {
             };
 
             // Map all 10 characters
-            const chronicleDataList = characterPairs.map(([actorId, unique]) =>
+            const chronicleDataList = characterPairs.map(([_actorId, unique]) =>
               mapToCharacterData(shared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
             );
 
@@ -331,12 +323,12 @@ describe('Party Chronicle Shared Field Property Tests', () => {
                    initialShared.scenarioName !== updatedShared.scenarioName);
 
             // Map characters with initial shared fields
-            const initialChronicles = characterPairs.map(([actorId, unique]) =>
+            const initialChronicles = characterPairs.map(([_actorId, unique]) =>
               mapToCharacterData(initialShared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
             );
 
             // Map characters with updated shared fields
-            const updatedChronicles = characterPairs.map(([actorId, unique]) =>
+            const updatedChronicles = characterPairs.map(([_actorId, unique]) =>
               mapToCharacterData(updatedShared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
             );
 
@@ -372,7 +364,7 @@ describe('Party Chronicle Shared Field Property Tests', () => {
           ),
           async (shared, characterPairs) => {
             // Map all characters
-            const chronicleDataList = characterPairs.map(([actorId, unique]) =>
+            const chronicleDataList = characterPairs.map(([_actorId, unique]) =>
               mapToCharacterData(shared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
             );
 

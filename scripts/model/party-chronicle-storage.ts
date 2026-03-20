@@ -8,6 +8,7 @@
  */
 
 import { PartyChronicleData } from './party-chronicle-types.js';
+import { debug, error } from '../utils/logger.js';
 
 /**
  * Storage structure for party chronicle data with timestamp
@@ -55,11 +56,11 @@ export async function savePartyChronicleData(data: PartyChronicleData): Promise<
     };
     
     await game.settings.set(MODULE_ID, STORAGE_KEY, storage);
-    console.log('[PFS Chronicle] Party chronicle data saved successfully', storage);
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error('[PFS Chronicle] Failed to save party chronicle data:', error);
-    throw new Error(`Failed to save party chronicle data: ${errorMessage}`);
+    debug('Party chronicle data saved successfully', storage);
+  } catch (caughtError) {
+    const errorMessage = caughtError instanceof Error ? caughtError.message : String(caughtError);
+    error('Failed to save party chronicle data:', caughtError);
+    throw new Error(`Failed to save party chronicle data: ${errorMessage}`, { cause: caughtError });
   }
 }
 
@@ -88,16 +89,16 @@ export async function loadPartyChronicleData(): Promise<PartyChronicleStorage | 
     const storage = await game.settings.get(MODULE_ID, STORAGE_KEY) as PartyChronicleStorage | undefined;
     
     if (!storage) {
-      console.log('[PFS Chronicle] No saved party chronicle data found');
+      debug('No saved party chronicle data found');
       return null;
     }
     
-    console.log('[PFS Chronicle] Party chronicle data loaded successfully', storage);
+    debug('Party chronicle data loaded successfully', storage);
     return storage;
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error('[PFS Chronicle] Failed to load party chronicle data:', error);
-    throw new Error(`Failed to load party chronicle data: ${errorMessage}`);
+  } catch (caughtError) {
+    const errorMessage = caughtError instanceof Error ? caughtError.message : String(caughtError);
+    error('Failed to load party chronicle data:', caughtError);
+    throw new Error(`Failed to load party chronicle data: ${errorMessage}`, { cause: caughtError });
   }
 }
 
@@ -121,10 +122,10 @@ export async function loadPartyChronicleData(): Promise<PartyChronicleStorage | 
 export async function clearPartyChronicleData(): Promise<void> {
   try {
     await game.settings.set(MODULE_ID, STORAGE_KEY, undefined);
-    console.log('[PFS Chronicle] Party chronicle data cleared successfully');
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error('[PFS Chronicle] Failed to clear party chronicle data:', error);
-    throw new Error(`Failed to clear party chronicle data: ${errorMessage}`);
+    debug('Party chronicle data cleared successfully');
+  } catch (caughtError) {
+    const errorMessage = caughtError instanceof Error ? caughtError.message : String(caughtError);
+    error('Failed to clear party chronicle data:', caughtError);
+    throw new Error(`Failed to clear party chronicle data: ${errorMessage}`, { cause: caughtError });
   }
 }
