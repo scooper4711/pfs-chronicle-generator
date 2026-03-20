@@ -61,13 +61,34 @@ jest.mock('pdf-lib', () => ({
 
 jest.mock('@pdf-lib/fontkit', () => ({}));
 
+jest.mock('./chronicle-exporter', () => ({
+  createArchive: jest.fn(() => ({ file: jest.fn() })),
+  addPdfToArchive: jest.fn(
+    (_archive: unknown, _bytes: unknown, filename: string, filenames: Set<string>) => {
+      filenames.add(filename);
+      return filename;
+    }
+  ),
+  storeArchive: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+}));
+
 // Suppress console noise during tests
 global.console.log = jest.fn();
 global.console.error = jest.fn();
 
 import { generateChroniclesFromPartyData } from './chronicle-generation';
+import { FlagActor } from './chronicle-exporter';
 
 // --- Helpers ---
+
+/** Creates a mock Party actor for zip archive storage. */
+function createMockPartyActor(): FlagActor {
+  return {
+    getFlag: jest.fn(() => undefined),
+    setFlag: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+    unsetFlag: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+  };
+}
 
 function validSharedData() {
   return {
@@ -154,7 +175,7 @@ describe('Chronicle Generation', () => {
       mockValidateUniqueFields.mockReturnValue({ valid: true, errors: [] });
 
       const data = { shared: validSharedData(), characters: {} };
-      await generateChroniclesFromPartyData(data, []);
+      await generateChroniclesFromPartyData(data, [], createMockPartyActor());
 
       expect(mockNotifications.error).toHaveBeenCalledWith(
         expect.stringContaining('Event date is required')
@@ -171,7 +192,7 @@ describe('Chronicle Generation', () => {
         characters: { 'actor-1': { characterName: 'Valeros' } },
       };
 
-      await generateChroniclesFromPartyData(data, [actor]);
+      await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());
 
       expect(mockNotifications.error).toHaveBeenCalledWith(
         expect.stringContaining('Society ID is required')
@@ -181,7 +202,7 @@ describe('Chronicle Generation', () => {
     it('does not proceed to layout loading when validation fails', async () => {
       mockValidateSharedFields.mockReturnValue({ valid: false, errors: ['Missing field'] });
 
-      await generateChroniclesFromPartyData({ shared: {}, characters: {} }, []);
+      await generateChroniclesFromPartyData({ shared: {}, characters: {} }, [], createMockPartyActor());
 
       expect(mockGetLayout).not.toHaveBeenCalled();
     });
@@ -194,7 +215,7 @@ describe('Chronicle Generation', () => {
       mockGetLayout.mockRejectedValue(new Error('Layout not found'));
 
       const data = { shared: validSharedData(), characters: {} };
-      await generateChroniclesFromPartyData(data, []);
+      await generateChroniclesFromPartyData(data, [], createMockPartyActor());
 
       expect(mockNotifications.error).toHaveBeenCalledWith(
         expect.stringContaining('Layout not found')
@@ -212,7 +233,7 @@ describe('Chronicle Generation', () => {
       shared.blankChroniclePath = '';
       const data = { shared, characters: {} };
 
-      await generateChroniclesFromPartyData(data, []);
+      await generateChroniclesFromPartyData(data, [], createMockPartyActor());
 
       expect(mockNotifications.error).toHaveBeenCalledWith('Blank chronicle PDF path is not set.');
     });
@@ -230,7 +251,7 @@ describe('Chronicle Generation', () => {
         characters: { 'actor-1': { characterName: 'Valeros', societyId: '12345-01' } },
       };
 
-      await generateChroniclesFromPartyData(data, [actor]);
+      await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());
 
       expect(mockNotifications.info).toHaveBeenCalledWith(
         expect.stringContaining('Successfully generated 1 chronicle(s)')
@@ -244,7 +265,7 @@ describe('Chronicle Generation', () => {
         characters: { 'actor-1': { characterName: 'Valeros' } },
       };
 
-      await generateChroniclesFromPartyData(data, [actor]);
+      await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());
 
       expect(actor.setFlag).toHaveBeenCalledWith(
         'pfs-chronicle-generator',
@@ -269,7 +290,7 @@ describe('Chronicle Generation', () => {
         },
       };
 
-      await generateChroniclesFromPartyData(data, [actor1, actor2]);
+      await generateChroniclesFromPartyData(data, [actor1, actor2], createMockPartyActor());
 
       expect(mockNotifications.info).toHaveBeenCalledWith(
         expect.stringContaining('Successfully generated 2 chronicle(s)')
@@ -304,7 +325,7 @@ describe('Chronicle Generation', () => {
         },
       };
 
-      await generateChroniclesFromPartyData(data, [actor1, actor2]);
+      await generateChroniclesFromPartyData(data, [actor1, actor2], createMockPartyActor());
 
       expect(mockNotifications.warn).toHaveBeenCalledWith(
         expect.stringContaining('1 failed')
@@ -322,7 +343,7 @@ describe('Chronicle Generation', () => {
         characters: { 'actor-1': { characterName: 'Valeros' } },
       };
 
-      await generateChroniclesFromPartyData(data, [actor]);
+      await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());
 
       expect(mockNotifications.warn).not.toHaveBeenCalled();
     });

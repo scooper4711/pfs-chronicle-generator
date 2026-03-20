@@ -18,6 +18,7 @@ import {
 } from './model/party-chronicle-types.js';
 import { validateSharedFields, validateUniqueFields } from './model/party-chronicle-validator.js';
 import { generateChroniclesFromPartyData } from './handlers/party-chronicle-handlers.js';
+import { FlagActor } from './handlers/chronicle-exporter.js';
 import { debug } from './utils/logger.js';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
@@ -276,7 +277,15 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       debug('Expanded form data:', data);
 
       // Delegate to extracted handler function
-      await generateChroniclesFromPartyData(data, this.partyActors);
+      // Note: In the hybrid ApplicationV2 pattern, form submission is handled
+      // by attachGenerateButtonListener which passes the real Party actor.
+      // This fallback uses a no-op actor for the ApplicationV2 code path.
+      const noOpPartyActor: FlagActor = {
+        getFlag: () => undefined,
+        setFlag: async () => {},
+        unsetFlag: async () => {},
+      };
+      await generateChroniclesFromPartyData(data, this.partyActors, noOpPartyActor);
     }
 
   /**

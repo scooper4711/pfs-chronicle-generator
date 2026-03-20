@@ -37,6 +37,7 @@ import { createEarnedIncomeChangeHandler } from '../utils/earned-income-form-hel
 import { clearPartyChronicleData, savePartyChronicleData } from '../model/party-chronicle-storage.js';
 import { PartyChronicleData, UniqueFields } from '../model/party-chronicle-types.js';
 import { handleCopySessionReport } from './session-report-handler.js';
+import { FlagActor } from './chronicle-exporter.js';
 import { debug } from '../utils/logger.js';
 
 /**
@@ -430,20 +431,25 @@ function createDefaultChronicleData(
 }
 
 /**
- * Attaches generate chronicles button event listener
- * 
+ * Attaches click listener to the Generate Chronicles button.
+ *
+ * Extracts form data and delegates to the chronicle generation pipeline,
+ * passing the Party actor for zip archive storage.
+ *
  * @param container - Form container element
  * @param partyActors - Array of party member actors
+ * @param partyActor - The Party actor for zip archive storage
  */
 export function attachGenerateButtonListener(
     container: HTMLElement,
-    partyActors: PartyActor[]
+    partyActors: PartyActor[],
+    partyActor: FlagActor
 ): void {
     const generateButton = container.querySelector(BUTTON_SELECTORS.GENERATE_CHRONICLES);
     generateButton?.addEventListener('click', async (event: Event) => {
         event.preventDefault();
         const formData = extractFormData(container, partyActors);
-        await generateChroniclesFromPartyData(formData, partyActors);
+        await generateChroniclesFromPartyData(formData, partyActors, partyActor);
     });
 }
 

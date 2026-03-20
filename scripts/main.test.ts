@@ -357,7 +357,7 @@ describe('main.ts', () => {
       expect(attachSeasonAndLayoutListeners).toHaveBeenCalledWith(container, partyActors);
       expect(attachFormFieldListeners).toHaveBeenCalledWith(container, partyActors);
       expect(attachSaveButtonListener).toHaveBeenCalledWith(container, partyActors);
-      expect(attachGenerateButtonListener).toHaveBeenCalledWith(container, partyActors);
+      expect(attachGenerateButtonListener).toHaveBeenCalledWith(container, partyActors, undefined);
     });
 
     it('initializes form state after rendering', async () => {

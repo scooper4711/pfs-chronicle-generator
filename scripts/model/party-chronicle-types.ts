@@ -212,4 +212,7 @@ export interface GenerationResult {
   
   /** Error message if generation failed */
   error?: string;
+
+  /** Raw PDF bytes when generation succeeds (used for zip archive) */
+  pdfBytes?: Uint8Array;
 }

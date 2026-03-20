@@ -301,7 +301,10 @@ function attachEventListeners(
     // Button listeners
     attachSaveButtonListener(container, partyActors);
     attachClearButtonListener(container, partyActors, partySheet);
-    attachGenerateButtonListener(container, partyActors);
+
+    // Resolve the Party actor from the party sheet for zip archive storage
+    const partyActor = (partySheet as any)?.actor;
+    attachGenerateButtonListener(container, partyActors, partyActor);
     attachCopySessionReportListener(container, partyActors);
     
     // Portrait and file picker listeners
