@@ -92,6 +92,13 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
     earnedIncomeDisplay.textContent = '0.00 gp';
     memberActivity.appendChild(earnedIncomeDisplay);
     
+    // Create hidden earned income input for form submission
+    const earnedIncomeInput = document.createElement('input');
+    earnedIncomeInput.type = 'hidden';
+    earnedIncomeInput.name = `characters.${characterId}.earnedIncome`;
+    earnedIncomeInput.value = '0';
+    memberActivity.appendChild(earnedIncomeInput);
+    
     return memberActivity;
   }
 
