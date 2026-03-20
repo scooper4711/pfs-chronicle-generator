@@ -23,21 +23,10 @@ import fontkit from '@pdf-lib/fontkit';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
 
-/**
- * Context object returned by _prepareContext for the layout-designer template.
- */
-interface LayoutDesignerContext {
-  seasons: Array<{ id: string; name: string }>;
-  selectedSeasonId: string;
-  layoutsInSeason: Array<{ id: string; description: string }>;
-  selectedLayoutId: string | undefined;
-  canvases: string[];
-  pdfPath: string;
-}
 
 export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
-  static DEFAULT_OPTIONS = {
+  static readonly DEFAULT_OPTIONS = {
     id: 'pfs-layout-designer',
     form: {
       handler: LayoutDesignerApp.#handleFormSubmit,
@@ -50,7 +39,7 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
     },
   };
 
-  static PARTS = {
+  static readonly PARTS = {
     main: {
       template: 'modules/pfs-chronicle-generator/templates/layout-designer.hbs',
     },

@@ -1,4 +1,4 @@
-import { ContentElement, Preset, Layout } from '../model/layout';
+import { ContentElement, Preset } from '../model/layout';
 
 /**
  * A resolved element combines preset properties with the element's own properties.

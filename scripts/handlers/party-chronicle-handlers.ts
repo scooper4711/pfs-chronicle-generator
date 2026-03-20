@@ -23,8 +23,6 @@ import { generateChroniclesFromPartyData } from './chronicle-generation.js';
 import { updateSectionSummary } from './collapsible-section-handlers.js';
 import { 
     SHARED_FIELD_SELECTORS,
-    CHARACTER_FIELD_SELECTORS,
-    GENERAL_SELECTORS,
     CSS_CLASSES
 } from '../constants/dom-selectors.js';
 
@@ -360,7 +358,7 @@ export async function handleLayoutChange(
             if (response.ok && blankPathInput) {
                 blankPathInput.value = layout.defaultChronicleLocation;
             }
-        } catch (error) {
+        } catch (_error) {
             console.log(`Default chronicle location not accessible: ${layout.defaultChronicleLocation}`);
             // Clear the path if default isn't accessible
             if (blankPathInput) {
@@ -602,7 +600,7 @@ async function checkFileExists(path: string): Promise<boolean> {
     try {
         const response = await fetch(path, { method: 'HEAD' });
         return response.ok;
-    } catch (error) {
+    } catch (_error) {
         console.log(`Chronicle path file not accessible: ${path}`);
         return false;
     }
