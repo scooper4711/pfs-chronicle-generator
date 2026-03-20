@@ -310,15 +310,22 @@ describe('PartyChronicleApp Property Tests', () => {
       const networkError = new Error('Network error');
       (global.fetch as jest.Mock).mockRejectedValue(networkError);
       
+      // Enable debug mode so Logger emits debug messages
+      (game.settings.get as jest.Mock).mockImplementation((_mod: string, key: string) => {
+        if (key === 'debugMode') return true;
+        return '';
+      });
+      
       // Mock console.log to verify error logging
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
       
       const result = await (app as any).checkFileExists(testPath);
       
       expect(result).toBe(false);
-      // Check that the error was logged (with the error object as second argument)
+      // Check that the error was logged via Logger (prefix is separate arg)
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        `[PFS Chronicle] Chronicle path file not accessible: ${testPath}`,
+        '[PFS Chronicle]',
+        `Chronicle path file not accessible: ${testPath}`,
         networkError
       );
       

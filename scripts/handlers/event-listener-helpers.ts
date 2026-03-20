@@ -37,6 +37,7 @@ import { createEarnedIncomeChangeHandler } from '../utils/earned-income-form-hel
 import { clearPartyChronicleData, savePartyChronicleData } from '../model/party-chronicle-storage.js';
 import { PartyChronicleData, UniqueFields } from '../model/party-chronicle-types.js';
 import { handleCopySessionReport } from './session-report-handler.js';
+import { debug } from '../utils/logger.js';
 
 /**
  * Actor type definition for party members
@@ -299,17 +300,17 @@ async function handleClearButtonConfirmed(
     );
     
     // Save the new data with defaults
-    console.log('[PFS Chronicle] Saving new data with defaults:', newData);
+    debug('Saving new data with defaults:', newData);
     await savePartyChronicleData(newData);
     
     ui.notifications?.info('Chronicle data cleared and defaults set');
-    console.log('[PFS Chronicle] Re-rendering form after clear');
+    debug('Re-rendering form after clear');
     
     // Re-render form (partySheet is typed as unknown since it's a Foundry VTT object)
     const { renderPartyChronicleForm } = await import('../main.js');
     await renderPartyChronicleForm(container, partyActors, partySheet);
     
-    console.log("[PFS Chronicle] Update chronicle path visibility after re-rendering");
+    debug('Update chronicle path visibility after re-rendering');
     await updateChroniclePathVisibility(chroniclePath, container, layoutId);
 }
 
@@ -375,7 +376,7 @@ function createDefaultChronicleData(
             const characterLevel = actor.system?.details?.level?.value || 1;
             const defaultTaskLevel = Math.max(0, characterLevel - 2);
             
-            console.log('[PFS Chronicle] Setting defaults for character:', actor.name, {
+            debug('Setting defaults for character:', actor.name, {
                 characterLevel,
                 defaultTaskLevel
             });

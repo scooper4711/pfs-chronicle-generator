@@ -8,6 +8,7 @@
  */
 
 import { layoutStore } from '../LayoutStore.js';
+import { debug, error } from '../utils/logger.js';
 import { 
   SharedFields,
   UniqueFields,
@@ -80,8 +81,8 @@ async function loadLayoutConfiguration(
   let layout: Layout;
   try {
     layout = await layoutStore.getLayout(layoutId as string);
-  } catch (error) {
-    ui.notifications?.error(`Failed to load layout: ${error instanceof Error ? error.message : String(error)}`);
+  } catch (caughtError) {
+    ui.notifications?.error(`Failed to load layout: ${caughtError instanceof Error ? caughtError.message : String(caughtError)}`);
     return null;
   }
   
@@ -263,7 +264,7 @@ async function generateSingleCharacterPdf(
     // Save PDF to actor flags
     await actor.setFlag('pfs-chronicle-generator', 'chroniclePdf', base64String);
 
-    console.log(`[PFS Chronicle] Successfully generated chronicle for ${characterName}`);
+    debug(`Successfully generated chronicle for ${characterName}`);
 
     return {
       characterId,
@@ -271,9 +272,9 @@ async function generateSingleCharacterPdf(
       success: true
     };
 
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error(`[PFS Chronicle] Failed to generate chronicle for ${characterName}:`, error);
+  } catch (caughtError) {
+    const errorMessage = caughtError instanceof Error ? caughtError.message : String(caughtError);
+    error(`Failed to generate chronicle for ${characterName}:`, caughtError);
 
     return {
       characterId,

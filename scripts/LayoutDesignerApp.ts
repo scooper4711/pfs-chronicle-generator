@@ -17,6 +17,7 @@
 
 import { layoutStore } from './LayoutStore.js';
 import { PdfGenerator } from './PdfGenerator.js';
+import { debug } from './utils/logger.js';
 import { Layout } from './model/layout.js';
 import { PDFDocument } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
@@ -196,7 +197,7 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
         pdfFileInput.value = layout.defaultChronicleLocation;
       }
     } catch {
-      console.log(`Default chronicle location not accessible: ${layout.defaultChronicleLocation}`);
+      debug(`Default chronicle location not accessible: ${layout.defaultChronicleLocation}`);
     }
   }
 

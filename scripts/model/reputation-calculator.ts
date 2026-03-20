@@ -8,6 +8,7 @@
  */
 
 import { FACTION_NAMES } from './faction-names.js';
+import { debug, warn } from '../utils/logger.js';
 import type { SharedFields } from './party-chronicle-types.js';
 
 /**
@@ -53,9 +54,9 @@ export function calculateReputation(
     if (chosenFaction && FACTION_NAMES[chosenFaction]) {
         const chosenBonus = shared.chosenFactionReputation ?? 0;
         reputationMap[chosenFaction] += chosenBonus;
-        console.log(`[PFS Chronicle] Adding chosen faction bonus: ${chosenFaction} +${chosenBonus}`);
+        debug(`Adding chosen faction bonus: ${chosenFaction} +${chosenBonus}`);
     } else if (chosenFaction) {
-        console.warn(`[PFS Chronicle] Unknown faction code: ${chosenFaction}`);
+        warn(`Unknown faction code: ${chosenFaction}`);
     }
 
     // Step 4: Filter out factions with 0 value
@@ -72,7 +73,7 @@ export function calculateReputation(
     // Step 6: Sort alphabetically by faction name
     reputationLines.sort((a, b) => a.localeCompare(b));
 
-    console.log(`[PFS Chronicle] Calculated reputation for ${actor?.name}:`, reputationLines);
+    debug(`Calculated reputation for ${actor?.name}:`, reputationLines);
 
     return reputationLines;
 }

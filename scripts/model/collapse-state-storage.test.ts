@@ -47,19 +47,20 @@ describe('collapse-state-storage', () => {
 
     it('should handle localStorage errors gracefully', () => {
       const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      const setItemSpy = jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
         throw new Error('QuotaExceeded');
       });
 
       saveCollapseState('event-details', true);
 
       expect(warnSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
         expect.stringContaining('Failed to save collapse state'),
         expect.any(Error)
       );
 
+      setItemSpy.mockRestore();
       warnSpy.mockRestore();
-      jest.restoreAllMocks();
     });
   });
 
@@ -144,6 +145,7 @@ describe('collapse-state-storage', () => {
       expect(loadAllCollapseStates()).toEqual({});
 
       expect(warnSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
         expect.stringContaining('Invalid collapse state data')
       );
       warnSpy.mockRestore();

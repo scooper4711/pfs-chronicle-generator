@@ -12,6 +12,7 @@
  * Requirements: party-chronicle-filling 4.5, 5.1, 5.2, 5.3, 5.4, 5.5
  */
 
+import { debug, warn, error } from '../utils/logger.js';
 import { layoutStore } from '../LayoutStore.js';
 import { savePartyChronicleData } from '../model/party-chronicle-storage.js';
 import { updateLayoutSpecificFields } from '../utils/layout-utils.js';
@@ -41,28 +42,28 @@ export { extractFormData, generateChroniclesFromPartyData };
  * Requirements: clickable-player-portraits 1.1, 1.3, 1.4, 3.1, 3.2, 3.3
  */
 export function handlePortraitClick(event: MouseEvent, partyActors: any[]): void {
-    console.log('[PFS Chronicle] Portrait clicked!', event.target);
+    debug('Portrait clicked!', event.target);
     event.preventDefault();
     
     const memberActivity = (event.target as HTMLElement).closest('.member-activity') as HTMLElement | null;
-    console.log('[PFS Chronicle] Member activity element:', memberActivity);
+    debug('Member activity element:', memberActivity);
     
     const characterId = memberActivity?.dataset.characterId;
-    console.log('[PFS Chronicle] Character ID:', characterId);
+    debug('Character ID:', characterId);
     
     if (!characterId) {
-        console.warn('[PFS Chronicle] Portrait clicked but no character ID found');
+        warn('Portrait clicked but no character ID found');
         return;
     }
     
     const actor = partyActors.find(a => a?.id === characterId);
-    console.log('[PFS Chronicle] Found actor:', actor);
+    debug('Found actor:', actor);
     
     if (actor?.sheet) {
-        console.log('[PFS Chronicle] Opening actor sheet');
+        debug('Opening actor sheet');
         actor.sheet.render(true, { focus: true });
     } else {
-        console.warn('[PFS Chronicle] Actor or actor sheet not found');
+        warn('Actor or actor sheet not found');
     }
 }
 
@@ -190,7 +191,7 @@ export function updateEarnedIncomeDisplay(
   downtimeDays: number,
   container: HTMLElement
 ): void {
-  console.log('[PFS Chronicle] updateEarnedIncomeDisplay called:', {
+  debug('updateEarnedIncomeDisplay called:', {
     characterId,
     taskLevel,
     successLevel,
@@ -206,23 +207,23 @@ export function updateEarnedIncomeDisplay(
     `.member-activity[data-character-id="${characterId}"] input[name="characters.${characterId}.earnedIncome"]`
   ) as HTMLInputElement;
   
-  console.log('[PFS Chronicle] Display element found:', !!displayElement);
+  debug('Display element found:', !!displayElement);
   
   if (displayElement) {
     const earnedIncome = calculateEarnedIncome(taskLevel, successLevel, proficiencyRank, downtimeDays);
     const formattedValue = formatIncomeValue(earnedIncome);
-    console.log('[PFS Chronicle] Calculated earned income:', earnedIncome, 'formatted:', formattedValue);
+    debug('Calculated earned income:', earnedIncome, 'formatted:', formattedValue);
     displayElement.textContent = formattedValue;
     
     // Update hidden input field for form submission and validation
     if (hiddenInput) {
       hiddenInput.value = earnedIncome.toString();
-      console.log('[PFS Chronicle] Hidden input updated to:', hiddenInput.value);
+      debug('Hidden input updated to:', hiddenInput.value);
     }
     
-    console.log('[PFS Chronicle] Display element updated to:', displayElement.textContent);
+    debug('Display element updated to:', displayElement.textContent);
   } else {
-    console.warn('[PFS Chronicle] Display element not found for character:', characterId);
+    warn('Display element not found for character:', characterId);
   }
 }
 
@@ -242,9 +243,9 @@ export function updateAllEarnedIncomeDisplays(
   downtimeDays: number,
   container: HTMLElement
 ): void {
-  console.log('[PFS Chronicle] updateAllEarnedIncomeDisplays called with downtimeDays:', downtimeDays);
+  debug('updateAllEarnedIncomeDisplays called with downtimeDays:', downtimeDays);
   const memberActivities = container.querySelectorAll('.member-activity');
-  console.log('[PFS Chronicle] Found member activities:', memberActivities.length);
+  debug('Found member activities:', memberActivities.length);
   
   memberActivities.forEach((activity) => {
     const characterId = (activity as HTMLElement).dataset.characterId;
@@ -252,7 +253,7 @@ export function updateAllEarnedIncomeDisplays(
     const successLevelSelect = activity.querySelector<HTMLSelectElement>('select[name$=".successLevel"]');
     const proficiencyRankSelect = activity.querySelector<HTMLSelectElement>('select[name$=".proficiencyRank"]');
     
-    console.log('[PFS Chronicle] Processing character:', characterId, {
+    debug('Processing character:', characterId, {
       hasTaskLevel: !!taskLevelSelect,
       hasSuccessLevel: !!successLevelSelect,
       hasProficiencyRank: !!proficiencyRankSelect,
@@ -268,7 +269,7 @@ export function updateAllEarnedIncomeDisplays(
       
       updateEarnedIncomeDisplay(characterId, taskLevel, successLevel, proficiencyRank, downtimeDays, container);
     } else {
-      console.warn('[PFS Chronicle] Skipping character due to missing elements:', characterId);
+      warn('Skipping character due to missing elements:', characterId);
     }
   });
 }
@@ -295,7 +296,7 @@ export async function handleSeasonChange(
     partyActors: any[],
     extractFormData: (container: HTMLElement, partyActors: any[]) => any
 ): Promise<void> {
-    console.log('[PFS Chronicle] Season changed');
+    debug('Season changed');
     const seasonId = (event.target as HTMLSelectElement).value;
     const layouts = layoutStore.getLayoutsByParent(seasonId);
     
@@ -344,7 +345,7 @@ export async function handleLayoutChange(
     partyActors: any[],
     extractFormData: (container: HTMLElement, partyActors: any[]) => any
 ): Promise<void> {
-    console.log('[PFS Chronicle] Layout changed');
+    debug('Layout changed');
     const layoutId = (event.target as HTMLSelectElement).value;
     
     // Update blank chronicle path based on layout's defaultChronicleLocation
@@ -359,7 +360,7 @@ export async function handleLayoutChange(
                 blankPathInput.value = layout.defaultChronicleLocation;
             }
         } catch (_error) {
-            console.log(`Default chronicle location not accessible: ${layout.defaultChronicleLocation}`);
+            debug(`Default chronicle location not accessible: ${layout.defaultChronicleLocation}`);
             // Clear the path if default isn't accessible
             if (blankPathInput) {
                 blankPathInput.value = '';
@@ -368,7 +369,7 @@ export async function handleLayoutChange(
     } else {
         // Layout doesn't have a default chronicle location - clear the path
         // This makes the chronicle path field visible so user can select a file
-        console.log('[PFS Chronicle] Layout has no default chronicle location, clearing path');
+        debug('Layout has no default chronicle location, clearing path');
         if (blankPathInput) {
             blankPathInput.value = '';
         }
@@ -419,7 +420,7 @@ export async function handleFieldChange(
     partyActors: any[],
     extractFormData: (container: HTMLElement, partyActors: any[]) => any
 ): Promise<void> {
-    console.log('[PFS Chronicle] Field changed');
+    debug('Field changed');
     
     const input = event.target as HTMLInputElement;
     const fieldName = input.name;
@@ -532,8 +533,8 @@ export async function handleChroniclePathFilePicker(
             try {
                 await saveFormData(container, partyActors);
                 await updateChroniclePathVisibility(path, container, layoutId);
-            } catch (error) {
-                console.error('[PFS Chronicle] File picker callback failed:', error);
+            } catch (caughtError) {
+                error('File picker callback failed:', caughtError);
             }
         }
     });
@@ -601,7 +602,7 @@ async function checkFileExists(path: string): Promise<boolean> {
         const response = await fetch(path, { method: 'HEAD' });
         return response.ok;
     } catch (_error) {
-        console.log(`Chronicle path file not accessible: ${path}`);
+        debug(`Chronicle path file not accessible: ${path}`);
         return false;
     }
 }
@@ -621,9 +622,9 @@ export async function saveFormData(container: HTMLElement, partyActors: any[]): 
     try {
         const formData = extractFormData(container, partyActors);
         await savePartyChronicleData(formData);
-        console.log('[PFS Chronicle] Auto-saved party chronicle data');
-    } catch (error) {
-        console.error('[PFS Chronicle] Auto-save failed:', error);
+        debug('Auto-saved party chronicle data');
+    } catch (caughtError) {
+        error('Auto-save failed:', caughtError);
         ui.notifications?.warn('Failed to auto-save chronicle data');
     }
 }

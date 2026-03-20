@@ -1,4 +1,5 @@
 import { layoutStore } from './LayoutStore.js';
+import { debug, error } from './utils/logger.js';
 import { LayoutDesignerApp } from './LayoutDesignerApp.js';
 import { PartyChronicleApp } from './PartyChronicleApp.js';
 import { generateChronicleFilename } from './utils/filename-utils.js';
@@ -50,6 +51,15 @@ function registerSettings(): void {
       scope: 'world', config: true, type: String, default: '',
     });
   }
+
+  game.settings.register(MODULE_ID, 'debugMode', {
+    name: 'Enable Debug Logging',
+    hint: 'When enabled, verbose debug messages are printed to the browser console. Useful for troubleshooting.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false,
+  });
 
   // Hidden setting for party chronicle data storage
   game.settings.register(MODULE_ID, 'partyChronicleData', {
@@ -338,10 +348,10 @@ async function initializeForm(
     
     // Initialize earned income displays on initial render
     // Requirements: earned-income-calculation 7.3
-    console.log('[PFS Chronicle] Initializing earned income displays...');
+    debug('Initializing earned income displays...');
     const downtimeDaysSelect = container.querySelector<HTMLSelectElement>('#downtimeDays');
     const initialDowntimeDays = Number.parseInt(downtimeDaysSelect?.value || '1', 10);
-    console.log('[PFS Chronicle] Initial downtime days:', initialDowntimeDays, 'from select:', downtimeDaysSelect?.value);
+    debug('Initial downtime days:', initialDowntimeDays, 'from select:', downtimeDaysSelect?.value);
     updateAllEarnedIncomeDisplays(initialDowntimeDays, container);
     
     // Initialize collapsible sections
@@ -391,9 +401,9 @@ export async function renderPartyChronicleForm(
         
         // Initialize form state
         await initializeForm(container, partyActors);
-    } catch (error) {
-        console.error('[PFS Chronicle] Error rendering form:', error);
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    } catch (renderError) {
+        error('Error rendering form:', renderError);
+        const errorMessage = renderError instanceof Error ? renderError.message : 'Unknown error';
         container.innerHTML = `
             <div style="padding: 2rem; text-align: center; color: red;">
                 <p>Error loading party chronicle form. Check console for details.</p>

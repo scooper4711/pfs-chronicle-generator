@@ -18,6 +18,7 @@ import {
 } from './model/party-chronicle-types.js';
 import { validateSharedFields, validateUniqueFields } from './model/party-chronicle-validator.js';
 import { generateChroniclesFromPartyData } from './handlers/party-chronicle-handlers.js';
+import { debug } from './utils/logger.js';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
 import FormDataExtended = foundry.applications.ux.FormDataExtended;
@@ -119,21 +120,21 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
 
       // Check if chronicle path file exists and if layout has a default location
       const chroniclePath = savedData?.shared?.blankChroniclePath || '';
-      console.log(`[PFS Chronicle] _prepareContext: chroniclePath = "${chroniclePath}"`);
+      debug(`_prepareContext: chroniclePath = "${chroniclePath}"`);
       const chroniclePathExists = await this.checkFileExists(chroniclePath);
-      console.log(`[PFS Chronicle] _prepareContext: chroniclePathExists = ${chroniclePathExists}`);
+      debug(`_prepareContext: chroniclePathExists = ${chroniclePathExists}`);
       
       // Get the selected layout to check if it has a default chronicle location
       const selectedLayout = await layoutStore.getLayout(effectiveLayoutId);
       const layoutHasDefault = !!selectedLayout?.defaultChronicleLocation;
-      console.log(`[PFS Chronicle] _prepareContext: layoutHasDefault = ${layoutHasDefault}`);
+      debug(`_prepareContext: layoutHasDefault = ${layoutHasDefault}`);
       
       // Field should be hidden only if:
       // 1. Layout has a default chronicle location, AND
       // 2. A valid file exists at the chronicle path
       // Otherwise, field should be visible so user can select/change the file
       const shouldHideChroniclePathField = layoutHasDefault && chroniclePathExists;
-      console.log(`[PFS Chronicle] _prepareContext: shouldHideChroniclePathField = ${shouldHideChroniclePathField}`);
+      debug(`_prepareContext: shouldHideChroniclePathField = ${shouldHideChroniclePathField}`);
 
       // Return PartyChronicleContext object
       return {
@@ -272,7 +273,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
     ): Promise<void> {
       // Extract and expand form data
       const data: any = foundry.utils.expandObject(formData.object);
-      console.log('[PFS Chronicle] Expanded form data:', data);
+      debug('Expanded form data:', data);
 
       // Delegate to extracted handler function
       await generateChroniclesFromPartyData(data, this.partyActors);
@@ -326,17 +327,17 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
     */
    private async checkFileExists(path: string): Promise<boolean> {
      if (!path) {
-       console.log('[PFS Chronicle] checkFileExists: empty path, returning false');
+       debug('checkFileExists: empty path, returning false');
        return false;
      }
 
      try {
-       console.log(`[PFS Chronicle] checkFileExists: checking path "${path}"`);
+       debug(`checkFileExists: checking path "${path}"`);
        const response = await fetch(path, { method: 'HEAD' });
-       console.log(`[PFS Chronicle] checkFileExists: response.ok = ${response.ok}`);
+       debug(`checkFileExists: response.ok = ${response.ok}`);
        return response.ok;
-     } catch (error) {
-       console.log(`[PFS Chronicle] Chronicle path file not accessible: ${path}`, error);
+     } catch (caughtError) {
+       debug(`Chronicle path file not accessible: ${path}`, caughtError);
        return false;
      }
    }

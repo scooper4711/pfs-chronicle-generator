@@ -390,6 +390,12 @@ describe('LayoutDesignerApp', () => {
       });
       mockGetLayout.mockResolvedValue(layout);
 
+      // Enable debug mode so the logger emits via console.log
+      mockSettingsGet.mockImplementation((_module: string, key: string) => {
+        if (key === 'debugMode') return true;
+        return '';
+      });
+
       const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
       global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
 
@@ -397,6 +403,7 @@ describe('LayoutDesignerApp', () => {
       await (app as any).handleLayoutChanged(event);
 
       expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
         'Default chronicle location not accessible: /chronicles/error.pdf'
       );
       consoleSpy.mockRestore();

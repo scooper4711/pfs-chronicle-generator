@@ -27,7 +27,8 @@ export default [
         max: 50,
         skipBlankLines: true,
         skipComments: true
-      }]
+      }],
+      'no-console': ['warn', { allow: ['warn', 'error'] }]
     }
   },
   {

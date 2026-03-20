@@ -96,7 +96,10 @@ describe('collapsible-section-handlers', () => {
       
       toggleSectionCollapse('invalid-section', container);
       
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Invalid section ID'));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        expect.stringContaining('Invalid section ID')
+      );
       consoleSpy.mockRestore();
     });
 
@@ -105,7 +108,10 @@ describe('collapsible-section-handlers', () => {
       
       toggleSectionCollapse('adventure-summary', container);
       
-      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Could not find section element'));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        expect.stringContaining('Could not find section element')
+      );
       consoleSpy.mockRestore();
     });
   });
