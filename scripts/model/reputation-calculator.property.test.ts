@@ -7,12 +7,8 @@
  */
 
 import fc from 'fast-check';
-import type { SharedFields } from './party-chronicle-types';
 import { calculateReputation } from './reputation-calculator';
 import { FACTION_NAMES } from './faction-names';
-
-// Faction abbreviations for test generation
-const FACTION_ABBREVS = ['EA', 'GA', 'HH', 'VS', 'RO', 'VW'];
 
 /**
  * Generator for valid reputation values (0-9)
@@ -63,18 +59,6 @@ const sharedFieldsWithReputationArbitrary = fc.record({
   reportingD: false,
   chosenFaction: '',
 }));
-
-/**
- * Generator for actor with chosen faction
- */
-const actorArbitrary = (chosenFaction: string | null) => fc.constant({
-  name: 'Test Character',
-  system: {
-    pfs: {
-      currentFaction: chosenFaction
-    }
-  }
-});
 
 describe('Reputation Calculator Property Tests', () => {
   describe('Property 6: Non-Zero Faction Inclusion', () => {
@@ -446,7 +430,7 @@ describe('Reputation Calculator Property Tests', () => {
               expect(valuePart).toMatch(/^[+-]\d+$/);
               
               // No extra spaces
-              expect(line).not.toMatch(/  /); // No double spaces
+              expect(line).not.toMatch(/ {2}/); // No double spaces
               expect(line).not.toMatch(/^ /); // No leading space
               expect(line).not.toMatch(/ $/); // No trailing space
             }

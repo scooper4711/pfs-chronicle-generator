@@ -22,7 +22,8 @@ export function updateValidationDisplay(
     partyActors: any[],
     extractFormData: (container: HTMLElement, partyActors: any[]) => any
 ): void {
-    // Import validation functions
+    // Dynamic import to avoid circular dependency at module load time
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- Foundry VTT module system requires synchronous imports here
     const { validateSharedFields, validateUniqueFields } = require('../model/party-chronicle-validator.js');
     
     // Extract form data

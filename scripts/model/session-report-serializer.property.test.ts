@@ -14,9 +14,6 @@ import { serializeSessionReport } from './session-report-serializer';
 import type { SessionReport, SignUp, BonusRep } from './session-report-types';
 import { FACTION_NAMES } from './faction-names';
 
-/** Arbitrary for a valid faction abbreviation code. */
-const factionCodeArbitrary = fc.constantFrom(...Object.keys(FACTION_NAMES));
-
 /** Arbitrary for a full faction name. */
 const factionNameArbitrary = fc.constantFrom(...Object.values(FACTION_NAMES));
 

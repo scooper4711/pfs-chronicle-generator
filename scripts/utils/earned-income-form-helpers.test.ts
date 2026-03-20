@@ -10,7 +10,7 @@ import { extractCharacterIdFromFieldName, extractEarnedIncomeParams, createEarne
 
 // Mock the earned-income-calculator
 jest.mock('./earned-income-calculator', () => ({
-  calculateDowntimeDays: jest.fn((xp: number, tb: number) => xp * 2),
+  calculateDowntimeDays: jest.fn((xp: number, _tb: number) => xp * 2),
   calculateEarnedIncome: jest.fn(() => 5),
   formatIncomeValue: jest.fn(() => '5 gp'),
 }));

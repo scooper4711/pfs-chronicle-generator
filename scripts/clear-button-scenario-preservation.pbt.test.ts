@@ -103,8 +103,7 @@ jest.mock('./model/party-chronicle-storage', () => {
 
 // Now import after mocking
 import { PartyChronicleApp } from './PartyChronicleApp';
-import { savePartyChronicleData, loadPartyChronicleData, clearPartyChronicleData } from './model/party-chronicle-storage';
-import { layoutStore } from './LayoutStore';
+import { savePartyChronicleData, clearPartyChronicleData } from './model/party-chronicle-storage';
 
 /**
  * Property 1: Fault Condition - Clear Button Preserves Scenario Selection

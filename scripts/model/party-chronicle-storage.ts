@@ -60,7 +60,7 @@ export async function savePartyChronicleData(data: PartyChronicleData): Promise<
   } catch (caughtError) {
     const errorMessage = caughtError instanceof Error ? caughtError.message : String(caughtError);
     error('Failed to save party chronicle data:', caughtError);
-    throw new Error(`Failed to save party chronicle data: ${errorMessage}`);
+    throw new Error(`Failed to save party chronicle data: ${errorMessage}`, { cause: caughtError });
   }
 }
 
@@ -98,7 +98,7 @@ export async function loadPartyChronicleData(): Promise<PartyChronicleStorage | 
   } catch (caughtError) {
     const errorMessage = caughtError instanceof Error ? caughtError.message : String(caughtError);
     error('Failed to load party chronicle data:', caughtError);
-    throw new Error(`Failed to load party chronicle data: ${errorMessage}`);
+    throw new Error(`Failed to load party chronicle data: ${errorMessage}`, { cause: caughtError });
   }
 }
 
@@ -126,6 +126,6 @@ export async function clearPartyChronicleData(): Promise<void> {
   } catch (caughtError) {
     const errorMessage = caughtError instanceof Error ? caughtError.message : String(caughtError);
     error('Failed to clear party chronicle data:', caughtError);
-    throw new Error(`Failed to clear party chronicle data: ${errorMessage}`);
+    throw new Error(`Failed to clear party chronicle data: ${errorMessage}`, { cause: caughtError });
   }
 }

@@ -87,7 +87,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * 
    * Requirements: party-chronicle-filling 1.3, 1.4, 8.2, conditional-chronicle-path-visibility 5.1, 5.2, 5.5, 6.4
    */
-  async _prepareContext(options?: any): Promise<any> {
+  async _prepareContext(_options?: any): Promise<any> {
       // Extract party member data - filter to only include character actors
       // Exclude: null actors, familiars, and NPCs
       const partyMembers: PartyMember[] = this.partyActors
@@ -170,7 +170,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
     const currentLayoutId = game.settings.get('pfs-chronicle-generator', 'layout') as string;
 
     let selectedSeasonId = savedData?.shared?.seasonId || settingSeasonId || (seasons.length > 0 ? seasons[0].id : '');
-    let selectedLayoutId = savedData?.shared?.layoutId || currentLayoutId || '';
+    const selectedLayoutId = savedData?.shared?.layoutId || currentLayoutId || '';
 
     // If a layout is set but doesn't belong to the selected season, adjust season accordingly
     if (selectedLayoutId) {

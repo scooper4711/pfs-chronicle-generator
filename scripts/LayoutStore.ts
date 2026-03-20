@@ -96,7 +96,7 @@ class LayoutStore {
         debug('Looking for layouts with dirFormat:', dirFormat);
         
         const layouts = Array.from(this.layoutInfo.entries())
-            .filter(([id, info]) => {
+            .filter(([id, _info]) => {
                 const idParts = id.split('.');
                 return idParts.length > 1 && idParts[1].startsWith(dirFormat);
             })

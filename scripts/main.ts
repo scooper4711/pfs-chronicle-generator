@@ -89,6 +89,7 @@ function registerHandlebarsHelpers(): void {
   });
 
   Handlebars.registerHelper('getTreasureBundleValue', function(level: number) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- Synchronous require needed inside Handlebars helper (no top-level await)
     const { getTreasureBundleValue } = require('./utils/treasure-bundle-calculator.js');
     return getTreasureBundleValue(level);
   });
@@ -147,7 +148,7 @@ Hooks.on('ready', async () => {
     }
 });
 
-Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) => {
+Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, _data: any) => {
     const pfsTab = html.find('.tab[data-tab="pfs"]');
     if (pfsTab.length === 0) {
         return;
@@ -174,6 +175,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
             const blankChroniclePath = chronicleData?.blankChroniclePath 
                 || game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
             const filename = generateChronicleFilename(sheet.actor.name, blankChroniclePath);
+            // eslint-disable-next-line @typescript-eslint/no-require-imports -- Synchronous require needed inside click handler (dynamic import not viable here)
             const FileSaver = require('file-saver');
             FileSaver.saveAs(blob, filename);
         }
@@ -211,7 +213,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, data: any) =
  * 
  * Requirements: party-chronicle-filling 1.1, 1.2
  */
-Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, data: any) => {
+Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, _data: any) => {
     // Only show PFS tab to GMs
     if (!game.user.isGM) return;
 

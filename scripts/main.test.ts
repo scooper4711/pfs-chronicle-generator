@@ -9,10 +9,11 @@
 
 // --- Capture Hooks callbacks ---
 
-const hooksCallbacks: Record<string, Function[]> = {};
+type HookCallback = (...args: unknown[]) => void;
+const hooksCallbacks: Record<string, HookCallback[]> = {};
 
 (global as any).Hooks = {
-  on: jest.fn((event: string, callback: Function) => {
+  on: jest.fn((event: string, callback: HookCallback) => {
     if (!hooksCallbacks[event]) hooksCallbacks[event] = [];
     hooksCallbacks[event].push(callback);
   }),
@@ -155,7 +156,6 @@ import {
   attachSeasonAndLayoutListeners,
   attachFormFieldListeners,
   attachSaveButtonListener,
-  attachClearButtonListener,
   attachGenerateButtonListener,
 } from './handlers/event-listener-helpers';
 import { updateValidationDisplay } from './handlers/validation-display';

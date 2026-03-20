@@ -18,6 +18,7 @@ describe('summary-utils property tests', () => {
         fc.property(
           fc.string({ minLength: 1, maxLength: 100 })
             .filter(s => s.trim().length > 0)
+            // eslint-disable-next-line no-control-regex -- Intentionally filtering control characters from test input
             .filter(s => !/[\x00-\x1F\x7F-\x9F]/.test(s)), // Filter out control characters
           (layoutName) => {
             const container = document.createElement('div');

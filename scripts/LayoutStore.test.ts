@@ -4,7 +4,6 @@
  * Tests layout loading, caching, merging, and season/layout retrieval.
  */
 
-import { Layout } from './model/layout';
 
 // We need to test the class directly, but it's exported as a singleton.
 // We'll re-import the module for each test to get a fresh instance.
@@ -152,9 +151,7 @@ describe('LayoutStore', () => {
       });
 
       // fetch returns different data based on URL
-      let fetchCallCount = 0;
       mockFetch.mockImplementation((url: string) => {
-        fetchCallCount++;
         // During initialization, files are fetched in order
         if (url.includes('parent.json')) {
           return Promise.resolve({

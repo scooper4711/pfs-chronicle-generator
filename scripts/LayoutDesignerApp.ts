@@ -60,7 +60,7 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
     const currentLayoutId = game.settings.get('pfs-chronicle-generator', 'layout') as string;
 
     let selectedSeasonId = settingSeasonId || (seasons.length > 0 ? seasons[0].id : '');
-    let selectedLayoutId = currentLayoutId || '';
+    const selectedLayoutId = currentLayoutId || '';
 
     // If a layout is set but doesn't belong to the selected season, adjust season
     if (selectedLayoutId) {

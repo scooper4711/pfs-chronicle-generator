@@ -45,7 +45,7 @@ jest.mock('./LayoutStore', () => ({
       { id: 'pfs2-season7', name: 'Season 7' },
       { id: 'pfs2-season6', name: 'Season 6' }
     ]),
-    getLayoutsByParent: jest.fn((seasonId: string) => [
+    getLayoutsByParent: jest.fn((_seasonId: string) => [
       { id: 'test-layout', description: 'Test Layout' }
     ]),
     getLayout: jest.fn(async (layoutId: string) => ({
@@ -114,7 +114,7 @@ describe('PartyChronicleApp Property Tests', () => {
             expect(context.partyMembers).toHaveLength(actors.length);
             
             // Property: Each actor should be represented in the party members list
-            actors.forEach((actor, index) => {
+            actors.forEach((actor) => {
               const member = context.partyMembers.find((m: PartyMember) => m.id === actor.id);
               
               // Each actor must be present

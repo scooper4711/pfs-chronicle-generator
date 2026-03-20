@@ -9,7 +9,6 @@ import {
   resolveValue,
   getAllContentElements,
   findContentElement,
-  ResolvedElement,
 } from './pdf-element-utils';
 import { ContentElement, Preset } from '../model/layout';
 

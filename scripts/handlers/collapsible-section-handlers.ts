@@ -216,7 +216,7 @@ export function updateSectionSummary(
   }
   
   // Generate summary text based on section type
-  let summaryText = '';
+  let summaryText: string;
   
   try {
     switch (sectionId) {

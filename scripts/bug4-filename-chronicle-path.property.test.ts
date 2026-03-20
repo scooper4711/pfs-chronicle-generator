@@ -222,7 +222,7 @@ describe('Downloaded PDF Filename Bug Condition Exploration', () => {
             const mockActor = {
               id: 'actor-1',
               name: testData.actorName,
-              getFlag: (namespace: string, key: string) => {
+              getFlag: (_namespace: string, _key: string) => {
                 // No flag data exists
                 return undefined;
               }

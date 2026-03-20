@@ -88,7 +88,6 @@ jest.mock('@pdf-lib/fontkit', () => ({}));
 
 import { LayoutDesignerApp } from './LayoutDesignerApp';
 import { PdfGenerator } from './PdfGenerator';
-import { PDFDocument } from 'pdf-lib';
 import { Layout } from './model/layout';
 
 // --- Test helpers ---
@@ -256,7 +255,6 @@ describe('LayoutDesignerApp', () => {
       setAppElement(app, form);
 
       const layoutDropdown = form.querySelector('#layout') as HTMLSelectElement;
-      const canvasDropdown = form.querySelector('#canvas') as HTMLSelectElement;
 
       // Simulate selecting season 7
       const event = { target: { value: 'pfs2-season7' } } as unknown as Event;
