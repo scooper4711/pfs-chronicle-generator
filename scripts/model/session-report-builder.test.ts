@@ -7,8 +7,11 @@
  * Requirements: paizo-session-reporting 4.1–4.11, 9.1–9.6
  */
 
-import { buildSessionReport, SessionReportActor, SessionReportBuildParams } from './session-report-builder';
+import { buildSessionReport, buildGameDateTime, SessionReportActor, SessionReportBuildParams } from './session-report-builder';
 import { createSharedFields, createUniqueFields } from './test-helpers';
+
+/** Fixed time for deterministic gameDate output: 2025-06-15T14:10:00Z → rounds to 14:00 */
+const FIXED_NOW = new Date('2025-06-15T14:10:00Z');
 
 describe('buildSessionReport edge cases', () => {
   it('defaults orgPlayNumber to 0 when actor has no system data', () => {
@@ -18,6 +21,7 @@ describe('buildSessionReport edge cases', () => {
       characters: { a1: createUniqueFields({ characterName: 'No System' }) },
       partyActors: [actor],
       layoutId: 'pfs2.s1-01',
+      now: FIXED_NOW,
     };
 
     const report = buildSessionReport(params);
@@ -134,15 +138,16 @@ describe('buildSessionReport edge cases', () => {
       },
       partyActors: actors,
       layoutId: 'pfs2.s5-18',
+      now: FIXED_NOW,
     };
 
     const report = buildSessionReport(params);
 
-    expect(report.gameDate).toBe('2025-03-15');
+    expect(report.gameDate).toBe('2025-03-15T14:00:00+00:00');
     expect(report.gameSystem).toBe('PFS2E');
     expect(report.generateGmChronicle).toBe(false);
     expect(report.gmOrgPlayNumber).toBe(99999);
-    expect(report.repEarned).toBe(0);
+    expect(report.repEarned).toBe(4);
     expect(report.reportingA).toBe(true);
     expect(report.reportingC).toBe(true);
     expect(report.scenario).toBe('PFS2E 5-18');
@@ -159,5 +164,31 @@ describe('buildSessionReport edge cases', () => {
     expect(report.bonusRepEarned).toHaveLength(2);
     expect(report.bonusRepEarned.find(b => b.faction === 'Grand Archive')?.reputation).toBe(3);
     expect(report.bonusRepEarned.find(b => b.faction === 'Vigilant Seal')?.reputation).toBe(1);
+  });
+});
+
+describe('buildGameDateTime', () => {
+  it('rounds minutes 0–14 down to :00', () => {
+    expect(buildGameDateTime('2025-03-15', new Date('2025-03-15T10:00:00Z'))).toBe('2025-03-15T10:00:00+00:00');
+    expect(buildGameDateTime('2025-03-15', new Date('2025-03-15T10:14:59Z'))).toBe('2025-03-15T10:00:00+00:00');
+  });
+
+  it('rounds minutes 15–44 to :30', () => {
+    expect(buildGameDateTime('2025-03-15', new Date('2025-03-15T10:15:00Z'))).toBe('2025-03-15T10:30:00+00:00');
+    expect(buildGameDateTime('2025-03-15', new Date('2025-03-15T10:44:59Z'))).toBe('2025-03-15T10:30:00+00:00');
+  });
+
+  it('rounds minutes 45–59 up to next hour :00', () => {
+    expect(buildGameDateTime('2025-03-15', new Date('2025-03-15T10:45:00Z'))).toBe('2025-03-15T11:00:00+00:00');
+    expect(buildGameDateTime('2025-03-15', new Date('2025-03-15T10:59:59Z'))).toBe('2025-03-15T11:00:00+00:00');
+  });
+
+  it('handles hour rollover at 23:45+ producing 00:00', () => {
+    expect(buildGameDateTime('2025-03-15', new Date('2025-03-15T23:45:00Z'))).toBe('2025-03-15T00:00:00+00:00');
+    expect(buildGameDateTime('2025-03-15', new Date('2025-03-15T23:59:59Z'))).toBe('2025-03-15T00:00:00+00:00');
+  });
+
+  it('preserves eventDate in the output', () => {
+    expect(buildGameDateTime('2026-12-31', new Date('2025-03-15T08:20:00Z'))).toBe('2026-12-31T08:30:00+00:00');
   });
 });
