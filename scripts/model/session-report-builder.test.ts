@@ -9,6 +9,7 @@
 
 import { buildSessionReport, buildGameDateTime, SessionReportActor, SessionReportBuildParams } from './session-report-builder';
 import { createSharedFields, createUniqueFields } from './test-helpers';
+import type { SharedFields } from './party-chronicle-types';
 
 /** Fixed time for deterministic gameDate output: 2025-06-15T14:10:00Z → rounds to 14:00 */
 const FIXED_NOW = new Date('2025-06-15T14:10:00Z');
@@ -164,6 +165,25 @@ describe('buildSessionReport edge cases', () => {
     expect(report.bonusRepEarned.find(b => b.faction === "Envoy's Alliance")?.reputation).toBe(2);
     expect(report.bonusRepEarned.find(b => b.faction === 'Grand Archive')?.reputation).toBe(3);
     expect(report.bonusRepEarned.find(b => b.faction === 'Vigilant Seal')?.reputation).toBe(1);
+  });
+
+  it('treats missing reputation keys as zero via nullish coalescing fallback', () => {
+    // reputationValues is typed with all 6 keys required, but at runtime
+    // a partial object could arrive. The ?? 0 fallback handles this defensively.
+    const partialReputation = { EA: 3, GA: 0 } as SharedFields['reputationValues'];
+    const params: SessionReportBuildParams = {
+      shared: createSharedFields({ reputationValues: partialReputation }),
+      characters: {},
+      partyActors: [],
+      layoutId: 'pfs2.s1-01',
+    };
+
+    const report = buildSessionReport(params);
+
+    // Only EA (value 3) should appear; GA is 0, and missing keys default to 0
+    expect(report.bonusRepEarned).toHaveLength(1);
+    expect(report.bonusRepEarned[0].faction).toBe("Envoy's Alliance");
+    expect(report.bonusRepEarned[0].reputation).toBe(3);
   });
 });
 

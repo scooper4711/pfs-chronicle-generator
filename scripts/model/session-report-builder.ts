@@ -90,14 +90,16 @@ function buildSignUp(
 function buildBonusReputation(
   reputationValues: SharedFields['reputationValues']
 ): BonusRep[] {
+  type ReputationKey = keyof typeof reputationValues;
   const factionCodes = Object.keys(FACTION_NAMES);
 
-  return factionCodes
-    .filter((code) => (reputationValues[code as keyof typeof reputationValues] ?? 0) !== 0)
-    .map((code) => ({
-      faction: FACTION_NAMES[code],
-      reputation: reputationValues[code as keyof typeof reputationValues] ?? 0,
-    }));
+  return factionCodes.reduce<BonusRep[]>((entries, code) => {
+    const reputation = reputationValues[code as ReputationKey] ?? 0;
+    if (reputation !== 0) {
+      entries.push({ faction: FACTION_NAMES[code], reputation });
+    }
+    return entries;
+  }, []);
 }
 
 /**
