@@ -344,6 +344,10 @@
     cursor: not-allowed;
 }
 
+.sheet.party [data-tab=pfs] .actions-section .buttons #clearData {
+    margin-left: 0.75rem;
+}
+
 /* Character-Specific Information header - compact styling */
 .sheet.party [data-tab=pfs] .content-header {
     padding: 0.15rem 0.5rem;
