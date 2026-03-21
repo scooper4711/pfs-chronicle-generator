@@ -148,7 +148,6 @@ function extractSharedFields(rawShared: any, layoutId: string, blankChroniclePat
     reportingB: Boolean(rawShared?.reportingB),
     reportingC: Boolean(rawShared?.reportingC),
     reportingD: Boolean(rawShared?.reportingD),
-    chosenFaction: rawShared?.chosenFaction || ''
   };
 }
 

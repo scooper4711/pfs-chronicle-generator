@@ -40,7 +40,6 @@ function createSharedFields(
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: ''
   };
 }
 

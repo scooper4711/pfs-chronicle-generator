@@ -427,7 +427,6 @@ function createDefaultChronicleData(
             reportingB: false,
             reportingC: false,
             reportingD: false,
-            chosenFaction: ''
         },
         characters
     };

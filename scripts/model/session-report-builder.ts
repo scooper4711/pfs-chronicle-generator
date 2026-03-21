@@ -79,23 +79,21 @@ function buildSignUp(
 /**
  * Assembles the bonusRepEarned array from shared reputation values.
  *
- * Includes an entry for each faction that has a non-zero reputation value
- * and is not the chosen faction. Uses full faction names from FACTION_NAMES.
+ * Includes an entry for each faction that has a non-zero reputation value.
+ * Uses full faction names from FACTION_NAMES.
  *
  * @param reputationValues - Faction-keyed reputation values from shared fields
- * @param chosenFaction - Abbreviation code of the chosen faction to exclude
  * @returns Array of BonusRep entries
  *
  * Requirements: paizo-session-reporting 4.11, 9.1–9.6
  */
 function buildBonusReputation(
-  reputationValues: SharedFields['reputationValues'],
-  chosenFaction: string
+  reputationValues: SharedFields['reputationValues']
 ): BonusRep[] {
   const factionCodes = Object.keys(FACTION_NAMES);
 
   return factionCodes
-    .filter((code) => code !== chosenFaction && (reputationValues[code as keyof typeof reputationValues] ?? 0) !== 0)
+    .filter((code) => (reputationValues[code as keyof typeof reputationValues] ?? 0) !== 0)
     .map((code) => ({
       faction: FACTION_NAMES[code],
       reputation: reputationValues[code as keyof typeof reputationValues] ?? 0,
@@ -170,6 +168,6 @@ export function buildSessionReport(params: SessionReportBuildParams): SessionRep
     reportingD: shared.reportingD,
     scenario: buildScenarioIdentifier(layoutId),
     signUps,
-    bonusRepEarned: buildBonusReputation(shared.reputationValues, shared.chosenFaction),
+    bonusRepEarned: buildBonusReputation(shared.reputationValues),
   };
 }

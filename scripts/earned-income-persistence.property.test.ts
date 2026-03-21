@@ -134,7 +134,6 @@ describe('Earned Income Data Persistence - Property Tests', () => {
         reportingB: fc.boolean(),
         reportingC: fc.boolean(),
         reportingD: fc.boolean(),
-        chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW'),
       }),
       characters: fc.dictionary(
         fc.string({ minLength: 1, maxLength: 20 }), // actor IDs
@@ -169,7 +168,6 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 reportingB: false,
                 reportingC: false,
                 reportingD: false,
-                chosenFaction: '',
               },
               characters: {
                 actor1: {
@@ -249,7 +247,6 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 reportingB: false,
                 reportingC: false,
                 reportingD: false,
-                chosenFaction: '',
               },
               characters: charactersData,
             };
@@ -318,7 +315,6 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 reportingB: false,
                 reportingC: false,
                 reportingD: false,
-                chosenFaction: '',
               },
               characters: charactersData,
             };
@@ -387,7 +383,6 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 reportingB: false,
                 reportingC: false,
                 reportingD: false,
-                chosenFaction: '',
               },
               characters: charactersData,
             };
@@ -467,7 +462,6 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 reportingB: false,
                 reportingC: false,
                 reportingD: false,
-                chosenFaction: '',
               },
               characters: {
                 actor1: {
@@ -569,7 +563,6 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 reportingB: false,
                 reportingC: false,
                 reportingD: false,
-                chosenFaction: '',
               },
               characters: {
                 actor1: {

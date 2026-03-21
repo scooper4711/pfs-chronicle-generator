@@ -128,7 +128,6 @@ describe('buildSessionReport edge cases', () => {
         reportingB: false,
         reportingC: true,
         reportingD: false,
-        chosenFaction: 'EA',
         chosenFactionReputation: 4,
         reputationValues: { EA: 2, GA: 3, HH: 0, VS: 1, RO: 0, VW: 0 },
       }),
@@ -160,8 +159,9 @@ describe('buildSessionReport edge cases', () => {
     expect(report.signUps[1].consumeReplay).toBe(true);
     expect(report.signUps[1].faction).toBe('Vigilant Seal');
 
-    // Bonus rep: GA=3, VS=1 (EA excluded as chosen, HH/RO/VW are 0)
-    expect(report.bonusRepEarned).toHaveLength(2);
+    // Bonus rep: EA=2, GA=3, VS=1 (all non-zero factions included, HH/RO/VW are 0)
+    expect(report.bonusRepEarned).toHaveLength(3);
+    expect(report.bonusRepEarned.find(b => b.faction === "Envoy's Alliance")?.reputation).toBe(2);
     expect(report.bonusRepEarned.find(b => b.faction === 'Grand Archive')?.reputation).toBe(3);
     expect(report.bonusRepEarned.find(b => b.faction === 'Vigilant Seal')?.reputation).toBe(1);
   });

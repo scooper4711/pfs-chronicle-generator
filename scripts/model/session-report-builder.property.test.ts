@@ -59,7 +59,6 @@ function buildParams(overrides: {
   reportingC?: boolean;
   reportingD?: boolean;
   reputationValues?: { EA: number; GA: number; HH: number; VS: number; RO: number; VW: number };
-  chosenFaction?: string;
   layoutId?: string;
 }): SessionReportBuildParams {
   const actorId = 'actor-1';
@@ -78,7 +77,6 @@ function buildParams(overrides: {
       reportingC: overrides.reportingC ?? false,
       reportingD: overrides.reportingD ?? false,
       reputationValues: overrides.reputationValues ?? { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
-      chosenFaction: overrides.chosenFaction ?? 'EA',
     }),
     characters: { [actorId]: createUniqueFields() },
     partyActors: [actor],
@@ -107,9 +105,8 @@ describe('Session Report Builder Properties', () => {
           fc.boolean(),
           fc.boolean(),
           reputationValuesArbitrary,
-          factionCodeArbitrary,
           layoutIdArbitrary,
-          (eventDate, gmPfsNumber, repA, repB, repC, repD, repValues, chosenFaction, layoutId) => {
+          (eventDate, gmPfsNumber, repA, repB, repC, repD, repValues, layoutId) => {
             const params = buildParams({
               eventDate,
               gmPfsNumber,
@@ -118,7 +115,6 @@ describe('Session Report Builder Properties', () => {
               reportingC: repC,
               reportingD: repD,
               reputationValues: repValues,
-              chosenFaction,
               layoutId,
             });
 
@@ -141,14 +137,12 @@ describe('Session Report Builder Properties', () => {
           eventDateArbitrary,
           gmPfsNumberArbitrary,
           reputationValuesArbitrary,
-          factionCodeArbitrary,
           layoutIdArbitrary,
-          (eventDate, gmPfsNumber, repValues, chosenFaction, layoutId) => {
+          (eventDate, gmPfsNumber, repValues, layoutId) => {
             const params = buildParams({
               eventDate,
               gmPfsNumber,
               reputationValues: repValues,
-              chosenFaction,
               layoutId,
             });
 
@@ -171,14 +165,12 @@ describe('Session Report Builder Properties', () => {
           eventDateArbitrary,
           gmPfsNumberArbitrary,
           reputationValuesArbitrary,
-          factionCodeArbitrary,
           layoutIdArbitrary,
-          (eventDate, gmPfsNumber, repValues, chosenFaction, layoutId) => {
+          (eventDate, gmPfsNumber, repValues, layoutId) => {
             const params = buildParams({
               eventDate,
               gmPfsNumber,
               reputationValues: repValues,
-              chosenFaction,
               layoutId,
             });
 
@@ -376,32 +368,29 @@ describe('Session Report Builder Properties', () => {
 describe('Property 5: Bonus reputation assembly', () => {
 
   /**
-   * For any combination of faction reputation values (0–6 each) and a
-   * chosen faction, the bonusRepEarned array contains exactly one entry
-   * for each faction with a non-zero reputation value that is not the
-   * chosen faction. Each entry uses the full faction name from
-   * FACTION_NAMES and the correct reputation value.
+   * For any combination of faction reputation values (0–6 each), the
+   * bonusRepEarned array contains exactly one entry for each faction
+   * with a non-zero reputation value. Each entry uses the full faction
+   * name from FACTION_NAMES and the correct reputation value.
    *
    * Feature: paizo-session-reporting, Property 5: Bonus reputation assembly
    * Validates: Requirements 4.11, 9.1, 9.2, 9.3, 9.4, 9.5, 9.6
    */
-  it('bonusRepEarned includes non-zero non-chosen factions with correct names and values', () => {
+  it('bonusRepEarned includes all non-zero factions with correct names and values', () => {
     fc.assert(
       fc.property(
         reputationValuesArbitrary,
-        factionCodeArbitrary,
         layoutIdArbitrary,
-        (reputationValues, chosenFaction, layoutId) => {
+        (reputationValues, layoutId) => {
           const params = buildParams({
             reputationValues,
-            chosenFaction,
             layoutId,
           });
 
           const report = buildSessionReport(params);
 
           const expectedFactions = Object.keys(FACTION_NAMES)
-            .filter((code) => code !== chosenFaction && reputationValues[code as keyof typeof reputationValues] !== 0);
+            .filter((code) => reputationValues[code as keyof typeof reputationValues] !== 0);
 
           expect(report.bonusRepEarned).toHaveLength(expectedFactions.length);
 
@@ -410,37 +399,6 @@ describe('Property 5: Bonus reputation assembly', () => {
             expect(entry).toBeDefined();
             expect(entry!.reputation).toBe(reputationValues[code as keyof typeof reputationValues]);
           }
-        }
-      ),
-      { numRuns: 100 }
-    );
-  });
-
-  /**
-   * The chosen faction is always excluded from bonusRepEarned,
-   * regardless of its reputation value.
-   *
-   * Feature: paizo-session-reporting, Property 5: Bonus reputation assembly
-   * Validates: Requirements 9.4
-   */
-  it('chosen faction is excluded from bonusRepEarned even when non-zero', () => {
-    fc.assert(
-      fc.property(
-        reputationValuesArbitrary,
-        factionCodeArbitrary,
-        layoutIdArbitrary,
-        (reputationValues, chosenFaction, layoutId) => {
-          const params = buildParams({
-            reputationValues,
-            chosenFaction,
-            layoutId,
-          });
-
-          const report = buildSessionReport(params);
-
-          const chosenFactionFullName = FACTION_NAMES[chosenFaction];
-          const chosenEntry = report.bonusRepEarned.find((b) => b.faction === chosenFactionFullName);
-          expect(chosenEntry).toBeUndefined();
         }
       ),
       { numRuns: 100 }
@@ -457,12 +415,10 @@ describe('Property 5: Bonus reputation assembly', () => {
     fc.assert(
       fc.property(
         reputationValuesArbitrary,
-        factionCodeArbitrary,
         layoutIdArbitrary,
-        (reputationValues, chosenFaction, layoutId) => {
+        (reputationValues, layoutId) => {
           const params = buildParams({
             reputationValues,
-            chosenFaction,
             layoutId,
           });
 
@@ -487,12 +443,10 @@ describe('Property 5: Bonus reputation assembly', () => {
     fc.assert(
       fc.property(
         reputationValuesArbitrary,
-        factionCodeArbitrary,
         layoutIdArbitrary,
-        (reputationValues, chosenFaction, layoutId) => {
+        (reputationValues, layoutId) => {
           const params = buildParams({
             reputationValues,
-            chosenFaction,
             layoutId,
           });
 

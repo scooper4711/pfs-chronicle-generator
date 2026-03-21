@@ -28,7 +28,6 @@ export const SHARED_FIELD_SELECTORS = {
   REPORTING_B: '#reportingB',
   REPORTING_C: '#reportingC',
   REPORTING_D: '#reportingD',
-  CHOSEN_FACTION: '#chosenFaction',
 } as const;
 
 /**

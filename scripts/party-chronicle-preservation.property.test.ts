@@ -101,7 +101,6 @@ describe('Party Chronicle Form Preservation Tests', () => {
                 reportingB: false,
                 reportingC: false,
                 reportingD: false,
-                chosenFaction: ''
               },
               characters: {
                 'char1': {
@@ -191,7 +190,6 @@ describe('Party Chronicle Form Preservation Tests', () => {
                 reportingB: false,
                 reportingC: false,
                 reportingD: false,
-                chosenFaction: ''
               },
               characters: {
                 'char1': {
@@ -235,7 +233,6 @@ describe('Party Chronicle Form Preservation Tests', () => {
                 reportingB: false,
                 reportingC: false,
                 reportingD: false,
-                chosenFaction: ''
               },
               characters: {
                 'char1': {
@@ -313,7 +310,6 @@ describe('Party Chronicle Form Preservation Tests', () => {
                 reportingB: false,
                 reportingC: false,
                 reportingD: false,
-                chosenFaction: ''
               },
               characters: {}
             };
@@ -343,7 +339,6 @@ describe('Party Chronicle Form Preservation Tests', () => {
                 reportingB: false,
                 reportingC: false,
                 reportingD: false,
-                chosenFaction: ''
               },
               characters: {}
             };

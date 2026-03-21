@@ -70,9 +70,6 @@ export interface SharedFields {
 
   /** Reporting flag D checkbox (paizo-session-reporting 10.1, 1.2) */
   reportingD: boolean;
-
-  /** Faction abbreviation code for the chosen faction (paizo-session-reporting 10.1, 1.2) */
-  chosenFaction: string;
 }
 
 /**

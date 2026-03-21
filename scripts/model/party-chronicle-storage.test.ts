@@ -116,7 +116,6 @@ describe('Party Chronicle Storage', () => {
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: ''
         },
         characters: {}
       };
@@ -150,7 +149,6 @@ describe('Party Chronicle Storage', () => {
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: ''
         },
         characters: {}
       };
@@ -183,7 +181,6 @@ describe('Party Chronicle Storage', () => {
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: ''
         },
         characters: {}
       };
@@ -349,7 +346,6 @@ describe('Party Chronicle Storage', () => {
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: ''
         },
         characters: {}
       };
@@ -468,7 +464,6 @@ describe('Party Chronicle Storage', () => {
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: ''
         },
         characters: {}
       };
@@ -543,7 +538,6 @@ describe('Party Chronicle Storage', () => {
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: ''
         },
         characters: {}
       };
@@ -584,7 +578,6 @@ describe('Party Chronicle Storage', () => {
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: ''
         },
         characters: {}
       };
@@ -643,7 +636,6 @@ describe('Party Chronicle Storage', () => {
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: ''
         },
         characters: {}
       };
@@ -668,7 +660,6 @@ describe('Party Chronicle Storage', () => {
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: ''
         },
         characters: {}
       };
@@ -733,7 +724,6 @@ describe('Party Chronicle Storage', () => {
         reportingB: fc.boolean(),
         reportingC: fc.boolean(),
         reportingD: fc.boolean(),
-        chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
       });
 
       const partyChronicleDataArb = fc.record({
@@ -798,7 +788,6 @@ describe('Party Chronicle Storage', () => {
         reportingB: fc.boolean(),
         reportingC: fc.boolean(),
         reportingD: fc.boolean(),
-        chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
       });
 
       await fc.assert(
@@ -873,7 +862,6 @@ describe('Party Chronicle Storage', () => {
         reportingB: fc.boolean(),
         reportingC: fc.boolean(),
         reportingD: fc.boolean(),
-        chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
       });
 
       const partyChronicleDataArb = fc.record({
