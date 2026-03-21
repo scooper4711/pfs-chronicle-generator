@@ -61,6 +61,11 @@ jest.mock('pdf-lib', () => ({
 
 jest.mock('@pdf-lib/fontkit', () => ({}));
 
+const mockPostChatNotification = jest.fn<(...args: any[]) => Promise<void>>().mockResolvedValue(undefined);
+jest.mock('./chat-notifier', () => ({
+  postChatNotification: (...args: any[]) => mockPostChatNotification(...args),
+}));
+
 jest.mock('./chronicle-exporter', () => ({
   createArchive: jest.fn(() => ({ file: jest.fn() })),
   addPdfToArchive: jest.fn(
@@ -346,6 +351,43 @@ describe('Chronicle Generation', () => {
       await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());
 
       expect(mockNotifications.warn).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('chat notification', () => {
+    beforeEach(() => {
+      setupSuccessfulPipeline();
+    });
+
+    it('calls postChatNotification with results and scenario name after successful generation', async () => {
+      const actor = createActor('actor-1', 'Valeros');
+      const data = {
+        shared: validSharedData(),
+        characters: { 'actor-1': { characterName: 'Valeros' } },
+      };
+
+      await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());
+
+      expect(mockPostChatNotification).toHaveBeenCalledTimes(1);
+      expect(mockPostChatNotification).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({ characterName: 'Valeros', success: true }),
+        ]),
+        'Test Scenario'
+      );
+    });
+
+    it('completes normally when postChatNotification throws', async () => {
+      mockPostChatNotification.mockRejectedValue(new Error('Chat failed'));
+      const actor = createActor('actor-1', 'Valeros');
+      const data = {
+        shared: validSharedData(),
+        characters: { 'actor-1': { characterName: 'Valeros' } },
+      };
+
+      await expect(
+        generateChroniclesFromPartyData(data, [actor], createMockPartyActor())
+      ).resolves.toBeUndefined();
     });
   });
 });

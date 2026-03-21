@@ -22,6 +22,7 @@ import { PDFDocument } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { createArchive, addPdfToArchive, storeArchive, FlagActor } from './chronicle-exporter.js';
 import { generateChronicleFilename } from '../utils/filename-utils.js';
+import { postChatNotification } from './chat-notifier.js';
 
 /**
  * Validates all character fields (shared and unique) for chronicle generation
@@ -439,4 +440,11 @@ export async function generateChroniclesFromPartyData(
 
   // Step 4: Display summary notifications
   displayGenerationResults(results);
+
+  // Step 5: Post chat notification
+  try {
+    await postChatNotification(results, data.shared.scenarioName);
+  } catch (err) {
+    error('Failed to post chat notification', err);
+  }
 }
