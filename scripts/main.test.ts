@@ -138,6 +138,7 @@ jest.mock('./handlers/event-listener-helpers', () => ({
   attachClearButtonListener: jest.fn(),
   attachGenerateButtonListener: jest.fn(),
   attachCopySessionReportListener: jest.fn(),
+  attachExportButtonListener: jest.fn(),
   attachPortraitListeners: jest.fn(),
   attachFilePickerListener: jest.fn(),
   attachCollapsibleSectionListeners: jest.fn(),

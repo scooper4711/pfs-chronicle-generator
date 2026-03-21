@@ -29,6 +29,7 @@ import {
     attachClearButtonListener,
     attachGenerateButtonListener,
     attachCopySessionReportListener,
+    attachExportButtonListener,
     attachPortraitListeners,
     attachFilePickerListener,
     attachCollapsibleSectionListeners
@@ -300,12 +301,13 @@ function attachEventListeners(
     
     // Button listeners
     attachSaveButtonListener(container, partyActors);
-    attachClearButtonListener(container, partyActors, partySheet);
 
     // Resolve the Party actor from the party sheet for zip archive storage
     const partyActor = (partySheet as any)?.actor;
+    attachClearButtonListener(container, partyActors, partySheet, partyActor);
     attachGenerateButtonListener(container, partyActors, partyActor);
     attachCopySessionReportListener(container, partyActors);
+    attachExportButtonListener(container, partyActor);
     
     // Portrait and file picker listeners
     attachPortraitListeners(container, partyActors);
@@ -392,8 +394,11 @@ export async function renderPartyChronicleForm(
     partySheet: unknown
 ): Promise<void> {
     try {
+        // Resolve the Party actor from the party sheet for zip archive storage
+        const partyActor = (partySheet as any)?.actor;
+
         // Prepare context using PartyChronicleApp
-        const chronicleApp = new PartyChronicleApp(partyActors);
+        const chronicleApp = new PartyChronicleApp(partyActors, {}, partyActor);
         const context: PartyChronicleContext = await chronicleApp._prepareContext();
         
         // Render template

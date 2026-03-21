@@ -18,7 +18,7 @@ import {
 } from './model/party-chronicle-types.js';
 import { validateSharedFields, validateUniqueFields } from './model/party-chronicle-validator.js';
 import { generateChroniclesFromPartyData } from './handlers/party-chronicle-handlers.js';
-import { FlagActor } from './handlers/chronicle-exporter.js';
+import { FlagActor, hasArchive } from './handlers/chronicle-exporter.js';
 import { debug } from './utils/logger.js';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
@@ -28,15 +28,20 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
   /** Array of party member actors */
   partyActors: any[];
 
+  /** The Party actor used for zip archive flag storage */
+  partyActor?: FlagActor;
+
   /**
    * Constructs a new PartyChronicleApp instance
    * 
    * @param partyActors - Array of actor objects representing party members
    * @param options - Additional application options
+   * @param partyActor - The Party actor for zip archive flag checks
    */
-  constructor(partyActors: any[], options: any = {}) {
+  constructor(partyActors: any[], options: any = {}, partyActor?: FlagActor) {
     super(options);
     this.partyActors = partyActors;
+    this.partyActor = partyActor;
   }
 
   /**
@@ -147,6 +152,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
         selectedLayoutId: effectiveLayoutId,
         savedData,
         chroniclePathExists: shouldHideChroniclePathField,
+        hasChronicleZip: this.partyActor ? hasArchive(this.partyActor) : false,
         buttons: [
           { type: "submit", icon: "fa-solid fa-file-pdf", label: "Generate Chronicles" }
         ]

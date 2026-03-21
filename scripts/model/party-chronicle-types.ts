@@ -182,6 +182,9 @@ export interface PartyChronicleContext {
   /** Previously saved party chronicle data */
   savedData: PartyChronicleData | null;
   
+  /** Whether a zip archive of chronicles is stored on the Party actor (chronicle-export 2.2, 2.3) */
+  hasChronicleZip: boolean;
+
   /** Action buttons for the form */
   buttons: Array<{ type: string; icon: string; label: string }>;
 }
