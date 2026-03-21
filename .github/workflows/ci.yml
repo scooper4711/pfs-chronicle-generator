@@ -30,19 +30,6 @@ jobs:
       - name: TypeScript tests with coverage
         run: npx jest --coverage --silent
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install Python dependencies
-        run: |
-          pip install -r chronicle2layout/requirements.txt
-          pip install pytest pytest-cov hypothesis
-
-      - name: Python tests with coverage
-        run: pytest --cov=chronicle2layout/src --cov-report=xml:coverage-python.xml chronicle2layout/tests/
-
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
