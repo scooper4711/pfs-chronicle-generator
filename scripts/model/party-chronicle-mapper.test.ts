@@ -37,7 +37,6 @@ describe('mapToCharacterData', () => {
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: '',
     ...overrides
   });
 
@@ -340,7 +339,6 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: '',
     ...overrides
   });
 
@@ -721,7 +719,6 @@ describe('Property 6: Data Combination Correctness', () => {
       reportingB: fc.boolean(),
       reportingC: fc.boolean(),
       reportingD: fc.boolean(),
-      chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
     });
 
     const uniqueFieldsArb = fc.record({
@@ -797,7 +794,6 @@ describe('Property 6: Data Combination Correctness', () => {
       reportingB: fc.boolean(),
       reportingC: fc.boolean(),
       reportingD: fc.boolean(),
-      chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
     });
 
     const uniqueFieldsArb = fc.record({
@@ -876,7 +872,6 @@ describe('Property 6: Data Combination Correctness', () => {
       reportingB: fc.boolean(),
       reportingC: fc.boolean(),
       reportingD: fc.boolean(),
-      chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
     });
 
     const uniqueFieldsArb = fc.record({
@@ -945,7 +940,6 @@ describe('Property 6: Data Combination Correctness', () => {
       reportingB: fc.boolean(),
       reportingC: fc.boolean(),
       reportingD: fc.boolean(),
-      chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
     });
 
     const uniqueFieldsArb = fc.record({
@@ -1009,7 +1003,6 @@ describe('Property 6: Data Combination Correctness', () => {
       reportingB: fc.boolean(),
       reportingC: fc.boolean(),
       reportingD: fc.boolean(),
-      chosenFaction: fc.constantFrom('', 'EA', 'GA', 'HH', 'VS', 'RO', 'VW')
     });
 
     const uniqueFieldsArb = fc.record({

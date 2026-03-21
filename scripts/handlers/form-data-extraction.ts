@@ -62,7 +62,6 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
         reportingB: (container.querySelector('#reportingB') as HTMLInputElement)?.checked || false,
         reportingC: (container.querySelector('#reportingC') as HTMLInputElement)?.checked || false,
         reportingD: (container.querySelector('#reportingD') as HTMLInputElement)?.checked || false,
-        chosenFaction: (container.querySelector('#chosenFaction') as HTMLSelectElement)?.value || '',
     };
     
     // Extract character-specific fields

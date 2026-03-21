@@ -89,19 +89,6 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="chosenFaction">Faction</label>
-                    <select id="chosenFaction" name="shared.chosenFaction">
-                        <option value="" {{#unless shared.chosenFaction}}selected{{/unless}}>—</option>
-                        <option value="EA" {{#if (eq shared.chosenFaction "EA")}}selected{{/if}}>Envoy's Alliance</option>
-                        <option value="GA" {{#if (eq shared.chosenFaction "GA")}}selected{{/if}}>Grand Archive</option>
-                        <option value="HH" {{#if (eq shared.chosenFaction "HH")}}selected{{/if}}>Horizon Hunters</option>
-                        <option value="VS" {{#if (eq shared.chosenFaction "VS")}}selected{{/if}}>Vigilant Seal</option>
-                        <option value="RO" {{#if (eq shared.chosenFaction "RO")}}selected{{/if}}>Radiant Oath</option>
-                        <option value="VW" {{#if (eq shared.chosenFaction "VW")}}selected{{/if}}>Verdant Wheel</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
                     <label for="reputation-EA">Envoy's Alliance</label>
                     <select id="reputation-EA" name="shared.reputationValues.EA">
                         <option value="0" {{#if (eq (lookup shared.reputationValues 'EA') 0)}}selected{{/if}}>-</option>

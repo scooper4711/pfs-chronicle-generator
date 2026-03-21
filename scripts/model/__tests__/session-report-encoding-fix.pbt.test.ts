@@ -55,7 +55,6 @@ const sharedFieldsArbitrary = fc.record({
   reportingB: fc.boolean(),
   reportingC: fc.boolean(),
   reportingD: fc.boolean(),
-  chosenFaction: fc.constantFrom('EA', 'GA', 'HH', 'VS', 'RO', 'VW'),
 });
 
 
@@ -311,43 +310,31 @@ describe('Preservation: Unchanged Behaviors Across Fix', () => {
   });
 
   /**
-   * Property 5d: bonusRepEarned Contains Only Non-Chosen Non-Zero Factions
+   * Property 5d: bonusRepEarned Contains All Non-Zero Factions
    *
-   * The bonusRepEarned array includes entries only for factions that
-   * are not the chosen faction AND have non-zero reputation values.
+   * The bonusRepEarned array includes entries for all factions that
+   * have non-zero reputation values.
    *
    * **Validates: Requirements 3.4**
    */
-  it('bonusRepEarned includes only non-chosen factions with non-zero reputation', () => {
+  it('bonusRepEarned includes all factions with non-zero reputation', () => {
     fc.assert(
       fc.property(buildParamsArbitrary, (params) => {
         const report = buildSessionReport(params);
-        const { chosenFaction, reputationValues } = params.shared;
+        const { reputationValues } = params.shared;
 
-        // Every entry must be a non-chosen faction with non-zero rep
+        // Every entry must have non-zero rep
         for (const entry of report.bonusRepEarned) {
           expect(entry.reputation).not.toBe(0);
         }
 
-        // Count expected entries: non-chosen factions with non-zero rep
+        // Count expected entries: all factions with non-zero rep
         const factionCodes = ['EA', 'GA', 'HH', 'VS', 'RO', 'VW'] as const;
         const expectedCount = factionCodes.filter(
-          (code) =>
-            code !== chosenFaction &&
-            reputationValues[code] !== 0
+          (code) => reputationValues[code] !== 0
         ).length;
 
         expect(report.bonusRepEarned).toHaveLength(expectedCount);
-
-        // Verify no entry corresponds to the chosen faction
-        const chosenFactionFullName =
-          { EA: "Envoy's Alliance", GA: 'Grand Archive', HH: 'Horizon Hunters',
-            VS: 'Vigilant Seal', RO: 'Radiant Oath', VW: 'Verdant Wheel' }[chosenFaction];
-
-        const chosenEntries = report.bonusRepEarned.filter(
-          (entry) => entry.faction === chosenFactionFullName
-        );
-        expect(chosenEntries).toHaveLength(0);
       }),
       { numRuns: 50 }
     );

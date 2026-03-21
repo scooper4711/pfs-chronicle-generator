@@ -184,7 +184,6 @@ describe('Chronicle Path Persistence Property Tests', () => {
         reportingB: false,
         reportingC: false,
         reportingD: false,
-        chosenFaction: ''
       },
       characters: {
         actor1: {

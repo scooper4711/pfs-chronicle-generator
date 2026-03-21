@@ -40,7 +40,6 @@ export function createSharedFields(overrides: Partial<SharedFields> = {}): Share
     reportingB: false,
     reportingC: false,
     reportingD: false,
-    chosenFaction: '',
     ...overrides
   };
 }

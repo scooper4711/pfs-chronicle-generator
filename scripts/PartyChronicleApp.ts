@@ -250,7 +250,6 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       reportingB: savedData?.shared?.reportingB ?? false,
       reportingC: savedData?.shared?.reportingC ?? false,
       reportingD: savedData?.shared?.reportingD ?? false,
-      chosenFaction: savedData?.shared?.chosenFaction ?? '',
     };
   }
 
