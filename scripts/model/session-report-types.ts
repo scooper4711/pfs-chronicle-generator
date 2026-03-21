@@ -70,8 +70,8 @@ export interface SessionReport {
   /** GM's Paizo organized play number */
   gmOrgPlayNumber: number;
 
-  /** Top-level rep earned is always 0 */
-  repEarned: 0;
+  /** Chosen faction reputation value from the shared Reputation section */
+  repEarned: number;
 
   /** Reporting flag A checkbox */
   reportingA: boolean;

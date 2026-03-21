@@ -14,6 +14,20 @@ import { serializeSessionReport } from './session-report-serializer';
 import type { SessionReport, SignUp, BonusRep } from './session-report-types';
 import { FACTION_NAMES } from './faction-names';
 
+/** Decode a base64 string containing UTF-16LE bytes back to a JS string. */
+function decodeUtf16LeBase64(base64: string): string {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.codePointAt(i) ?? 0;
+  }
+  const codeUnits: number[] = [];
+  for (let i = 0; i < bytes.length; i += 2) {
+    codeUnits.push(bytes[i] | (bytes[i + 1] << 8));
+  }
+  return codeUnits.map((code) => String.fromCodePoint(code)).join('');
+}
+
 /** Arbitrary for a full faction name. */
 const factionNameArbitrary = fc.constantFrom(...Object.values(FACTION_NAMES));
 
@@ -72,7 +86,7 @@ describe('Session Report Serializer Properties', () => {
 
     /**
      * For any valid SessionReport object, serializing to JSON,
-     * base64-encoding, then base64-decoding and JSON-parsing produces
+     * UTF-16LE + base64-encoding, then decoding and JSON-parsing produces
      * an object deeply equal to the original.
      *
      * Feature: paizo-session-reporting, Property 6: Serialization round-trip
@@ -82,7 +96,7 @@ describe('Session Report Serializer Properties', () => {
       fc.assert(
         fc.property(sessionReportArbitrary, (report) => {
           const encoded = serializeSessionReport(report);
-          const decoded = JSON.parse(atob(encoded));
+          const decoded = JSON.parse(decodeUtf16LeBase64(encoded));
 
           expect(decoded).toEqual(report);
         }),
@@ -110,8 +124,8 @@ describe('Session Report Serializer Properties', () => {
     });
 
     /**
-     * For any valid SessionReport, the base64-encoded output decodes
-     * to the same JSON string that skipBase64 mode produces.
+     * For any valid SessionReport, the UTF-16LE base64-encoded output
+     * decodes to the same JSON string that skipBase64 mode produces.
      *
      * Feature: paizo-session-reporting, Property 6: Serialization round-trip
      * Validates: Requirements 6.2, 6.4
@@ -122,7 +136,7 @@ describe('Session Report Serializer Properties', () => {
           const encoded = serializeSessionReport(report);
           const rawJson = serializeSessionReport(report, true);
 
-          expect(atob(encoded)).toBe(rawJson);
+          expect(decodeUtf16LeBase64(encoded)).toBe(rawJson);
         }),
         { numRuns: 100 }
       );

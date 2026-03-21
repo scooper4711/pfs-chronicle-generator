@@ -43,6 +43,8 @@ export interface SessionReportBuildParams {
   characters: Record<string, UniqueFields>;
   partyActors: SessionReportActor[];
   layoutId: string;
+  /** Optional Date for deterministic testing of time-rounding logic */
+  now?: Date;
 }
 
 /**
@@ -101,9 +103,45 @@ function buildBonusReputation(
 }
 
 /**
+ * Builds an ISO 8601 datetime string from an event date and current time.
+ *
+ * Appends the current time (rounded to the nearest half-hour) to the
+ * event date string. Rounding rules:
+ * - minutes >= 45 → round up to next hour with :00
+ * - minutes >= 15 → round to :30
+ * - otherwise → round to :00
+ *
+ * @param eventDate - Date string in YYYY-MM-DD format
+ * @param now - Current time (defaults to new Date())
+ * @returns ISO 8601 datetime string: YYYY-MM-DDTHH:MM:00+00:00
+ *
+ * Requirements: paizo-session-reporting 2.3
+ */
+export function buildGameDateTime(eventDate: string, now?: Date): string {
+  const currentTime = now ?? new Date();
+  let hours = currentTime.getUTCHours();
+  const minutes = currentTime.getUTCMinutes();
+
+  let roundedMinutes: number;
+  if (minutes >= 45) {
+    roundedMinutes = 0;
+    hours = (hours + 1) % 24;
+  } else if (minutes >= 15) {
+    roundedMinutes = 30;
+  } else {
+    roundedMinutes = 0;
+  }
+
+  const hoursStr = String(hours).padStart(2, '0');
+  const minutesStr = String(roundedMinutes).padStart(2, '0');
+
+  return `${eventDate}T${hoursStr}:${minutesStr}:00+00:00`;
+}
+
+/**
  * Assembles a SessionReport from form data, party actors, and layout metadata.
  *
- * Constant fields (gameSystem, generateGmChronicle, repEarned) are set to their
+ * Constant fields (gameSystem, generateGmChronicle) are set to their
  * fixed values. Variable fields are mapped from shared fields, per-character
  * unique fields, and actor PFS data. The scenario identifier is constructed
  * from the layout ID.
@@ -121,11 +159,11 @@ export function buildSessionReport(params: SessionReportBuildParams): SessionRep
     .map((actor) => buildSignUp(actor, characters[actor.id], shared.chosenFactionReputation));
 
   return {
-    gameDate: shared.eventDate,
+    gameDate: buildGameDateTime(shared.eventDate, params.now),
     gameSystem: 'PFS2E',
     generateGmChronicle: false,
     gmOrgPlayNumber: Number.parseInt(shared.gmPfsNumber, 10) || 0,
-    repEarned: 0,
+    repEarned: shared.chosenFactionReputation,
     reportingA: shared.reportingA,
     reportingB: shared.reportingB,
     reportingC: shared.reportingC,

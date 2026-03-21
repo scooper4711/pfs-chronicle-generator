@@ -165,7 +165,7 @@ describe('Session Report Builder Properties', () => {
      * Feature: paizo-session-reporting, Property 2: Session report constant fields invariant
      * Validates: Requirements 4.3, 4.4, 4.6
      */
-    it('top-level repEarned is always 0', () => {
+    it('top-level repEarned equals chosenFactionReputation', () => {
       fc.assert(
         fc.property(
           eventDateArbitrary,
@@ -184,7 +184,7 @@ describe('Session Report Builder Properties', () => {
 
             const report = buildSessionReport(params);
 
-            expect(report.repEarned).toBe(0);
+            expect(report.repEarned).toBe(params.shared.chosenFactionReputation);
           }
         ),
         { numRuns: 100 }
@@ -284,13 +284,16 @@ describe('Session Report Builder Properties', () => {
     /**
      * For any valid form state with an event date, GM PFS number, and
      * reporting flag values, the assembled SessionReport has gameDate
-     * equal to the input event date, gmOrgPlayNumber equal to the numeric
-     * GM PFS number, and reportingA–reportingD equal to the input flags.
+     * starting with the input event date and including a rounded time
+     * component, gmOrgPlayNumber equal to the numeric GM PFS number,
+     * and reportingA–reportingD equal to the input flags.
      *
      * Feature: paizo-session-reporting, Property 3: Session report field mapping
      * Validates: Requirements 4.2, 4.5, 4.7
      */
-    it('gameDate equals the input event date', () => {
+    it('gameDate starts with the input event date and includes rounded time', () => {
+      const gameDatePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:(00|30):00\+00:00$/;
+
       fc.assert(
         fc.property(
           eventDateArbitrary,
@@ -301,7 +304,8 @@ describe('Session Report Builder Properties', () => {
 
             const report = buildSessionReport(params);
 
-            expect(report.gameDate).toBe(eventDate);
+            expect(report.gameDate.startsWith(eventDate)).toBe(true);
+            expect(report.gameDate).toMatch(gameDatePattern);
           }
         ),
         { numRuns: 100 }
