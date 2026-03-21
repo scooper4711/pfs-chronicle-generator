@@ -51,6 +51,14 @@ jest.mock('./session-report-handler', () => ({
   handleCopySessionReport: jest.fn(),
 }));
 
+const mockClearArchive = jest.fn().mockResolvedValue(undefined);
+jest.mock('./chronicle-exporter', () => ({
+  clearArchive: (...args: unknown[]) => mockClearArchive(...args),
+  downloadArchive: jest.fn(),
+  hasArchive: jest.fn().mockReturnValue(false),
+  FlagActor: {},
+}));
+
 // Mock the dynamic import of main.js
 const mockRenderPartyChronicleForm = jest.fn().mockResolvedValue(undefined);
 jest.mock('../main.js', () => ({
@@ -84,9 +92,17 @@ jest.mock('../main.js', () => ({
 describe('event-listener-helpers', () => {
   let container: HTMLElement;
   let partyActors: PartyActor[];
+  const mockPartyActor = {
+    getFlag: jest.fn(),
+    setFlag: jest.fn().mockResolvedValue(undefined),
+    unsetFlag: jest.fn().mockResolvedValue(undefined),
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPartyActor.getFlag.mockReset();
+    mockPartyActor.setFlag.mockReset().mockResolvedValue(undefined);
+    mockPartyActor.unsetFlag.mockReset().mockResolvedValue(undefined);
     container = document.createElement('div');
 
     // Build the minimal DOM the clear-button flow reads from
@@ -122,7 +138,7 @@ describe('event-listener-helpers', () => {
 
   describe('attachClearButtonListener — clear flow', () => {
     it('should clear data, save defaults, re-render, and update visibility', async () => {
-      attachClearButtonListener(container, partyActors, {});
+      attachClearButtonListener(container, partyActors, {}, mockPartyActor);
 
       // Click the clear button
       const clearButton = container.querySelector('#clearData') as HTMLButtonElement;
@@ -172,7 +188,7 @@ describe('event-listener-helpers', () => {
       const scenarioInput = container.querySelector('#scenarioName') as HTMLInputElement;
       scenarioInput.value = 'PFS Bounty #1: The Whitefang Wyrm';
 
-      attachClearButtonListener(container, partyActors, {});
+      attachClearButtonListener(container, partyActors, {}, mockPartyActor);
       const clearButton = container.querySelector('#clearData') as HTMLButtonElement;
       clearButton.click();
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -188,7 +204,7 @@ describe('event-listener-helpers', () => {
       const scenarioInput = container.querySelector('#scenarioName') as HTMLInputElement;
       scenarioInput.value = 'PFS Quest #1: The Sandstone Secret';
 
-      attachClearButtonListener(container, partyActors, {});
+      attachClearButtonListener(container, partyActors, {}, mockPartyActor);
       const clearButton = container.querySelector('#clearData') as HTMLButtonElement;
       clearButton.click();
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -205,7 +221,7 @@ describe('event-listener-helpers', () => {
         { id: 'actor-3', name: 'NoSystem', type: 'character' },
       ];
 
-      attachClearButtonListener(container, actorsNoSystem, {});
+      attachClearButtonListener(container, actorsNoSystem, {}, mockPartyActor);
       const clearButton = container.querySelector('#clearData') as HTMLButtonElement;
       clearButton.click();
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -218,7 +234,7 @@ describe('event-listener-helpers', () => {
     it('should not proceed when confirmation dialog is rejected', async () => {
       (foundry.applications.api.DialogV2.confirm as jest.Mock).mockResolvedValueOnce(false);
 
-      attachClearButtonListener(container, partyActors, {});
+      attachClearButtonListener(container, partyActors, {}, mockPartyActor);
       const clearButton = container.querySelector('#clearData') as HTMLButtonElement;
       clearButton.click();
       await new Promise(resolve => setTimeout(resolve, 50));

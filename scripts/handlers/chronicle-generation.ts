@@ -20,6 +20,8 @@ import { validateSharedFields, validateUniqueFields } from '../model/party-chron
 import { PdfGenerator } from '../PdfGenerator.js';
 import { PDFDocument } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
+import { createArchive, addPdfToArchive, storeArchive, FlagActor } from './chronicle-exporter.js';
+import { generateChronicleFilename } from '../utils/filename-utils.js';
 
 /**
  * Validates all character fields (shared and unique) for chronicle generation
@@ -269,7 +271,8 @@ async function generateSingleCharacterPdf(
     return {
       characterId,
       characterName,
-      success: true
+      success: true,
+      pdfBytes: modifiedPdfBytes
     };
 
   } catch (caughtError) {
@@ -287,29 +290,35 @@ async function generateSingleCharacterPdf(
 
 /**
  * Processes all party members to generate their chronicles
- * 
+ *
  * This helper function iterates through all party members and generates a PDF
  * chronicle for each one. It extracts character data, generates the PDF, and
- * saves it to actor flags. Results are collected and returned for notification display.
- * 
+ * saves it to actor flags. Each successful PDF is also added to a zip archive
+ * that is stored on the Party actor after the loop completes.
+ *
  * @param data - Form data containing shared and character-specific fields
  * @param partyActors - Array of party member actors
  * @param layout - The layout configuration for PDF generation
  * @param layoutId - The selected layout ID
  * @param blankChroniclePath - Path to the blank chronicle PDF
+ * @param partyActor - The Party actor for zip archive storage
  * @returns Promise that resolves to array of GenerationResult objects
- * 
+ *
  * Requirements: code-standards-refactoring 2.6, 2.7, 2.8, 3.1, 3.6
+ * Requirements: chronicle-export 1.1, 1.2, 1.4, 1.5, 1.6, 5.3
  */
 async function processAllPartyMembers(
   data: any,
   partyActors: any[],
   layout: Layout,
   layoutId: string,
-  blankChroniclePath: string
+  blankChroniclePath: string,
+  partyActor: FlagActor
 ): Promise<GenerationResult[]> {
   const results: GenerationResult[] = [];
-  
+  const archive = createArchive();
+  const usedFilenames = new Set<string>();
+
   for (const actor of partyActors) {
     // Extract and transform character chronicle data
     const chronicleData = extractCharacterChronicleData(
@@ -318,7 +327,7 @@ async function processAllPartyMembers(
       layoutId,
       blankChroniclePath
     );
-    
+
     // Generate PDF and save to actor flags
     const result = await generateSingleCharacterPdf(
       chronicleData,
@@ -326,10 +335,21 @@ async function processAllPartyMembers(
       blankChroniclePath,
       actor
     );
-    
+
+    // Add successful PDFs to the zip archive
+    if (result.success && result.pdfBytes && result.pdfBytes.length > 0) {
+      const filename = generateChronicleFilename(actor.name, blankChroniclePath);
+      addPdfToArchive(archive, result.pdfBytes, filename, usedFilenames);
+    }
+
     results.push(result);
   }
-  
+
+  // Store the zip on the Party actor if at least one PDF was added
+  if (usedFilenames.size > 0) {
+    await storeArchive(archive, partyActor);
+  }
+
   return results;
 }
 
@@ -391,7 +411,8 @@ function displayGenerationResults(results: GenerationResult[]): void {
  */
 export async function generateChroniclesFromPartyData(
   data: any,
-  partyActors: any[]
+  partyActors: any[],
+  partyActor: FlagActor
 ): Promise<void> {
   // Step 1: Validate all fields
   const validation = validateAllCharacterFields(data, partyActors);
@@ -399,22 +420,23 @@ export async function generateChroniclesFromPartyData(
     ui.notifications?.error(`Validation failed: ${validation.errors.join(', ')}`);
     return;
   }
-  
+
   // Step 2: Load layout and blank chronicle path
   const layoutConfig = await loadLayoutConfiguration(data);
   if (!layoutConfig) {
     return; // Error already displayed by helper
   }
-  
+
   // Step 3: Process each party member
   const results = await processAllPartyMembers(
     data,
     partyActors,
     layoutConfig.layout,
     layoutConfig.layoutId,
-    layoutConfig.blankChroniclePath
+    layoutConfig.blankChroniclePath,
+    partyActor
   );
-  
+
   // Step 4: Display summary notifications
   displayGenerationResults(results);
 }

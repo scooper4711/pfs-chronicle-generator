@@ -37,6 +37,7 @@ import { createEarnedIncomeChangeHandler } from '../utils/earned-income-form-hel
 import { clearPartyChronicleData, savePartyChronicleData } from '../model/party-chronicle-storage.js';
 import { PartyChronicleData, UniqueFields } from '../model/party-chronicle-types.js';
 import { handleCopySessionReport } from './session-report-handler.js';
+import { FlagActor, clearArchive, downloadArchive, hasArchive } from './chronicle-exporter.js';
 import { debug } from '../utils/logger.js';
 
 /**
@@ -235,7 +236,8 @@ export function attachSaveButtonListener(
 export function attachClearButtonListener(
     container: HTMLElement,
     partyActors: PartyActor[],
-    partySheet: unknown
+    partySheet: unknown,
+    partyActor: FlagActor
 ): void {
     const clearButton = container.querySelector(BUTTON_SELECTORS.CLEAR_DATA);
     clearButton?.addEventListener('click', async (event: Event) => {
@@ -249,7 +251,7 @@ export function attachClearButtonListener(
         });
 
         if (confirmed) {
-            await handleClearButtonConfirmed(container, partyActors, partySheet);
+            await handleClearButtonConfirmed(container, partyActors, partySheet, partyActor);
         }
     });
 }
@@ -265,7 +267,8 @@ export function attachClearButtonListener(
 async function handleClearButtonConfirmed(
     container: HTMLElement,
     partyActors: PartyActor[],
-    partySheet: unknown
+    partySheet: unknown,
+    partyActor: FlagActor
 ): Promise<void> {
     // Get current values to preserve
     const gmPfsNumber = (container.querySelector(SHARED_FIELD_SELECTORS.GM_PFS_NUMBER) as HTMLInputElement)?.value || '';
@@ -283,6 +286,7 @@ async function handleClearButtonConfirmed(
     
     // Clear all data first
     await clearPartyChronicleData();
+    await clearArchive(partyActor);
     
     // Create new data with preserved values and smart defaults
     const newData = createDefaultChronicleData(
@@ -430,20 +434,30 @@ function createDefaultChronicleData(
 }
 
 /**
- * Attaches generate chronicles button event listener
- * 
+ * Attaches click listener to the Generate Chronicles button.
+ *
+ * Extracts form data and delegates to the chronicle generation pipeline,
+ * passing the Party actor for zip archive storage.
+ *
  * @param container - Form container element
  * @param partyActors - Array of party member actors
+ * @param partyActor - The Party actor for zip archive storage
  */
 export function attachGenerateButtonListener(
     container: HTMLElement,
-    partyActors: PartyActor[]
+    partyActors: PartyActor[],
+    partyActor: FlagActor
 ): void {
     const generateButton = container.querySelector(BUTTON_SELECTORS.GENERATE_CHRONICLES);
     generateButton?.addEventListener('click', async (event: Event) => {
         event.preventDefault();
         const formData = extractFormData(container, partyActors);
-        await generateChroniclesFromPartyData(formData, partyActors);
+        await generateChroniclesFromPartyData(formData, partyActors, partyActor);
+
+        const exportButton = container.querySelector(BUTTON_SELECTORS.EXPORT_CHRONICLES);
+        if (exportButton && hasArchive(partyActor)) {
+            exportButton.removeAttribute('disabled');
+        }
     });
 }
 
@@ -465,6 +479,36 @@ export function attachCopySessionReportListener(
         const layoutSelect = container.querySelector(SHARED_FIELD_SELECTORS.LAYOUT) as HTMLSelectElement;
         const layoutId = layoutSelect?.value || '';
         await handleCopySessionReport(container, partyActors, layoutId, event as MouseEvent);
+    });
+}
+
+/**
+ * Attaches Export Chronicles button event listener.
+ * Downloads the stored zip archive using the scenario name and event date
+ * from the form fields.
+ *
+ * @param container - Form container element
+ * @param partyActor - The Party actor holding the zip archive in its flags
+ *
+ * Requirements: chronicle-export 2.1, 3.1, 3.2, 3.3, 3.4, 4.1, 4.2, 6.2
+ */
+export function attachExportButtonListener(
+    container: HTMLElement,
+    partyActor: FlagActor
+): void {
+    const exportButton = container.querySelector(BUTTON_SELECTORS.EXPORT_CHRONICLES);
+    exportButton?.addEventListener('click', (event: Event) => {
+        event.preventDefault();
+
+        if (!hasArchive(partyActor)) {
+            ui.notifications?.error('No chronicle archive available to export.');
+            return;
+        }
+
+        const scenarioName = (container.querySelector(SHARED_FIELD_SELECTORS.SCENARIO_NAME) as HTMLInputElement)?.value || '';
+        const eventDate = (container.querySelector(SHARED_FIELD_SELECTORS.EVENT_DATE) as HTMLInputElement)?.value || '';
+
+        downloadArchive(partyActor, scenarioName, eventDate);
     });
 }
 

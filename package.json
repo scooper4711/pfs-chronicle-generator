@@ -18,6 +18,7 @@
     "@eslint/js": "^10.0.1",
     "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",
+    "@types/jszip": "^3.4.0",
     "@typescript-eslint/eslint-plugin": "^8.56.1",
     "@typescript-eslint/parser": "^8.56.1",
     "esbuild": "^0.25.9",
@@ -35,6 +36,7 @@
     "@pdf-lib/fontkit": "^1.1.1",
     "file-saver": "^2.0.5",
     "js-yaml": "^4.1.1",
+    "jszip": "^3.10.1",
     "pdf-lib": "^1.17.1"
   }
 }

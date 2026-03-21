@@ -64,6 +64,7 @@ export const BUTTON_SELECTORS = {
   CLEAR_DATA: '#clearData',
   GENERATE_CHRONICLES: '#generateChronicles',
   COPY_SESSION_REPORT: '#copySessionReport',
+  EXPORT_CHRONICLES: '#exportChronicles',
 } as const;
 
 /**
