@@ -339,6 +339,11 @@
     color: var(--color-text-light-0, #fff);
 }
 
+.sheet.party [data-tab=pfs] .actions-section .buttons button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 /* Character-Specific Information header - compact styling */
 .sheet.party [data-tab=pfs] .content-header {
     padding: 0.15rem 0.5rem;
