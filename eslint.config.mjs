@@ -38,7 +38,7 @@ export default defineConfig(
 
   // Test files — exempt from file size and function length limits
   {
-    files: ['**/*.test.ts', '**/*.pbt.test.ts', '**/*.property.test.ts'],
+    files: ['tests/**/*.ts'],
     extends: [
       eslint.configs.recommended,
       ...tseslint.configs.recommended,

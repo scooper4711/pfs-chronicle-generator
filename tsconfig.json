@@ -12,6 +12,7 @@
     "types": ["fvtt-types", "jest"],
   },
   "include": [
-    "scripts/**/*.ts"
+    "scripts/**/*.ts",
+    "tests/**/*.ts"
   ]
 }
