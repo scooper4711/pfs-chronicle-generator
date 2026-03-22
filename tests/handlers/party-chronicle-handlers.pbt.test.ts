@@ -13,19 +13,19 @@ import { describe, it, expect, jest } from '@jest/globals';
 import fc from 'fast-check';
 
 // Mock the dependencies to avoid type errors in other modules
-jest.mock('./chronicle-generation', () => ({
+jest.mock('../../scripts/handlers/chronicle-generation', () => ({
   generateChroniclesFromPartyData: jest.fn()
 }));
 
-jest.mock('./validation-display', () => ({
+jest.mock('../../scripts/handlers/validation-display', () => ({
   updateValidationDisplay: jest.fn()
 }));
 
-jest.mock('./collapsible-section-handlers', () => ({
+jest.mock('../../scripts/handlers/collapsible-section-handlers', () => ({
   updateSectionSummary: jest.fn()
 }));
 
-jest.mock('../model/party-chronicle-storage', () => ({
+jest.mock('../../scripts/model/party-chronicle-storage', () => ({
   savePartyChronicleData: jest.fn()
 }));
 
@@ -33,8 +33,8 @@ jest.mock('../model/party-chronicle-storage', () => ({
 import {
   updateEarnedIncomeDisplay,
   updateAllEarnedIncomeDisplays
-} from './party-chronicle-handlers';
-import { calculateEarnedIncome, formatIncomeValue } from '../utils/earned-income-calculator';
+} from '../../scripts/handlers/party-chronicle-handlers';
+import { calculateEarnedIncome, formatIncomeValue } from '../../scripts/utils/earned-income-calculator';
 
 /**
  * Creates a mock DOM structure for testing reactive updates

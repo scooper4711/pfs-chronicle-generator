@@ -10,8 +10,8 @@
 import { describe, it, expect } from '@jest/globals';
 import fc from 'fast-check';
 import JSZip from 'jszip';
-import { createArchive, addPdfToArchive, deduplicateFilename, generateZipFilename, hasArchive, storeArchive, clearArchive, FlagActor } from './chronicle-exporter';
-import { sanitizeFilename, generateChronicleFilename } from '../utils/filename-utils';
+import { createArchive, addPdfToArchive, deduplicateFilename, generateZipFilename, hasArchive, storeArchive, clearArchive, FlagActor } from '../../scripts/handlers/chronicle-exporter';
+import { sanitizeFilename, generateChronicleFilename } from '../../scripts/utils/filename-utils';
 
 // Feature: chronicle-export, Property 2: Filename deduplication produces unique names
 // **Validates: Requirements 1.3**

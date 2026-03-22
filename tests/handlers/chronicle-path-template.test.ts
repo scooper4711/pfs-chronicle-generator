@@ -64,7 +64,7 @@ global.game = {
 } as any;
 
 // Mock layoutStore
-jest.mock('../LayoutStore', () => ({
+jest.mock('../../scripts/LayoutStore', () => ({
   layoutStore: {
     getSeasons: jest.fn(() => [
       { id: 'pfs2-season7', name: 'Season 7' }
@@ -81,12 +81,12 @@ jest.mock('../LayoutStore', () => ({
 }));
 
 // Mock party chronicle storage
-jest.mock('../model/party-chronicle-storage', () => ({
+jest.mock('../../scripts/model/party-chronicle-storage', () => ({
   loadPartyChronicleData: jest.fn(async () => null)
 }));
 
 // Now import PartyChronicleApp after mocks are set up
-import { PartyChronicleApp } from '../PartyChronicleApp';
+import { PartyChronicleApp } from '../../scripts/PartyChronicleApp';
 
 describe('Chronicle Path Template Structure Tests', () => {
   const createMockActor = () => ({

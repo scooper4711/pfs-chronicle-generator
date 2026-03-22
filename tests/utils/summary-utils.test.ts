@@ -7,7 +7,7 @@ import {
   generateEventDetailsSummary,
   generateReputationSummary,
   generateSharedRewardsSummary
-} from './summary-utils';
+} from '../../scripts/utils/summary-utils';
 
 describe('summary-utils', () => {
   let container: HTMLElement;

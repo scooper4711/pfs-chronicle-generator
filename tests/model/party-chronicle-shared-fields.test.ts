@@ -8,8 +8,8 @@
  */
 
 import fc from 'fast-check';
-import { PartyChronicleData } from './party-chronicle-types';
-import { mapToCharacterData } from './party-chronicle-mapper';
+import { PartyChronicleData } from '../../scripts/model/party-chronicle-types';
+import { mapToCharacterData } from '../../scripts/model/party-chronicle-mapper';
 
 /**
  * Generator for shared field values

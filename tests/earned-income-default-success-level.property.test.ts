@@ -11,7 +11,7 @@
 
 import { describe, it, expect, beforeEach } from '@jest/globals';
 import fc from 'fast-check';
-import { extractFormData } from './handlers/form-data-extraction';
+import { extractFormData } from '../scripts/handlers/form-data-extraction';
 
 describe('Earned Income Default Success Level - Property Tests', () => {
   let container: HTMLElement;

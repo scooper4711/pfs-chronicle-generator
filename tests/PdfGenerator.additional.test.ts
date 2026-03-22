@@ -5,8 +5,8 @@
  */
 
 import { PDFDocument, PDFPage } from 'pdf-lib';
-import { PdfGenerator } from './PdfGenerator';
-import { Layout } from './model/layout';
+import { PdfGenerator } from '../scripts/PdfGenerator';
+import { Layout } from '../scripts/model/layout';
 
 describe('PdfGenerator - additional element types', () => {
   let pdfDoc: PDFDocument;

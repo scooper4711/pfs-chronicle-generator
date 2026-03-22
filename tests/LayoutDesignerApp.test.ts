@@ -54,7 +54,7 @@ const mockGetSeasons = jest.fn();
 const mockGetLayoutsByParent = jest.fn();
 const mockGetLayout = jest.fn();
 
-jest.mock('./LayoutStore', () => ({
+jest.mock('../scripts/LayoutStore', () => ({
   layoutStore: {
     getSeasons: (...args: unknown[]) => mockGetSeasons(...args),
     getLayoutsByParent: (...args: unknown[]) => mockGetLayoutsByParent(...args),
@@ -65,7 +65,7 @@ jest.mock('./LayoutStore', () => ({
 const mockDrawGrid = jest.fn().mockResolvedValue(undefined);
 const mockDrawBoxes = jest.fn().mockResolvedValue(undefined);
 
-jest.mock('./PdfGenerator', () => ({
+jest.mock('../scripts/PdfGenerator', () => ({
   PdfGenerator: jest.fn().mockImplementation(() => ({
     drawGrid: mockDrawGrid,
     drawBoxes: mockDrawBoxes,
@@ -86,9 +86,9 @@ jest.mock('pdf-lib', () => ({
 
 jest.mock('@pdf-lib/fontkit', () => ({}));
 
-import { LayoutDesignerApp } from './LayoutDesignerApp';
-import { PdfGenerator } from './PdfGenerator';
-import { Layout } from './model/layout';
+import { LayoutDesignerApp } from '../scripts/LayoutDesignerApp';
+import { PdfGenerator } from '../scripts/PdfGenerator';
+import { Layout } from '../scripts/model/layout';
 
 // --- Test helpers ---
 

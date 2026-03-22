@@ -6,8 +6,8 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import type { SharedFields } from './party-chronicle-types';
-import { calculateReputation } from './reputation-calculator';
+import type { SharedFields } from '../../scripts/model/party-chronicle-types';
+import { calculateReputation } from '../../scripts/model/reputation-calculator';
 
 // Helper to create minimal SharedFields for testing
 function createSharedFields(

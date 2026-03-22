@@ -33,7 +33,7 @@ import {
   downloadArchive,
   clearArchive,
   FlagActor,
-} from './chronicle-exporter';
+} from '../../scripts/handlers/chronicle-exporter';
 
 // --- Helpers ---
 

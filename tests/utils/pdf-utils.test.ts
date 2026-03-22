@@ -1,5 +1,5 @@
 import { PDFDocument } from 'pdf-lib';
-import { getFont } from './pdf-utils';
+import { getFont } from '../../scripts/utils/pdf-utils';
 
 describe('getFont - standard font resolution', () => {
   let pdfDoc: PDFDocument;

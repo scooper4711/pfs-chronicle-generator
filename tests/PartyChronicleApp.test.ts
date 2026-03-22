@@ -6,7 +6,7 @@
  */
 
 import fc from 'fast-check';
-import { PartyMember, PartyChronicleContext } from './model/party-chronicle-types';
+import { PartyMember, PartyChronicleContext } from '../scripts/model/party-chronicle-types';
 
 // Mock foundry global before importing PartyChronicleApp
 (global as any).foundry = {
@@ -39,7 +39,7 @@ global.game = {
 } as any;
 
 // Mock layoutStore
-jest.mock('./LayoutStore', () => ({
+jest.mock('../scripts/LayoutStore', () => ({
   layoutStore: {
     getSeasons: jest.fn(() => [
       { id: 'pfs2-season7', name: 'Season 7' },
@@ -57,12 +57,12 @@ jest.mock('./LayoutStore', () => ({
 }));
 
 // Mock party chronicle storage
-jest.mock('./model/party-chronicle-storage', () => ({
+jest.mock('../scripts/model/party-chronicle-storage', () => ({
   loadPartyChronicleData: jest.fn(async () => null)
 }));
 
 // Now import PartyChronicleApp after mocks are set up
-import { PartyChronicleApp } from './PartyChronicleApp';
+import { PartyChronicleApp } from '../scripts/PartyChronicleApp';
 
 /**
  * Generator for mock actor objects
@@ -369,7 +369,7 @@ describe('PartyChronicleApp Property Tests', () => {
     });
 
     it('sets chroniclePathExists to false when layout has no default (even if file exists)', async () => {
-      const { loadPartyChronicleData } = require('./model/party-chronicle-storage');
+      const { loadPartyChronicleData } = require('../scripts/model/party-chronicle-storage');
       
       // Mock saved data with a chronicle path
       loadPartyChronicleData.mockResolvedValue({
@@ -397,7 +397,7 @@ describe('PartyChronicleApp Property Tests', () => {
     });
 
     it('sets chroniclePathExists to false when file does not exist', async () => {
-      const { loadPartyChronicleData } = require('./model/party-chronicle-storage');
+      const { loadPartyChronicleData } = require('../scripts/model/party-chronicle-storage');
       
       // Mock saved data with a chronicle path
       loadPartyChronicleData.mockResolvedValue({
@@ -424,7 +424,7 @@ describe('PartyChronicleApp Property Tests', () => {
     });
 
     it('sets chroniclePathExists to false when path is empty', async () => {
-      const { loadPartyChronicleData } = require('./model/party-chronicle-storage');
+      const { loadPartyChronicleData } = require('../scripts/model/party-chronicle-storage');
       
       // Mock saved data with empty chronicle path
       loadPartyChronicleData.mockResolvedValue({
@@ -446,7 +446,7 @@ describe('PartyChronicleApp Property Tests', () => {
     });
 
     it('sets chroniclePathExists to false when no saved data exists', async () => {
-      const { loadPartyChronicleData } = require('./model/party-chronicle-storage');
+      const { loadPartyChronicleData } = require('../scripts/model/party-chronicle-storage');
       
       // Mock no saved data
       loadPartyChronicleData.mockResolvedValue(null);
@@ -462,7 +462,7 @@ describe('PartyChronicleApp Property Tests', () => {
     });
 
     it('calls checkFileExists during context preparation', async () => {
-      const { loadPartyChronicleData } = require('./model/party-chronicle-storage');
+      const { loadPartyChronicleData } = require('../scripts/model/party-chronicle-storage');
       
       // Mock saved data with a chronicle path
       loadPartyChronicleData.mockResolvedValue({
@@ -492,7 +492,7 @@ describe('PartyChronicleApp Property Tests', () => {
     });
 
     it('handles network errors during file existence check', async () => {
-      const { loadPartyChronicleData } = require('./model/party-chronicle-storage');
+      const { loadPartyChronicleData } = require('../scripts/model/party-chronicle-storage');
       
       // Mock saved data with a chronicle path
       loadPartyChronicleData.mockResolvedValue({

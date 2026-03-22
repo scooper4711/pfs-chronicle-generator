@@ -80,7 +80,7 @@ global.fetch = jest.fn<typeof fetch>() as jest.MockedFunction<typeof fetch>;
 const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
 
 // Mock layoutStore before importing
-jest.mock('./LayoutStore', () => ({
+jest.mock('../scripts/LayoutStore', () => ({
   layoutStore: {
     getSeasons: jest.fn(() => [
       { id: 'season-4', name: 'Season 4' },
@@ -103,15 +103,15 @@ jest.mock('./LayoutStore', () => ({
 }));
 
 // Mock party chronicle storage
-jest.mock('./model/party-chronicle-storage', () => {
-  const actualStorage = jest.requireActual('./model/party-chronicle-storage') as any;
+jest.mock('../scripts/model/party-chronicle-storage', () => {
+  const actualStorage = jest.requireActual('../scripts/model/party-chronicle-storage') as any;
   return {
     ...actualStorage,
   };
 });
 
 // Now import after mocking
-import { savePartyChronicleData, clearPartyChronicleData } from './model/party-chronicle-storage';
+import { savePartyChronicleData, clearPartyChronicleData } from '../scripts/model/party-chronicle-storage';
 
 /**
  * Property 1: Fault Condition - Chronicle Path Visibility Not Updated After Clear
@@ -286,7 +286,7 @@ describe('Clear Button Chronicle Path Visibility Bug Condition Exploration', () 
             // Step 4: Simulate calling updateChroniclePathVisibility
             // This is what SHOULD happen after re-rendering the form
             // Import the function dynamically to test it
-            const { updateChroniclePathVisibility } = await import('./handlers/party-chronicle-handlers');
+            const { updateChroniclePathVisibility } = await import('../scripts/handlers/party-chronicle-handlers');
             
             // Call updateChroniclePathVisibility with the preserved chronicle path and layoutId
             await updateChroniclePathVisibility(preservedValues.chroniclePath, container, preservedValues.layoutId);
@@ -405,7 +405,7 @@ describe('Clear Button Chronicle Path Visibility Bug Condition Exploration', () 
         await savePartyChronicleData(clearedData);
         
         // Step 4: Call updateChroniclePathVisibility (what SHOULD happen)
-        const { updateChroniclePathVisibility } = await import('./handlers/party-chronicle-handlers');
+        const { updateChroniclePathVisibility } = await import('../scripts/handlers/party-chronicle-handlers');
         await updateChroniclePathVisibility(preservedChroniclePath, container, preservedLayoutId);
         
         // Property: Chronicle path field should be hidden when file exists

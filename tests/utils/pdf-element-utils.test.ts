@@ -9,10 +9,10 @@ import {
   resolveValue,
   getAllContentElements,
   findContentElement,
-} from './pdf-element-utils';
-import { ContentElement, Preset } from '../model/layout';
+} from '../../scripts/utils/pdf-element-utils';
+import { ContentElement, Preset } from '../../scripts/model/layout';
 
-jest.mock('./logger.js', () => ({
+jest.mock('../../scripts/utils/logger.js', () => ({
   debug: jest.fn(),
 }));
 

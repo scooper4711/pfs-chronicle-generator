@@ -5,7 +5,7 @@
  * to the current type definitions, including all required reputation fields.
  */
 
-import { SharedFields, UniqueFields, PartyChronicleData } from './party-chronicle-types';
+import { SharedFields, UniqueFields, PartyChronicleData } from '../../scripts/model/party-chronicle-types';
 
 /**
  * Creates valid SharedFields with all required fields including reputation

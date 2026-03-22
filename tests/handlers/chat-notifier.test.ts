@@ -8,8 +8,8 @@
  */
 
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
-import { postChatNotification, getGmUserIds } from './chat-notifier';
-import { GenerationResult } from '../model/party-chronicle-types';
+import { postChatNotification, getGmUserIds } from '../../scripts/handlers/chat-notifier';
+import { GenerationResult } from '../../scripts/model/party-chronicle-types';
 
 const mockCreate = jest.fn<() => Promise<unknown>>().mockResolvedValue(undefined);
 

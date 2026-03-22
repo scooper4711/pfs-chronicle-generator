@@ -5,8 +5,8 @@
  */
 
 import { PDFDocument } from 'pdf-lib';
-import { getColor, getCanvasRect, getFont } from './pdf-utils';
-import { Canvas } from '../model/layout';
+import { getColor, getCanvasRect, getFont } from '../../scripts/utils/pdf-utils';
+import { Canvas } from '../../scripts/model/layout';
 
 describe('getColor', () => {
   it('should return black for undefined color', () => {

@@ -9,12 +9,12 @@
 
 import fc from 'fast-check';
 import { describe, it, expect } from '@jest/globals';
-import { updateSectionSummary } from './collapsible-section-handlers';
+import { updateSectionSummary } from '../../scripts/handlers/collapsible-section-handlers';
 import {
   generateEventDetailsSummary,
   generateReputationSummary,
   generateSharedRewardsSummary
-} from '../utils/summary-utils';
+} from '../../scripts/utils/summary-utils';
 
 describe('collapsible-section-handlers property tests', () => {
   describe('updateSectionSummary', () => {

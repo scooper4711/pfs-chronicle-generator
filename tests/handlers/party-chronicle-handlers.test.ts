@@ -16,7 +16,7 @@ import {
   updateAllEarnedIncomeDisplays,
   updateDowntimeDaysDisplay,
   handleFieldChange
-} from './party-chronicle-handlers';
+} from '../../scripts/handlers/party-chronicle-handlers';
 
 describe('Party Chronicle Event Handlers - Unit Tests', () => {
   let container: HTMLElement;

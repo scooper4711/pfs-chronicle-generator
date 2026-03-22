@@ -8,13 +8,13 @@
  * @jest-environment jsdom
  */
 
-import { attachClearButtonListener, PartyActor } from './event-listener-helpers';
+import { attachClearButtonListener, PartyActor } from '../../scripts/handlers/event-listener-helpers';
 
 // Track calls to clearPartyChronicleData and savePartyChronicleData
 const mockClearPartyChronicleData = jest.fn().mockResolvedValue(undefined);
 const mockSavePartyChronicleData = jest.fn().mockResolvedValue(undefined);
 
-jest.mock('../model/party-chronicle-storage', () => ({
+jest.mock('../../scripts/model/party-chronicle-storage', () => ({
   clearPartyChronicleData: (...args: unknown[]) => mockClearPartyChronicleData(...args),
   savePartyChronicleData: (...args: unknown[]) => mockSavePartyChronicleData(...args),
 }));
@@ -22,7 +22,7 @@ jest.mock('../model/party-chronicle-storage', () => ({
 // Mock the handlers that are imported by event-listener-helpers
 const mockUpdateChroniclePathVisibility = jest.fn().mockResolvedValue(undefined);
 
-jest.mock('./party-chronicle-handlers', () => ({
+jest.mock('../../scripts/handlers/party-chronicle-handlers', () => ({
   handleSeasonChange: jest.fn(),
   handleLayoutChange: jest.fn(),
   handleFieldChange: jest.fn(),
@@ -38,21 +38,21 @@ jest.mock('./party-chronicle-handlers', () => ({
   updateChroniclePathVisibility: (...args: unknown[]) => mockUpdateChroniclePathVisibility(...args),
 }));
 
-jest.mock('./collapsible-section-handlers', () => ({
+jest.mock('../../scripts/handlers/collapsible-section-handlers', () => ({
   handleSectionHeaderClick: jest.fn(),
   handleSectionHeaderKeydown: jest.fn(),
 }));
 
-jest.mock('../utils/earned-income-form-helpers', () => ({
+jest.mock('../../scripts/utils/earned-income-form-helpers', () => ({
   createEarnedIncomeChangeHandler: jest.fn(() => jest.fn()),
 }));
 
-jest.mock('./session-report-handler', () => ({
+jest.mock('../../scripts/handlers/session-report-handler', () => ({
   handleCopySessionReport: jest.fn(),
 }));
 
 const mockClearArchive = jest.fn().mockResolvedValue(undefined);
-jest.mock('./chronicle-exporter', () => ({
+jest.mock('../../scripts/handlers/chronicle-exporter', () => ({
   clearArchive: (...args: unknown[]) => mockClearArchive(...args),
   downloadArchive: jest.fn(),
   hasArchive: jest.fn().mockReturnValue(false),
@@ -61,7 +61,7 @@ jest.mock('./chronicle-exporter', () => ({
 
 // Mock the dynamic import of main.js
 const mockRenderPartyChronicleForm = jest.fn().mockResolvedValue(undefined);
-jest.mock('../main.js', () => ({
+jest.mock('../../scripts/main.js', () => ({
   renderPartyChronicleForm: (...args: unknown[]) => mockRenderPartyChronicleForm(...args),
 }));
 

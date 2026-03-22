@@ -9,7 +9,7 @@
 
 import { describe, it, expect } from '@jest/globals';
 import fc from 'fast-check';
-import { formatIncomeValue } from './utils/earned-income-calculator';
+import { formatIncomeValue } from '../scripts/utils/earned-income-calculator';
 
 describe('Earned Income Display Formatting - Property Tests', () => {
   /**

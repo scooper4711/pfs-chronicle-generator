@@ -10,10 +10,10 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { mapToCharacterData } from './model/party-chronicle-mapper';
+import { mapToCharacterData } from '../scripts/model/party-chronicle-mapper';
 import { createSharedFields, createUniqueFields, createMockActor } from './model/test-helpers';
-import { calculateTreasureBundlesGp, calculateGpGained } from './utils/treasure-bundle-calculator';
-import { calculateEarnedIncome } from './utils/earned-income-calculator';
+import { calculateTreasureBundlesGp, calculateGpGained } from '../scripts/utils/treasure-bundle-calculator';
+import { calculateEarnedIncome } from '../scripts/utils/earned-income-calculator';
 
 describe('Treasure Bundle Calculation - Integration Tests', () => {
   describe('Complete Workflow: Enter treasure bundles → Calculate values → Generate PDFs', () => {

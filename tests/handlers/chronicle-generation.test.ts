@@ -28,24 +28,24 @@ const mockNotifications = {
 // --- Module mocks ---
 
 const mockGetLayout = jest.fn<(id: string) => Promise<any>>();
-jest.mock('../LayoutStore', () => ({
+jest.mock('../../scripts/LayoutStore', () => ({
   layoutStore: { getLayout: (id: string) => mockGetLayout(id) },
 }));
 
 const mockMapToCharacterData = jest.fn<(...args: any[]) => any>();
-jest.mock('../model/party-chronicle-mapper', () => ({
+jest.mock('../../scripts/model/party-chronicle-mapper', () => ({
   mapToCharacterData: (...args: any[]) => mockMapToCharacterData(...args),
 }));
 
 const mockValidateSharedFields = jest.fn<(...args: any[]) => any>();
 const mockValidateUniqueFields = jest.fn<(...args: any[]) => any>();
-jest.mock('../model/party-chronicle-validator', () => ({
+jest.mock('../../scripts/model/party-chronicle-validator', () => ({
   validateSharedFields: (...args: any[]) => mockValidateSharedFields(...args),
   validateUniqueFields: (...args: any[]) => mockValidateUniqueFields(...args),
 }));
 
 const mockPdfGenerate = jest.fn<() => Promise<void>>().mockResolvedValue(undefined);
-jest.mock('../PdfGenerator', () => ({
+jest.mock('../../scripts/PdfGenerator', () => ({
   PdfGenerator: jest.fn().mockImplementation(() => ({
     generate: mockPdfGenerate,
   })),
@@ -62,11 +62,11 @@ jest.mock('pdf-lib', () => ({
 jest.mock('@pdf-lib/fontkit', () => ({}));
 
 const mockPostChatNotification = jest.fn<(...args: any[]) => Promise<void>>().mockResolvedValue(undefined);
-jest.mock('./chat-notifier', () => ({
+jest.mock('../../scripts/handlers/chat-notifier', () => ({
   postChatNotification: (...args: any[]) => mockPostChatNotification(...args),
 }));
 
-jest.mock('./chronicle-exporter', () => ({
+jest.mock('../../scripts/handlers/chronicle-exporter', () => ({
   createArchive: jest.fn(() => ({ file: jest.fn() })),
   addPdfToArchive: jest.fn(
     (_archive: unknown, _bytes: unknown, filename: string, filenames: Set<string>) => {
@@ -81,8 +81,8 @@ jest.mock('./chronicle-exporter', () => ({
 global.console.log = jest.fn();
 global.console.error = jest.fn();
 
-import { generateChroniclesFromPartyData } from './chronicle-generation';
-import { FlagActor } from './chronicle-exporter';
+import { generateChroniclesFromPartyData } from '../../scripts/handlers/chronicle-generation';
+import { FlagActor } from '../../scripts/handlers/chronicle-exporter';
 
 // --- Helpers ---
 

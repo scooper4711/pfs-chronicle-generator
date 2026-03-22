@@ -4,8 +4,8 @@
 
 import { describe, it, expect } from '@jest/globals';
 import * as fc from 'fast-check';
-import { mapToCharacterData } from './party-chronicle-mapper';
-import { SharedFields, UniqueFields } from './party-chronicle-types';
+import { mapToCharacterData } from '../../scripts/model/party-chronicle-mapper';
+import { SharedFields, UniqueFields } from '../../scripts/model/party-chronicle-types';
 
 describe('mapToCharacterData', () => {
   const createMockActor = (actorId: string, currentFaction: string | null = null) => ({

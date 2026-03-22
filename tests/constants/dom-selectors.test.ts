@@ -12,7 +12,7 @@ import {
   REPUTATION_SELECTORS,
   GENERAL_SELECTORS,
   CSS_CLASSES,
-} from './dom-selectors';
+} from '../../scripts/constants/dom-selectors';
 
 describe('CHARACTER_FIELD_SELECTORS', () => {
   const characterId = 'abc123';

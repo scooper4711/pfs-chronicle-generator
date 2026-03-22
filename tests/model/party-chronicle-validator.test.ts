@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { validateSharedFields, validateUniqueFields, validateAllFields } from './party-chronicle-validator';
-import { SharedFields, UniqueFields } from './party-chronicle-types';
+import { validateSharedFields, validateUniqueFields, validateAllFields } from '../../scripts/model/party-chronicle-validator';
+import { SharedFields, UniqueFields } from '../../scripts/model/party-chronicle-types';
 import { createSharedFields, createUniqueFields } from './test-helpers';
 
 describe('validateSharedFields', () => {

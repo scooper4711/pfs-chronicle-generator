@@ -8,7 +8,7 @@ import {
   generateEventDetailsSummary,
   generateReputationSummary,
   generateSharedRewardsSummary
-} from './summary-utils';
+} from '../../scripts/utils/summary-utils';
 
 describe('summary-utils property tests', () => {
   describe('generateEventDetailsSummary', () => {

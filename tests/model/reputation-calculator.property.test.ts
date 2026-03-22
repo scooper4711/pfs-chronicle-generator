@@ -7,8 +7,8 @@
  */
 
 import fc from 'fast-check';
-import { calculateReputation } from './reputation-calculator';
-import { FACTION_NAMES } from './faction-names';
+import { calculateReputation } from '../../scripts/model/reputation-calculator';
+import { FACTION_NAMES } from '../../scripts/model/faction-names';
 
 /**
  * Generator for valid reputation values (0-9)

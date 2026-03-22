@@ -18,7 +18,7 @@ import {
   getIncomePerDay,
   calculateEarnedIncome,
   formatIncomeValue
-} from './earned-income-calculator';
+} from '../../scripts/utils/earned-income-calculator';
 
 describe('Earned Income Calculator Unit Tests', () => {
   describe('getDCForLevel', () => {

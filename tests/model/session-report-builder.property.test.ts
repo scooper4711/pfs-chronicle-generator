@@ -9,10 +9,10 @@
 
 import fc from 'fast-check';
 import { describe, it, expect } from '@jest/globals';
-import { buildSessionReport, SessionReportActor, SessionReportBuildParams } from './session-report-builder';
+import { buildSessionReport, SessionReportActor, SessionReportBuildParams } from '../../scripts/model/session-report-builder';
 import { createSharedFields, createUniqueFields } from './test-helpers';
-import { FACTION_NAMES } from './faction-names';
-import type { UniqueFields } from './party-chronicle-types';
+import { FACTION_NAMES } from '../../scripts/model/faction-names';
+import type { UniqueFields } from '../../scripts/model/party-chronicle-types';
 
 /** Arbitrary for a valid faction abbreviation code. */
 const factionCodeArbitrary = fc.constantFrom(...Object.keys(FACTION_NAMES));

@@ -54,7 +54,7 @@ describe('LayoutStore', () => {
   }
 
   async function getStore() {
-    const mod = await import('./LayoutStore');
+    const mod = await import('../scripts/LayoutStore');
     return mod.layoutStore;
   }
 

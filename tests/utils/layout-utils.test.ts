@@ -4,17 +4,17 @@
  * Tests checkbox and strikeout choice extraction from layout definitions.
  */
 
-import { findCheckboxChoices, findStrikeoutChoices } from './layout-utils';
-import { Layout } from '../model/layout';
+import { findCheckboxChoices, findStrikeoutChoices } from '../../scripts/utils/layout-utils';
+import { Layout } from '../../scripts/model/layout';
 
 // Mock dependencies that are not needed for pure function tests
-jest.mock('../LayoutStore', () => ({
+jest.mock('../../scripts/LayoutStore', () => ({
   layoutStore: {
     getLayout: jest.fn(),
   },
 }));
 
-jest.mock('../model/party-chronicle-storage', () => ({
+jest.mock('../../scripts/model/party-chronicle-storage', () => ({
   loadPartyChronicleData: jest.fn(),
 }));
 

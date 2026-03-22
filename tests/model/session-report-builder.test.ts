@@ -7,9 +7,9 @@
  * Requirements: paizo-session-reporting 4.1–4.11, 9.1–9.6
  */
 
-import { buildSessionReport, buildGameDateTime, SessionReportActor, SessionReportBuildParams } from './session-report-builder';
+import { buildSessionReport, buildGameDateTime, SessionReportActor, SessionReportBuildParams } from '../../scripts/model/session-report-builder';
 import { createSharedFields, createUniqueFields } from './test-helpers';
-import type { SharedFields } from './party-chronicle-types';
+import type { SharedFields } from '../../scripts/model/party-chronicle-types';
 
 /** Fixed time for deterministic gameDate output: 2025-06-15T14:10:00Z → rounds to 14:00 */
 const FIXED_NOW = new Date('2025-06-15T14:10:00Z');

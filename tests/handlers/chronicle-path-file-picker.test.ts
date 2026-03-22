@@ -43,12 +43,12 @@ global.console.error = jest.fn();
 };
 
 // Mock party chronicle storage
-jest.mock('../model/party-chronicle-storage', () => ({
+jest.mock('../../scripts/model/party-chronicle-storage', () => ({
   savePartyChronicleData: jest.fn<() => Promise<void>>().mockResolvedValue(undefined)
 }));
 
 // Mock form data extraction
-jest.mock('./form-data-extraction', () => ({
+jest.mock('../../scripts/handlers/form-data-extraction', () => ({
   extractFormData: jest.fn(() => ({
     shared: {
       blankChroniclePath: '/path/to/chronicle.pdf'
@@ -58,8 +58,8 @@ jest.mock('./form-data-extraction', () => ({
 }));
 
 // Now import the handlers after mocks are set up
-import { handleChroniclePathFilePicker, updateChroniclePathVisibility } from './party-chronicle-handlers';
-import { savePartyChronicleData } from '../model/party-chronicle-storage';
+import { handleChroniclePathFilePicker, updateChroniclePathVisibility } from '../../scripts/handlers/party-chronicle-handlers';
+import { savePartyChronicleData } from '../../scripts/model/party-chronicle-storage';
 
 describe('Chronicle Path File Picker Handler Tests', () => {
   let container: HTMLElement;

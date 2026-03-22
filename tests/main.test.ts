@@ -71,7 +71,7 @@ const mockGetSeasons = jest.fn().mockReturnValue([
   { id: 'pfs2-season7', name: 'Season 7' },
 ]);
 
-jest.mock('./LayoutStore', () => ({
+jest.mock('../scripts/LayoutStore', () => ({
   layoutStore: {
     initialize: (...args: unknown[]) => mockInitialize(...args),
     getSeasons: (...args: unknown[]) => mockGetSeasons(...args),
@@ -80,11 +80,11 @@ jest.mock('./LayoutStore', () => ({
   },
 }));
 
-jest.mock('./LayoutDesignerApp', () => ({
+jest.mock('../scripts/LayoutDesignerApp', () => ({
   LayoutDesignerApp: jest.fn(),
 }));
 
-jest.mock('./PartyChronicleApp', () => ({
+jest.mock('../scripts/PartyChronicleApp', () => ({
   PartyChronicleApp: jest.fn().mockImplementation(() => ({
     _prepareContext: jest.fn().mockResolvedValue({
       partyMembers: [],
@@ -96,26 +96,26 @@ jest.mock('./PartyChronicleApp', () => ({
   })),
 }));
 
-jest.mock('./utils/filename-utils', () => ({
+jest.mock('../scripts/utils/filename-utils', () => ({
   generateChronicleFilename: jest.fn().mockReturnValue('chronicle.pdf'),
 }));
 
-jest.mock('./utils/layout-utils', () => ({
+jest.mock('../scripts/utils/layout-utils', () => ({
   updateLayoutSpecificFields: jest.fn().mockResolvedValue(undefined),
 }));
 
-jest.mock('./handlers/validation-display', () => ({
+jest.mock('../scripts/handlers/validation-display', () => ({
   updateValidationDisplay: jest.fn(),
 }));
 
-jest.mock('./utils/earned-income-calculator', () => ({
+jest.mock('../scripts/utils/earned-income-calculator', () => ({
   calculateTaskLevelOptions: jest.fn().mockReturnValue([
     { value: 1, label: 'Level 1' },
     { value: 2, label: 'Level 2' },
   ]),
 }));
 
-jest.mock('./handlers/party-chronicle-handlers', () => ({
+jest.mock('../scripts/handlers/party-chronicle-handlers', () => ({
   extractFormData: jest.fn().mockReturnValue({ shared: {}, characters: {} }),
   saveFormData: jest.fn().mockResolvedValue(undefined),
   updateAllTreasureBundleDisplays: jest.fn(),
@@ -123,12 +123,12 @@ jest.mock('./handlers/party-chronicle-handlers', () => ({
   updateAllEarnedIncomeDisplays: jest.fn(),
 }));
 
-jest.mock('./handlers/collapsible-section-handlers', () => ({
+jest.mock('../scripts/handlers/collapsible-section-handlers', () => ({
   initializeCollapseSections: jest.fn(),
   updateAllSectionSummaries: jest.fn(),
 }));
 
-jest.mock('./handlers/event-listener-helpers', () => ({
+jest.mock('../scripts/handlers/event-listener-helpers', () => ({
   attachSeasonAndLayoutListeners: jest.fn(),
   attachFormFieldListeners: jest.fn(),
   attachTreasureBundleListeners: jest.fn(),
@@ -150,25 +150,25 @@ jest.spyOn(console, 'error').mockImplementation();
 
 // --- Import after mocks ---
 
-import { renderPartyChronicleForm } from './main';
-import { LayoutDesignerApp } from './LayoutDesignerApp';
-import { calculateTaskLevelOptions } from './utils/earned-income-calculator';
+import { renderPartyChronicleForm } from '../scripts/main';
+import { LayoutDesignerApp } from '../scripts/LayoutDesignerApp';
+import { calculateTaskLevelOptions } from '../scripts/utils/earned-income-calculator';
 import {
   attachSeasonAndLayoutListeners,
   attachFormFieldListeners,
   attachSaveButtonListener,
   attachGenerateButtonListener,
-} from './handlers/event-listener-helpers';
-import { updateValidationDisplay } from './handlers/validation-display';
+} from '../scripts/handlers/event-listener-helpers';
+import { updateValidationDisplay } from '../scripts/handlers/validation-display';
 import {
   updateAllTreasureBundleDisplays,
   updateDowntimeDaysDisplay,
   updateAllEarnedIncomeDisplays,
-} from './handlers/party-chronicle-handlers';
+} from '../scripts/handlers/party-chronicle-handlers';
 import {
   initializeCollapseSections,
   updateAllSectionSummaries,
-} from './handlers/collapsible-section-handlers';
+} from '../scripts/handlers/collapsible-section-handlers';
 
 // --- Helper to fire a captured hook ---
 

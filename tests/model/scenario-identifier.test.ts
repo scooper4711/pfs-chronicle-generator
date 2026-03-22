@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { buildScenarioIdentifier } from './scenario-identifier';
+import { buildScenarioIdentifier } from '../../scripts/model/scenario-identifier';
 
 describe('buildScenarioIdentifier', () => {
   describe('standard scenario layout IDs', () => {

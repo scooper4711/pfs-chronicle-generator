@@ -13,10 +13,10 @@ import {
   updateSectionSummary,
   updateAllSectionSummaries,
   initializeCollapseSections
-} from './collapsible-section-handlers';
+} from '../../scripts/handlers/collapsible-section-handlers';
 
 // Mock the storage module
-jest.mock('../model/collapse-state-storage', () => ({
+jest.mock('../../scripts/model/collapse-state-storage', () => ({
   saveCollapseState: jest.fn(),
   loadCollapseState: jest.fn(() => null),
   getDefaultCollapseState: jest.fn((sectionId: string) => {
@@ -32,7 +32,7 @@ jest.mock('../model/collapse-state-storage', () => ({
 }));
 
 // Mock the summary utils module
-jest.mock('../utils/summary-utils', () => ({
+jest.mock('../../scripts/utils/summary-utils', () => ({
   generateEventDetailsSummary: jest.fn(() => 'Session Reporting - Test Scenario'),
   generateReputationSummary: jest.fn(() => 'Reputation - +2'),
   generateSharedRewardsSummary: jest.fn(() => 'Shared Rewards - 4 XP; 3 TB')
@@ -328,7 +328,7 @@ describe('collapsible-section-handlers', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       // Override the mock to throw
-      const summaryUtils = require('../utils/summary-utils');
+      const summaryUtils = require('../../scripts/utils/summary-utils');
       summaryUtils.generateEventDetailsSummary.mockImplementationOnce(() => {
         throw new Error('test error');
       });

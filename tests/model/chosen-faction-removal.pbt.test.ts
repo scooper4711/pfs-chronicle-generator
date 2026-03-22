@@ -10,9 +10,9 @@
 
 import fc from 'fast-check';
 import { describe, it, expect } from '@jest/globals';
-import { buildSessionReport, SessionReportActor, SessionReportBuildParams } from './session-report-builder';
+import { buildSessionReport, SessionReportActor, SessionReportBuildParams } from '../../scripts/model/session-report-builder';
 import { createSharedFields, createUniqueFields } from './test-helpers';
-import { FACTION_NAMES } from './faction-names';
+import { FACTION_NAMES } from '../../scripts/model/faction-names';
 
 /** Arbitrary for a valid faction abbreviation code. */
 const factionCodeArbitrary = fc.constantFrom(...Object.keys(FACTION_NAMES));
@@ -224,7 +224,7 @@ describe('Preservation: Non-Bug-Condition Behavior Unchanged', () => {
             },
           }));
 
-          const characters: Record<string, import('./party-chronicle-types').UniqueFields> = {};
+          const characters: Record<string, import('../../scripts/model/party-chronicle-types').UniqueFields> = {};
           for (const member of partyMembers) {
             characters[member.actorId] = createUniqueFields({
               characterName: member.characterName,

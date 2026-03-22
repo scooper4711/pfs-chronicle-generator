@@ -15,8 +15,8 @@
 
 import fc from 'fast-check';
 import { describe, it, expect } from '@jest/globals';
-import { mapToCharacterData } from './model/party-chronicle-mapper';
-import { SharedFields, UniqueFields } from './model/party-chronicle-types';
+import { mapToCharacterData } from '../scripts/model/party-chronicle-mapper';
+import { SharedFields, UniqueFields } from '../scripts/model/party-chronicle-types';
 import { createSharedFields, createUniqueFields } from './model/test-helpers';
 
 /**

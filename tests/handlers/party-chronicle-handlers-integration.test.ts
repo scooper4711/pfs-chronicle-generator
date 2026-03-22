@@ -15,12 +15,12 @@ import {
   handleLayoutChange,
   saveFormData,
   updateChroniclePathVisibility,
-} from './party-chronicle-handlers';
+} from '../../scripts/handlers/party-chronicle-handlers';
 
 const mockGetLayoutsByParent = jest.fn().mockReturnValue([]);
 const mockGetLayout = jest.fn().mockResolvedValue(null);
 
-jest.mock('../LayoutStore', () => ({
+jest.mock('../../scripts/LayoutStore', () => ({
   layoutStore: {
     getLayoutsByParent: (...args: unknown[]) => mockGetLayoutsByParent(...args),
     getLayout: (...args: unknown[]) => mockGetLayout(...args),
@@ -28,27 +28,27 @@ jest.mock('../LayoutStore', () => ({
 }));
 
 const mockSavePartyChronicleData = jest.fn().mockResolvedValue(undefined);
-jest.mock('../model/party-chronicle-storage', () => ({
+jest.mock('../../scripts/model/party-chronicle-storage', () => ({
   savePartyChronicleData: (...args: unknown[]) => mockSavePartyChronicleData(...args),
 }));
 
-jest.mock('../utils/layout-utils', () => ({
+jest.mock('../../scripts/utils/layout-utils', () => ({
   updateLayoutSpecificFields: jest.fn().mockResolvedValue(undefined),
 }));
 
-jest.mock('./validation-display', () => ({
+jest.mock('../../scripts/handlers/validation-display', () => ({
   updateValidationDisplay: jest.fn(),
 }));
 
-jest.mock('./collapsible-section-handlers', () => ({
+jest.mock('../../scripts/handlers/collapsible-section-handlers', () => ({
   updateSectionSummary: jest.fn(),
 }));
 
-jest.mock('./form-data-extraction', () => ({
+jest.mock('../../scripts/handlers/form-data-extraction', () => ({
   extractFormData: jest.fn(() => ({ shared: {}, characters: {} })),
 }));
 
-jest.mock('./chronicle-generation', () => ({
+jest.mock('../../scripts/handlers/chronicle-generation', () => ({
   generateChroniclesFromPartyData: jest.fn(),
 }));
 

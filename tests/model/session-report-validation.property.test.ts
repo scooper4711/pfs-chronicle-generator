@@ -9,8 +9,8 @@
 
 import fc from 'fast-check';
 import { describe, it, expect } from '@jest/globals';
-import { validateSessionReportFields, SessionReportValidationParams } from './party-chronicle-validator';
-import { FACTION_NAMES } from './faction-names';
+import { validateSessionReportFields, SessionReportValidationParams } from '../../scripts/model/party-chronicle-validator';
+import { FACTION_NAMES } from '../../scripts/model/faction-names';
 
 /** Arbitrary for a valid faction abbreviation code. */
 const factionCodeArbitrary = fc.constantFrom(...Object.keys(FACTION_NAMES));

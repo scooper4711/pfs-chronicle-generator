@@ -10,7 +10,7 @@
 
 import fc from 'fast-check';
 import { describe, it, expect } from '@jest/globals';
-import { buildScenarioIdentifier } from './scenario-identifier';
+import { buildScenarioIdentifier } from '../../scripts/model/scenario-identifier';
 
 describe('Scenario Identifier Construction', () => {
   describe('Property 1: Scenario identifier construction', () => {

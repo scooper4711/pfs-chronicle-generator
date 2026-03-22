@@ -14,8 +14,8 @@ import {
   buildChatMessageContent,
   buildGmWhisperContent,
   postChatNotification,
-} from './chat-notifier';
-import { GenerationResult } from '../model/party-chronicle-types';
+} from '../../scripts/handlers/chat-notifier';
+import { GenerationResult } from '../../scripts/model/party-chronicle-types';
 
 const generationResultArbitrary = fc.record({
   characterId: fc.string({ minLength: 1 }),

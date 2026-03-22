@@ -11,7 +11,7 @@ import {
   loadCollapseState,
   getDefaultCollapseState,
   loadAllCollapseStates,
-} from './collapse-state-storage';
+} from '../../scripts/model/collapse-state-storage';
 
 const STORAGE_KEY = 'pfs-chronicle-generator.collapseSections';
 

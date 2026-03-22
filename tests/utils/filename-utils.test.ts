@@ -1,4 +1,4 @@
-import { sanitizeFilename, generateChronicleFilename } from './filename-utils';
+import { sanitizeFilename, generateChronicleFilename } from '../../scripts/utils/filename-utils';
 
 describe('filename-utils', () => {
     describe('sanitizeFilename', () => {

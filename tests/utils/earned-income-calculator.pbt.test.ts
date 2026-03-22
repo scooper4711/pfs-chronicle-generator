@@ -16,7 +16,7 @@ import {
   calculateTaskLevelOptions,
   getIncomePerDay,
   calculateEarnedIncome
-} from './earned-income-calculator';
+} from '../../scripts/utils/earned-income-calculator';
 
 describe('Earned Income Calculator Property-Based Tests', () => {
   // Feature: earned-income-calculation, Property 1: Task Level Options Generation

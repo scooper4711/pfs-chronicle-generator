@@ -11,29 +11,29 @@
  * Requirements: paizo-session-reporting 4.1, 6.5, 7.1, 7.2, 7.3, 7.4, 8.5
  */
 
-import { handleCopySessionReport } from './session-report-handler';
+import { handleCopySessionReport } from '../../scripts/handlers/session-report-handler';
 
 // Mock dependencies
-jest.mock('./form-data-extraction', () => ({
+jest.mock('../../scripts/handlers/form-data-extraction', () => ({
   extractFormData: jest.fn(),
 }));
 
-jest.mock('../model/party-chronicle-validator', () => ({
+jest.mock('../../scripts/model/party-chronicle-validator', () => ({
   validateSessionReportFields: jest.fn(),
 }));
 
-jest.mock('../model/session-report-builder', () => ({
+jest.mock('../../scripts/model/session-report-builder', () => ({
   buildSessionReport: jest.fn(),
 }));
 
-jest.mock('../model/session-report-serializer', () => ({
+jest.mock('../../scripts/model/session-report-serializer', () => ({
   serializeSessionReport: jest.fn(),
 }));
 
-import { extractFormData } from './form-data-extraction';
-import { validateSessionReportFields } from '../model/party-chronicle-validator';
-import { buildSessionReport } from '../model/session-report-builder';
-import { serializeSessionReport } from '../model/session-report-serializer';
+import { extractFormData } from '../../scripts/handlers/form-data-extraction';
+import { validateSessionReportFields } from '../../scripts/model/party-chronicle-validator';
+import { buildSessionReport } from '../../scripts/model/session-report-builder';
+import { serializeSessionReport } from '../../scripts/model/session-report-serializer';
 
 const mockExtractFormData = extractFormData as jest.Mock;
 const mockValidate = validateSessionReportFields as jest.Mock;

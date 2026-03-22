@@ -10,9 +10,9 @@
 
 import fc from 'fast-check';
 import { describe, it, expect } from '@jest/globals';
-import { serializeSessionReport } from './session-report-serializer';
-import type { SessionReport, SignUp, BonusRep } from './session-report-types';
-import { FACTION_NAMES } from './faction-names';
+import { serializeSessionReport } from '../../scripts/model/session-report-serializer';
+import type { SessionReport, SignUp, BonusRep } from '../../scripts/model/session-report-types';
+import { FACTION_NAMES } from '../../scripts/model/faction-names';
 
 /** Decode a base64 string containing UTF-16LE bytes back to a JS string. */
 function decodeUtf16LeBase64(base64: string): string {

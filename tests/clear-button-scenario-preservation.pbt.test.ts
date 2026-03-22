@@ -69,7 +69,7 @@ function resetMockGameSettings() {
 }
 
 // Mock layoutStore before importing
-jest.mock('./LayoutStore', () => ({
+jest.mock('../scripts/LayoutStore', () => ({
   layoutStore: {
     getSeasons: jest.fn(() => [
       { id: 'season-4', name: 'Season 4' },
@@ -93,8 +93,8 @@ jest.mock('./LayoutStore', () => ({
 }));
 
 // Mock party chronicle storage
-jest.mock('./model/party-chronicle-storage', () => {
-  const actualStorage = jest.requireActual('./model/party-chronicle-storage');
+jest.mock('../scripts/model/party-chronicle-storage', () => {
+  const actualStorage = jest.requireActual('../scripts/model/party-chronicle-storage');
   return {
     ...actualStorage,
     // Use actual implementations but they'll use our mocked localStorage
@@ -102,8 +102,8 @@ jest.mock('./model/party-chronicle-storage', () => {
 });
 
 // Now import after mocking
-import { PartyChronicleApp } from './PartyChronicleApp';
-import { savePartyChronicleData, clearPartyChronicleData } from './model/party-chronicle-storage';
+import { PartyChronicleApp } from '../scripts/PartyChronicleApp';
+import { savePartyChronicleData, clearPartyChronicleData } from '../scripts/model/party-chronicle-storage';
 
 /**
  * Property 1: Fault Condition - Clear Button Preserves Scenario Selection

@@ -8,10 +8,10 @@
  */
 
 import fc from 'fast-check';
-import { PartyChronicleData, UniqueFields } from './party-chronicle-types';
-import { mapToCharacterData } from './party-chronicle-mapper';
-import { calculateTreasureBundlesGp, calculateGpGained } from '../utils/treasure-bundle-calculator';
-import { calculateEarnedIncome } from '../utils/earned-income-calculator';
+import { PartyChronicleData, UniqueFields } from '../../scripts/model/party-chronicle-types';
+import { mapToCharacterData } from '../../scripts/model/party-chronicle-mapper';
+import { calculateTreasureBundlesGp, calculateGpGained } from '../../scripts/utils/treasure-bundle-calculator';
+import { calculateEarnedIncome } from '../../scripts/utils/earned-income-calculator';
 
 /**
  * Generator for unique field values

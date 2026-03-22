@@ -15,7 +15,7 @@
 
 import fc from 'fast-check';
 import { describe, it, expect } from '@jest/globals';
-import { generateChronicleFilename } from './utils/filename-utils';
+import { generateChronicleFilename } from '../scripts/utils/filename-utils';
 
 /**
  * Simulates the UNFIXED download handler behavior (uses module setting directly)

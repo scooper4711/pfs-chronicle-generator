@@ -4,7 +4,7 @@ import {
   calculateTreasureBundlesGp,
   calculateGpGained,
   formatGoldValue
-} from './treasure-bundle-calculator';
+} from '../../scripts/utils/treasure-bundle-calculator';
 
 describe('treasure-bundle-calculator', () => {
   describe('TREASURE_BUNDLE_VALUES', () => {

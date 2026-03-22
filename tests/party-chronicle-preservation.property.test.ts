@@ -15,9 +15,9 @@
 
 import fc from 'fast-check';
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { savePartyChronicleData, loadPartyChronicleData, clearPartyChronicleData } from './model/party-chronicle-storage';
-import { PartyChronicleData } from './model/party-chronicle-types';
-import { sanitizeFilename } from './utils/filename-utils';
+import { savePartyChronicleData, loadPartyChronicleData, clearPartyChronicleData } from '../scripts/model/party-chronicle-storage';
+import { PartyChronicleData } from '../scripts/model/party-chronicle-types';
+import { sanitizeFilename } from '../scripts/utils/filename-utils';
 
 // Mock the Foundry VTT game.settings API
 const mockSettings = new Map<string, any>();

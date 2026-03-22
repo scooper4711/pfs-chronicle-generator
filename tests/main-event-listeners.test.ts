@@ -96,7 +96,7 @@ global.console.log = jest.fn();
 global.console.error = jest.fn();
 
 // Mock all module dependencies
-jest.mock('./LayoutStore', () => ({
+jest.mock('../scripts/LayoutStore', () => ({
   layoutStore: {
     initialize: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
     getSeasons: jest.fn(() => [{ id: 'season1', name: 'Season 1' }]),
@@ -104,11 +104,11 @@ jest.mock('./LayoutStore', () => ({
   }
 }));
 
-jest.mock('./LayoutDesignerApp', () => ({
+jest.mock('../scripts/LayoutDesignerApp', () => ({
   LayoutDesignerApp: jest.fn()
 }));
 
-jest.mock('./PartyChronicleApp', () => ({
+jest.mock('../scripts/PartyChronicleApp', () => ({
   PartyChronicleApp: jest.fn().mockImplementation(() => ({
     _prepareContext: jest.fn<() => Promise<any>>().mockResolvedValue({
       shared: {
@@ -122,20 +122,20 @@ jest.mock('./PartyChronicleApp', () => ({
   }))
 }));
 
-jest.mock('./model/party-chronicle-storage', () => ({
+jest.mock('../scripts/model/party-chronicle-storage', () => ({
   clearPartyChronicleData: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
   savePartyChronicleData: jest.fn<() => Promise<void>>().mockResolvedValue(undefined)
 }));
 
-jest.mock('./utils/filename-utils', () => ({
+jest.mock('../scripts/utils/filename-utils', () => ({
   generateChronicleFilename: jest.fn(() => 'chronicle.pdf')
 }));
 
-jest.mock('./utils/layout-utils', () => ({
+jest.mock('../scripts/utils/layout-utils', () => ({
   updateLayoutSpecificFields: jest.fn<() => Promise<void>>().mockResolvedValue(undefined)
 }));
 
-jest.mock('./handlers/validation-display', () => ({
+jest.mock('../scripts/handlers/validation-display', () => ({
   updateValidationDisplay: jest.fn()
 }));
 
@@ -151,7 +151,7 @@ const mockGenerateChroniclesFromPartyData = jest.fn<() => Promise<void>>().mockR
 const mockUpdateAllTreasureBundleDisplays = jest.fn();
 const mockUpdateTreasureBundleDisplay = jest.fn();
 
-jest.mock('./handlers/party-chronicle-handlers', () => ({
+jest.mock('../scripts/handlers/party-chronicle-handlers', () => ({
   handleChroniclePathFilePicker: mockHandleChroniclePathFilePicker,
   handlePortraitClick: mockHandlePortraitClick,
   handleSeasonChange: mockHandleSeasonChange,

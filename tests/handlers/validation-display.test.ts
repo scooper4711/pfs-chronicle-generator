@@ -6,10 +6,10 @@
  * @jest-environment jsdom
  */
 
-import { updateValidationDisplay } from './validation-display';
+import { updateValidationDisplay } from '../../scripts/handlers/validation-display';
 
 // Mock the validator module
-jest.mock('../model/party-chronicle-validator', () => ({
+jest.mock('../../scripts/model/party-chronicle-validator', () => ({
   validateSharedFields: jest.fn((shared: any) => {
     const errors: string[] = [];
     if (!shared?.gmPfsNumber) errors.push('GM PFS Number is required');

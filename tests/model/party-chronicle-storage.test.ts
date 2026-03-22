@@ -7,8 +7,8 @@ import {
   savePartyChronicleData,
   loadPartyChronicleData,
   clearPartyChronicleData
-} from './party-chronicle-storage';
-import { PartyChronicleData } from './party-chronicle-types';
+} from '../../scripts/model/party-chronicle-storage';
+import { PartyChronicleData } from '../../scripts/model/party-chronicle-types';
 import { createSharedFields, createUniqueFields } from './test-helpers';
 
 // Mock the global game object

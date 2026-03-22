@@ -13,9 +13,9 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { mapToCharacterData } from './model/party-chronicle-mapper';
+import { mapToCharacterData } from '../scripts/model/party-chronicle-mapper';
 import { createSharedFields, createUniqueFields, createMockActor } from './model/test-helpers';
-import { formatIncomeValue } from './utils/earned-income-calculator';
+import { formatIncomeValue } from '../scripts/utils/earned-income-calculator';
 
 describe('Earned Income Calculation - Integration Tests', () => {
   describe('Complete Workflow: Enter downtime days → select inputs → see calculated income → generate PDFs', () => {

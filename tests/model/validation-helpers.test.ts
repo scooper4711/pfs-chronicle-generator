@@ -1,4 +1,4 @@
-import { validateNumberField } from './validation-helpers';
+import { validateNumberField } from '../../scripts/model/validation-helpers';
 
 describe('validateNumberField - validateRange coverage', () => {
   it('rejects value above max when minExclusive with both min and max', () => {

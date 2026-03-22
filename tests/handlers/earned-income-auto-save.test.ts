@@ -11,7 +11,7 @@
  */
 
 import { describe, it, expect, beforeEach } from '@jest/globals';
-import { extractFormData } from './form-data-extraction';
+import { extractFormData } from '../../scripts/handlers/form-data-extraction';
 
 describe('Earned Income Auto-Save Tests', () => {
   let container: HTMLElement;

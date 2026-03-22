@@ -9,9 +9,9 @@
 
 import { describe, it, expect } from '@jest/globals';
 import fc from 'fast-check';
-import { mapToCharacterData } from './model/party-chronicle-mapper';
-import { SharedFields, UniqueFields } from './model/party-chronicle-types';
-import { calculateEarnedIncome } from './utils/earned-income-calculator';
+import { mapToCharacterData } from '../scripts/model/party-chronicle-mapper';
+import { SharedFields, UniqueFields } from '../scripts/model/party-chronicle-types';
+import { calculateEarnedIncome } from '../scripts/utils/earned-income-calculator';
 import { createSharedFields, createUniqueFields } from './model/test-helpers';
 
 describe('Earned Income PDF Generation Integration - Property-Based Tests', () => {

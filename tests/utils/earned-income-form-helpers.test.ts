@@ -6,17 +6,17 @@
  * @jest-environment jsdom
  */
 
-import { extractCharacterIdFromFieldName, extractEarnedIncomeParams, createEarnedIncomeChangeHandler } from './earned-income-form-helpers';
+import { extractCharacterIdFromFieldName, extractEarnedIncomeParams, createEarnedIncomeChangeHandler } from '../../scripts/utils/earned-income-form-helpers';
 
 // Mock the earned-income-calculator
-jest.mock('./earned-income-calculator', () => ({
+jest.mock('../../scripts/utils/earned-income-calculator', () => ({
   calculateDowntimeDays: jest.fn((xp: number, _tb: number) => xp * 2),
   calculateEarnedIncome: jest.fn(() => 5),
   formatIncomeValue: jest.fn(() => '5 gp'),
 }));
 
 // Mock the party-chronicle-handlers
-jest.mock('../handlers/party-chronicle-handlers', () => ({
+jest.mock('../../scripts/handlers/party-chronicle-handlers', () => ({
   updateEarnedIncomeDisplay: jest.fn(),
 }));
 
@@ -102,7 +102,7 @@ describe('extractEarnedIncomeParams', () => {
 
 describe('createEarnedIncomeChangeHandler', () => {
   it('should create a handler that extracts params and updates display', () => {
-    const { updateEarnedIncomeDisplay } = require('../handlers/party-chronicle-handlers');
+    const { updateEarnedIncomeDisplay } = require('../../scripts/handlers/party-chronicle-handlers');
     const container = createFormContainer('char1');
     const handler = createEarnedIncomeChangeHandler(container);
 
@@ -117,7 +117,7 @@ describe('createEarnedIncomeChangeHandler', () => {
   });
 
   it('should not update display when character ID cannot be extracted', () => {
-    const { updateEarnedIncomeDisplay } = require('../handlers/party-chronicle-handlers');
+    const { updateEarnedIncomeDisplay } = require('../../scripts/handlers/party-chronicle-handlers');
     updateEarnedIncomeDisplay.mockClear();
 
     const container = createFormContainer('char1');

@@ -27,7 +27,7 @@ import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 };
 
 // Mock layoutStore
-jest.mock('../LayoutStore', () => ({
+jest.mock('../../scripts/LayoutStore', () => ({
   layoutStore: {
     getSeasons: jest.fn(() => [
       { id: 'pfs2-season7', name: 'Season 7' },
@@ -44,9 +44,9 @@ jest.mock('../LayoutStore', () => ({
   }
 }));
 
-import { savePartyChronicleData, loadPartyChronicleData, clearPartyChronicleData } from '../model/party-chronicle-storage';
-import { PartyChronicleApp } from '../PartyChronicleApp';
-import type { PartyChronicleData } from '../model/party-chronicle-types';
+import { savePartyChronicleData, loadPartyChronicleData, clearPartyChronicleData } from '../../scripts/model/party-chronicle-storage';
+import { PartyChronicleApp } from '../../scripts/PartyChronicleApp';
+import type { PartyChronicleData } from '../../scripts/model/party-chronicle-types';
 
 /**
  * Generator for valid file paths

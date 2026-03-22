@@ -1,4 +1,4 @@
-import { debug, warn, error } from './logger';
+import { debug, warn, error } from '../../scripts/utils/logger';
 
 const LOG_PREFIX = '[PFS Chronicle]';
 

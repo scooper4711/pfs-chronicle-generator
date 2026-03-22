@@ -39,12 +39,12 @@ global.console.error = jest.fn();
 };
 
 // Mock party chronicle storage
-jest.mock('../model/party-chronicle-storage', () => ({
+jest.mock('../../scripts/model/party-chronicle-storage', () => ({
   savePartyChronicleData: jest.fn<() => Promise<void>>().mockResolvedValue(undefined)
 }));
 
 // Mock form data extraction
-jest.mock('./form-data-extraction', () => ({
+jest.mock('../../scripts/handlers/form-data-extraction', () => ({
   extractFormData: jest.fn(() => ({
     shared: {
       blankChroniclePath: '/path/to/chronicle.pdf'
@@ -54,7 +54,7 @@ jest.mock('./form-data-extraction', () => ({
 }));
 
 // Now import the handlers after mocks are set up
-import { updateChroniclePathVisibility } from './party-chronicle-handlers';
+import { updateChroniclePathVisibility } from '../../scripts/handlers/party-chronicle-handlers';
 
 /**
  * Generator for valid file paths

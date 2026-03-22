@@ -12,8 +12,8 @@ import fc from 'fast-check';
 import {
   validateSharedFields,
   validateUniqueFields
-} from './party-chronicle-validator';
-import { SharedFields, UniqueFields } from './party-chronicle-types';
+} from '../../scripts/model/party-chronicle-validator';
+import { SharedFields, UniqueFields } from '../../scripts/model/party-chronicle-types';
 
 describe('Party Chronicle Validator Property-Based Tests', () => {
   // Feature: earned-income-calculation, Property 6: XP Earned Validation

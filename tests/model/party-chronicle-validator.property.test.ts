@@ -7,8 +7,8 @@
 
 import { describe, it, expect } from '@jest/globals';
 import fc from 'fast-check';
-import { validateSharedFields } from './party-chronicle-validator';
-import { SharedFields } from './party-chronicle-types';
+import { validateSharedFields } from '../../scripts/model/party-chronicle-validator';
+import { SharedFields } from '../../scripts/model/party-chronicle-types';
 
 describe('Reputation Validation Properties', () => {
   /**

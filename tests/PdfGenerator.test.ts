@@ -1,6 +1,6 @@
 import { PDFDocument, PDFPage, rgb, StandardFonts } from 'pdf-lib';
-import { PdfGenerator } from './PdfGenerator';
-import { Layout } from './model/layout';
+import { PdfGenerator } from '../scripts/PdfGenerator';
+import { Layout } from '../scripts/model/layout';
 
 describe('PdfGenerator', () => {
     let pdfDoc: PDFDocument;

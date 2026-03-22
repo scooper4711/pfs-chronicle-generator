@@ -17,10 +17,10 @@
 
 import { describe, it, expect } from '@jest/globals';
 import fc from 'fast-check';
-import { serializeSessionReport } from '../session-report-serializer';
-import { buildSessionReport } from '../session-report-builder';
-import type { SessionReportBuildParams } from '../session-report-builder';
-import type { SessionReport } from '../session-report-types';
+import { serializeSessionReport } from '../../../scripts/model/session-report-serializer';
+import { buildSessionReport } from '../../../scripts/model/session-report-builder';
+import type { SessionReportBuildParams } from '../../../scripts/model/session-report-builder';
+import type { SessionReport } from '../../../scripts/model/session-report-types';
 
 /**
  * Arbitrary for a valid SharedFields object with constrained values.
