@@ -93,6 +93,7 @@ This project follows the principles from Robert C. Martin's "Clean Code". These 
 - Be precise - don't use `any` type in TypeScript without good reason
 - **TypeScript Type Safety**:
   - Do NOT use the `any` type except when interfacing with libraries which lack TypeScript definitions
+  - The `@typescript-eslint/no-explicit-any` ESLint rule is currently disabled (`'off'`) due to existing `any` usage in the codebase, but it will be enabled as `'warn'` in a future cleanup pass — write all new code as if the rule is already active
   - When `any` is necessary, add a comment explaining why and document the expected shape
   - Prefer `unknown` over `any` when the type is truly unknown - it forces type checking before use
   - Use proper type definitions or interfaces instead of `any` whenever possible
@@ -395,7 +396,7 @@ The coding standards above MUST be enforced via ESLint rules in `eslint.config.m
   - `@typescript-eslint/no-unused-vars` → `'error'` (with `argsIgnorePattern: '^_'` and `caughtErrorsIgnorePattern: '^_'` to allow intentionally unused parameters and catch bindings prefixed with underscore)
 - **SHOULD rules use `'warn'` severity** — these are soft limits that produce warnings:
   - `max-lines-per-function` at max 50 → `'warn'`
-  - `@typescript-eslint/no-explicit-any` → `'warn'` (aligns with the TypeScript Type Safety standard — avoid `any` but allow it with justification)
+  - `@typescript-eslint/no-explicit-any` → currently `'off'` due to existing `any` usage, but will be enabled as `'warn'` in a future cleanup pass. All new code should avoid `any` as if the rule were active.
   - `no-console` → `'warn'` (allow `console.warn` and `console.error`; use proper logging or remove `console.log` before merging)
 
 The ESLint config structure must:

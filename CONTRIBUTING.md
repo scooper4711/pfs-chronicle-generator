@@ -130,7 +130,7 @@ The Layout Designer is ideal for creating or modifying **parent layouts** (e.g.,
 - Common text fields (character name, player name, event info)
 - Standard preset definitions
 
-**Individual scenario layouts** (e.g., `6-06-RottenApples.json`) should be generated using the Python scripts (see below) to automatically extract:
+**Individual scenario layouts** (e.g., `6-06-RottenApples.json`) should be generated using the Python scripts (see above) to automatically extract:
 - Specific strikeout item choices for that scenario
 - Checkbox labels in the adventure summary
 - Scenario-specific coordinates derived from the PDF
@@ -202,22 +202,42 @@ npm run test:all     # Run tests + code quality checks
 This project enforces code quality standards for maintainability:
 
 ```bash
-npm run check:quality        # Run all quality checks
-npm run check:complexity     # Check cyclomatic complexity and file size
+npm run check:quality        # Run lint + duplication checks
 npm run check:duplication    # Check code duplication (DRY principle)
+npm run lint                 # Run ESLint (includes complexity and file size checks)
 ```
 
-**Standards:**
-- **Cyclomatic Complexity**: Functions must have CCN < 15
-- **File Size**: Files must be < 500 lines (excluding comments/blanks)
-- **Code Duplication**: Must be < 20% (target: < 5%)
+Complexity and file size limits are enforced via ESLint rules in `eslint.config.mjs`:
+- **Cyclomatic Complexity**: Functions must have CCN < 15 (ESLint `complexity` rule)
+- **File Size**: Files must be < 500 lines (ESLint `max-lines` rule)
+- **Code Duplication**: Must be < 20% (jscpd via `check:duplication`)
+
+**Code Coverage**: Jest enforces a 75% coverage threshold across lines, branches, functions, and statements. Run with `--coverage` to check:
+
+```bash
+npx jest --coverage --silent
+```
 
 See [CODE_QUALITY.md](CODE_QUALITY.md) for detailed documentation on code quality standards and how to fix violations.
 
 ### Linting
 
 ```bash
-npm run lint         # Run ESLint
+npm run lint         # Run ESLint (max 5 warnings allowed)
+```
+
+### Pre-Push Checklist
+
+Before pushing, verify all checks pass:
+
+1. `npm run lint` — no lint errors
+2. `npx jest --coverage --silent` — all tests pass, coverage ≥ 75%
+3. `npm run check:duplication` — duplication within acceptable range
+
+Or run everything together:
+
+```bash
+npm run test:all     # tests + lint + duplication
 ```
 
 ## Submitting Changes

@@ -4,25 +4,26 @@ This document describes the automated code quality checks enforced in this proje
 
 ## Overview
 
-This project enforces three key code quality metrics:
+This project enforces four key code quality metrics:
 
 1. **Cyclomatic Complexity (CCN)** - Measures code complexity
 2. **File Size** - Limits file length for maintainability
 3. **Code Duplication (DRY)** - Detects repeated code
+4. **Code Coverage** - Enforces minimum 80% test coverage
 
 All checks are automated and can be run via npm scripts.
 
 ## Quick Start
 
 ```bash
-# Run all quality checks
+# Run all quality checks (lint + duplication)
 npm run check:quality
 
 # Run tests and quality checks together
 npm run test:all
 
 # Run individual checks
-npm run check:complexity    # Check CCN and file size
+npm run lint                # ESLint (includes complexity and file size checks)
 npm run check:duplication   # Check code duplication
 ```
 
@@ -94,6 +95,15 @@ function initializeDefaults(config: Config): Config {
 2. Split large classes into smaller, focused classes
 3. Move related functionality into dedicated modules
 
+## TypeScript `any` Type
+
+The `@typescript-eslint/no-explicit-any` ESLint rule is currently disabled (`'off'`) due to existing `any` usage in the codebase. It will be enabled as `'warn'` in a future cleanup pass.
+
+All new code should be written as if the rule is already active:
+- Use proper type definitions or interfaces instead of `any`
+- Prefer `unknown` over `any` when the type is truly unknown
+- When `any` is unavoidable (e.g., interfacing with untyped libraries), add a comment explaining why
+
 ## Code Duplication (DRY Principle)
 
 ### What is DRY?
@@ -140,8 +150,8 @@ This prevents premature abstraction while ensuring duplication doesn't spread.
 ### Individual Checks
 
 ```bash
-# Check complexity and file size only
-npm run check:complexity
+# Check complexity and file size (via ESLint)
+npm run lint
 
 # Check code duplication only
 npm run check:duplication
@@ -150,7 +160,7 @@ npm run check:duplication
 ### Combined Checks
 
 ```bash
-# Run all quality checks (complexity + duplication)
+# Run all quality checks (lint + duplication)
 npm run check:quality
 
 # Run tests + quality checks
@@ -208,21 +218,30 @@ Detailed clone information is saved to `debug/jscpd-report/jscpd-report.json`.
 
 File: `eslint.config.mjs`
 
+Complexity and file size are enforced via ESLint rules on production files (`scripts/**/*.ts`, excluding test files):
+
 ```javascript
 rules: {
+  // MUST rules (error) — hard limits
   'complexity': ['error', { max: 15 }],
-  'max-lines': ['error', { 
-    max: 500, 
-    skipBlankLines: true, 
-    skipComments: true 
+  'max-lines': ['error', { max: 500, skipBlankLines: true, skipComments: true }],
+  '@typescript-eslint/no-unused-vars': ['error', {
+    argsIgnorePattern: '^_',
+    caughtErrorsIgnorePattern: '^_',
   }],
-  'max-lines-per-function': ['warn', {
-    max: 50,
-    skipBlankLines: true,
-    skipComments: true
-  }]
+
+  // SHOULD rules (warn) — soft limits
+  'max-lines-per-function': ['warn', { max: 50, skipBlankLines: true, skipComments: true }],
+  'no-console': ['warn', { allow: ['warn', 'error'] }],
+
+  // Currently disabled — will be enabled as 'warn' in a future cleanup pass.
+  // All new code should avoid `any` as if this rule were active.
+  // '@typescript-eslint/no-explicit-any': 'warn',
+  '@typescript-eslint/no-explicit-any': 'off',
 }
 ```
+
+Test files (`tests/**/*.ts`) are exempt from file size and function length limits.
 
 ### jscpd Configuration
 
@@ -231,15 +250,47 @@ File: `.jscpd.json`
 ```json
 {
   "threshold": 10,
+  "reporters": ["console", "json"],
   "minLines": 5,
   "minTokens": 50,
   "ignore": [
     "**/node_modules/**",
     "**/dist/**",
-    "**/*.test.ts"
-  ]
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/debug/**"
+  ],
+  "format": ["typescript", "javascript"],
+  "output": "./debug/jscpd-report",
+  "exitCode": 0,
+  "absolute": true
 }
 ```
+
+### Jest Coverage Threshold
+
+File: `jest.config.js`
+
+Jest enforces a 75% minimum coverage threshold across all metrics:
+
+```javascript
+coverageThreshold: {
+  global: {
+    branches: 75,
+    functions: 75,
+    lines: 75,
+    statements: 75,
+  },
+},
+```
+
+Run with `--coverage` to check:
+
+```bash
+npx jest --coverage --silent
+```
+
+If coverage drops below 75% on any metric, the test run will fail.
 
 ## Best Practices
 
@@ -302,7 +353,8 @@ Some duplication is acceptable (e.g., similar test setup code). If jscpd reports
 
 ## See Also
 
-- `.kiro/steering/architecture.md` - Full coding standards documentation
+- `.kiro/steering/coding-standards.md` - Full coding standards documentation
 - `eslint.config.mjs` - ESLint configuration
 - `.jscpd.json` - Duplication detection configuration
+- `jest.config.js` - Test and coverage configuration
 - `scripts-build/check-duplication.js` - Custom duplication checker
