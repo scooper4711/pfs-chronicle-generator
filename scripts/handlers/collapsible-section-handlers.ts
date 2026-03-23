@@ -292,7 +292,7 @@ export function initializeCollapseSections(container: HTMLElement): void {
     
     // Load collapse state from storage or use default
     const savedState = loadCollapseState(sectionId);
-    const isCollapsed = savedState !== null ? savedState : getDefaultCollapseState(sectionId);
+    const isCollapsed = savedState ?? getDefaultCollapseState(sectionId);
     
     // Apply collapse state to DOM
     if (isCollapsed) {

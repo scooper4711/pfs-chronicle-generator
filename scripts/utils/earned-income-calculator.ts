@@ -172,9 +172,8 @@ export function calculateTaskLevelOptions(characterLevel: number): TaskLevelOpti
   const pfsDefaultLevel = Math.max(characterLevel - 2, 0);
   
   // Add each task level with its DC, skipping duplicates
-  for (let i = 0; i < taskLevels.length; i++) {
-    const taskLevel = taskLevels[i];
-    
+  for (const taskLevel of taskLevels) {
+   
     // Skip if we've already added this level
     if (addedLevels.has(taskLevel)) {
       continue;

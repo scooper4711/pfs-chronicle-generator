@@ -48,7 +48,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * Default application options
    * Defines the application's ID, form behavior, position, and window settings
    */
-  static DEFAULT_OPTIONS = {
+  static readonly DEFAULT_OPTIONS = {
     id: "pfs-party-chronicle",
     form: {
       handler: PartyChronicleApp.#generateChronicles,
@@ -70,7 +70,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * Template parts for the application
    * Defines the main content and footer templates
    */
-  static PARTS = {
+  static readonly PARTS = {
     main: {
       template: "modules/pfs-chronicle-generator/templates/party-chronicle-filling.hbs",
     },

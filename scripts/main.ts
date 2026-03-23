@@ -172,7 +172,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, _data: any) 
             const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], {type: 'application/pdf'});
             // Check actor flags first, fall back to module setting for backward compatibility
-            const chronicleData = sheet.actor.getFlag('pfs-chronicle-generator', 'chronicleData') as any;
+            const chronicleData = sheet.actor.getFlag('pfs-chronicle-generator', 'chronicleData');
             const blankChroniclePath = chronicleData?.blankChroniclePath 
                 || game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
             const filename = generateChronicleFilename(sheet.actor.name, blankChroniclePath);

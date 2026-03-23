@@ -220,7 +220,7 @@ function renderCharacterErrors(
         const actorId = actor.id;
         const characterName = actor.name;
         const unique = characters[actorId];
-        const result = validateUniqueFields(unique as any, characterName);
+        const result = validateUniqueFields(unique, characterName);
         
         if (result.errors.length > 0) {
             result.errors.forEach(error => {
