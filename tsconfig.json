@@ -3,7 +3,7 @@
     "target": "esnext",
     "module": "ES2020",
     "outDir": "./dist",
-    "rootDir": "./scripts",
+    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
