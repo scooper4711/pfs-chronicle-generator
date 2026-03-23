@@ -12,6 +12,7 @@ import { describe, it, expect } from '@jest/globals';
 import fc from 'fast-check';
 import {
   DC_BY_LEVEL,
+  INCOME_TABLE,
   getDCForLevel,
   calculateTaskLevelOptions,
   getIncomePerDay,
@@ -197,12 +198,11 @@ describe('Earned Income Calculator Property-Based Tests', () => {
           (taskLevel, proficiencyRank) => {
             const criticalIncome = getIncomePerDay(taskLevel, 'critical_success', proficiencyRank);
             
-            // PFS Rule: "On a critical success, treat your PC level as 1 higher to determine results,
-            // to a minimum level of 3"
-            const effectiveLevel = Math.max(taskLevel + 1, 3);
+            // PFS Rule: "On a critical success, treat your task level as 1 higher to determine results"
+            const effectiveLevel = taskLevel + 1;
             const expectedIncome = getIncomePerDay(effectiveLevel, 'success', proficiencyRank);
             
-            // Critical success at level N should equal success at max(N+1, 3)
+            // Critical success at level N should equal success at N+1
             expect(criticalIncome).toBe(expectedIncome);
           }
         ),
@@ -387,4 +387,134 @@ describe('Earned Income Calculator Property-Based Tests', () => {
       );
     });
   });
+
+  // Bugfix: earn-income-crit-success-fix
+  // Property 1: Bug Condition - Critical Success Uses TaskLevel + 1 Without Floor
+  // **Validates: Requirements 2.1, 2.2, 2.3, 2.4**
+  //
+  // Exploratory test: on unfixed code, this SHOULD FAIL because getIncomePerDay
+  // uses Math.max(level + 1, 3) which floors the effective level at 3 for task
+  // levels 0 and 1, instead of using taskLevel + 1 directly.
+  describe('Property 1: Bug Condition - Critical Success Uses TaskLevel + 1 Without Floor', () => {
+    it('should return income at taskLevel + 1 for critical success at low task levels', () => {
+      fc.assert(
+        fc.property(
+          fc.integer({ min: 0, max: 1 }),
+          fc.constantFrom('trained', 'expert', 'master', 'legendary'),
+          (taskLevel, proficiencyRank) => {
+            const actualIncome = getIncomePerDay(taskLevel, 'critical_success', proficiencyRank);
+            const expectedLevel = taskLevel + 1;
+            const expectedIncome = INCOME_TABLE[expectedLevel][proficiencyRank] as number;
+
+            expect(actualIncome).toBe(expectedIncome);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+  });
+
+  // Bugfix: earn-income-crit-success-fix
+  // Property 1 (Full Range): Bug Condition - Critical Success Uses TaskLevel + 1 Without Floor
+  // **Validates: Requirements 2.1, 2.2, 2.3, 2.4**
+  //
+  // Fix verification: covers the full range of task levels 0-19, asserting that
+  // getIncomePerDay uses INCOME_TABLE[taskLevel + 1][rank] for critical success.
+  describe('Property 1 (Full Range): Bug Condition - Critical Success Uses TaskLevel + 1 Without Floor', () => {
+    it('should return income at taskLevel + 1 for critical success at any task level 0-19', () => {
+      fc.assert(
+        fc.property(
+          fc.integer({ min: 0, max: 19 }),
+          fc.constantFrom('trained', 'expert', 'master', 'legendary'),
+          (taskLevel, proficiencyRank) => {
+            const actualIncome = getIncomePerDay(taskLevel, 'critical_success', proficiencyRank);
+            const expectedIncome = INCOME_TABLE[taskLevel + 1][proficiencyRank] as number;
+
+            expect(actualIncome).toBe(expectedIncome);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+  });
+
+  // Bugfix: earn-income-crit-success-fix
+  // Property 2: Preservation - Non-Critical-Success Behavior Unchanged
+  // **Validates: Requirements 3.3, 3.4, 3.5, 3.6, 3.7**
+  //
+  // Preservation test: for success, failure, and critical_failure, income lookups
+  // must match the INCOME_TABLE directly without any modification.
+  describe('Property 2: Preservation - Non-Critical-Success Behavior Unchanged', () => {
+    it('should return INCOME_TABLE[taskLevel][rank] for success at any task level 0-20', () => {
+      fc.assert(
+        fc.property(
+          fc.integer({ min: 0, max: 20 }),
+          fc.constantFrom('trained', 'expert', 'master', 'legendary'),
+          (taskLevel, proficiencyRank) => {
+            const actualIncome = getIncomePerDay(taskLevel, 'success', proficiencyRank);
+            const expectedIncome = INCOME_TABLE[taskLevel][proficiencyRank] as number;
+
+            expect(actualIncome).toBe(expectedIncome);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    it('should return INCOME_TABLE[taskLevel].failure for failure at any task level 0-20', () => {
+      fc.assert(
+        fc.property(
+          fc.integer({ min: 0, max: 20 }),
+          fc.constantFrom('trained', 'expert', 'master', 'legendary'),
+          (taskLevel, _proficiencyRank) => {
+            const actualIncome = getIncomePerDay(taskLevel, 'failure', _proficiencyRank);
+            const expectedIncome = INCOME_TABLE[taskLevel].failure as number;
+
+            expect(actualIncome).toBe(expectedIncome);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    it('should return 0 for critical_failure at any task level 0-20', () => {
+      fc.assert(
+        fc.property(
+          fc.integer({ min: 0, max: 20 }),
+          fc.constantFrom('trained', 'expert', 'master', 'legendary'),
+          (taskLevel, proficiencyRank) => {
+            const actualIncome = getIncomePerDay(taskLevel, 'critical_failure', proficiencyRank);
+
+            expect(actualIncome).toBe(0);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+  });
+
+  // Bugfix: earn-income-crit-success-fix
+  // Property 4: Preservation - Level 20 Critical Success Special Case
+  // **Validates: Requirements 3.2**
+  //
+  // Level 20 has special critical success values in the INCOME_TABLE that differ
+  // from the normal taskLevel + 1 pattern. This test verifies those are preserved.
+  describe('Property 4: Preservation - Level 20 Critical Success Special Case', () => {
+    it('should return special critical success table values for level 20', () => {
+      fc.assert(
+        fc.property(
+          fc.constantFrom('trained', 'expert', 'master', 'legendary'),
+          (proficiencyRank) => {
+            const actualIncome = getIncomePerDay(20, 'critical_success', proficiencyRank);
+            const criticalTable = INCOME_TABLE[20].critical as Record<string, number>;
+            const expectedIncome = criticalTable[proficiencyRank];
+
+            expect(actualIncome).toBe(expectedIncome);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+  });
 });
+
