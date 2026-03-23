@@ -199,11 +199,10 @@ export function calculateTaskLevelOptions(characterLevel: number): TaskLevelOpti
 
 /**
  * Gets income per day from the income table
- * Handles critical success by treating PC level as 1 higher (minimum level 3)
+ * Handles critical success by treating task level as 1 higher (clamped to 0-20 range)
  * Handles level 20 critical success special case
  * 
- * PFS Rule: "On a critical success, treat your PC level as 1 higher to determine results,
- * to a minimum level of 3"
+ * PFS Rule: "On a critical success, treat your task level as 1 higher to determine results"
  * 
  * @param taskLevel - Task level (0-20 or "-")
  * @param successLevel - Success level (critical_failure, failure, success, critical_success)
@@ -242,8 +241,8 @@ export function getIncomePerDay(
       return criticalTable[proficiencyRank] || 0;
     }
     
-    // For other levels, use max(task level + 1, 3) to enforce minimum level 3
-    const effectiveLevel = Math.min(Math.max(level + 1, 3), 20);
+    // For other levels, use task level + 1 (clamped to valid range)
+    const effectiveLevel = Math.min(level + 1, 20);
     const levelData = INCOME_TABLE[effectiveLevel];
     return (levelData[proficiencyRank] as number) || 0;
   }

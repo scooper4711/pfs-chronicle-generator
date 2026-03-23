@@ -11,12 +11,12 @@
             <div class="summary-data collapsible-content" id="event-details-content">
                 <div class="form-group">
                     <label for="gmPfsNumber">GM PFS Number</label>
-                    <input type="text" id="gmPfsNumber" name="shared.gmPfsNumber" value="{{shared.gmPfsNumber}}">
+                    <input type="text" id="gmPfsNumber" name="shared.gmPfsNumber" value="{{shared.gmPfsNumber}}" data-tooltip="Your Organized Play ID number from paizo.com. This is printed on every chronicle you generate.">
                 </div>
                 
                 <div class="form-group">
                     <label for="season">Season</label>
-                    <select id="season" name="shared.seasonId">
+                    <select id="season" name="shared.seasonId" data-tooltip="Select the season or category (Bounties, Quests, Specials) that contains the scenario you ran.">
                         {{#each seasons}}
                             <option value="{{this.id}}" {{#if (eq this.id ../selectedSeasonId)}}selected{{/if}}>{{this.name}}</option>
                         {{/each}}
@@ -25,7 +25,7 @@
                 
                 <div class="form-group">
                     <label for="layout">Scenario</label>
-                    <select id="layout" name="shared.layoutId">
+                    <select id="layout" name="shared.layoutId" data-tooltip="Select the specific scenario you ran. This determines the chronicle layout, item list, and adventure summary checkboxes.">
                         {{#each layoutsInSeason}}
                             <option value="{{this.id}}" {{#if (eq this.id ../selectedLayoutId)}}selected{{/if}}>{{this.description}}</option>
                         {{/each}}
@@ -34,28 +34,30 @@
                 
                 <div class="form-group">
                     <label for="scenarioName">Event Name</label>
-                    <input type="text" id="scenarioName" name="shared.scenarioName" value="{{shared.scenarioName}}">
+                    <input type="text" id="scenarioName" name="shared.scenarioName" value="{{shared.scenarioName}}" data-tooltip="The name of the event where you ran this game (e.g. your local game store name, convention name, or 'Online Play').">
                 </div>
                 
                 <div class="form-group">
                     <label for="eventCode">Event Code</label>
-                    <input type="text" id="eventCode" name="shared.eventCode" value="{{shared.eventCode}}">
+                    <input type="text" id="eventCode" name="shared.eventCode" value="{{shared.eventCode}}" data-tooltip="The event code from paizo.com for this session. Create one at paizo.com under Organized Play → My Events if you don't have one yet.">
                 </div>
                 
                 <div class="form-group">
                     <label for="eventDate">Event Date</label>
-                    <input type="date" id="eventDate" name="shared.eventDate" value="{{shared.eventDate}}">
+                    <input type="date" id="eventDate" name="shared.eventDate" value="{{shared.eventDate}}" data-tooltip="The date the game was played. Used on the chronicle and in the session report for paizo.com.">
                 </div>
                 
                 <div class="form-group {{#unless chroniclePathExists}}chronicle-path-visible{{/unless}}" id="chroniclePathGroup">
-                    <label for="blankChroniclePath">Chronicle Path</label>
+                    <label for="blankChroniclePath">Chronicle PDF
+                        <span class="fas fa-question-circle" data-tooltip="This module cannot distribute Paizo's chronicle PDFs due to licensing. For Seasons 5–7, the chronicle is included in the premium Foundry VTT module and will be set automatically when you select a scenario. For all other seasons, use the file picker to upload a copy of the blank chronicle PDF (or the full scenario PDF) to your Foundry server."></span>
+                    </label>
                     <div class="form-fields">
                         <input type="text" id="blankChroniclePath" name="shared.blankChroniclePath" value="{{shared.blankChroniclePath}}" readonly>
-                        <button type="button" class="file-picker-button" id="chroniclePathFilePicker"><i class="fas fa-folder-open"></i></button>
+                        <button type="button" class="file-picker-button" id="chroniclePathFilePicker"><i class="fas fa-folder-open" data-tooltip="Browse or upload a blank chronicle PDF"></i></button>
                     </div>
                 </div>
                 
-                <div class="form-group reporting-flags">
+                <div class="form-group reporting-flags" data-tooltip="Optional reporting flags A–D as defined by the scenario. Check the ones that apply based on the party's choices during the adventure.">
                     <label>Reporting Flags</label>
                     <div class="form-fields">
                         <label class="checkbox-label"><input type="checkbox" id="reportingA" name="shared.reportingA" {{#if shared.reportingA}}checked{{/if}}> A</label>
@@ -76,7 +78,9 @@
             </header>
             <div class="summary-data collapsible-content" id="reputation-content">
                 <div class="form-group">
-                    <label for="chosenFactionReputation">Chosen Faction</label>
+                    <label for="chosenFactionReputation">Chosen Faction
+                        <span class="fas fa-question-circle" data-tooltip="Reputation awarded to each PC's primary faction. This is the standard reputation earned for completing the adventure — typically +2 for a Quest or Bounty and +4 for a Scenario. Each PC receives this amount for whichever faction they have selected on their character sheet."></span>
+                    </label>
                     <select id="chosenFactionReputation" name="shared.chosenFactionReputation">
                         <option value="0" {{#if (eq shared.chosenFactionReputation 0)}}selected{{/if}}>-</option>
                         <option value="1" {{#if (eq shared.chosenFactionReputation 1)}}selected{{/if}}>+1</option>
@@ -90,7 +94,7 @@
                 
                 <div class="form-group">
                     <label for="reputation-EA">Envoy's Alliance</label>
-                    <select id="reputation-EA" name="shared.reputationValues.EA">
+                    <select id="reputation-EA" name="shared.reputationValues.EA" data-tooltip="Reputation earned specifically for Envoy's Alliance for completing a side-quest. Usually +2">
                         <option value="0" {{#if (eq (lookup shared.reputationValues 'EA') 0)}}selected{{/if}}>-</option>
                         <option value="1" {{#if (eq (lookup shared.reputationValues 'EA') 1)}}selected{{/if}}>+1</option>
                         <option value="2" {{#if (eq (lookup shared.reputationValues 'EA') 2)}}selected{{/if}}>+2</option>
@@ -103,7 +107,7 @@
                 
                 <div class="form-group">
                     <label for="reputation-GA">Grand Archive</label>
-                    <select id="reputation-GA" name="shared.reputationValues.GA">
+                    <select id="reputation-GA" name="shared.reputationValues.GA" data-tooltip="Reputation earned specifically for Grand Archive for completing a side-quest. Usually +2">
                         <option value="0" {{#if (eq (lookup shared.reputationValues 'GA') 0)}}selected{{/if}}>-</option>
                         <option value="1" {{#if (eq (lookup shared.reputationValues 'GA') 1)}}selected{{/if}}>+1</option>
                         <option value="2" {{#if (eq (lookup shared.reputationValues 'GA') 2)}}selected{{/if}}>+2</option>
@@ -116,7 +120,7 @@
                 
                 <div class="form-group">
                     <label for="reputation-HH">Horizon Hunters</label>
-                    <select id="reputation-HH" name="shared.reputationValues.HH">
+                    <select id="reputation-HH" name="shared.reputationValues.HH" data-tooltip="Reputation earned specifically for Horizon Hunters for completing a side-quest. Usually +2">
                         <option value="0" {{#if (eq (lookup shared.reputationValues 'HH') 0)}}selected{{/if}}>-</option>
                         <option value="1" {{#if (eq (lookup shared.reputationValues 'HH') 1)}}selected{{/if}}>+1</option>
                         <option value="2" {{#if (eq (lookup shared.reputationValues 'HH') 2)}}selected{{/if}}>+2</option>
@@ -129,7 +133,7 @@
                 
                 <div class="form-group">
                     <label for="reputation-VS">Vigilant Seal</label>
-                    <select id="reputation-VS" name="shared.reputationValues.VS">
+                    <select id="reputation-VS" name="shared.reputationValues.VS" data-tooltip="Reputation earned specifically for Vigilant Seal for completing a side-quest. Usually +2">
                         <option value="0" {{#if (eq (lookup shared.reputationValues 'VS') 0)}}selected{{/if}}>-</option>
                         <option value="1" {{#if (eq (lookup shared.reputationValues 'VS') 1)}}selected{{/if}}>+1</option>
                         <option value="2" {{#if (eq (lookup shared.reputationValues 'VS') 2)}}selected{{/if}}>+2</option>
@@ -142,7 +146,7 @@
                 
                 <div class="form-group">
                     <label for="reputation-RO">Radiant Oath</label>
-                    <select id="reputation-RO" name="shared.reputationValues.RO">
+                    <select id="reputation-RO" name="shared.reputationValues.RO" data-tooltip="Reputation earned specifically for Radiant Oath for completing a side-quest. Usually +2">
                         <option value="0" {{#if (eq (lookup shared.reputationValues 'RO') 0)}}selected{{/if}}>-</option>
                         <option value="1" {{#if (eq (lookup shared.reputationValues 'RO') 1)}}selected{{/if}}>+1</option>
                         <option value="2" {{#if (eq (lookup shared.reputationValues 'RO') 2)}}selected{{/if}}>+2</option>
@@ -155,7 +159,7 @@
                 
                 <div class="form-group">
                     <label for="reputation-VW">Verdant Wheel</label>
-                    <select id="reputation-VW" name="shared.reputationValues.VW">
+                    <select id="reputation-VW" name="shared.reputationValues.VW" data-tooltip="Reputation earned specifically for Verdant Wheel for completing a side-quest. Usually +2">
                         <option value="0" {{#if (eq (lookup shared.reputationValues 'VW') 0)}}selected{{/if}}>-</option>
                         <option value="1" {{#if (eq (lookup shared.reputationValues 'VW') 1)}}selected{{/if}}>+1</option>
                         <option value="2" {{#if (eq (lookup shared.reputationValues 'VW') 2)}}selected{{/if}}>+2</option>
@@ -307,7 +311,7 @@
                         
                         <div class="form-group">
                             <label for="successLevel-{{this.id}}"><i class="fas fa-dice-d20"></i> Success Level</label>
-                            <select id="successLevel-{{this.id}}" name="characters.{{this.id}}.successLevel">
+                            <select id="successLevel-{{this.id}}" name="characters.{{this.id}}.successLevel" data-tooltip="The result of the character's Earn Income check for downtime. Defaults to Success. This affects how much gold the character earns during downtime.">
                                 <option value="critical_failure" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'critical_failure')}}selected{{/if}}>Critical Failure</option>
                                 <option value="failure" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'failure')}}selected{{/if}}>Failure</option>
                                 <option value="success" {{#if (or (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'success') (not (lookup (lookup ../savedData.characters this.id) 'successLevel')))}}selected{{/if}}>Success</option>
@@ -352,7 +356,7 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="checkbox-label">
+                        <label class="checkbox-label" data-tooltip="Check this if the player has already played this scenario and is using a replay credit. This is included in the session report for paizo.com.">
                             <input type="checkbox" name="characters.{{this.id}}.consumeReplay"
                                 {{#if (lookup (lookup ../savedData.characters this.id) 'consumeReplay')}}checked{{/if}}>
                             Consume Replay

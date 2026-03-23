@@ -159,6 +159,7 @@
     display: block;
     font-size: var(--font-size-12);
     margin-bottom: 0.25rem;
+    white-space: nowrap;
 }
 
 .sheet.party [data-tab=pfs] .sidebar .form-group input,
@@ -418,6 +419,38 @@
     font-size: 0.85rem;
     color: #666;
     font-style: italic;
+}
+
+/* Sidebar help icon styling - uses Foundry's built-in tooltip system */
+.sheet.party [data-tab=pfs] .sidebar .form-group label .fa-question-circle {
+    margin-left: 4px;
+    font-size: 1em;
+    color: var(--color-text-dark-secondary);
+    cursor: help;
+    vertical-align: middle;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .form-group label .fa-question-circle:hover {
+    color: var(--color-text-dark-primary);
+}
+
+/* Chronicle Path field - input + file picker button side by side */
+.sheet.party [data-tab=pfs] .sidebar #chroniclePathGroup .form-fields {
+    width: 55%;
+    max-width: 280px;
+    display: flex;
+    gap: 0.25rem;
+    flex: none;
+}
+
+.sheet.party [data-tab=pfs] .sidebar #chroniclePathGroup .form-fields input {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+}
+
+.sheet.party [data-tab=pfs] .sidebar #chroniclePathGroup .form-fields button {
+    flex-shrink: 0;
 }
 
 /* Conditional Chronicle Path Visibility */

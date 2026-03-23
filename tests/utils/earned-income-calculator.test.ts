@@ -224,24 +224,24 @@ describe('Earned Income Calculator Unit Tests', () => {
       expect(getIncomePerDay(10, 'critical_success', 'legendary')).toBe(8);
     });
 
-    it('should use minimum level 3 for critical success at level 0', () => {
-      // Critical success at level 0 uses level 3 values (minimum)
-      expect(getIncomePerDay(0, 'critical_success', 'trained')).toBe(0.5);
-      expect(getIncomePerDay(0, 'critical_success', 'expert')).toBe(0.5);
-      expect(getIncomePerDay(0, 'critical_success', 'master')).toBe(0.5);
-      expect(getIncomePerDay(0, 'critical_success', 'legendary')).toBe(0.5);
+    it('should use level + 1 for critical success at level 0', () => {
+      // Critical success at level 0 uses level 1 values (0 + 1 = 1)
+      expect(getIncomePerDay(0, 'critical_success', 'trained')).toBe(0.2);
+      expect(getIncomePerDay(0, 'critical_success', 'expert')).toBe(0.2);
+      expect(getIncomePerDay(0, 'critical_success', 'master')).toBe(0.2);
+      expect(getIncomePerDay(0, 'critical_success', 'legendary')).toBe(0.2);
     });
 
-    it('should use minimum level 3 for critical success at level 1', () => {
-      // Critical success at level 1 uses level 3 values (minimum)
-      expect(getIncomePerDay(1, 'critical_success', 'trained')).toBe(0.5);
-      expect(getIncomePerDay(1, 'critical_success', 'expert')).toBe(0.5);
-      expect(getIncomePerDay(1, 'critical_success', 'master')).toBe(0.5);
-      expect(getIncomePerDay(1, 'critical_success', 'legendary')).toBe(0.5);
+    it('should use level + 1 for critical success at level 1', () => {
+      // Critical success at level 1 uses level 2 values (1 + 1 = 2)
+      expect(getIncomePerDay(1, 'critical_success', 'trained')).toBe(0.3);
+      expect(getIncomePerDay(1, 'critical_success', 'expert')).toBe(0.3);
+      expect(getIncomePerDay(1, 'critical_success', 'master')).toBe(0.3);
+      expect(getIncomePerDay(1, 'critical_success', 'legendary')).toBe(0.3);
     });
 
-    it('should use minimum level 3 for critical success at level 2', () => {
-      // Critical success at level 2 uses level 3 values (minimum)
+    it('should use level + 1 for critical success at level 2', () => {
+      // Critical success at level 2 uses level 3 values (2 + 1 = 3)
       expect(getIncomePerDay(2, 'critical_success', 'trained')).toBe(0.5);
       expect(getIncomePerDay(2, 'critical_success', 'expert')).toBe(0.5);
       expect(getIncomePerDay(2, 'critical_success', 'master')).toBe(0.5);
@@ -382,6 +382,16 @@ describe('Earned Income Calculator Unit Tests', () => {
       
       // Level 1 failure = 0.02 gp/day × 2 days = 0.04 gp
       expect(calculateEarnedIncome(1, 'failure', 'trained', 2)).toBe(0.04);
+    });
+
+    // Bugfix: earn-income-crit-success-fix
+    // Exploratory test: concrete example from the bug report
+    // Task level 1, critical success, trained, 8 downtime days
+    // Expected: 2.4 gp (level 2 trained = 0.3 gp/day × 8 days)
+    // Unfixed code returns: 4.0 gp (level 3 trained = 0.5 gp/day × 8 days)
+    // **Validates: Requirements 2.2**
+    it('should return 2.4 gp for task level 1 critical success trained with 8 downtime days', () => {
+      expect(calculateEarnedIncome(1, 'critical_success', 'trained', 8)).toBe(2.4);
     });
   });
 
