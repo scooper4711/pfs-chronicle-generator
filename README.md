@@ -428,6 +428,8 @@ If you don't want to use tools written by AI, then I respect that decsion. That'
 
 ## 🙏 Acknowledgments
 
+Thank you to GreyWolf and TMK - for your beta testing and excellent input on features and functionality. Without you two, this module would never have seen the light of day!
+
 Thank you to [SonarCloud](https://sonarcloud.io) for helping the open source community by making their product free for open source projects like mine.
 
 Special thanks to [razanur37's PFS Chronicle Filler](https://razanur37.github.io/pfscf/) for inspiration and the foundation this module was built upon. The layout file format, the concept of automated chronicle generation, and many of the layout files for earlier seasons and adventure paths came from that project.
