@@ -289,7 +289,7 @@ async function handleClearButtonConfirmed(
     await clearArchive(partyActor);
     
     // Create new data with preserved values and smart defaults
-    const newData = createDefaultChronicleData(
+    const newData = createDefaultChronicleData({
         gmPfsNumber,
         scenarioName,
         eventCode,
@@ -299,9 +299,8 @@ async function handleClearButtonConfirmed(
         defaultXp,
         defaultTreasureBundles,
         defaultDowntimeDays,
-        defaultChosenFactionRep,
-        partyActors
-    );
+        defaultChosenFactionRep
+    }, partyActors);
     
     // Save the new data with defaults
     debug('Saving new data with defaults:', newData);
@@ -344,37 +343,14 @@ function determineAdventureDefaults(scenarioName: string): {
 }
 
 /**
- * Creates default chronicle data structure with preserved and default values
+ * Builds default UniqueFields for each party actor
  * 
- * @param gmPfsNumber - GM PFS number to preserve
- * @param scenarioName - Scenario name to preserve
- * @param eventCode - Event code to preserve
- * @param chroniclePath - Chronicle path to preserve
- * @param layoutId - Layout ID to preserve
- * @param seasonId - Season ID to preserve
- * @param defaultXp - Default XP value
- * @param defaultTreasureBundles - Default treasure bundles value
- * @param defaultDowntimeDays - Default downtime days value
- * @param defaultChosenFactionRep - Default chosen faction reputation value
  * @param partyActors - Array of party member actors
- * @returns Chronicle data structure with defaults
+ * @returns Map of actor IDs to default UniqueFields
  */
-function createDefaultChronicleData(
-    gmPfsNumber: string,
-    scenarioName: string,
-    eventCode: string,
-    chroniclePath: string,
-    layoutId: string,
-    seasonId: string,
-    defaultXp: number,
-    defaultTreasureBundles: number,
-    defaultDowntimeDays: number,
-    defaultChosenFactionRep: number,
-    partyActors: PartyActor[]
-): PartyChronicleData {
+function buildDefaultCharacterFields(partyActors: PartyActor[]): { [actorId: string]: UniqueFields } {
     const characters: { [actorId: string]: UniqueFields } = {};
     
-    // Set default earned income values for each character
     partyActors.forEach((actor) => {
         if (actor?.id) {
             const characterLevel = actor.system?.details?.level?.value || 1;
@@ -400,21 +376,49 @@ function createDefaultChronicleData(
         }
     });
     
+    return characters;
+}
+
+/** Parameters for creating default chronicle data after a clear operation */
+interface ClearDefaults {
+    gmPfsNumber: string;
+    scenarioName: string;
+    eventCode: string;
+    chroniclePath: string;
+    layoutId: string;
+    seasonId: string;
+    defaultXp: number;
+    defaultTreasureBundles: number;
+    defaultDowntimeDays: number;
+    defaultChosenFactionRep: number;
+}
+
+/**
+ * Creates default chronicle data structure with preserved and default values
+ * 
+ * @param defaults - Preserved field values and adventure-type defaults
+ * @param partyActors - Array of party member actors
+ * @returns Chronicle data structure with defaults
+ */
+function createDefaultChronicleData(
+    defaults: ClearDefaults,
+    partyActors: PartyActor[]
+): PartyChronicleData {
     return {
         shared: {
-            gmPfsNumber,
-            scenarioName,
-            eventCode,
+            gmPfsNumber: defaults.gmPfsNumber,
+            scenarioName: defaults.scenarioName,
+            eventCode: defaults.eventCode,
             eventDate: '',
-            xpEarned: defaultXp,
-            treasureBundles: defaultTreasureBundles,
-            downtimeDays: defaultDowntimeDays,
-            layoutId,
-            seasonId,
-            blankChroniclePath: chroniclePath,
+            xpEarned: defaults.defaultXp,
+            treasureBundles: defaults.defaultTreasureBundles,
+            downtimeDays: defaults.defaultDowntimeDays,
+            layoutId: defaults.layoutId,
+            seasonId: defaults.seasonId,
+            blankChroniclePath: defaults.chroniclePath,
             adventureSummaryCheckboxes: [],
             strikeoutItems: [],
-            chosenFactionReputation: defaultChosenFactionRep,
+            chosenFactionReputation: defaults.defaultChosenFactionRep,
             reputationValues: {
                 EA: 0,
                 GA: 0,
@@ -428,7 +432,7 @@ function createDefaultChronicleData(
             reportingC: false,
             reportingD: false,
         },
-        characters
+        characters: buildDefaultCharacterFields(partyActors)
     };
 }
 

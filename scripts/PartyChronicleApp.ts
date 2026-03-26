@@ -214,6 +214,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * 
    * Requirements: party-chronicle-filling 1.3, 1.4, 8.2, multi-line-reputation-tracking 1.2, 1.3, 4.1, 4.2
    */
+  // eslint-disable-next-line complexity -- Flat null-coalescing pattern is clearer than extraction
   private mapPartyFieldsToContext(
     savedData: PartyChronicleData | null,
     effectiveLayoutId: string,
