@@ -130,7 +130,7 @@ describe('updateValidationDisplay', () => {
     expect(gmGroup?.classList.contains('has-error')).toBe(true);
   });
 
-  it('should add field-error spans after labels for errored fields', () => {
+  it('should add field-error spans inside form-groups for errored fields', () => {
     const container = createFormContainer();
     const partyActors: any[] = [];
     const extractFormData = () => ({

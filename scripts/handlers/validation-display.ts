@@ -192,13 +192,10 @@ function addFieldError(container: HTMLElement, fieldId: string, errorText: strin
     
     formGroup.classList.add('has-error');
     
-    const label = formGroup.querySelector('label');
-    if (label) {
-        const errorSpan = document.createElement('span');
-        errorSpan.className = 'field-error';
-        errorSpan.textContent = errorText;
-        label.after(errorSpan);
-    }
+    const errorSpan = document.createElement('span');
+    errorSpan.className = 'field-error';
+    errorSpan.textContent = errorText;
+    formGroup.appendChild(errorSpan);
 }
 
 /**
