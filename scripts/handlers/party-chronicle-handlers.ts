@@ -533,6 +533,7 @@ export async function handleChroniclePathFilePicker(
             try {
                 await saveFormData(container, partyActors);
                 await updateChroniclePathVisibility(path, container, layoutId);
+                updateValidationDisplay(container, partyActors, extractFormData);
             } catch (caughtError) {
                 error('File picker callback failed:', caughtError);
             }

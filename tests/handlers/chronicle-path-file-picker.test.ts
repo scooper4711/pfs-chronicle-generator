@@ -57,9 +57,15 @@ jest.mock('../../scripts/handlers/form-data-extraction', () => ({
   }))
 }));
 
+// Mock validation display to verify it gets called after file selection
+jest.mock('../../scripts/handlers/validation-display', () => ({
+  updateValidationDisplay: jest.fn()
+}));
+
 // Now import the handlers after mocks are set up
 import { handleChroniclePathFilePicker, updateChroniclePathVisibility } from '../../scripts/handlers/party-chronicle-handlers';
 import { savePartyChronicleData } from '../../scripts/model/party-chronicle-storage';
+import { updateValidationDisplay } from '../../scripts/handlers/validation-display';
 
 describe('Chronicle Path File Picker Handler Tests', () => {
   let container: HTMLElement;
@@ -183,6 +189,30 @@ describe('Chronicle Path File Picker Handler Tests', () => {
       // Verify the input field was updated
       const input = container.querySelector('#blankChroniclePath') as HTMLInputElement;
       expect(input.value).toBe(testPath);
+    });
+
+    /**
+     * Test that validation display is refreshed after file selection
+     * 
+     * Requirements: file-picker-validation-clear 2.1, 2.2
+     */
+    it('should call updateValidationDisplay after file selection', async () => {
+      const event = new Event('click');
+      const testPath = '/path/to/selected/chronicle.pdf';
+
+      mockFetch.mockResolvedValue({ ok: true } as Response);
+
+      await handleChroniclePathFilePicker(event, container, partyActors);
+
+      const config = mockFilePickerImplementation.mock.calls[0][0];
+      await config.callback(testPath);
+
+      expect(updateValidationDisplay).toHaveBeenCalledTimes(1);
+      expect(updateValidationDisplay).toHaveBeenCalledWith(
+        container,
+        partyActors,
+        expect.any(Function)
+      );
     });
 
     it('should handle callback with empty path', async () => {
