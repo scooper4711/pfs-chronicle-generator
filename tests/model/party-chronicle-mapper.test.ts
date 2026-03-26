@@ -376,7 +376,7 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
     expect(result1.income_earned).toBe(0.8);
 
     // Test case 2: Level 5 expert success, 3 downtime days
-    // Expected: 1.3 gp/day × 3 days = 3.9 gp
+    // Expected: 1 gp/day × 3 days = 3 gp
     const shared2 = createSharedFields({ downtimeDays: 3 });
     const unique2 = createUniqueFields({
       level: 7,
@@ -385,7 +385,7 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
       proficiencyRank: 'expert'
     });
     const result2 = mapToCharacterData(shared2, unique2, actor);
-    expect(result2.income_earned).toBe(3.9);
+    expect(result2.income_earned).toBe(3);
 
     // Test case 3: Level 10 master success, 2 downtime days
     // Expected: 6 gp/day × 2 days = 12 gp
@@ -529,10 +529,10 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
 
     // Test all proficiency ranks with level 20 critical success
     const testCases = [
-      { proficiencyRank: 'trained', expectedPerDay: 35, downtimeDays: 4, expectedTotal: 140 },
-      { proficiencyRank: 'expert', expectedPerDay: 40, downtimeDays: 3, expectedTotal: 120 },
-      { proficiencyRank: 'master', expectedPerDay: 50, downtimeDays: 2, expectedTotal: 100 },
-      { proficiencyRank: 'legendary', expectedPerDay: 60, downtimeDays: 5, expectedTotal: 300 }
+      { proficiencyRank: 'trained', expectedPerDay: 50, downtimeDays: 4, expectedTotal: 200 },
+      { proficiencyRank: 'expert', expectedPerDay: 90, downtimeDays: 3, expectedTotal: 270 },
+      { proficiencyRank: 'master', expectedPerDay: 175, downtimeDays: 2, expectedTotal: 350 },
+      { proficiencyRank: 'legendary', expectedPerDay: 300, downtimeDays: 5, expectedTotal: 1500 }
     ];
 
     testCases.forEach(({ proficiencyRank, downtimeDays, expectedTotal }) => {

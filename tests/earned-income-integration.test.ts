@@ -156,8 +156,8 @@ describe('Earned Income Calculation - Integration Tests', () => {
       const result = mapToCharacterData(shared, unique, actor);
 
       // Critical success uses level + 1 (task level 4)
-      // Level 4 trained = 0.8 gp/day × 4 days = 3.2 gp
-      expect(result.income_earned).toBe(3.2);
+      // Level 4 trained = 0.7 gp/day × 4 days = 2.8 gp
+      expect(result.income_earned).toBe(2.8);
     });
 
     /**
@@ -170,10 +170,10 @@ describe('Earned Income Calculation - Integration Tests', () => {
       });
 
       const testCases = [
-        { proficiencyRank: 'trained', expectedPerDay: 35, expectedTotal: 140 },
-        { proficiencyRank: 'expert', expectedPerDay: 40, expectedTotal: 160 },
-        { proficiencyRank: 'master', expectedPerDay: 50, expectedTotal: 200 },
-        { proficiencyRank: 'legendary', expectedPerDay: 60, expectedTotal: 240 }
+        { proficiencyRank: 'trained', expectedPerDay: 50, expectedTotal: 200 },
+        { proficiencyRank: 'expert', expectedPerDay: 90, expectedTotal: 360 },
+        { proficiencyRank: 'master', expectedPerDay: 175, expectedTotal: 700 },
+        { proficiencyRank: 'legendary', expectedPerDay: 300, expectedTotal: 1200 }
       ];
 
       testCases.forEach(({ proficiencyRank, expectedTotal }) => {
@@ -353,7 +353,7 @@ describe('Earned Income Calculation - Integration Tests', () => {
           taskLevel: 3,
           successLevel: 'critical_success',
           proficiencyRank: 'trained',
-          expectedIncome: 3.2
+          expectedIncome: 2.8
         },
         {
           name: 'High proficiency',
@@ -490,8 +490,8 @@ describe('Earned Income Calculation - Integration Tests', () => {
       const actor = createMockActor('actor-1', 'EA');
       const result = mapToCharacterData(shared, unique, actor);
 
-      // Level 20 critical success legendary = 60 gp/day × 8 days = 480 gp
-      expect(result.income_earned).toBe(480);
+      // Level 20 critical success legendary = 300 gp/day × 8 days = 2400 gp
+      expect(result.income_earned).toBe(2400);
     });
 
     /**

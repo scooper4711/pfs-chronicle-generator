@@ -223,10 +223,10 @@ describe('Earned Income Calculator Property-Based Tests', () => {
             
             // Verify it's using the special critical values
             const expectedCritical: Record<string, number> = {
-              trained: 35,
-              expert: 40,
-              master: 50,
-              legendary: 60
+              trained: 50,
+              expert: 90,
+              master: 175,
+              legendary: 300
             };
             expect(criticalIncome).toBe(expectedCritical[proficiencyRank]);
           }

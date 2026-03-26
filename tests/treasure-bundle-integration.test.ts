@@ -109,7 +109,7 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       const testCases = [
         { level: 5, taskLevel: '-', successLevel: 'success', proficiencyRank: 'trained', downtimeDays: 0, expectedIncomeEarned: 0, expectedTreasureBundlesGp: 20, expectedGpGained: 20 },
         { level: 5, taskLevel: 3, successLevel: 'success', proficiencyRank: 'trained', downtimeDays: 4, expectedIncomeEarned: 2, expectedTreasureBundlesGp: 20, expectedGpGained: 22 },
-        { level: 5, taskLevel: 3, successLevel: 'critical_success', proficiencyRank: 'expert', downtimeDays: 8, expectedIncomeEarned: 8, expectedTreasureBundlesGp: 20, expectedGpGained: 28 },
+        { level: 5, taskLevel: 3, successLevel: 'critical_success', proficiencyRank: 'expert', downtimeDays: 8, expectedIncomeEarned: 6.4, expectedTreasureBundlesGp: 20, expectedGpGained: 26.4 },
         { level: 10, taskLevel: 8, successLevel: 'success', proficiencyRank: 'master', downtimeDays: 8, expectedIncomeEarned: 24, expectedTreasureBundlesGp: 120, expectedGpGained: 144 }
       ];
 
@@ -350,7 +350,7 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
         level: 20,
         taskLevel: 20,  // Level 20 task
         successLevel: 'critical_success',  // Critical success for maximum income
-        proficiencyRank: 'legendary'  // Legendary at level 20 critical = 60 gp/day
+        proficiencyRank: 'legendary'  // Legendary at level 20 critical = 300 gp/day
       });
 
       const actor = createMockActor('actor-1', 'EA');
@@ -358,10 +358,10 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
 
       // Level 20: 2 × 3680 = 7360
       expect(result.treasure_bundles_gp).toBe(7360);
-      // Level 20 legendary critical success = 60 gp/day × 8 days = 480 gp
-      // 7360 + 480 = 7840
-      expect(result.gp_gained).toBe(7840);
-      expect(result.income_earned).toBe(480);
+      // Level 20 legendary critical success = 300 gp/day × 8 days = 2400 gp
+      // 7360 + 2400 = 9760
+      expect(result.gp_gained).toBe(9760);
+      expect(result.income_earned).toBe(2400);
     });
   });
 

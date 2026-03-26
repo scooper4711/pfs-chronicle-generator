@@ -197,7 +197,7 @@ describe('Earned Income Calculator Unit Tests', () => {
     });
 
     it('should return correct income for level 5 expert success', () => {
-      expect(getIncomePerDay(5, 'success', 'expert')).toBe(1.3);
+      expect(getIncomePerDay(5, 'success', 'expert')).toBe(1);
     });
 
     it('should return correct income for level 10 master success', () => {
@@ -249,45 +249,45 @@ describe('Earned Income Calculator Unit Tests', () => {
     });
 
     it('should use level + 1 for critical success at level 3', () => {
-      // Critical success at level 3 uses level 4 values (above minimum)
-      expect(getIncomePerDay(3, 'critical_success', 'trained')).toBe(0.8);
-      expect(getIncomePerDay(3, 'critical_success', 'expert')).toBe(1);
-      expect(getIncomePerDay(3, 'critical_success', 'master')).toBe(1);
-      expect(getIncomePerDay(3, 'critical_success', 'legendary')).toBe(1);
+      // Critical success at level 3 uses level 4 values
+      expect(getIncomePerDay(3, 'critical_success', 'trained')).toBe(0.7);
+      expect(getIncomePerDay(3, 'critical_success', 'expert')).toBe(0.8);
+      expect(getIncomePerDay(3, 'critical_success', 'master')).toBe(0.8);
+      expect(getIncomePerDay(3, 'critical_success', 'legendary')).toBe(0.8);
     });
 
     it('should use level + 1 for critical success at level 4 and above', () => {
-      // Critical success at level 4+ uses level + 1 (well above minimum)
-      expect(getIncomePerDay(4, 'critical_success', 'trained')).toBe(1);
-      expect(getIncomePerDay(4, 'critical_success', 'expert')).toBe(1.3);
-      expect(getIncomePerDay(4, 'critical_success', 'master')).toBe(1.3);
-      expect(getIncomePerDay(4, 'critical_success', 'legendary')).toBe(1.3);
+      // Critical success at level 4 uses level 5 values
+      expect(getIncomePerDay(4, 'critical_success', 'trained')).toBe(0.9);
+      expect(getIncomePerDay(4, 'critical_success', 'expert')).toBe(1);
+      expect(getIncomePerDay(4, 'critical_success', 'master')).toBe(1);
+      expect(getIncomePerDay(4, 'critical_success', 'legendary')).toBe(1);
     });
 
     it('should use special critical success values for level 20', () => {
-      expect(getIncomePerDay(20, 'critical_success', 'trained')).toBe(35);
-      expect(getIncomePerDay(20, 'critical_success', 'expert')).toBe(40);
-      expect(getIncomePerDay(20, 'critical_success', 'master')).toBe(50);
-      expect(getIncomePerDay(20, 'critical_success', 'legendary')).toBe(60);
+      expect(getIncomePerDay(20, 'critical_success', 'trained')).toBe(50);
+      expect(getIncomePerDay(20, 'critical_success', 'expert')).toBe(90);
+      expect(getIncomePerDay(20, 'critical_success', 'master')).toBe(175);
+      expect(getIncomePerDay(20, 'critical_success', 'legendary')).toBe(300);
     });
 
     it('should return correct income for level 20 normal success', () => {
-      expect(getIncomePerDay(20, 'success', 'trained')).toBe(30);
-      expect(getIncomePerDay(20, 'success', 'expert')).toBe(35);
-      expect(getIncomePerDay(20, 'success', 'master')).toBe(40);
-      expect(getIncomePerDay(20, 'success', 'legendary')).toBe(50);
+      expect(getIncomePerDay(20, 'success', 'trained')).toBe(40);
+      expect(getIncomePerDay(20, 'success', 'expert')).toBe(75);
+      expect(getIncomePerDay(20, 'success', 'master')).toBe(150);
+      expect(getIncomePerDay(20, 'success', 'legendary')).toBe(200);
     });
 
     it('should return correct income for level 19 critical success', () => {
       // Critical success at level 19 uses level 20 normal values (not critical)
-      expect(getIncomePerDay(19, 'critical_success', 'trained')).toBe(30);
-      expect(getIncomePerDay(19, 'critical_success', 'expert')).toBe(35);
-      expect(getIncomePerDay(19, 'critical_success', 'master')).toBe(40);
-      expect(getIncomePerDay(19, 'critical_success', 'legendary')).toBe(50);
+      expect(getIncomePerDay(19, 'critical_success', 'trained')).toBe(40);
+      expect(getIncomePerDay(19, 'critical_success', 'expert')).toBe(75);
+      expect(getIncomePerDay(19, 'critical_success', 'master')).toBe(150);
+      expect(getIncomePerDay(19, 'critical_success', 'legendary')).toBe(200);
     });
 
     it('should handle string task level', () => {
-      expect(getIncomePerDay('5', 'success', 'trained')).toBe(1);
+      expect(getIncomePerDay('5', 'success', 'trained')).toBe(0.9);
       expect(getIncomePerDay('10', 'success', 'master')).toBe(6);
     });
 
@@ -320,8 +320,8 @@ describe('Earned Income Calculator Unit Tests', () => {
     });
 
     it('should calculate income per day × downtime days', () => {
-      // Level 5 trained success = 1 gp/day × 4 days = 4 gp
-      expect(calculateEarnedIncome(5, 'success', 'trained', 4)).toBe(4);
+      // Level 5 trained success = 0.9 gp/day × 4 days = 3.6 gp
+      expect(calculateEarnedIncome(5, 'success', 'trained', 4)).toBe(3.6);
       
       // Level 10 master success = 6 gp/day × 3 days = 18 gp
       expect(calculateEarnedIncome(10, 'success', 'master', 3)).toBe(18);
@@ -343,19 +343,19 @@ describe('Earned Income Calculator Unit Tests', () => {
 
     it('should handle rounding edge cases', () => {
       // Test that rounding works correctly for values that need rounding
-      // Level 4 trained success = 0.8 gp/day × 3 days = 2.4 gp
-      expect(calculateEarnedIncome(4, 'success', 'trained', 3)).toBe(2.4);
+      // Level 4 trained success = 0.7 gp/day × 3 days = 2.1 gp
+      expect(calculateEarnedIncome(4, 'success', 'trained', 3)).toBe(2.1);
       
-      // Level 5 expert success = 1.3 gp/day × 3 days = 3.9 gp
-      expect(calculateEarnedIncome(5, 'success', 'expert', 3)).toBe(3.9);
+      // Level 5 expert success = 1 gp/day × 3 days = 3 gp
+      expect(calculateEarnedIncome(5, 'success', 'expert', 3)).toBe(3);
     });
 
     it('should calculate correctly with maximum downtime days', () => {
       // Level 10 master success = 6 gp/day × 8 days = 48 gp
       expect(calculateEarnedIncome(10, 'success', 'master', 8)).toBe(48);
       
-      // Level 20 legendary success = 50 gp/day × 8 days = 400 gp
-      expect(calculateEarnedIncome(20, 'success', 'legendary', 8)).toBe(400);
+      // Level 20 legendary success = 200 gp/day × 8 days = 1600 gp
+      expect(calculateEarnedIncome(20, 'success', 'legendary', 8)).toBe(1600);
     });
 
     it('should calculate correctly with critical success', () => {
@@ -370,10 +370,10 @@ describe('Earned Income Calculator Unit Tests', () => {
 
     it('should calculate correctly with level 20 critical success', () => {
       // Level 20 critical success uses special values
-      expect(calculateEarnedIncome(20, 'critical_success', 'trained', 4)).toBe(140);  // 35 × 4
-      expect(calculateEarnedIncome(20, 'critical_success', 'expert', 4)).toBe(160);   // 40 × 4
-      expect(calculateEarnedIncome(20, 'critical_success', 'master', 4)).toBe(200);   // 50 × 4
-      expect(calculateEarnedIncome(20, 'critical_success', 'legendary', 4)).toBe(240); // 60 × 4
+      expect(calculateEarnedIncome(20, 'critical_success', 'trained', 4)).toBe(200);  // 50 × 4
+      expect(calculateEarnedIncome(20, 'critical_success', 'expert', 4)).toBe(360);   // 90 × 4
+      expect(calculateEarnedIncome(20, 'critical_success', 'master', 4)).toBe(700);   // 175 × 4
+      expect(calculateEarnedIncome(20, 'critical_success', 'legendary', 4)).toBe(1200); // 300 × 4
     });
 
     it('should handle small income values correctly', () => {
@@ -474,10 +474,10 @@ describe('Earned Income Calculator Unit Tests', () => {
     it('should have special critical success values for level 20', () => {
       const critical = INCOME_TABLE[20].critical as Record<string, number>;
       expect(critical).toBeDefined();
-      expect(critical.trained).toBe(35);
-      expect(critical.expert).toBe(40);
-      expect(critical.master).toBe(50);
-      expect(critical.legendary).toBe(60);
+      expect(critical.trained).toBe(50);
+      expect(critical.expert).toBe(90);
+      expect(critical.master).toBe(175);
+      expect(critical.legendary).toBe(300);
     });
 
     it('should have all values as positive numbers', () => {

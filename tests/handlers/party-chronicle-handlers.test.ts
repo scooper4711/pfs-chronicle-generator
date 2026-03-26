@@ -258,8 +258,8 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       // Verify correct calculations
       // Level 3, success, trained = 0.5 gp/day * 4 days = 2.00 gp
       expect(display1?.textContent).toBe('2.00 gp');
-      // Level 5, success, expert = 1.3 gp/day * 4 days = 5.20 gp
-      expect(display2?.textContent).toBe('5.20 gp');
+      // Level 5, success, expert = 1 gp/day * 4 days = 4.00 gp
+      expect(display2?.textContent).toBe('4.00 gp');
       // Level 7, critical success (uses level 8), master = 3 gp/day * 4 days = 12.00 gp
       expect(display3?.textContent).toBe('12.00 gp');
     });
@@ -396,8 +396,8 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
 
       // Level 3, success, trained = 0.5 gp/day * 4 days = 2.00 gp
       expect(earnedIncomeDisplay1?.textContent).toBe('2.00 gp');
-      // Level 5, success, expert = 1.3 gp/day * 4 days = 5.20 gp
-      expect(earnedIncomeDisplay2?.textContent).toBe('5.20 gp');
+      // Level 5, success, expert = 1 gp/day * 4 days = 4.00 gp
+      expect(earnedIncomeDisplay2?.textContent).toBe('4.00 gp');
     });
 
     /**
@@ -503,7 +503,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       const display2 = member2.querySelector('.earned-income-value');
 
       expect(display1?.textContent).toBe('2.00 gp');
-      expect(display2?.textContent).toBe('5.20 gp');
+      expect(display2?.textContent).toBe('4.00 gp');
     });
   });
 
@@ -553,8 +553,8 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
 
       // Verify display was updated with new task level
       const display = member.querySelector('.earned-income-value');
-      // Level 5, success, trained = 1 gp/day * 4 days = 4.00 gp
-      expect(display?.textContent).toBe('4.00 gp');
+      // Level 5, success, trained = 0.9 gp/day * 4 days = 3.60 gp
+      expect(display?.textContent).toBe('3.60 gp');
     });
 
     /**
@@ -652,8 +652,8 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
 
       // Verify display was updated with critical success calculation
       const display = member.querySelector('.earned-income-value');
-      // Level 3, critical success (uses level 4), trained = 0.8 gp/day * 4 days = 3.20 gp
-      expect(display?.textContent).toBe('3.20 gp');
+      // Level 3, critical success (uses level 4), trained = 0.7 gp/day * 4 days = 2.80 gp
+      expect(display?.textContent).toBe('2.80 gp');
     });
 
     /**
@@ -751,8 +751,8 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
 
       // Verify display was updated with new proficiency rank
       const display = member.querySelector('.earned-income-value');
-      // Level 5, success, expert = 1.3 gp/day * 4 days = 5.20 gp
-      expect(display?.textContent).toBe('5.20 gp');
+      // Level 5, success, expert = 1 gp/day * 4 days = 4.00 gp
+      expect(display?.textContent).toBe('4.00 gp');
     });
 
     /**
