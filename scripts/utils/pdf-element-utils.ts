@@ -35,30 +35,6 @@ export function resolvePresets(element: ContentElement, layoutPresets: Record<st
 }
 
 /**
- * Extracts a part of a society ID string (format: "playerNumber-characterNumber").
- *
- * @param data - The data object containing the societyid field
- * @param extractor - Function to extract the desired part from the split parts
- * @returns The extracted part, or empty string if the society ID is missing or malformed
- */
-function extractSocietyIdPart(data: PdfFieldData, extractor: (parts: string[]) => string): string {
-    const societyid = data['societyid'];
-    if (societyid && typeof societyid === 'string') {
-        const parts = societyid.split('-');
-        if (parts.length === 2) {
-            return extractor(parts);
-        }
-    }
-    return '';
-}
-
-/** Maps special society ID parameter names to their extraction logic. */
-const SOCIETY_ID_EXTRACTORS: Record<string, (parts: string[]) => string> = {
-    'societyid.player': (parts) => parts[0],
-    'societyid.char_without_first_digit': (parts) => parts[1].substring(1),
-};
-
-/**
  * Joins an array value based on the element type.
  * Multiline elements use newlines; other elements use triple pipe delimiter.
  */
@@ -71,9 +47,6 @@ function joinArrayValue(paramValue: unknown[], elementType?: string): string {
 /**
  * Resolves a value that may be a parameter reference or a literal string.
  * Parameter references start with 'param:' and are resolved from the data object.
- * Supports special parameter transformations:
- * - 'param:societyid.player' - Extracts the player ID from a society ID (before the dash)
- * - 'param:societyid.char_without_first_digit' - Extracts character ID without first digit (after dash, skip first char)
  *
  * Array values are joined differently based on element type:
  * - 'multiline' elements: joined with newlines (\n)
@@ -99,11 +72,6 @@ export function resolveValue(value: string | undefined, data: PdfFieldData, elem
         isArray: Array.isArray(data[paramName]),
         elementType
     });
-
-    const societyExtractor = SOCIETY_ID_EXTRACTORS[paramName];
-    if (societyExtractor) {
-        return extractSocietyIdPart(data, societyExtractor);
-    }
 
     const paramValue = data[paramName];
     if (Array.isArray(paramValue)) {

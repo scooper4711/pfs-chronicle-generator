@@ -386,7 +386,8 @@ function buildDefaultCharacterFields(partyActors: PartyActor[]): { [actorId: str
             
             characters[actor.id] = {
                 characterName: actor.name || '',
-                societyId: '',
+                playerNumber: '',
+                characterNumber: '',
                 level: characterLevel,
                 taskLevel: defaultTaskLevel,
                 successLevel: 'success',

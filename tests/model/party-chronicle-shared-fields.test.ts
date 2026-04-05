@@ -56,7 +56,8 @@ const sharedFieldsArbitrary = fc.record({
  */
 const uniqueFieldsArbitrary = fc.record({
   characterName: fc.string({ minLength: 1, maxLength: 30 }),
-  societyId: fc.string({ minLength: 5, maxLength: 15 }),
+  playerNumber: fc.stringMatching(/^\d{1,10}$/),
+  characterNumber: fc.stringMatching(/^2\d{1,5}$/),
   level: fc.integer({ min: 1, max: 20 }),
   taskLevel: fc.oneof(
     fc.constant('-'),

@@ -13,7 +13,8 @@ import {
   validateDateFormat,
   validateNumberField,
   validateRequiredString,
-  validateSocietyIdFormat,
+  validatePlayerNumber,
+  validateCharacterNumber,
   validateOptionalArray
 } from './validation-helpers.js';
 
@@ -139,7 +140,8 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
  * ```typescript
  * const unique: Partial<UniqueFields> = {
  *   characterName: 'Valeros',
- *   societyId: '',  // Missing!
+ *   playerNumber: '',     // Missing!
+ *   characterNumber: '',  // Missing!
  *   level: 3,
  *   incomeEarned: 8,
  *   goldSpent: 10,
@@ -193,8 +195,9 @@ export function validateUniqueFields(
   // Validate Character Name
   errors.push(...validateRequiredString(unique.characterName, 'Character Name', prefix));
   
-  // Validate Society ID with format check
-  errors.push(...validateSocietyIdFormat(unique.societyId, 'Society ID', prefix));
+  // Validate Player Number and Character Number
+  errors.push(...validatePlayerNumber(unique.playerNumber, 'Player Number', prefix));
+  errors.push(...validateCharacterNumber(unique.characterNumber, 'Character Number', prefix));
   
   // Validate Level
   errors.push(...validateNumberField(unique.level, 'Level', { 

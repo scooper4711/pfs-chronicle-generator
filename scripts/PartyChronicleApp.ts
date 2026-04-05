@@ -83,7 +83,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * Prepares context data for the Handlebars template
    * 
    * This method:
-   * - Extracts party member data (id, name, level, societyId)
+   * - Extracts party member data (id, name, level, playerNumber, characterNumber)
    * - Loads saved party chronicle data from world flags
    * - Prepares season and layout dropdown data
    * - Checks if chronicle path file exists
@@ -103,9 +103,8 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
           name: actor.name,
           img: actor.img,
           level: actor.system?.details?.level?.value ?? 1,
-          societyId: actor.system?.pfs?.playerNumber && actor.system?.pfs?.characterNumber
-            ? `${actor.system.pfs.playerNumber}-${actor.system.pfs.characterNumber}`
-            : '',
+          playerNumber: actor.system?.pfs?.playerNumber?.toString() ?? '',
+          characterNumber: actor.system?.pfs?.characterNumber?.toString() ?? '',
           faction: FACTION_NAMES[actor.system?.pfs?.currentFaction] ?? ''
         }));
 

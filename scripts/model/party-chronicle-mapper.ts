@@ -20,6 +20,8 @@ export interface ChronicleData {
   // Character identification
   char: string;
   societyid: string;
+  char_number: string;
+  char_number_short: string;
   level: number;
   
   // Event details
@@ -80,7 +82,8 @@ export interface ChronicleData {
  * 
  * const unique: UniqueFields = {
  *   characterName: 'Valeros',
- *   societyId: '12345-01',
+ *   playerNumber: '12345',
+ *   characterNumber: '2001',
  *   level: 3,
  *   incomeEarned: 8,
  *   goldSpent: 10,
@@ -125,7 +128,9 @@ export function mapToCharacterData(
   const chronicleData: ChronicleData = {
     // Character identification from unique fields
     char: unique.characterName,
-    societyid: unique.societyId,
+    societyid: unique.playerNumber,
+    char_number: unique.characterNumber,
+    char_number_short: unique.characterNumber.length > 1 ? unique.characterNumber.substring(1) : unique.characterNumber,
     level: unique.level,
     
     // Event details from shared fields

@@ -126,30 +126,6 @@ describe('resolveValue', () => {
     expect(resolveValue('param:notes', data, 'multiline')).toBe('line1\nline2\nline3');
   });
 
-  it('should extract player ID from societyid.player', () => {
-    const data = { societyid: '12345-2001' };
-    expect(resolveValue('param:societyid.player', data)).toBe('12345');
-  });
-
-  it('should extract character ID without first digit from societyid.char_without_first_digit', () => {
-    const data = { societyid: '12345-2001' };
-    expect(resolveValue('param:societyid.char_without_first_digit', data)).toBe('001');
-  });
-
-  it('should return empty string for malformed societyid (no dash)', () => {
-    const data = { societyid: '12345' };
-    expect(resolveValue('param:societyid.player', data)).toBe('');
-  });
-
-  it('should return empty string for missing societyid', () => {
-    const data = {};
-    expect(resolveValue('param:societyid.player', data)).toBe('');
-  });
-
-  it('should return empty string for non-string societyid', () => {
-    const data = { societyid: 12345 };
-    expect(resolveValue('param:societyid.player', data)).toBe('');
-  });
 });
 
 describe('getAllContentElements', () => {

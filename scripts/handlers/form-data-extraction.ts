@@ -78,7 +78,8 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
         characters[actorId] = {
             // Read from hidden fields (non-editable)
             characterName: (container.querySelector(`input[name="characters.${actorId}.characterName"]`) as HTMLInputElement)?.value || actor.name,
-            societyId: (container.querySelector(`input[name="characters.${actorId}.societyId"]`) as HTMLInputElement)?.value || '',
+            playerNumber: (container.querySelector(`input[name="characters.${actorId}.playerNumber"]`) as HTMLInputElement)?.value || '',
+            characterNumber: (container.querySelector(`input[name="characters.${actorId}.characterNumber"]`) as HTMLInputElement)?.value || '',
             level: Number.parseInt((container.querySelector(`input[name="characters.${actorId}.level"]`) as HTMLInputElement)?.value) || actor.level || 1,
             // Read earned income input fields
             taskLevel: taskLevel,

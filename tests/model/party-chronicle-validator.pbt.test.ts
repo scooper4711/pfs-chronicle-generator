@@ -102,7 +102,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
             // Test case 1: Missing success level
             const uniqueNoSuccess: Partial<UniqueFields> = {
               characterName: 'Test Character',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 5,
               goldSpent: 0,
               taskLevel: taskLevel,
@@ -122,7 +122,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
             // Test case 2: Missing proficiency rank
             const uniqueNoProficiency: Partial<UniqueFields> = {
               characterName: 'Test Character',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 5,
               goldSpent: 0,
               taskLevel: taskLevel,
@@ -142,7 +142,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
             // Test case 3: Both provided (should be valid for earned income fields)
             const uniqueComplete: Partial<UniqueFields> = {
               characterName: 'Test Character',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 5,
               goldSpent: 0,
               taskLevel: taskLevel,
@@ -172,7 +172,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
           (successLevel, proficiencyRank) => {
             const unique: Partial<UniqueFields> = {
               characterName: 'Test Character',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 5,
               goldSpent: 0,
               taskLevel: '-',
@@ -203,7 +203,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
           (invalidSuccessLevel) => {
             const unique: Partial<UniqueFields> = {
               characterName: 'Test Character',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 5,
               goldSpent: 0,
               taskLevel: 5,
@@ -234,7 +234,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
           (invalidProficiencyRank) => {
             const unique: Partial<UniqueFields> = {
               characterName: 'Test Character',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 5,
               goldSpent: 0,
               taskLevel: 5,
@@ -263,7 +263,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
           (successLevel) => {
             const unique: Partial<UniqueFields> = {
               characterName: 'Test Character',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 5,
               goldSpent: 0,
               taskLevel: 5,
@@ -291,7 +291,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
           (proficiencyRank) => {
             const unique: Partial<UniqueFields> = {
               characterName: 'Test Character',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 5,
               goldSpent: 0,
               taskLevel: 5,

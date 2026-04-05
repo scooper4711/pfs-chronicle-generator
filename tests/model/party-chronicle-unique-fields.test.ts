@@ -19,7 +19,8 @@ import { calculateEarnedIncome } from '../../scripts/utils/earned-income-calcula
  */
 const uniqueFieldsArbitrary = fc.record({
   characterName: fc.string({ minLength: 1, maxLength: 30 }),
-  societyId: fc.string({ minLength: 5, maxLength: 15 }),
+  playerNumber: fc.stringMatching(/^\d{1,10}$/),
+  characterNumber: fc.stringMatching(/^2\d{1,5}$/),
   level: fc.integer({ min: 1, max: 20 }),
   taskLevel: fc.oneof(
     fc.constant('-'),
@@ -141,7 +142,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               
               // Verify character-specific fields match this character's unique data
               expect(chronicleData.char).toBe(unique.characterName);
-              expect(chronicleData.societyid).toBe(unique.societyId);
+              expect(chronicleData.societyid).toBe(unique.playerNumber);
               expect(chronicleData.level).toBe(unique.level);
               expect(chronicleData.income_earned).toBe(expectedEarnedIncome);
               expect(chronicleData.gp_gained).toBe(expectedGpGained);
@@ -167,8 +168,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 if (otherUnique.characterName !== unique.characterName) {
                   expect(chronicleData.char).not.toBe(otherUnique.characterName);
                 }
-                if (otherUnique.societyId !== unique.societyId) {
-                  expect(chronicleData.societyid).not.toBe(otherUnique.societyId);
+                if (otherUnique.playerNumber !== unique.playerNumber) {
+                  expect(chronicleData.societyid).not.toBe(otherUnique.playerNumber);
                 }
                 if (otherUnique.level !== unique.level) {
                   expect(chronicleData.level).not.toBe(otherUnique.level);
@@ -261,7 +262,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
 
             // Property: Single character's unique fields are correctly applied
             expect(chronicleData.char).toBe(unique.characterName);
-            expect(chronicleData.societyid).toBe(unique.societyId);
+            expect(chronicleData.societyid).toBe(unique.playerNumber);
             expect(chronicleData.level).toBe(unique.level);
             expect(chronicleData.income_earned).toBe(expectedEarnedIncome);
             expect(chronicleData.gp_gained).toBe(expectedGpGained);
@@ -301,7 +302,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                   if (mapping1.unique.characterName !== mapping2.unique.characterName) {
                     expect(mapping1.chronicleData.char).not.toBe(mapping2.chronicleData.char);
                   }
-                  if (mapping1.unique.societyId !== mapping2.unique.societyId) {
+                  if (mapping1.unique.playerNumber !== mapping2.unique.playerNumber) {
                     expect(mapping1.chronicleData.societyid).not.toBe(mapping2.chronicleData.societyid);
                   }
                   if (mapping1.unique.level !== mapping2.unique.level) {
@@ -338,7 +339,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             actorIds.forEach(actorId => {
               characters[actorId] = {
                 characterName: `Character ${actorId.substring(0, 8)}`,
-                societyId: `${Math.floor(Math.random() * 900000 + 100000)}-${Math.floor(Math.random() * 9000 + 1000)}`,
+                playerNumber: `${Math.floor(Math.random() * 900000 + 100000)}`,
+                characterNumber: `${Math.floor(Math.random() * 9000 + 1000)}`,
                 level: Math.floor(Math.random() * 20) + 1,
                 taskLevel: Math.floor(Math.random() * 20),
                 successLevel: 'success',
@@ -359,7 +361,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             actorIds.forEach(actorId => {
               expect(partyData.characters[actorId]).toBeDefined();
               expect(partyData.characters[actorId]).toHaveProperty('characterName');
-              expect(partyData.characters[actorId]).toHaveProperty('societyId');
+              expect(partyData.characters[actorId]).toHaveProperty('playerNumber');
+              expect(partyData.characters[actorId]).toHaveProperty('characterNumber');
               expect(partyData.characters[actorId]).toHaveProperty('level');
               expect(partyData.characters[actorId]).toHaveProperty('earnedIncome');
               expect(partyData.characters[actorId]).toHaveProperty('goldSpent');
@@ -408,7 +411,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             actorIds.forEach((actorId, index) => {
               characters[actorId] = {
                 characterName: `Character ${index + 1}`,
-                societyId: `${100000 + index}-${1000 + index}`,
+                playerNumber: `${100000 + index}`,
+                characterNumber: `${1000 + index}`,
                 level: (index % 20) + 1,
                 taskLevel: (index % 20),
                 successLevel: 'success',
@@ -448,7 +452,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             actorIds.forEach(actorId => {
               characters[actorId] = {
                 characterName: `Character ${actorId.substring(0, 8)}`,
-                societyId: `123456-${actorId.substring(0, 4)}`,
+                playerNumber: '123456',
+                characterNumber: actorId.substring(0, 4),
                 level: 5,
                 taskLevel: 3,
                 successLevel: 'success',
@@ -513,7 +518,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             // Property: Each character must have all required unique fields
             const requiredFields: (keyof UniqueFields)[] = [
               'characterName',
-              'societyId',
+              'playerNumber',
+              'characterNumber',
               'level',
               'earnedIncome',
               'goldSpent',

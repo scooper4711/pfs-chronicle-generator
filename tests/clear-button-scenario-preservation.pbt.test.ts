@@ -188,7 +188,7 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
               characters: {
                 'char1': {
                   characterName: 'Test Character',
-                  societyId: '12345-2001',
+                  playerNumber: '12345', characterNumber: '2001',
                   level: 5,
                   taskLevel: 3,
                   successLevel: 'success',
@@ -250,7 +250,7 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
               characters: {
                 'char1': {
                   characterName: 'Test Character',
-                  societyId: '',
+                  playerNumber: '', characterNumber: '',
                   level: 5,
                   taskLevel: 3,
                   successLevel: 'success',

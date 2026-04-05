@@ -56,7 +56,8 @@ describe('Earned Income Auto-Save Tests', () => {
       
       <!-- Character 1 fields -->
       <input type="text" name="characters.actor1.characterName" value="Character 1">
-      <input type="text" name="characters.actor1.societyId" value="12345-2001">
+      <input type="text" name="characters.actor1.playerNumber" value="12345">
+      <input type="text" name="characters.actor1.characterNumber" value="2001">
       <input type="number" name="characters.actor1.level" value="5">
       <select name="characters.actor1.taskLevel">
         <option value="-">-</option>
@@ -82,7 +83,8 @@ describe('Earned Income Auto-Save Tests', () => {
       
       <!-- Character 2 fields -->
       <input type="text" name="characters.actor2.characterName" value="Character 2">
-      <input type="text" name="characters.actor2.societyId" value="12345-2002">
+      <input type="text" name="characters.actor2.playerNumber" value="12345">
+      <input type="text" name="characters.actor2.characterNumber" value="2002">
       <input type="number" name="characters.actor2.level" value="3">
       <select name="characters.actor2.taskLevel">
         <option value="-" selected>-</option>

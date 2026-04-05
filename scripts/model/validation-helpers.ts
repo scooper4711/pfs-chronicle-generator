@@ -52,41 +52,47 @@ export function validateDateFormat(date: string | undefined | null, fieldName: s
 }
 
 /**
- * Validates that a society ID is in the correct format (playerNumber-characterNumber).
+ * Validates that a player number is a non-empty numeric string.
  * 
- * @param societyId - The society ID to validate
+ * @param value - The player number to validate
  * @param fieldName - The name of the field for error messages
  * @param prefix - Optional prefix for error messages (e.g., character name)
  * @returns Array of error messages (empty if valid)
- * 
- * @example
- * ```typescript
- * const errors = validateSocietyIdFormat('12345-01', 'Society ID');
- * // errors = []
- * 
- * const errors2 = validateSocietyIdFormat('invalid', 'Society ID', 'Valeros: ');
- * // errors2 = ['Valeros: Society ID must be in format "playerNumber-characterNumber" (e.g., "12345-01")']
- * ```
  */
-export function validateSocietyIdFormat(
-  societyId: string | undefined | null,
+export function validatePlayerNumber(
+  value: string | undefined | null,
   fieldName: string,
   prefix: string = ''
 ): string[] {
-  const errors: string[] = [];
-  
-  if (!societyId || societyId.trim() === '') {
-    errors.push(`${prefix}${fieldName} is required`);
-    return errors;
+  if (!value || value.trim() === '') {
+    return [`${prefix}${fieldName} is required`];
   }
-  
-  // Check if society ID is in valid format (playerNumber-characterNumber)
-  const societyIdRegex = /^\d+-\d+$/;
-  if (!societyIdRegex.test(societyId)) {
-    errors.push(`${prefix}${fieldName} must be in format "playerNumber-characterNumber" (e.g., "12345-01")`);
+  if (!/^\d+$/.test(value)) {
+    return [`${prefix}${fieldName} must be a numeric string (e.g., "12345")`];
   }
-  
-  return errors;
+  return [];
+}
+
+/**
+ * Validates that a character number is a non-empty numeric string.
+ * 
+ * @param value - The character number to validate
+ * @param fieldName - The name of the field for error messages
+ * @param prefix - Optional prefix for error messages (e.g., character name)
+ * @returns Array of error messages (empty if valid)
+ */
+export function validateCharacterNumber(
+  value: string | undefined | null,
+  fieldName: string,
+  prefix: string = ''
+): string[] {
+  if (!value || value.trim() === '') {
+    return [`${prefix}${fieldName} is required`];
+  }
+  if (!/^\d+$/.test(value)) {
+    return [`${prefix}${fieldName} must be a numeric string (e.g., "2001")`];
+  }
+  return [];
 }
 
 /**

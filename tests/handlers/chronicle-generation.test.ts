@@ -253,7 +253,7 @@ describe('Chronicle Generation', () => {
       const actor = createActor('actor-1', 'Valeros');
       const data = {
         shared: validSharedData(),
-        characters: { 'actor-1': { characterName: 'Valeros', societyId: '12345-01' } },
+        characters: { 'actor-1': { characterName: 'Valeros', playerNumber: '12345', characterNumber: '01' } },
       };
 
       await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());

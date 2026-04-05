@@ -89,8 +89,11 @@ export interface UniqueFields {
   /** Character name (editable, may differ from actor name) */
   characterName: string;
   
-  /** Society ID in format "playerNumber-characterNumber" */
-  societyId: string;
+  /** Organized Play player number (digits before the dash in the old combined format) */
+  playerNumber: string;
+  
+  /** Character number (e.g., "2001") */
+  characterNumber: string;
   
   /** Character level */
   level: number;
@@ -147,8 +150,11 @@ export interface PartyMember {
   /** Character level */
   level: number;
   
-  /** Society ID */
-  societyId: string;
+  /** Player number */
+  playerNumber: string;
+
+  /** Character number */
+  characterNumber: string;
 
   /** Faction full name from actor.system.pfs.currentFaction */
   faction: string;

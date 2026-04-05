@@ -465,7 +465,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       const mockExtractFormData = () => createMockFormData({
         actor1: {
           characterName: 'Character 1',
-          societyId: '123456-2001',
+          playerNumber: '123456', characterNumber: '2001',
           level: 3,
           taskLevel: '3',
           successLevel: 'success',
@@ -473,7 +473,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
         },
         actor2: {
           characterName: 'Character 2',
-          societyId: '123456-2002',
+          playerNumber: '123456', characterNumber: '2002',
           level: 5,
           taskLevel: '5',
           successLevel: 'success',
@@ -529,7 +529,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       const mockExtractFormData = () => createMockFormData({
         actor1: {
           characterName: 'Character 1',
-          societyId: '123456-2001',
+          playerNumber: '123456', characterNumber: '2001',
           level: 5,
           taskLevel: '5',
           successLevel: 'success',
@@ -578,7 +578,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       const mockExtractFormData = () => createMockFormData({
         actor1: {
           characterName: 'Character 1',
-          societyId: '123456-2001',
+          playerNumber: '123456', characterNumber: '2001',
           level: 3,
           taskLevel: '-',
           successLevel: 'success',
@@ -628,7 +628,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       const mockExtractFormData = () => createMockFormData({
         actor1: {
           characterName: 'Character 1',
-          societyId: '123456-2001',
+          playerNumber: '123456', characterNumber: '2001',
           level: 3,
           taskLevel: '3',
           successLevel: 'critical_success',
@@ -677,7 +677,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       const mockExtractFormData = () => createMockFormData({
         actor1: {
           characterName: 'Character 1',
-          societyId: '123456-2001',
+          playerNumber: '123456', characterNumber: '2001',
           level: 3,
           taskLevel: '3',
           successLevel: 'critical_failure',
@@ -727,7 +727,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       const mockExtractFormData = () => createMockFormData({
         actor1: {
           characterName: 'Character 1',
-          societyId: '123456-2001',
+          playerNumber: '123456', characterNumber: '2001',
           level: 5,
           taskLevel: '5',
           successLevel: 'success',
@@ -778,7 +778,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       let mockExtractFormData = () => createMockFormData({
         actor1: {
           characterName: 'Character 1',
-          societyId: '123456-2001',
+          playerNumber: '123456', characterNumber: '2001',
           level: 10,
           taskLevel: '10',
           successLevel: 'success',
@@ -801,7 +801,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       mockExtractFormData = () => createMockFormData({
         actor1: {
           characterName: 'Character 1',
-          societyId: '123456-2001',
+          playerNumber: '123456', characterNumber: '2001',
           level: 10,
           taskLevel: '10',
           successLevel: 'success',
@@ -824,7 +824,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       mockExtractFormData = () => createMockFormData({
         actor1: {
           characterName: 'Character 1',
-          societyId: '123456-2001',
+          playerNumber: '123456', characterNumber: '2001',
           level: 10,
           taskLevel: '10',
           successLevel: 'success',
@@ -847,7 +847,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       mockExtractFormData = () => createMockFormData({
         actor1: {
           characterName: 'Character 1',
-          societyId: '123456-2001',
+          playerNumber: '123456', characterNumber: '2001',
           level: 10,
           taskLevel: '10',
           successLevel: 'success',

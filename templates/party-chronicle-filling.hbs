@@ -282,13 +282,14 @@
                     </div>
                     <div class="character-identity">
                         <div class="character-name">{{this.name}}</div>
-                        <div class="character-society-id">{{#if this.societyId}}{{this.societyId}}{{else}}<em>No Society ID</em>{{/if}}</div>
+                        <div class="character-society-id">{{#if this.playerNumber}}{{this.playerNumber}}-{{this.characterNumber}}{{else}}<em>No Society ID</em>{{/if}}</div>
                         <div class="character-level">Level {{this.level}}</div>
                         <div class="character-faction" id="factionDisplay-{{this.id}}">{{#if this.faction}}{{this.faction}}{{else}}<em>No Faction</em>{{/if}}</div>
                     </div>
                     {{!-- Hidden fields to preserve data --}}
                     <input type="hidden" name="characters.{{this.id}}.characterName" value="{{this.name}}">
-                    <input type="hidden" name="characters.{{this.id}}.societyId" value="{{this.societyId}}">
+                    <input type="hidden" name="characters.{{this.id}}.playerNumber" value="{{this.playerNumber}}">
+                    <input type="hidden" name="characters.{{this.id}}.characterNumber" value="{{this.characterNumber}}">
                     <input type="hidden" name="characters.{{this.id}}.level" value="{{this.level}}">
                 </div>
                 

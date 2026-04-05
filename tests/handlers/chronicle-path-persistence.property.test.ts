@@ -188,7 +188,7 @@ describe('Chronicle Path Persistence Property Tests', () => {
       characters: {
         actor1: {
           characterName: 'Character 1',
-          societyId: '12345-2001',
+          playerNumber: '12345', characterNumber: '2001',
           level: 5,
           taskLevel: 3,
           successLevel: 'success',
@@ -200,7 +200,7 @@ describe('Chronicle Path Persistence Property Tests', () => {
         },
         actor2: {
           characterName: 'Character 2',
-          societyId: '12345-2002',
+          playerNumber: '12345', characterNumber: '2002',
           level: 3,
           taskLevel: 1,
           successLevel: 'success',
@@ -488,14 +488,16 @@ describe('Chronicle Path Persistence Property Tests', () => {
             if (loaded) {
               const characters = loaded.data.characters;
               expect(characters.actor1.characterName).toBe('Character 1');
-              expect(characters.actor1.societyId).toBe('12345-2001');
+              expect(characters.actor1.playerNumber).toBe('12345');
+              expect(characters.actor1.characterNumber).toBe('2001');
               expect(characters.actor1.level).toBe(5);
               expect(characters.actor1.earnedIncome).toBe(10.5);
               expect(characters.actor1.goldSpent).toBe(5.0);
               expect(characters.actor1.notes).toBe('Test notes 1');
 
               expect(characters.actor2.characterName).toBe('Character 2');
-              expect(characters.actor2.societyId).toBe('12345-2002');
+              expect(characters.actor2.playerNumber).toBe('12345');
+              expect(characters.actor2.characterNumber).toBe('2002');
               expect(characters.actor2.level).toBe(3);
               expect(characters.actor2.earnedIncome).toBe(8.0);
               expect(characters.actor2.goldSpent).toBe(3.5);

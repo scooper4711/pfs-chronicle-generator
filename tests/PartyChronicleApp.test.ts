@@ -124,12 +124,12 @@ describe('PartyChronicleApp Property Tests', () => {
               expect(member!.name).toBe(actor.name);
               expect(member!.level).toBe(actor.system.details.level.value);
               
-              // Society ID should be formatted correctly if PFS data exists
               if (actor.system.pfs) {
-                const expectedSocietyId = `${actor.system.pfs.playerNumber}-${actor.system.pfs.characterNumber}`;
-                expect(member!.societyId).toBe(expectedSocietyId);
+                expect(member!.playerNumber).toBe(actor.system.pfs.playerNumber.toString());
+                expect(member!.characterNumber).toBe(actor.system.pfs.characterNumber.toString());
               } else {
-                expect(member!.societyId).toBe('');
+                expect(member!.playerNumber).toBe('');
+                expect(member!.characterNumber).toBe('');
               }
             });
             
@@ -204,9 +204,9 @@ describe('PartyChronicleApp Property Tests', () => {
             const app = new PartyChronicleApp(actors);
             const context = await app._prepareContext() as PartyChronicleContext;
             
-            // All members should have empty society IDs
             context.partyMembers.forEach((member: PartyMember) => {
-              expect(member.societyId).toBe('');
+              expect(member.playerNumber).toBe('');
+              expect(member.characterNumber).toBe('');
             });
           }
         ),

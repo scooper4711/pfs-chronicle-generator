@@ -69,11 +69,15 @@ describe('Earned Income Default Success Level - Property Tests', () => {
     characterNameInput.value = 'Test Character';
     container.appendChild(characterNameInput);
 
-    // Add society ID input
-    const societyIdInput = document.createElement('input');
-    societyIdInput.name = `characters.${characterId}.societyId`;
-    societyIdInput.value = '123456-2001';
-    container.appendChild(societyIdInput);
+    // Add player number and character number inputs
+    const playerNumberInput = document.createElement('input');
+    playerNumberInput.name = `characters.${characterId}.playerNumber`;
+    playerNumberInput.value = '123456';
+    container.appendChild(playerNumberInput);
+    const characterNumberInput = document.createElement('input');
+    characterNumberInput.name = `characters.${characterId}.characterNumber`;
+    characterNumberInput.value = '2001';
+    container.appendChild(characterNumberInput);
 
     // Add level input
     const levelInput = document.createElement('input');
@@ -185,10 +189,14 @@ describe('Earned Income Default Success Level - Property Tests', () => {
             characterNameInput.value = 'Test Character';
             container.appendChild(characterNameInput);
 
-            const societyIdInput = document.createElement('input');
-            societyIdInput.name = `characters.${characterId}.societyId`;
-            societyIdInput.value = '123456-2001';
-            container.appendChild(societyIdInput);
+            const playerNumberInput = document.createElement('input');
+            playerNumberInput.name = `characters.${characterId}.playerNumber`;
+            playerNumberInput.value = '123456';
+            container.appendChild(playerNumberInput);
+            const characterNumberInput = document.createElement('input');
+            characterNumberInput.name = `characters.${characterId}.characterNumber`;
+            characterNumberInput.value = '2001';
+            container.appendChild(characterNumberInput);
 
             const levelInput = document.createElement('input');
             levelInput.name = `characters.${characterId}.level`;
@@ -290,10 +298,14 @@ describe('Earned Income Default Success Level - Property Tests', () => {
             characterNameInput.value = 'Test Character';
             container.appendChild(characterNameInput);
 
-            const societyIdInput = document.createElement('input');
-            societyIdInput.name = `characters.${characterId}.societyId`;
-            societyIdInput.value = '123456-2001';
-            container.appendChild(societyIdInput);
+            const playerNumberInput2 = document.createElement('input');
+            playerNumberInput2.name = `characters.${characterId}.playerNumber`;
+            playerNumberInput2.value = '123456';
+            container.appendChild(playerNumberInput2);
+            const characterNumberInput2 = document.createElement('input');
+            characterNumberInput2.name = `characters.${characterId}.characterNumber`;
+            characterNumberInput2.value = '2001';
+            container.appendChild(characterNumberInput2);
 
             const levelInput = document.createElement('input');
             levelInput.name = `characters.${characterId}.level`;
@@ -349,10 +361,14 @@ describe('Earned Income Default Success Level - Property Tests', () => {
             characterNameInput.value = 'Test Character';
             container.appendChild(characterNameInput);
 
-            const societyIdInput = document.createElement('input');
-            societyIdInput.name = `characters.${characterId}.societyId`;
-            societyIdInput.value = '123456-2001';
-            container.appendChild(societyIdInput);
+            const playerNumberInput3 = document.createElement('input');
+            playerNumberInput3.name = `characters.${characterId}.playerNumber`;
+            playerNumberInput3.value = '123456';
+            container.appendChild(playerNumberInput3);
+            const characterNumberInput3 = document.createElement('input');
+            characterNumberInput3.name = `characters.${characterId}.characterNumber`;
+            characterNumberInput3.value = '2001';
+            container.appendChild(characterNumberInput3);
 
             const levelInput = document.createElement('input');
             levelInput.name = `characters.${characterId}.level`;

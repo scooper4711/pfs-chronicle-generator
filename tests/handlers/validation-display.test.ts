@@ -18,7 +18,7 @@ jest.mock('../../scripts/model/party-chronicle-validator', () => ({
   }),
   validateUniqueFields: jest.fn((unique: any, name: string) => {
     const errors: string[] = [];
-    if (!unique?.societyId) errors.push(`${name}: Society ID is required`);
+    if (!unique?.playerNumber) errors.push(`${name}: Player Number is required`);
     if (!unique?.incomeEarned && unique?.incomeEarned !== 0) errors.push(`${name}: Income Earned is required`);
     return { valid: errors.length === 0, errors };
   }),
@@ -78,7 +78,7 @@ describe('updateValidationDisplay', () => {
     const partyActors = [{ id: 'actor1', name: 'Valeros' }];
     const extractFormData = () => ({
       shared: { gmPfsNumber: '12345', scenarioName: 'Test' },
-      characters: { actor1: { societyId: '12345-2001', incomeEarned: 10 } },
+      characters: { actor1: { playerNumber: '12345', characterNumber: '2001', incomeEarned: 10 } },
     });
 
     updateValidationDisplay(container, partyActors, extractFormData);
@@ -107,7 +107,7 @@ describe('updateValidationDisplay', () => {
     const partyActors = [{ id: 'actor1', name: 'Valeros' }];
     const extractFormData = () => ({
       shared: { gmPfsNumber: '12345', scenarioName: 'Test' },
-      characters: { actor1: { societyId: '12345-2001', incomeEarned: 10 } },
+      characters: { actor1: { playerNumber: '12345', characterNumber: '2001', incomeEarned: 10 } },
     });
 
     updateValidationDisplay(container, partyActors, extractFormData);

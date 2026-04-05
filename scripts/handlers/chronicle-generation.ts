@@ -167,7 +167,8 @@ function extractUniqueFields(rawCharacters: any, actor: any): UniqueFields {
   const uniqueFields = rawCharacters?.[actor.id] || {};
   return {
     characterName: uniqueFields.characterName || actor.name,
-    societyId: uniqueFields.societyId || '',
+    playerNumber: uniqueFields.playerNumber || '',
+    characterNumber: uniqueFields.characterNumber || '',
     level: Number(uniqueFields.level) || actor.system?.details?.level?.value || 1,
     taskLevel: uniqueFields.taskLevel !== undefined ? uniqueFields.taskLevel : (Number(uniqueFields.level) || 1) - 2,
     successLevel: uniqueFields.successLevel || 'success',

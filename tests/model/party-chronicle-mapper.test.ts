@@ -43,7 +43,7 @@ describe('mapToCharacterData', () => {
   // Helper to create UniqueFields with default earned income fields
   const createUniqueFields = (overrides: Partial<UniqueFields> = {}): UniqueFields => ({
     characterName: 'Test Character',
-    societyId: '12345-01',
+    playerNumber: '12345', characterNumber: '01',
     level: 1,
     taskLevel: '-',
     successLevel: 'success',
@@ -79,7 +79,7 @@ describe('mapToCharacterData', () => {
 
     const unique = createUniqueFields({
       characterName: 'Valeros',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 3,
       taskLevel: 1,
       successLevel: 'success',
@@ -93,7 +93,9 @@ describe('mapToCharacterData', () => {
 
     // Character identification
     expect(result.char).toBe('Valeros');
-    expect(result.societyid).toBe('12345-01');
+    expect(result.societyid).toBe('12345');
+    expect(result.char_number).toBe('01');
+    expect(result.char_number_short).toBe('1');
     expect(result.level).toBe(3);
 
     // Event details
@@ -131,7 +133,7 @@ describe('mapToCharacterData', () => {
 
     const unique = createUniqueFields({
       characterName: 'Seoni',
-      societyId: '67890-02',
+      playerNumber: '67890', characterNumber: '02',
       level: 5,
       taskLevel: '-',
       goldSpent: 0,
@@ -162,7 +164,7 @@ describe('mapToCharacterData', () => {
 
     const unique = createUniqueFields({
       characterName: 'Kyra',
-      societyId: '11111-03',
+      playerNumber: '11111', characterNumber: '03',
       level: 1,
       taskLevel: '-',
       goldSpent: 0,
@@ -190,7 +192,7 @@ describe('mapToCharacterData', () => {
 
     const unique = createUniqueFields({
       characterName: 'O\'Brien',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 3,
       taskLevel: 2,
       successLevel: 'success',
@@ -220,7 +222,7 @@ describe('mapToCharacterData', () => {
     // Test level 1: 3 × 1.4 = 4.2
     const unique1 = createUniqueFields({
       characterName: 'Test1',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 1,
       taskLevel: '-'
     });
@@ -231,7 +233,7 @@ describe('mapToCharacterData', () => {
     // Test level 10: 3 × 60 = 180
     const unique10 = createUniqueFields({
       characterName: 'Test10',
-      societyId: '12345-02',
+      playerNumber: '12345', characterNumber: '02',
       level: 10,
       taskLevel: '-'
     });
@@ -242,7 +244,7 @@ describe('mapToCharacterData', () => {
     // Test level 20: 3 × 3680 = 11040
     const unique20 = createUniqueFields({
       characterName: 'Test20',
-      societyId: '12345-03',
+      playerNumber: '12345', characterNumber: '03',
       level: 20,
       taskLevel: '-'
     });
@@ -259,7 +261,7 @@ describe('mapToCharacterData', () => {
 
     const unique = createUniqueFields({
       characterName: 'Test',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 5,
       taskLevel: 3,
       successLevel: 'success',
@@ -287,7 +289,7 @@ describe('mapToCharacterData', () => {
 
     const unique = createUniqueFields({
       characterName: 'Test',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 1,
       taskLevel: 0,
       successLevel: 'success',
@@ -345,7 +347,7 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
   // Helper to create UniqueFields with default earned income fields
   const createUniqueFields = (overrides: Partial<UniqueFields> = {}): UniqueFields => ({
     characterName: 'Test Character',
-    societyId: '12345-01',
+    playerNumber: '12345', characterNumber: '01',
     level: 1,
     taskLevel: '-',
     successLevel: 'success',
@@ -723,7 +725,8 @@ describe('Property 6: Data Combination Correctness', () => {
 
     const uniqueFieldsArb = fc.record({
       characterName: fc.string({ minLength: 1, maxLength: 50 }),
-      societyId: fc.string({ minLength: 1, maxLength: 20 }),
+      playerNumber: fc.stringMatching(/^\d{1,10}$/),
+      characterNumber: fc.stringMatching(/^2\d{1,5}$/),
       level: fc.integer({ min: 1, max: 20 }),
       taskLevel: fc.oneof(fc.constant('-'), fc.integer({ min: 0, max: 20 })),
       successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
@@ -749,9 +752,11 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.strikeout_item_lines).toEqual(shared.strikeoutItems);
         expect(result.treasure_bundles).toBe(shared.treasureBundles.toString());
 
-        // Verify all unique fields are present in the result
+        // Verify society ID fields are mapped correctly
+        expect(result.societyid).toBe(unique.playerNumber);
+        expect(result.char_number).toBe(unique.characterNumber);
+        expect(result.char_number_short).toBe(unique.characterNumber.substring(1));
         expect(result.char).toBe(unique.characterName);
-        expect(result.societyid).toBe(unique.societyId);
         expect(result.level).toBe(unique.level);
         expect(result.gp_spent).toBe(unique.goldSpent);
         expect(result.notes).toBe(unique.notes);
@@ -798,7 +803,8 @@ describe('Property 6: Data Combination Correctness', () => {
 
     const uniqueFieldsArb = fc.record({
       characterName: fc.string({ minLength: 1, maxLength: 50 }),
-      societyId: fc.string({ minLength: 1, maxLength: 20 }),
+      playerNumber: fc.stringMatching(/^\d{1,10}$/),
+      characterNumber: fc.stringMatching(/^2\d{1,5}$/),
       level: fc.integer({ min: 1, max: 20 }),
       taskLevel: fc.oneof(fc.constant('-'), fc.integer({ min: 0, max: 20 })),
       successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
@@ -815,13 +821,14 @@ describe('Property 6: Data Combination Correctness', () => {
         const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify no data transformation or loss occurs
-        // String fields should be identical
         expect(result.gmid).toStrictEqual(shared.gmPfsNumber);
         expect(result.event).toStrictEqual(shared.scenarioName);
         expect(result.eventcode).toStrictEqual(shared.eventCode);
         expect(result.date).toStrictEqual(shared.eventDate);
         expect(result.char).toStrictEqual(unique.characterName);
-        expect(result.societyid).toStrictEqual(unique.societyId);
+        expect(result.societyid).toStrictEqual(unique.playerNumber);
+        expect(result.char_number).toStrictEqual(unique.characterNumber);
+        expect(result.char_number_short).toStrictEqual(unique.characterNumber.substring(1));
         expect(result.notes).toStrictEqual(unique.notes);
         expect(result.reputation).toBeDefined();
         expect(result.treasure_bundles).toStrictEqual(shared.treasureBundles.toString());
@@ -876,7 +883,8 @@ describe('Property 6: Data Combination Correctness', () => {
 
     const uniqueFieldsArb = fc.record({
       characterName: fc.string({ minLength: 1, maxLength: 50 }),
-      societyId: fc.string({ minLength: 1, maxLength: 20 }),
+      playerNumber: fc.stringMatching(/^\d{1,10}$/),
+      characterNumber: fc.stringMatching(/^2\d{1,5}$/),
       level: fc.integer({ min: 1, max: 20 }),
       taskLevel: fc.constant('-'),
       successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
@@ -944,7 +952,8 @@ describe('Property 6: Data Combination Correctness', () => {
 
     const uniqueFieldsArb = fc.record({
       characterName: fc.string({ minLength: 1, maxLength: 50 }),
-      societyId: fc.string({ minLength: 1, maxLength: 20 }),
+      playerNumber: fc.stringMatching(/^\d{1,10}$/),
+      characterNumber: fc.stringMatching(/^2\d{1,5}$/),
       level: fc.integer({ min: 1, max: 20 }),
       taskLevel: fc.constant('-'),
       successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
@@ -1007,7 +1016,8 @@ describe('Property 6: Data Combination Correctness', () => {
 
     const uniqueFieldsArb = fc.record({
       characterName: stringArb,
-      societyId: stringArb,
+      playerNumber: fc.stringMatching(/^\d{1,10}$/),
+      characterNumber: fc.stringMatching(/^2\d{1,5}$/),
       level: fc.integer({ min: 1, max: 20 }),
       taskLevel: fc.oneof(fc.constant('-'), fc.integer({ min: 0, max: 20 })),
       successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
@@ -1029,7 +1039,9 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.eventcode).toBe(shared.eventCode);
         expect(result.date).toBe(shared.eventDate);
         expect(result.char).toBe(unique.characterName);
-        expect(result.societyid).toBe(unique.societyId);
+        expect(result.societyid).toBe(unique.playerNumber);
+        expect(result.char_number).toBe(unique.characterNumber);
+        expect(result.char_number_short).toBe(unique.characterNumber.substring(1));
         expect(result.notes).toBe(unique.notes);
         expect(result.treasure_bundles).toBe(shared.treasureBundles.toString());
 

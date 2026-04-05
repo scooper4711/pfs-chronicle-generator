@@ -64,7 +64,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
             // Step 3: Map to ChronicleData using mapToCharacterData
             const uniqueFields: UniqueFields = createUniqueFields({
               characterName: 'Valeros',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 3,
               taskLevel: 1,
               earnedIncome: 8,
@@ -124,7 +124,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
             // Step 3: Map to ChronicleData using mapToCharacterData
             const uniqueFields: UniqueFields = createUniqueFields({
               characterName: 'Valeros',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 3,
               taskLevel: 1,
               earnedIncome: 8,
@@ -171,7 +171,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
       
       const uniqueFields: UniqueFields = createUniqueFields({
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         taskLevel: 1,
         earnedIncome: 8,
@@ -215,7 +215,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
             
             const uniqueFields: UniqueFields = createUniqueFields({
               characterName: 'Valeros',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 3,
               taskLevel: 1,
               earnedIncome: 8,
@@ -272,7 +272,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
             
             const uniqueFields: UniqueFields = createUniqueFields({
               characterName: 'Valeros',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 3,
               taskLevel: 1,
               earnedIncome: 8,
@@ -330,7 +330,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
             
             const uniqueFields: UniqueFields = createUniqueFields({
               characterName: 'Valeros',
-              societyId: '12345-01',
+              playerNumber: '12345', characterNumber: '01',
               level: 3,
               taskLevel: 1,
               earnedIncome: 8,
@@ -382,7 +382,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
       
       const uniqueFields: UniqueFields = createUniqueFields({
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         taskLevel: 1,
         earnedIncome: 8,

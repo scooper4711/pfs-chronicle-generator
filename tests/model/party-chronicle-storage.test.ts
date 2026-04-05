@@ -49,7 +49,7 @@ describe('Party Chronicle Storage', () => {
         characters: {
           'actor-1': createUniqueFields({
             characterName: 'Hero One',
-            societyId: '12345-01',
+            playerNumber: '12345', characterNumber: '01',
             level: 5,
             earnedIncome: 10,
             goldSpent: 5,
@@ -212,7 +212,7 @@ describe('Party Chronicle Storage', () => {
         characters: {
           'actor-1': createUniqueFields({
             characterName: 'Hero One',
-            societyId: '12345-01',
+            playerNumber: '12345', characterNumber: '01',
             level: 5,
             goldSpent: 5,
             notes: ''
@@ -409,14 +409,14 @@ describe('Party Chronicle Storage', () => {
         characters: {
           'actor-1': createUniqueFields({
             characterName: 'Hero One',
-            societyId: '12345-01',
+            playerNumber: '12345', characterNumber: '01',
             level: 5,
             goldSpent: 5,
             notes: 'Test notes'
           }),
           'actor-2': createUniqueFields({
             characterName: 'Hero Two',
-            societyId: '12345-02',
+            playerNumber: '12345', characterNumber: '02',
             level: 3,
             goldSpent: 3,
             notes: 'More notes'
@@ -684,7 +684,8 @@ describe('Party Chronicle Storage', () => {
       // Generators for party chronicle data
       const characterDataArb = fc.record({
         characterName: fc.string({ minLength: 1, maxLength: 50 }),
-        societyId: fc.string({ minLength: 1, maxLength: 20 }),
+        playerNumber: fc.stringMatching(/^\d{1,10}$/),
+        characterNumber: fc.stringMatching(/^2\d{1,5}$/),
         level: fc.integer({ min: 1, max: 20 }),
         taskLevel: fc.oneof(
           fc.constant('-'),
@@ -825,7 +826,8 @@ describe('Party Chronicle Storage', () => {
 
       const characterDataArb = fc.record({
         characterName: stringArb,
-        societyId: stringArb,
+        playerNumber: stringArb,
+        characterNumber: stringArb,
         level: fc.integer({ min: 1, max: 20 }),
         taskLevel: fc.oneof(fc.constant('-'), fc.integer({ min: 0, max: 20 })),
         successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),

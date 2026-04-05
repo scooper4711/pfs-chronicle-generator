@@ -1010,7 +1010,7 @@ describe('validateUniqueFields', () => {
   it('should pass validation for valid unique fields', () => {
     const unique: UniqueFields = createUniqueFields({
       characterName: 'Valeros',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 3,
       goldSpent: 10,
       notes: 'Saved the village',
@@ -1029,7 +1029,7 @@ describe('validateUniqueFields', () => {
   it('should fail validation when Character Name is missing', () => {
     const unique: Partial<UniqueFields> = {
       characterName: '',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 3,
       goldSpent: 10,
       notes: ''
@@ -1041,10 +1041,10 @@ describe('validateUniqueFields', () => {
     expect(result.errors).toContain('Character Name is required');
   });
 
-  it('should fail validation when Society ID is missing', () => {
+  it('should fail validation when Player Number is missing', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      societyId: '',
+      playerNumber: '', characterNumber: '',
       level: 3,
       goldSpent: 10,
       notes: ''
@@ -1053,13 +1053,13 @@ describe('validateUniqueFields', () => {
     const result = validateUniqueFields(unique);
 
     expect(result.valid).toBe(false);
-    expect(result.errors).toContain('Society ID is required');
+    expect(result.errors).toContain('Player Number is required');
   });
 
-  it('should fail validation when Society ID has invalid format', () => {
+  it('should fail validation when Character Number is missing', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      societyId: '12345',
+      playerNumber: '12345', characterNumber: '',
       level: 3,
       goldSpent: 10,
       notes: ''
@@ -1068,13 +1068,13 @@ describe('validateUniqueFields', () => {
     const result = validateUniqueFields(unique);
 
     expect(result.valid).toBe(false);
-    expect(result.errors.some(e => e.includes('playerNumber-characterNumber'))).toBe(true);
+    expect(result.errors).toContain('Character Number is required');
   });
 
   it('should fail validation when Level is missing', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       goldSpent: 10,
       notes: ''
     };
@@ -1088,7 +1088,7 @@ describe('validateUniqueFields', () => {
   it('should fail validation when Level is out of range', () => {
     const unique1: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 0,
       goldSpent: 10,
       notes: ''
@@ -1100,7 +1100,7 @@ describe('validateUniqueFields', () => {
 
     const unique2: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 21,
       goldSpent: 10,
       notes: ''
@@ -1114,7 +1114,7 @@ describe('validateUniqueFields', () => {
   it('should fail validation when Level is not an integer', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 3.5,
       goldSpent: 10,
       notes: ''
@@ -1132,7 +1132,7 @@ describe('validateUniqueFields', () => {
   it('should fail validation when Gold Spent is missing', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 3,
       notes: ''
     };
@@ -1146,7 +1146,7 @@ describe('validateUniqueFields', () => {
   it('should accept zero values for numeric fields', () => {
     const unique: UniqueFields = createUniqueFields({
       characterName: 'Valeros',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 1,
       goldSpent: 0,
       notes: '',
@@ -1165,7 +1165,7 @@ describe('validateUniqueFields', () => {
   it('should accept empty strings for optional fields', () => {
     const unique: UniqueFields = createUniqueFields({
       characterName: 'Valeros',
-      societyId: '12345-01',
+      playerNumber: '12345', characterNumber: '01',
       level: 3,
       goldSpent: 10,
       notes: '',
@@ -1184,7 +1184,7 @@ describe('validateUniqueFields', () => {
   it('should prefix errors with character name when provided', () => {
     const unique: Partial<UniqueFields> = {
       characterName: '',
-      societyId: '',
+      playerNumber: '', characterNumber: '',
       level: 3,
       goldSpent: 10,
       notes: ''
@@ -1199,14 +1199,14 @@ describe('validateUniqueFields', () => {
   it('should collect multiple errors', () => {
     const unique: Partial<UniqueFields> = {
       characterName: '',
-      societyId: '',
+      playerNumber: '', characterNumber: '',
       notes: ''
     };
 
     const result = validateUniqueFields(unique);
 
     expect(result.valid).toBe(false);
-    expect(result.errors.length).toBeGreaterThanOrEqual(4); // Character Name, Society ID, Level, Gold Spent
+    expect(result.errors.length).toBeGreaterThanOrEqual(4); // Character Name, Player Number, Character Number, Level
   });
 });
 
@@ -1239,7 +1239,7 @@ describe('validateAllFields', () => {
     const characters = {
       'actor-1': {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1250,7 +1250,7 @@ describe('validateAllFields', () => {
       } as UniqueFields,
       'actor-2': {
         characterName: 'Seoni',
-        societyId: '67890-02',
+        playerNumber: '67890', characterNumber: '02',
         level: 5,
         goldSpent: 0,
         notes: ''
@@ -1287,7 +1287,7 @@ describe('validateAllFields', () => {
     const characters = {
       'actor-1': {
         characterName: 'Valeros',
-        societyId: '',
+        playerNumber: '', characterNumber: '',
         level: 3,
         goldSpent: 10,
         notes: ''
@@ -1298,7 +1298,7 @@ describe('validateAllFields', () => {
 
     expect(result.valid).toBe(false);
     expect(result.errors.some(e => e.includes('GM PFS Number'))).toBe(true);
-    expect(result.errors.some(e => e.includes('Society ID'))).toBe(true);
+    expect(result.errors.some(e => e.includes('Player Number'))).toBe(true);
   });
 
   it('should validate multiple characters', () => {
@@ -1329,14 +1329,14 @@ describe('validateAllFields', () => {
     const characters = {
       'actor-1': {
         characterName: 'Valeros',
-        societyId: '',
+        playerNumber: '', characterNumber: '',
         level: 3,
         goldSpent: 10,
         notes: ''
       } as Partial<UniqueFields>,
       'actor-2': {
         characterName: 'Seoni',
-        societyId: '',
+        playerNumber: '', characterNumber: '',
         level: 5,
         goldSpent: 0,
         notes: ''
@@ -1346,7 +1346,7 @@ describe('validateAllFields', () => {
     const result = validateAllFields(shared, characters);
 
     expect(result.valid).toBe(false);
-    expect(result.errors.filter(e => e.includes('Society ID')).length).toBe(2);
+    expect(result.errors.filter(e => e.includes('Player Number')).length).toBe(2);
   });
 
   it('should use character names from map when provided', () => {
@@ -1377,7 +1377,7 @@ describe('validateAllFields', () => {
     const characters = {
       'actor-1': {
         characterName: 'Valeros',
-        societyId: '',
+        playerNumber: '', characterNumber: '',
         level: 3,
         goldSpent: 10,
         notes: ''
@@ -1615,7 +1615,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept task level "-" (opt-out)', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1631,7 +1631,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept task level 0', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1649,7 +1649,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept task level 20', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 20,
         goldSpent: 10,
         notes: '',
@@ -1668,7 +1668,7 @@ describe('validateUniqueFields - Earned Income', () => {
       for (let level = 0; level <= 20; level++) {
         const unique: Partial<UniqueFields> = {
           characterName: 'Valeros',
-          societyId: '12345-01',
+          playerNumber: '12345', characterNumber: '01',
           level: Math.max(level, 1),
           goldSpent: 10,
           notes: '',
@@ -1687,7 +1687,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should reject task level less than 0', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1705,7 +1705,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should reject task level greater than 20', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1723,7 +1723,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should reject invalid task level string', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1743,7 +1743,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept success level "critical_failure"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1761,7 +1761,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept success level "failure"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1779,7 +1779,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept success level "success"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1797,7 +1797,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept success level "critical_success"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1815,7 +1815,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should reject invalid success level', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1835,7 +1835,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept proficiency rank "trained"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1853,7 +1853,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept proficiency rank "expert"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1871,7 +1871,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept proficiency rank "master"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1889,7 +1889,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept proficiency rank "legendary"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1907,7 +1907,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should reject invalid proficiency rank', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1927,7 +1927,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should require success level when task level is not "-"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1945,7 +1945,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should require proficiency rank when task level is not "-"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1963,7 +1963,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should require both success level and proficiency rank when task level is not "-"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1981,7 +1981,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should not require success level when task level is "-"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -1998,7 +1998,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should not require proficiency rank when task level is "-"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -2015,7 +2015,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept success level and proficiency rank when task level is "-" (optional)', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -2033,7 +2033,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should prefix conditional validation errors with character name', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -2053,7 +2053,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should pass validation with all earned income fields valid', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 5,
         goldSpent: 10,
         notes: '',
@@ -2072,7 +2072,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should collect multiple earned income validation errors', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        societyId: '12345-01',
+        playerNumber: '12345', characterNumber: '01',
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -2093,7 +2093,7 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should validate earned income fields alongside other unique fields', () => {
       const unique: Partial<UniqueFields> = {
         characterName: '',  // Invalid
-        societyId: '',  // Invalid
+        playerNumber: '', characterNumber: '',  // Invalid
         level: 3,
         goldSpent: 10,
         notes: '',
@@ -2107,7 +2107,7 @@ describe('validateUniqueFields - Earned Income', () => {
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThanOrEqual(3);
       expect(result.errors).toContain('Character Name is required');
-      expect(result.errors).toContain('Society ID is required');
+      expect(result.errors).toContain('Player Number is required');
       expect(result.errors).toContain('Success Level is required when Task Level is not "-"');
     });
   });

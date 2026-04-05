@@ -96,7 +96,8 @@ describe('Earned Income Data Persistence - Property Tests', () => {
       successLevel: successLevelArbitrary,
       proficiencyRank: proficiencyRankArbitrary,
       characterName: fc.string({ minLength: 1, maxLength: 50 }),
-      societyId: fc.string({ minLength: 1, maxLength: 20 }),
+      playerNumber: fc.stringMatching(/^\d{1,10}$/),
+      characterNumber: fc.stringMatching(/^2\d{1,5}$/),
       level: fc.integer({ min: 1, max: 20 }),
       earnedIncome: fc.double({ min: 0, max: 1000, noNaN: true }),
       goldSpent: fc.double({ min: 0, max: 1000, noNaN: true }),
@@ -172,7 +173,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
               characters: {
                 actor1: {
                   characterName: 'Test Character',
-                  societyId: '12345-2001',
+                  playerNumber: '12345', characterNumber: '2001',
                   level: 5,
                   taskLevel: 3,
                   successLevel: 'success',
@@ -216,7 +217,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
             characters.forEach((char) => {
               charactersData[char.actorId] = {
                 characterName: `Character ${char.actorId}`,
-                societyId: '12345-2001',
+                playerNumber: '12345', characterNumber: '2001',
                 level: 5,
                 taskLevel: char.taskLevel,
                 successLevel: 'success',
@@ -284,7 +285,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
             characters.forEach((char) => {
               charactersData[char.actorId] = {
                 characterName: `Character ${char.actorId}`,
-                societyId: '12345-2001',
+                playerNumber: '12345', characterNumber: '2001',
                 level: 5,
                 taskLevel: 3,
                 successLevel: char.successLevel,
@@ -352,7 +353,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
             characters.forEach((char) => {
               charactersData[char.actorId] = {
                 characterName: `Character ${char.actorId}`,
-                societyId: '12345-2001',
+                playerNumber: '12345', characterNumber: '2001',
                 level: 5,
                 taskLevel: 3,
                 successLevel: 'success',
@@ -466,7 +467,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
               characters: {
                 actor1: {
                   characterName: 'Test Character',
-                  societyId: '12345-2001',
+                  playerNumber: '12345', characterNumber: '2001',
                   level: 5,
                   taskLevel: '-', // Opt-out
                   successLevel: 'success',
@@ -567,7 +568,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
               characters: {
                 actor1: {
                   characterName: 'Test Character',
-                  societyId: '12345-2001',
+                  playerNumber: '12345', characterNumber: '2001',
                   level: 5,
                   taskLevel: fields.taskLevel,
                   successLevel: fields.successLevel,

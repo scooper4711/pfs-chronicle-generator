@@ -112,7 +112,8 @@ describe('Form Data Extraction Property Tests', () => {
       
       <!-- Character-specific fields -->
       <input type="text" name="characters.actor1.characterName" value="Character 1">
-      <input type="text" name="characters.actor1.societyId" value="12345-2001">
+      <input type="text" name="characters.actor1.playerNumber" value="12345">
+      <input type="text" name="characters.actor1.characterNumber" value="2001">
       <input type="number" name="characters.actor1.level" value="5">
       <select name="characters.actor1.taskLevel"><option value="3" selected>3</option></select>
       <select name="characters.actor1.successLevel"><option value="success" selected>Success</option></select>
@@ -123,7 +124,8 @@ describe('Form Data Extraction Property Tests', () => {
       <input type="checkbox" name="characters.actor1.consumeReplay">
       
       <input type="text" name="characters.actor2.characterName" value="Character 2">
-      <input type="text" name="characters.actor2.societyId" value="12345-2002">
+      <input type="text" name="characters.actor2.playerNumber" value="12345">
+      <input type="text" name="characters.actor2.characterNumber" value="2002">
       <input type="number" name="characters.actor2.level" value="3">
       <select name="characters.actor2.taskLevel"><option value="3" selected>3</option></select>
       <select name="characters.actor2.successLevel"><option value="success" selected>Success</option></select>
@@ -364,7 +366,8 @@ describe('Form Data Extraction Property Tests', () => {
 
             // Verify character fields are present and correct
             expect(formData.characters.actor1.characterName).toBe('Character 1');
-            expect(formData.characters.actor1.societyId).toBe('12345-2001');
+            expect(formData.characters.actor1.playerNumber).toBe('12345');
+            expect(formData.characters.actor1.characterNumber).toBe('2001');
             expect(formData.characters.actor1.level).toBe(5);
             expect(formData.characters.actor1.taskLevel).toBe(3);
             expect(formData.characters.actor1.successLevel).toBe('success');
@@ -373,7 +376,8 @@ describe('Form Data Extraction Property Tests', () => {
             expect(formData.characters.actor1.notes).toBe('Test notes 1');
 
             expect(formData.characters.actor2.characterName).toBe('Character 2');
-            expect(formData.characters.actor2.societyId).toBe('12345-2002');
+            expect(formData.characters.actor2.playerNumber).toBe('12345');
+            expect(formData.characters.actor2.characterNumber).toBe('2002');
             expect(formData.characters.actor2.level).toBe(3);
             expect(formData.characters.actor2.taskLevel).toBe(3);
             expect(formData.characters.actor2.successLevel).toBe('success');

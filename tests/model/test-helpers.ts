@@ -53,7 +53,8 @@ export function createSharedFields(overrides: Partial<SharedFields> = {}): Share
 export function createUniqueFields(overrides: Partial<UniqueFields> = {}): UniqueFields {
   return {
     characterName: 'Test Character',
-    societyId: '12345-01',
+    playerNumber: '12345',
+    characterNumber: '2001',
     level: 5,
     taskLevel: 3,
     successLevel: 'success',

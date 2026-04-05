@@ -80,7 +80,8 @@ const buildParamsArbitrary = sharedFieldsArbitrary.chain((shared) =>
       characters: {
         [actorId]: {
           characterName: char.characterName,
-          societyId: `${char.playerNumber}-${char.characterNumber}`,
+          playerNumber: char.playerNumber.toString(),
+          characterNumber: char.characterNumber.toString(),
           level: 5,
           taskLevel: 5,
           successLevel: 'success',

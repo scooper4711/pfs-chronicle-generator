@@ -224,7 +224,7 @@ function renderCharacterErrors(
                 // Map error messages to field IDs (remove character name prefix)
                 const errorWithoutPrefix = error.replace(`${characterName}: `, '');
                 
-                if (errorWithoutPrefix.includes('Society ID')) {
+                if (errorWithoutPrefix.includes('Player Number') || errorWithoutPrefix.includes('Character Number')) {
                     const incomeField = container.querySelector(`#incomeEarned-${actorId}`);
                     const memberActivity = incomeField?.closest('.member-activity');
                     const societyIdElement = memberActivity?.querySelector('.character-society-id') as HTMLElement;
