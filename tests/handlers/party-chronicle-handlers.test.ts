@@ -17,10 +17,11 @@ import {
   updateDowntimeDaysDisplay,
   handleFieldChange
 } from '../../scripts/handlers/party-chronicle-handlers';
+import type { PartyActor } from '../../scripts/handlers/event-listener-helpers';
 
 describe('Party Chronicle Event Handlers - Unit Tests', () => {
   let container: HTMLElement;
-  let partyActors: any[];
+  let partyActors: PartyActor[];
 
   beforeEach(() => {
     // Create a fresh container for each test
@@ -30,7 +31,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
     partyActors = [
       { id: 'actor1', name: 'Character 1' },
       { id: 'actor2', name: 'Character 2' }
-    ];
+    ] as PartyActor[];
 
     // Mock Foundry VTT globals
     (global as any).game = {
@@ -521,7 +522,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       container.appendChild(member);
 
       // Use only the actors that are in the DOM
-      const testPartyActors = [{ id: 'actor1', name: 'Character 1' }];
+      const testPartyActors = [{ id: 'actor1', name: 'Character 1' }] as PartyActor[];
 
       const taskLevelSelect = member.querySelector('select[name$=".taskLevel"]') as HTMLSelectElement;
 
@@ -570,7 +571,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       container.appendChild(member);
 
       // Use only the actors that are in the DOM
-      const testPartyActors = [{ id: 'actor1', name: 'Character 1' }];
+      const testPartyActors = [{ id: 'actor1', name: 'Character 1' }] as PartyActor[];
 
       const taskLevelSelect = member.querySelector('select[name$=".taskLevel"]') as HTMLSelectElement;
 
@@ -620,7 +621,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       container.appendChild(member);
 
       // Use only the actors that are in the DOM
-      const testPartyActors = [{ id: 'actor1', name: 'Character 1' }];
+      const testPartyActors = [{ id: 'actor1', name: 'Character 1' }] as PartyActor[];
 
       const successLevelSelect = member.querySelector('select[name$=".successLevel"]') as HTMLSelectElement;
 
@@ -669,7 +670,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       container.appendChild(member);
 
       // Use only the actors that are in the DOM
-      const testPartyActors = [{ id: 'actor1', name: 'Character 1' }];
+      const testPartyActors = [{ id: 'actor1', name: 'Character 1' }] as PartyActor[];
 
       const successLevelSelect = member.querySelector('select[name$=".successLevel"]') as HTMLSelectElement;
 
@@ -719,7 +720,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       container.appendChild(member);
 
       // Use only the actors that are in the DOM
-      const testPartyActors = [{ id: 'actor1', name: 'Character 1' }];
+      const testPartyActors = [{ id: 'actor1', name: 'Character 1' }] as PartyActor[];
 
       const proficiencyRankSelect = member.querySelector('select[name$=".proficiencyRank"]') as HTMLSelectElement;
 
@@ -768,7 +769,7 @@ describe('Party Chronicle Event Handlers - Unit Tests', () => {
       container.appendChild(member);
 
       // Use only the actors that are in the DOM
-      const testPartyActors = [{ id: 'actor1', name: 'Character 1' }];
+      const testPartyActors = [{ id: 'actor1', name: 'Character 1' }] as PartyActor[];
 
       const proficiencyRankSelect = member.querySelector('select[name$=".proficiencyRank"]') as HTMLSelectElement;
       const display = member.querySelector('.earned-income-value');

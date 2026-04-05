@@ -11,6 +11,7 @@ import { SharedFields, UniqueFields } from './party-chronicle-types.js';
 import { calculateReputation } from './reputation-calculator.js';
 import { calculateTreasureBundlesGp, calculateGpGained } from '../utils/treasure-bundle-calculator.js';
 import { calculateEarnedIncome } from '../utils/earned-income-calculator.js';
+import { PartyActor } from '../handlers/event-listener-helpers.js';
 
 /**
  * Chronicle data format expected by PdfGenerator
@@ -103,7 +104,7 @@ export interface ChronicleData {
 export function mapToCharacterData(
   shared: SharedFields,
   unique: UniqueFields,
-  actor: any
+  actor: PartyActor
 ): ChronicleData {
   // Calculate earned income based on inputs
   const incomeEarned = calculateEarnedIncome(

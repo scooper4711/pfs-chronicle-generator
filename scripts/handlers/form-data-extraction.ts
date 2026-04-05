@@ -7,6 +7,9 @@
  * Requirements: party-chronicle-filling 4.5, multi-line-reputation-tracking 1.2, 1.3, 4.1, 4.2, earned-income-calculation 10.1, 10.2, 10.3, 10.4, 10.5, 10.6
  */
 
+import type { PartyActor } from './event-listener-helpers.js';
+import type { ChronicleFormData, SharedFields, UniqueFields } from '../model/party-chronicle-types.js';
+
 /**
  * Extracts form data into PartyChronicleData structure
  * 
@@ -30,9 +33,9 @@
  * Requirements: party-chronicle-filling 4.5, multi-line-reputation-tracking 1.2, 1.3, 4.1, 4.2, earned-income-calculation 10.1, 10.2, 10.3, 10.4, 10.5, 10.6
  */
 // eslint-disable-next-line complexity, max-lines-per-function
-export function extractFormData(container: HTMLElement, partyActors: any[]): any {
+export function extractFormData(container: HTMLElement, partyActors: PartyActor[]): ChronicleFormData {
     // Extract shared fields
-    const shared: any = {
+    const shared: SharedFields = {
         gmPfsNumber: (container.querySelector('#gmPfsNumber') as HTMLInputElement)?.value || '',
         scenarioName: (container.querySelector('#scenarioName') as HTMLInputElement)?.value || '',
         eventCode: (container.querySelector('#eventCode') as HTMLInputElement)?.value || '',
@@ -65,9 +68,9 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
     };
     
     // Extract character-specific fields
-    const characters: any = {};
+    const characters: Record<string, UniqueFields> = {};
     // eslint-disable-next-line complexity -- Flat field extraction pattern, low cognitive complexity
-    partyActors.forEach((actor: any) => {
+    partyActors.forEach((actor: PartyActor) => {
         const actorId = actor.id;
         
         // Get task level value (can be "-" or a number)
@@ -80,7 +83,7 @@ export function extractFormData(container: HTMLElement, partyActors: any[]): any
             characterName: (container.querySelector(`input[name="characters.${actorId}.characterName"]`) as HTMLInputElement)?.value || actor.name,
             playerNumber: (container.querySelector(`input[name="characters.${actorId}.playerNumber"]`) as HTMLInputElement)?.value || '',
             characterNumber: (container.querySelector(`input[name="characters.${actorId}.characterNumber"]`) as HTMLInputElement)?.value || '',
-            level: Number.parseInt((container.querySelector(`input[name="characters.${actorId}.level"]`) as HTMLInputElement)?.value) || actor.level || 1,
+            level: Number.parseInt((container.querySelector(`input[name="characters.${actorId}.level"]`) as HTMLInputElement)?.value) || actor.system?.details?.level?.value || 1,
             // Read earned income input fields
             taskLevel: taskLevel,
             successLevel: (container.querySelector(`select[name="characters.${actorId}.successLevel"]`) as HTMLSelectElement)?.value || 'success',

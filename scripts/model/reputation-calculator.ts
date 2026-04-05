@@ -10,6 +10,7 @@
 import { FACTION_NAMES } from './faction-names.js';
 import { debug, warn } from '../utils/logger.js';
 import type { SharedFields } from './party-chronicle-types.js';
+import type { PartyActor } from '../handlers/event-listener-helpers.js';
 
 /**
  * Calculates multi-line reputation for a character
@@ -30,7 +31,7 @@ import type { SharedFields } from './party-chronicle-types.js';
  */
 export function calculateReputation(
     shared: SharedFields,
-    actor: any
+    actor: PartyActor
 ): string[] {
     // Step 1: Create empty reputation map for all factions
     const reputationMap: Record<string, number> = {

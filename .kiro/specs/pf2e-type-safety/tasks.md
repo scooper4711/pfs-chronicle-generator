@@ -98,15 +98,15 @@ Replace `any` types across the pfs-chronicle-generator codebase with proper Type
     - Import `PartyActor` from `event-listener-helpers` and `ChronicleFormData` from `party-chronicle-types`
     - _Requirements: 3.1, 3.2_
 
-- [ ] 7. Type PartyChronicleApp class members and methods
-  - [ ] 7.1 Replace `any` types in PartyChronicleApp constructor and members
+- [x] 7. Type PartyChronicleApp class members and methods
+  - [x] 7.1 Replace `any` types in PartyChronicleApp constructor and members
     - Change `partyActors: any[]` member declaration to `partyActors: PartyActor[]`
     - Change constructor `partyActors: any[]` parameter to `partyActors: PartyActor[]`
     - Change constructor `options: any` parameter to `options: Partial<ApplicationConfiguration>` or `unknown`
     - Import `PartyActor` from `event-listener-helpers`
     - _Requirements: 1.1, 1.2, 1.3_
 
-  - [ ] 7.2 Replace `any` types in PartyChronicleApp methods
+  - [x] 7.2 Replace `any` types in PartyChronicleApp methods
     - Change `_prepareContext(_options?: any)` return type from `Promise<any>` to `Promise<PartyChronicleContext>`
     - Change `_prepareContext` parameter from `any` to `unknown`
     - Change `loadPartyLayoutData` return type to use `LayoutSeason[]` and `LayoutEntry[]` instead of `any[]`
@@ -117,8 +117,8 @@ Replace `any` types across the pfs-chronicle-generator codebase with proper Type
     - Import `ChronicleFormData`, `LayoutSeason`, `LayoutEntry` from `party-chronicle-types`
     - _Requirements: 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10_
 
-- [ ] 8. Type party-chronicle-mapper.ts and reputation-calculator.ts
-  - [ ] 8.1 Replace `actor: any` with `actor: PartyActor` in `mapToCharacterData` and `calculateReputation`
+- [x] 8. Type party-chronicle-mapper.ts and reputation-calculator.ts
+  - [x] 8.1 Replace `actor: any` with `actor: PartyActor` in `mapToCharacterData` and `calculateReputation`
     - Change `actor: any` to `actor: PartyActor` in `mapToCharacterData` in `scripts/model/party-chronicle-mapper.ts`
     - Change `actor: any` to `actor: PartyActor` in `calculateReputation` in `scripts/model/reputation-calculator.ts`
     - Import `PartyActor` from `../handlers/event-listener-helpers`

@@ -6,6 +6,7 @@ import { describe, it, expect } from '@jest/globals';
 import * as fc from 'fast-check';
 import { mapToCharacterData } from '../../scripts/model/party-chronicle-mapper';
 import { SharedFields, UniqueFields } from '../../scripts/model/party-chronicle-types';
+import type { PartyActor } from '../../scripts/handlers/event-listener-helpers';
 
 describe('mapToCharacterData', () => {
   const createMockActor = (actorId: string, currentFaction: string | null = null) => ({
@@ -15,7 +16,7 @@ describe('mapToCharacterData', () => {
         currentFaction
       }
     }
-  });
+  }) as unknown as PartyActor;
 
   // Helper to create SharedFields with default earned income fields
   const createSharedFields = (overrides: Partial<SharedFields> = {}): SharedFields => ({
@@ -319,7 +320,7 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
         currentFaction
       }
     }
-  });
+  }) as unknown as PartyActor;
 
   // Helper to create SharedFields with default earned income fields
   const createSharedFields = (overrides: Partial<SharedFields> = {}): SharedFields => ({
@@ -739,7 +740,7 @@ describe('Property 6: Data Combination Correctness', () => {
 
     fc.assert(
       fc.property(sharedFieldsArb, uniqueFieldsArb, (shared, unique) => {
-        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } };
+        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } } as unknown as PartyActor;
         const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify all shared fields are present in the result
@@ -817,7 +818,7 @@ describe('Property 6: Data Combination Correctness', () => {
 
     fc.assert(
       fc.property(sharedFieldsArb, uniqueFieldsArb, (shared, unique) => {
-        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } };
+        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } } as unknown as PartyActor;
         const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify no data transformation or loss occurs
@@ -897,7 +898,7 @@ describe('Property 6: Data Combination Correctness', () => {
 
     fc.assert(
       fc.property(sharedFieldsArb, uniqueFieldsArb, (shared, unique) => {
-        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } };
+        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } } as unknown as PartyActor;
         const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify empty arrays are preserved
@@ -966,7 +967,7 @@ describe('Property 6: Data Combination Correctness', () => {
 
     fc.assert(
       fc.property(sharedFieldsArb, uniqueFieldsArb, (shared, unique) => {
-        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } };
+        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } } as unknown as PartyActor;
         const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify zero values are preserved (not treated as falsy)
@@ -1030,7 +1031,7 @@ describe('Property 6: Data Combination Correctness', () => {
 
     fc.assert(
       fc.property(sharedFieldsArb, uniqueFieldsArb, (shared, unique) => {
-        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } };
+        const mockActor = { id: 'test-actor-id', system: { pfs: { currentFaction: 'EA' } } } as unknown as PartyActor;
         const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify all string fields preserve special characters and unicode

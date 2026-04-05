@@ -87,6 +87,7 @@ jest.mock('../../scripts/model/party-chronicle-storage', () => ({
 
 // Now import PartyChronicleApp after mocks are set up
 import { PartyChronicleApp } from '../../scripts/PartyChronicleApp';
+import { PartyActor } from '../../scripts/handlers/event-listener-helpers';
 
 describe('Chronicle Path Template Structure Tests', () => {
   const createMockActor = () => ({
@@ -99,7 +100,7 @@ describe('Chronicle Path Template Structure Tests', () => {
         level: { value: 5 }
       }
     }
-  });
+  }) as unknown as PartyActor;
 
   describe('File Picker Button Existence', () => {
     /**

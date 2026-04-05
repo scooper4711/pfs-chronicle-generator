@@ -104,6 +104,7 @@ jest.mock('../scripts/model/party-chronicle-storage', () => {
 // Now import after mocking
 import { PartyChronicleApp } from '../scripts/PartyChronicleApp';
 import { savePartyChronicleData, clearPartyChronicleData } from '../scripts/model/party-chronicle-storage';
+import { PartyActor } from '../scripts/handlers/event-listener-helpers';
 
 /**
  * Property 1: Fault Condition - Clear Button Preserves Scenario Selection
@@ -284,7 +285,7 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
                   }
                 }
               }
-            ];
+            ] as unknown as PartyActor[];
             
             const chronicleApp = new PartyChronicleApp(mockPartyActors);
             const context = await chronicleApp._prepareContext();

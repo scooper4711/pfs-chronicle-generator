@@ -14,11 +14,17 @@ import { FACTION_NAMES } from './model/faction-names.js';
 import { 
   PartyMember,
   SharedFields,
-  PartyChronicleData
+  PartyChronicleData,
+  PartyChronicleContext,
+  ChronicleFormData,
+  UniqueFields,
+  LayoutSeason,
+  LayoutEntry
 } from './model/party-chronicle-types.js';
 import { validateSharedFields, validateUniqueFields } from './model/party-chronicle-validator.js';
 import { generateChroniclesFromPartyData } from './handlers/party-chronicle-handlers.js';
 import { FlagActor, hasArchive } from './handlers/chronicle-exporter.js';
+import { PartyActor } from './handlers/event-listener-helpers.js';
 import { debug } from './utils/logger.js';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
@@ -26,7 +32,7 @@ import FormDataExtended = foundry.applications.ux.FormDataExtended;
 
 export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2) {
   /** Array of party member actors */
-  partyActors: any[];
+  partyActors: PartyActor[];
 
   /** The Party actor used for zip archive flag storage */
   partyActor?: FlagActor;
@@ -38,7 +44,9 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * @param options - Additional application options
    * @param partyActor - The Party actor for zip archive flag checks
    */
-  constructor(partyActors: any[], options: any = {}, partyActor?: FlagActor) {
+  constructor(partyActors: PartyActor[], options?: unknown, partyActor?: FlagActor) {
+    // @ts-expect-error ApplicationV2 base class expects specific options type; unknown is safe here
+
     super(options);
     this.partyActors = partyActors;
     this.partyActor = partyActor;
@@ -93,20 +101,24 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * 
    * Requirements: party-chronicle-filling 1.3, 1.4, 8.2, conditional-chronicle-path-visibility 5.1, 5.2, 5.5, 6.4
    */
-  async _prepareContext(_options?: any): Promise<any> {
+  // @ts-expect-error Base class _prepareContext returns Promise<RenderContext>; our PartyChronicleContext is a superset but not structurally compatible
+  async _prepareContext(_options?: unknown): Promise<PartyChronicleContext> {
       // Extract party member data - filter to only include character actors
       // Exclude: null actors, familiars, and NPCs
       const partyMembers: PartyMember[] = this.partyActors
         .filter(actor => actor?.type === 'character')
-        .map(actor => ({
-          id: actor.id,
-          name: actor.name,
-          img: actor.img,
-          level: actor.system?.details?.level?.value ?? 1,
-          playerNumber: actor.system?.pfs?.playerNumber?.toString() ?? '',
-          characterNumber: actor.system?.pfs?.characterNumber?.toString() ?? '',
-          faction: FACTION_NAMES[actor.system?.pfs?.currentFaction] ?? ''
-        }));
+        .map(actor => {
+          const factionKey = actor.system?.pfs?.currentFaction ?? '';
+          return {
+            id: actor.id,
+            name: actor.name,
+            img: actor.img,
+            level: actor.system?.details?.level?.value ?? 1,
+            playerNumber: actor.system?.pfs?.playerNumber?.toString() ?? '',
+            characterNumber: actor.system?.pfs?.characterNumber?.toString() ?? '',
+            faction: FACTION_NAMES[factionKey] ?? ''
+          };
+        });
 
       // Load saved party chronicle data from world flags
       const savedStorage = await loadPartyChronicleData();
@@ -166,8 +178,8 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * @returns Object containing seasons, layouts, and selected IDs
    */
   private loadPartyLayoutData(savedData: PartyChronicleData | null): {
-    seasons: any[];
-    layoutsInSeason: any[];
+    seasons: LayoutSeason[];
+    layoutsInSeason: LayoutEntry[];
     selectedSeasonId: string;
     effectiveLayoutId: string;
   } {
@@ -278,7 +290,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       formData: FormDataExtended
     ): Promise<void> {
       // Extract and expand form data
-      const data: any = foundry.utils.expandObject(formData.object);
+      const data = foundry.utils.expandObject(formData.object) as ChronicleFormData;
       debug('Expanded form data:', data);
 
       // Delegate to extracted handler function
@@ -299,7 +311,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * @param data - The form data to validate
    * @returns ValidationResult indicating success or errors
    */
-  private validateSharedFields(data: any): { valid: boolean; errors: string[] } {
+  private validateSharedFields(data: ChronicleFormData): { valid: boolean; errors: string[] } {
     const shared = data.shared || {};
     return validateSharedFields(shared);
   }
@@ -310,7 +322,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * @param data - The form data to validate
    * @returns ValidationResult indicating success or errors
    */
-  private validateUniqueFields(data: any): { valid: boolean; errors: string[] } {
+  private validateUniqueFields(data: ChronicleFormData): { valid: boolean; errors: string[] } {
     const allErrors: string[] = [];
     const characters = data.characters || {};
     
@@ -318,7 +330,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
     for (const [actorId, unique] of Object.entries(characters)) {
       const actor = this.partyActors.find(a => a.id === actorId);
       const characterName = actor?.name || actorId;
-      const result = validateUniqueFields(unique as any, characterName);
+      const result = validateUniqueFields(unique as UniqueFields, characterName);
       allErrors.push(...result.errors);
     }
     

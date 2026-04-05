@@ -53,6 +53,9 @@ export interface PartyActor extends FlagActor {
     img: string;
     type: string;
     render(force?: boolean): void;
+    sheet?: {
+        render(force?: boolean, options?: { focus?: boolean }): void;
+    };
     system?: {
         details?: {
             level?: {

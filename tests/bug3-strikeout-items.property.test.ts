@@ -18,6 +18,7 @@ import { describe, it, expect } from '@jest/globals';
 import { mapToCharacterData } from '../scripts/model/party-chronicle-mapper';
 import { SharedFields, UniqueFields } from '../scripts/model/party-chronicle-types';
 import { createSharedFields, createUniqueFields } from './model/test-helpers';
+import { PartyActor } from '../scripts/handlers/event-listener-helpers';
 
 /**
  * Property 1: Fault Condition - Strikeout Items Passed to PDF Generation
@@ -76,7 +77,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
               id: 'actor-1',
               name: 'Valeros',
               system: { pfs: { currentFaction: 'EA' } }
-            };
+            } as unknown as PartyActor;
             
             const chronicleData = mapToCharacterData(sharedFields, uniqueFields, mockActor);
             
@@ -136,7 +137,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
               id: 'actor-1',
               name: 'Valeros',
               system: { pfs: { currentFaction: 'EA' } }
-            };
+            } as unknown as PartyActor;
             
             const chronicleData = mapToCharacterData(sharedFields, uniqueFields, mockActor);
             
@@ -183,7 +184,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
         id: 'actor-1',
         name: 'Valeros',
         system: { pfs: { currentFaction: 'EA' } }
-      };
+      } as unknown as PartyActor;
       
       const chronicleData = mapToCharacterData(sharedFields, uniqueFields, mockActor);
       
@@ -227,7 +228,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
               id: 'actor-1',
               name: 'Valeros',
               system: { pfs: { currentFaction: 'EA' } }
-            };
+            } as unknown as PartyActor;
             
             const chronicleData = mapToCharacterData(sharedFields, uniqueFields, mockActor);
             
@@ -284,7 +285,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
               id: 'actor-1',
               name: 'Valeros',
               system: { pfs: { currentFaction: 'EA' } }
-            };
+            } as unknown as PartyActor;
             
             const chronicleData = mapToCharacterData(sharedFields, uniqueFields, mockActor);
             
@@ -342,7 +343,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
               id: 'actor-1',
               name: 'Valeros',
               system: { pfs: { currentFaction: 'EA' } }
-            };
+            } as unknown as PartyActor;
             
             const chronicleData = mapToCharacterData(sharedFields, uniqueFields, mockActor);
             
@@ -394,7 +395,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
         id: 'actor-1',
         name: 'Valeros',
         system: { pfs: { currentFaction: 'EA' } }
-      };
+      } as unknown as PartyActor;
       
       const chronicleData = mapToCharacterData(sharedFields, uniqueFields, mockActor);
       

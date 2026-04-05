@@ -206,6 +206,9 @@ export interface PartyChronicleContext {
   /** Previously saved party chronicle data */
   savedData: PartyChronicleData | null;
   
+  /** Whether the chronicle path file exists and layout has a default (conditional-chronicle-path-visibility 5.1, 5.2) */
+  chroniclePathExists: boolean;
+
   /** Whether a zip archive of chronicles is stored on the Party actor (chronicle-export 2.2, 2.3) */
   hasChronicleZip: boolean;
 

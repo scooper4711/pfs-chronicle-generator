@@ -71,7 +71,12 @@ import { PartyChronicleApp } from '../scripts/PartyChronicleApp';
 const actorArbitrary = fc.record({
   id: fc.uuid(),
   name: fc.string({ minLength: 1, maxLength: 30 }),
+  img: fc.constant('icons/default.webp'),
   type: fc.constant('character'), // Add type property to match filter in _prepareContext
+  render: fc.constant(jest.fn()),
+  getFlag: fc.constant(jest.fn(() => undefined)),
+  setFlag: fc.constant(jest.fn(async () => {})),
+  unsetFlag: fc.constant(jest.fn(async () => {})),
   system: fc.record({
     details: fc.record({
       level: fc.record({
@@ -189,6 +194,12 @@ describe('PartyChronicleApp Property Tests', () => {
             fc.record({
               id: fc.uuid(),
               name: fc.string({ minLength: 1, maxLength: 30 }),
+              img: fc.constant('icons/default.webp'),
+              type: fc.constant('character' as const),
+              render: fc.constant(jest.fn()),
+              getFlag: fc.constant(jest.fn(() => undefined)),
+              setFlag: fc.constant(jest.fn(async () => {})),
+              unsetFlag: fc.constant(jest.fn(async () => {})),
               system: fc.record({
                 details: fc.record({
                   level: fc.record({

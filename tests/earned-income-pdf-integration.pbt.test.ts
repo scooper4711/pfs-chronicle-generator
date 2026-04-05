@@ -13,6 +13,7 @@ import { mapToCharacterData } from '../scripts/model/party-chronicle-mapper';
 import { SharedFields, UniqueFields } from '../scripts/model/party-chronicle-types';
 import { calculateEarnedIncome } from '../scripts/utils/earned-income-calculator';
 import { createSharedFields, createUniqueFields } from './model/test-helpers';
+import { PartyActor } from '../scripts/handlers/event-listener-helpers';
 
 describe('Earned Income PDF Generation Integration - Property-Based Tests', () => {
   const createMockActor = (actorId: string, currentFaction: string | null = null) => ({
@@ -22,7 +23,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
         currentFaction
       }
     }
-  });
+  }) as unknown as PartyActor;
 
   // Feature: earned-income-calculation, Property 12: PDF Generation Integration
   // **Validates: Requirements 12.1, 12.2, 12.3**

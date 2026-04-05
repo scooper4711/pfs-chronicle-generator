@@ -7,6 +7,7 @@
 
 import { describe, it, expect } from '@jest/globals';
 import type { SharedFields } from '../../scripts/model/party-chronicle-types';
+import type { PartyActor } from '../../scripts/handlers/event-listener-helpers';
 import { calculateReputation } from '../../scripts/model/reputation-calculator';
 
 // Helper to create minimal SharedFields for testing
@@ -52,7 +53,7 @@ function createActor(chosenFaction: string | null | undefined, name: string = 'T
         currentFaction: chosenFaction
       }
     }
-  };
+  } as unknown as PartyActor;
 }
 
 describe('Reputation Calculator Unit Tests', () => {
@@ -204,7 +205,7 @@ describe('Reputation Calculator Unit Tests', () => {
   describe('Missing actor data', () => {
     it('should handle missing actor.system', () => {
       const shared = createSharedFields(2, { EA: 3, GA: 0 });
-      const actor = { name: 'Test Character' };
+      const actor = { name: 'Test Character' } as unknown as PartyActor;
 
       const result = calculateReputation(shared, actor);
 
@@ -214,7 +215,7 @@ describe('Reputation Calculator Unit Tests', () => {
 
     it('should handle missing actor.system.pfs', () => {
       const shared = createSharedFields(2, { EA: 3, GA: 0 });
-      const actor = { name: 'Test Character', system: {} };
+      const actor = { name: 'Test Character', system: {} } as unknown as PartyActor;
 
       const result = calculateReputation(shared, actor);
 
@@ -224,7 +225,7 @@ describe('Reputation Calculator Unit Tests', () => {
 
     it('should handle null actor', () => {
       const shared = createSharedFields(2, { EA: 3, GA: 0 });
-      const actor = null;
+      const actor = null as unknown as PartyActor;
 
       const result = calculateReputation(shared, actor);
 
@@ -234,7 +235,7 @@ describe('Reputation Calculator Unit Tests', () => {
 
     it('should handle undefined actor', () => {
       const shared = createSharedFields(2, { EA: 3, GA: 0 });
-      const actor = undefined;
+      const actor = undefined as unknown as PartyActor;
 
       const result = calculateReputation(shared, actor);
 

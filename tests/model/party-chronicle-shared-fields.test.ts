@@ -10,6 +10,7 @@
 import fc from 'fast-check';
 import { PartyChronicleData } from '../../scripts/model/party-chronicle-types';
 import { mapToCharacterData } from '../../scripts/model/party-chronicle-mapper';
+import { PartyActor } from '../../scripts/handlers/event-listener-helpers';
 
 /**
  * Generator for shared field values
@@ -77,6 +78,8 @@ const uniqueFieldsArbitrary = fc.record({
 const actorIdArbitrary = fc.uuid();
 
 describe('Party Chronicle Shared Field Property Tests', () => {
+  const mockActor = { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } } as unknown as PartyActor;
+
   describe('Property 2: Shared Field Propagation', () => {
     /**
      * **Validates: Requirements 2.2**
@@ -100,7 +103,7 @@ describe('Party Chronicle Shared Field Property Tests', () => {
             // Map each character to chronicle data
             const chronicleDataList = characterPairs.map(([_actorId, unique]) => ({
               unique,
-              chronicleData: mapToCharacterData(shared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
+              chronicleData: mapToCharacterData(shared, unique, mockActor)
             }));
 
             // Property: All characters should have the same shared field values
@@ -167,13 +170,13 @@ describe('Party Chronicle Shared Field Property Tests', () => {
             // Map party characters to chronicle data
             const partyChronicles = partyCharacters.map(([actorId, unique]) => ({
               actorId,
-              chronicleData: mapToCharacterData(partyShared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
+              chronicleData: mapToCharacterData(partyShared, unique, mockActor)
             }));
 
             // Map outside characters with different shared fields
             const outsideChronicles = outsideCharacters.map(([actorId, unique]) => ({
               actorId,
-              chronicleData: mapToCharacterData(outsideShared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
+              chronicleData: mapToCharacterData(outsideShared, unique, mockActor)
             }));
 
             // Property: Party characters should have party shared fields
@@ -213,7 +216,7 @@ describe('Party Chronicle Shared Field Property Tests', () => {
               }
             };
 
-            const chronicleData = mapToCharacterData(shared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } });
+            const chronicleData = mapToCharacterData(shared, unique, mockActor);
 
             // Property: Single character should receive all shared field values
             expect(chronicleData.gmid).toBe(shared.gmPfsNumber);
@@ -248,7 +251,7 @@ describe('Party Chronicle Shared Field Property Tests', () => {
 
             // Map all 10 characters
             const chronicleDataList = characterPairs.map(([_actorId, unique]) =>
-              mapToCharacterData(shared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
+              mapToCharacterData(shared, unique, mockActor)
             );
 
             // Property: All 10 characters should have identical shared field values
@@ -281,7 +284,7 @@ describe('Party Chronicle Shared Field Property Tests', () => {
             const chronicleDataList = characterPairs.map(([actorId, unique]) => ({
               actorId,
               unique,
-              chronicleData: mapToCharacterData(shared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
+              chronicleData: mapToCharacterData(shared, unique, mockActor)
             }));
 
             // Property: Even though unique fields differ, shared fields remain consistent
@@ -325,12 +328,12 @@ describe('Party Chronicle Shared Field Property Tests', () => {
 
             // Map characters with initial shared fields
             const initialChronicles = characterPairs.map(([_actorId, unique]) =>
-              mapToCharacterData(initialShared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
+              mapToCharacterData(initialShared, unique, mockActor)
             );
 
             // Map characters with updated shared fields
             const updatedChronicles = characterPairs.map(([_actorId, unique]) =>
-              mapToCharacterData(updatedShared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
+              mapToCharacterData(updatedShared, unique, mockActor)
             );
 
             // Property: All characters should have initial shared values
@@ -366,7 +369,7 @@ describe('Party Chronicle Shared Field Property Tests', () => {
           async (shared, characterPairs) => {
             // Map all characters
             const chronicleDataList = characterPairs.map(([_actorId, unique]) =>
-              mapToCharacterData(shared, unique, { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } })
+              mapToCharacterData(shared, unique, mockActor)
             );
 
             // Property: All shared field types are correctly propagated

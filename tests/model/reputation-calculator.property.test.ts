@@ -9,6 +9,7 @@
 import fc from 'fast-check';
 import { calculateReputation } from '../../scripts/model/reputation-calculator';
 import { FACTION_NAMES } from '../../scripts/model/faction-names';
+import type { PartyActor } from '../../scripts/handlers/event-listener-helpers';
 
 /**
  * Generator for valid reputation values (0-9)
@@ -80,7 +81,7 @@ describe('Reputation Calculator Property Tests', () => {
             const actor = { 
               name: 'Test Character',
               system: { pfs: { currentFaction: chosenFaction } } 
-            };
+            } as unknown as PartyActor;
             
             const result = calculateReputation(shared, actor);
             
@@ -124,7 +125,7 @@ describe('Reputation Calculator Property Tests', () => {
             const actor = { 
               name: 'Test Character',
               system: { pfs: { currentFaction: chosenFaction } } 
-            };
+            } as unknown as PartyActor;
             
             const result = calculateReputation(shared, actor);
             
@@ -168,7 +169,7 @@ describe('Reputation Calculator Property Tests', () => {
             const actor = { 
               name: 'Test Character',
               system: { pfs: { currentFaction: chosenFaction } } 
-            };
+            } as unknown as PartyActor;
             
             const result = calculateReputation(shared, actor);
             
@@ -209,7 +210,7 @@ describe('Reputation Calculator Property Tests', () => {
             const actor = { 
               name: 'Test Character',
               system: { pfs: { currentFaction: null } } 
-            };
+            } as unknown as PartyActor;
             
             const result = calculateReputation(shared, actor);
             
@@ -250,7 +251,7 @@ describe('Reputation Calculator Property Tests', () => {
             const actor = { 
               name: 'Test Character',
               system: { pfs: { currentFaction: undefined } } 
-            };
+            } as unknown as PartyActor;
             
             const result = calculateReputation(shared, actor);
             
@@ -295,7 +296,7 @@ describe('Reputation Calculator Property Tests', () => {
             const actor = { 
               name: 'Test Character',
               system: { pfs: { currentFaction: chosenFaction } } 
-            };
+            } as unknown as PartyActor;
             
             const result = calculateReputation(shared, actor);
             
@@ -340,7 +341,7 @@ describe('Reputation Calculator Property Tests', () => {
             const actor = { 
               name: 'Test Character',
               system: { pfs: { currentFaction: chosenFaction } } 
-            };
+            } as unknown as PartyActor;
             
             const result = calculateReputation(shared, actor);
             
@@ -372,7 +373,7 @@ describe('Reputation Calculator Property Tests', () => {
             const actor = { 
               name: 'Test Character',
               system: { pfs: { currentFaction: chosenFaction } } 
-            };
+            } as unknown as PartyActor;
             
             const result = calculateReputation(shared, actor);
             
@@ -411,7 +412,7 @@ describe('Reputation Calculator Property Tests', () => {
             const actor = { 
               name: 'Test Character',
               system: { pfs: { currentFaction: chosenFaction } } 
-            };
+            } as unknown as PartyActor;
             
             const result = calculateReputation(shared, actor);
             
@@ -459,7 +460,7 @@ describe('Reputation Calculator Property Tests', () => {
             const actor = { 
               name: 'Test Character',
               system: { pfs: { currentFaction: chosenFaction } } 
-            };
+            } as unknown as PartyActor;
             
             const result = calculateReputation(shared, actor);
             
@@ -499,7 +500,7 @@ describe('Reputation Calculator Property Tests', () => {
             const actor = { 
               name: 'Test Character',
               system: { pfs: { currentFaction: chosenFaction } } 
-            };
+            } as unknown as PartyActor;
             
             const result = calculateReputation(shared, actor);
             
@@ -535,7 +536,7 @@ describe('Reputation Calculator Property Tests', () => {
             const actor = { 
               name: 'Test Character',
               system: { pfs: { currentFaction: chosenFaction } } 
-            };
+            } as unknown as PartyActor;
             
             // Call calculateReputation multiple times with same input
             const result1 = calculateReputation(shared, actor);

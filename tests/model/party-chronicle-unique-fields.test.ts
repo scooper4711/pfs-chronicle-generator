@@ -12,6 +12,7 @@ import { PartyChronicleData, UniqueFields } from '../../scripts/model/party-chro
 import { mapToCharacterData } from '../../scripts/model/party-chronicle-mapper';
 import { calculateTreasureBundlesGp, calculateGpGained } from '../../scripts/utils/treasure-bundle-calculator';
 import { calculateEarnedIncome } from '../../scripts/utils/earned-income-calculator';
+import { PartyActor } from '../../scripts/handlers/event-listener-helpers';
 
 /**
  * Generator for unique field values
@@ -88,7 +89,7 @@ const createMockActor = (actorId: string, currentFaction: string | null = null) 
       currentFaction
     }
   }
-});
+}) as unknown as PartyActor;
 
 describe('Party Chronicle Unique Field Property Tests', () => {
   describe('Property 3: Unique Field Isolation', () => {

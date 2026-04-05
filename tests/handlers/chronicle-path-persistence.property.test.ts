@@ -47,6 +47,7 @@ jest.mock('../../scripts/LayoutStore', () => ({
 import { savePartyChronicleData, loadPartyChronicleData, clearPartyChronicleData } from '../../scripts/model/party-chronicle-storage';
 import { PartyChronicleApp } from '../../scripts/PartyChronicleApp';
 import type { PartyChronicleData } from '../../scripts/model/party-chronicle-types';
+import { PartyActor } from '../../scripts/handlers/event-listener-helpers';
 
 /**
  * Generator for valid file paths
@@ -119,7 +120,7 @@ function teardownFoundryMocks(): void {
 }
 
 describe('Chronicle Path Persistence Property Tests', () => {
-  let partyActors: any[];
+  let partyActors: PartyActor[];
 
   beforeEach(() => {
     setupFoundryMocks();
@@ -146,7 +147,7 @@ describe('Chronicle Path Persistence Property Tests', () => {
           pfs: { playerNumber: '12345', characterNumber: '2002' }
         }
       }
-    ];
+    ] as unknown as PartyActor[];
   });
 
   afterEach(() => {
@@ -251,7 +252,7 @@ describe('Chronicle Path Persistence Property Tests', () => {
 
             // 5. Verify the saved data is available in context
             expect(context.savedData).toBeDefined();
-            expect(context.savedData.shared.blankChroniclePath).toBe(chroniclePath);
+            expect(context.savedData!.shared.blankChroniclePath).toBe(chroniclePath);
 
             // Clean up
             await clearPartyChronicleData();
@@ -318,7 +319,7 @@ describe('Chronicle Path Persistence Property Tests', () => {
 
       // Verify empty path is preserved
       expect(context.shared.blankChroniclePath).toBe('');
-      expect(context.savedData.shared.blankChroniclePath).toBe('');
+      expect(context.savedData!.shared.blankChroniclePath).toBe('');
 
       // Clean up
       await clearPartyChronicleData();
