@@ -1,5 +1,7 @@
 ---
-inclusion: always
+applyTo: "**/*"
+description: "Guidelines for using the SonarQube MCP server"
+name: "SonarCloud instructions"
 ---
 
 These are some guidelines when using the SonarQube MCP server.
