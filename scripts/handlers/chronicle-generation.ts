@@ -10,18 +10,20 @@
 import { layoutStore } from '../LayoutStore.js';
 import { debug, error } from '../utils/logger.js';
 import { 
+  ChronicleFormData,
   SharedFields,
   UniqueFields,
   GenerationResult
 } from '../model/party-chronicle-types.js';
 import { Layout } from '../model/layout.js';
-import { mapToCharacterData } from '../model/party-chronicle-mapper.js';
+import { mapToCharacterData, ChronicleData } from '../model/party-chronicle-mapper.js';
 import { validateSharedFields, validateUniqueFields } from '../model/party-chronicle-validator.js';
 import { PdfGenerator } from '../PdfGenerator.js';
 import { PDFDocument } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { createArchive, addPdfToArchive, storeArchive, FlagActor } from './chronicle-exporter.js';
 import { generateChronicleFilename } from '../utils/filename-utils.js';
+import { PartyActor } from './event-listener-helpers.js';
 import { postChatNotification } from './chat-notifier.js';
 
 /**
@@ -38,8 +40,8 @@ import { postChatNotification } from './chat-notifier.js';
  * Requirements: code-standards-refactoring 2.6, 2.7, 2.8, 3.1, 3.6
  */
 function validateAllCharacterFields(
-  data: any,
-  partyActors: any[]
+  data: ChronicleFormData,
+  partyActors: PartyActor[]
 ): { valid: boolean; errors: string[] } {
   const allErrors: string[] = [];
   
@@ -52,7 +54,7 @@ function validateAllCharacterFields(
   for (const [actorId, unique] of Object.entries(characters)) {
     const actor = partyActors.find(a => a.id === actorId);
     const characterName = actor?.name || actorId;
-    const result = validateUniqueFields(unique as any, characterName);
+    const result = validateUniqueFields(unique as UniqueFields, characterName);
     allErrors.push(...result.errors);
   }
   
@@ -75,7 +77,7 @@ function validateAllCharacterFields(
  * Requirements: code-standards-refactoring 2.6, 2.7, 2.8, 3.1, 3.6
  */
 async function loadLayoutConfiguration(
-  data: any
+  data: ChronicleFormData
 ): Promise<{ layout: Layout; layoutId: string; blankChroniclePath: string } | null> {
   // Get the selected layout ID
   const layoutId = data.shared?.layoutId || game.settings.get('pfs-chronicle-generator', 'layout');
@@ -117,7 +119,7 @@ async function loadLayoutConfiguration(
  * @returns Typed SharedFields object with all fields populated
  */
 // eslint-disable-next-line complexity -- Flat null-coalescing pattern, low cognitive complexity
-function extractSharedFields(rawShared: any, layoutId: string, blankChroniclePath: string): SharedFields {
+function extractSharedFields(rawShared: Partial<SharedFields>, layoutId: string, blankChroniclePath: string): SharedFields {
   return {
     gmPfsNumber: rawShared?.gmPfsNumber || '',
     scenarioName: rawShared?.scenarioName || '',
@@ -163,7 +165,7 @@ function extractSharedFields(rawShared: any, layoutId: string, blankChroniclePat
  * @returns Typed UniqueFields object for this character
  */
 // eslint-disable-next-line complexity -- Flat null-coalescing pattern, low cognitive complexity
-function extractUniqueFields(rawCharacters: any, actor: any): UniqueFields {
+function extractUniqueFields(rawCharacters: Record<string, Partial<UniqueFields>>, actor: PartyActor): UniqueFields {
   const uniqueFields = rawCharacters?.[actor.id] || {};
   return {
     characterName: uniqueFields.characterName || actor.name,
@@ -193,11 +195,11 @@ function extractUniqueFields(rawCharacters: any, actor: any): UniqueFields {
  * @returns Mapped chronicle data ready for PDF generation
  */
 function extractCharacterChronicleData(
-  data: any,
-  actor: any,
+  data: ChronicleFormData,
+  actor: PartyActor,
   layoutId: string,
   blankChroniclePath: string
-): any {
+): ChronicleData {
   const sharedFields = extractSharedFields(data.shared, layoutId, blankChroniclePath);
   const characterData = extractUniqueFields(data.characters, actor);
   return mapToCharacterData(sharedFields, characterData, actor);
@@ -224,10 +226,10 @@ function extractCharacterChronicleData(
  * Requirements: code-standards-refactoring 2.6, 2.7, 2.8, 3.1, 3.6
  */
 async function generateSingleCharacterPdf(
-  chronicleData: any,
+  chronicleData: ChronicleData,
   layout: Layout,
   blankChroniclePath: string,
-  actor: any
+  actor: PartyActor
 ): Promise<GenerationResult> {
   const characterId = actor.id;
   const characterName = actor.name;
@@ -309,8 +311,8 @@ async function generateSingleCharacterPdf(
  * Requirements: chronicle-export 1.1, 1.2, 1.4, 1.5, 1.6, 5.3
  */
 async function processAllPartyMembers(
-  data: any,
-  partyActors: any[],
+  data: ChronicleFormData,
+  partyActors: PartyActor[],
   layout: Layout,
   layoutId: string,
   blankChroniclePath: string,
@@ -411,8 +413,8 @@ function displayGenerationResults(results: GenerationResult[]): void {
  * Requirements: code-standards-refactoring 2.1, 2.6, 2.7, 2.8, 3.1, 3.6
  */
 export async function generateChroniclesFromPartyData(
-  data: any,
-  partyActors: any[],
+  data: ChronicleFormData,
+  partyActors: PartyActor[],
   partyActor: FlagActor
 ): Promise<void> {
   // Step 1: Validate all fields

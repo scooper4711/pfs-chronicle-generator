@@ -83,6 +83,8 @@ global.console.error = jest.fn();
 
 import { generateChroniclesFromPartyData } from '../../scripts/handlers/chronicle-generation';
 import { FlagActor } from '../../scripts/handlers/chronicle-exporter';
+import type { ChronicleFormData } from '../../scripts/model/party-chronicle-types';
+import type { PartyActor } from '../../scripts/handlers/event-listener-helpers';
 
 // --- Helpers ---
 
@@ -119,13 +121,13 @@ function validSharedData() {
   };
 }
 
-function createActor(id: string, name: string) {
+function createActor(id: string, name: string): PartyActor {
   return {
     id,
     name,
     system: { details: { level: { value: 5 } }, pfs: { playerNumber: '12345', characterNumber: '01' } },
     setFlag: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
-  };
+  } as unknown as PartyActor;
 }
 
 function setupSuccessfulPipeline() {
@@ -179,7 +181,7 @@ describe('Chronicle Generation', () => {
       mockValidateSharedFields.mockReturnValue({ valid: false, errors: ['Event date is required'] });
       mockValidateUniqueFields.mockReturnValue({ valid: true, errors: [] });
 
-      const data = { shared: validSharedData(), characters: {} };
+      const data = { shared: validSharedData(), characters: {} } as unknown as ChronicleFormData;
       await generateChroniclesFromPartyData(data, [], createMockPartyActor());
 
       expect(mockNotifications.error).toHaveBeenCalledWith(
@@ -195,7 +197,7 @@ describe('Chronicle Generation', () => {
       const data = {
         shared: validSharedData(),
         characters: { 'actor-1': { characterName: 'Valeros' } },
-      };
+      } as unknown as ChronicleFormData;
 
       await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());
 
@@ -207,7 +209,7 @@ describe('Chronicle Generation', () => {
     it('does not proceed to layout loading when validation fails', async () => {
       mockValidateSharedFields.mockReturnValue({ valid: false, errors: ['Missing field'] });
 
-      await generateChroniclesFromPartyData({ shared: {}, characters: {} }, [], createMockPartyActor());
+      await generateChroniclesFromPartyData({ shared: {}, characters: {} } as unknown as ChronicleFormData, [], createMockPartyActor());
 
       expect(mockGetLayout).not.toHaveBeenCalled();
     });
@@ -219,7 +221,7 @@ describe('Chronicle Generation', () => {
       mockValidateUniqueFields.mockReturnValue({ valid: true, errors: [] });
       mockGetLayout.mockRejectedValue(new Error('Layout not found'));
 
-      const data = { shared: validSharedData(), characters: {} };
+      const data = { shared: validSharedData(), characters: {} } as unknown as ChronicleFormData;
       await generateChroniclesFromPartyData(data, [], createMockPartyActor());
 
       expect(mockNotifications.error).toHaveBeenCalledWith(
@@ -236,7 +238,7 @@ describe('Chronicle Generation', () => {
 
       const shared = validSharedData();
       shared.blankChroniclePath = '';
-      const data = { shared, characters: {} };
+      const data = { shared, characters: {} } as unknown as ChronicleFormData;
 
       await generateChroniclesFromPartyData(data, [], createMockPartyActor());
 
@@ -254,7 +256,7 @@ describe('Chronicle Generation', () => {
       const data = {
         shared: validSharedData(),
         characters: { 'actor-1': { characterName: 'Valeros', playerNumber: '12345', characterNumber: '01' } },
-      };
+      } as unknown as ChronicleFormData;
 
       await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());
 
@@ -268,7 +270,7 @@ describe('Chronicle Generation', () => {
       const data = {
         shared: validSharedData(),
         characters: { 'actor-1': { characterName: 'Valeros' } },
-      };
+      } as unknown as ChronicleFormData;
 
       await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());
 
@@ -293,7 +295,7 @@ describe('Chronicle Generation', () => {
           'actor-1': { characterName: 'Valeros' },
           'actor-2': { characterName: 'Seelah' },
         },
-      };
+      } as unknown as ChronicleFormData;
 
       await generateChroniclesFromPartyData(data, [actor1, actor2], createMockPartyActor());
 
@@ -328,7 +330,7 @@ describe('Chronicle Generation', () => {
           'actor-1': { characterName: 'Valeros' },
           'actor-2': { characterName: 'Seelah' },
         },
-      };
+      } as unknown as ChronicleFormData;
 
       await generateChroniclesFromPartyData(data, [actor1, actor2], createMockPartyActor());
 
@@ -346,7 +348,7 @@ describe('Chronicle Generation', () => {
       const data = {
         shared: validSharedData(),
         characters: { 'actor-1': { characterName: 'Valeros' } },
-      };
+      } as unknown as ChronicleFormData;
 
       await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());
 
@@ -364,7 +366,7 @@ describe('Chronicle Generation', () => {
       const data = {
         shared: validSharedData(),
         characters: { 'actor-1': { characterName: 'Valeros' } },
-      };
+      } as unknown as ChronicleFormData;
 
       await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());
 
@@ -383,7 +385,7 @@ describe('Chronicle Generation', () => {
       const data = {
         shared: validSharedData(),
         characters: { 'actor-1': { characterName: 'Valeros' } },
-      };
+      } as unknown as ChronicleFormData;
 
       await expect(
         generateChroniclesFromPartyData(data, [actor], createMockPartyActor())

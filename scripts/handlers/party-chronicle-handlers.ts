@@ -26,6 +26,8 @@ import {
     SHARED_FIELD_SELECTORS,
     CSS_CLASSES
 } from '../constants/dom-selectors.js';
+import type { PartyActor } from './event-listener-helpers.js';
+import type { ChronicleFormData } from '../model/party-chronicle-types.js';
 
 // Re-export for backward compatibility
 export { extractFormData, generateChroniclesFromPartyData };
@@ -41,7 +43,7 @@ export { extractFormData, generateChroniclesFromPartyData };
  * 
  * Requirements: clickable-player-portraits 1.1, 1.3, 1.4, 3.1, 3.2, 3.3
  */
-export function handlePortraitClick(event: MouseEvent, partyActors: any[]): void {
+export function handlePortraitClick(event: MouseEvent, partyActors: PartyActor[]): void {
     debug('Portrait clicked!', event.target);
     event.preventDefault();
     
@@ -293,8 +295,8 @@ export function updateAllEarnedIncomeDisplays(
 export async function handleSeasonChange(
     event: Event,
     container: HTMLElement,
-    partyActors: any[],
-    extractFormData: (container: HTMLElement, partyActors: any[]) => any
+    partyActors: PartyActor[],
+    extractFormData: (container: HTMLElement, partyActors: PartyActor[]) => ChronicleFormData
 ): Promise<void> {
     debug('Season changed');
     const seasonId = (event.target as HTMLSelectElement).value;
@@ -342,8 +344,8 @@ export async function handleSeasonChange(
 export async function handleLayoutChange(
     event: Event,
     container: HTMLElement,
-    partyActors: any[],
-    extractFormData: (container: HTMLElement, partyActors: any[]) => any
+    partyActors: PartyActor[],
+    extractFormData: (container: HTMLElement, partyActors: PartyActor[]) => ChronicleFormData
 ): Promise<void> {
     debug('Layout changed');
     const layoutId = (event.target as HTMLSelectElement).value;
@@ -417,8 +419,8 @@ export async function handleLayoutChange(
 export async function handleFieldChange(
     event: Event,
     container: HTMLElement,
-    partyActors: any[],
-    extractFormData: (container: HTMLElement, partyActors: any[]) => any
+    partyActors: PartyActor[],
+    extractFormData: (container: HTMLElement, partyActors: PartyActor[]) => ChronicleFormData
 ): Promise<void> {
     debug('Field changed');
     
@@ -512,7 +514,7 @@ export async function handleFieldChange(
 export async function handleChroniclePathFilePicker(
     event: Event,
     container: HTMLElement,
-    partyActors: any[]
+    partyActors: PartyActor[]
 ): Promise<void> {
     event.preventDefault();
     
@@ -619,7 +621,7 @@ async function checkFileExists(path: string): Promise<boolean> {
  * @param container - HTMLElement wrapping the form container
  * @param partyActors - Array of party member actors
  */
-export async function saveFormData(container: HTMLElement, partyActors: any[]): Promise<void> {
+export async function saveFormData(container: HTMLElement, partyActors: PartyActor[]): Promise<void> {
     try {
         const formData = extractFormData(container, partyActors);
         await savePartyChronicleData(formData);

@@ -16,6 +16,8 @@ import {
   saveFormData,
   updateChroniclePathVisibility,
 } from '../../scripts/handlers/party-chronicle-handlers';
+import type { PartyActor } from '../../scripts/handlers/event-listener-helpers';
+import type { ChronicleFormData } from '../../scripts/model/party-chronicle-types';
 
 const mockGetLayoutsByParent = jest.fn().mockReturnValue([]);
 const mockGetLayout = jest.fn().mockResolvedValue(null);
@@ -45,7 +47,7 @@ jest.mock('../../scripts/handlers/collapsible-section-handlers', () => ({
 }));
 
 jest.mock('../../scripts/handlers/form-data-extraction', () => ({
-  extractFormData: jest.fn(() => ({ shared: {}, characters: {} })),
+  extractFormData: jest.fn(() => ({ shared: {}, characters: {} }) as unknown as ChronicleFormData),
 }));
 
 jest.mock('../../scripts/handlers/chronicle-generation', () => ({
@@ -73,7 +75,7 @@ describe('party-chronicle-handlers — Logger coverage', () => {
       const mockRender = jest.fn();
       const partyActors = [
         { id: 'actor-1', name: 'Valeros', sheet: { render: mockRender } },
-      ];
+      ] as unknown as PartyActor[];
 
       container.innerHTML = `
         <div class="member-activity" data-character-id="actor-1">
@@ -107,7 +109,7 @@ describe('party-chronicle-handlers — Logger coverage', () => {
 
     it('should warn when actor sheet is not found', () => {
       const spy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-      const partyActors = [{ id: 'actor-1', name: 'Valeros' }];
+      const partyActors = [{ id: 'actor-1', name: 'Valeros' }] as unknown as PartyActor[];
       container.innerHTML = `
         <div class="member-activity" data-character-id="actor-1">
           <img class="actor-link" />
@@ -139,7 +141,7 @@ describe('party-chronicle-handlers — Logger coverage', () => {
       const seasonSelect = container.querySelector('#season') as HTMLSelectElement;
       const event = new Event('change', { bubbles: true });
       Object.defineProperty(event, 'target', { value: seasonSelect });
-      const mockExtract = jest.fn(() => ({ shared: {}, characters: {} }));
+      const mockExtract = jest.fn(() => ({ shared: {}, characters: {} }) as unknown as ChronicleFormData);
 
       await handleSeasonChange(event, container, [], mockExtract);
 
@@ -158,7 +160,7 @@ describe('party-chronicle-handlers — Logger coverage', () => {
       const seasonSelect = container.querySelector('#season') as HTMLSelectElement;
       const event = new Event('change', { bubbles: true });
       Object.defineProperty(event, 'target', { value: seasonSelect });
-      const mockExtract = jest.fn(() => ({ shared: {}, characters: {} }));
+      const mockExtract = jest.fn(() => ({ shared: {}, characters: {} }) as unknown as ChronicleFormData);
 
       await handleSeasonChange(event, container, [], mockExtract);
 
@@ -182,7 +184,7 @@ describe('party-chronicle-handlers — Logger coverage', () => {
       const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
       const event = new Event('change', { bubbles: true });
       Object.defineProperty(event, 'target', { value: layoutSelect });
-      const mockExtract = jest.fn(() => ({ shared: {}, characters: {} }));
+      const mockExtract = jest.fn(() => ({ shared: {}, characters: {} }) as unknown as ChronicleFormData);
 
       await handleLayoutChange(event, container, [], mockExtract);
 
@@ -204,7 +206,7 @@ describe('party-chronicle-handlers — Logger coverage', () => {
       const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
       const event = new Event('change', { bubbles: true });
       Object.defineProperty(event, 'target', { value: layoutSelect });
-      const mockExtract = jest.fn(() => ({ shared: {}, characters: {} }));
+      const mockExtract = jest.fn(() => ({ shared: {}, characters: {} }) as unknown as ChronicleFormData);
 
       await handleLayoutChange(event, container, [], mockExtract);
 
@@ -226,7 +228,7 @@ describe('party-chronicle-handlers — Logger coverage', () => {
       const layoutSelect = container.querySelector('#layout') as HTMLSelectElement;
       const event = new Event('change', { bubbles: true });
       Object.defineProperty(event, 'target', { value: layoutSelect });
-      const mockExtract = jest.fn(() => ({ shared: {}, characters: {} }));
+      const mockExtract = jest.fn(() => ({ shared: {}, characters: {} }) as unknown as ChronicleFormData);
 
       await handleLayoutChange(event, container, [], mockExtract);
 
