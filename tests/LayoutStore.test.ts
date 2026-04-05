@@ -192,15 +192,15 @@ describe('LayoutStore', () => {
         .mockResolvedValueOnce({
           files: [],
           dirs: [
-            'modules/pfs-chronicle-generator/layouts/pfs2',
+            'modules/pfs-chronicle-generator/assets/layouts/pfs2',
           ],
         })
         .mockResolvedValueOnce({
           files: [],
           dirs: [
-            'modules/pfs-chronicle-generator/layouts/pfs2/s1',
-            'modules/pfs-chronicle-generator/layouts/pfs2/s3',
-            'modules/pfs-chronicle-generator/layouts/pfs2/s2',
+            'modules/pfs-chronicle-generator/assets/layouts/pfs2/s1',
+            'modules/pfs-chronicle-generator/assets/layouts/pfs2/s3',
+            'modules/pfs-chronicle-generator/assets/layouts/pfs2/s2',
           ],
         })
         .mockResolvedValue({ files: [], dirs: [] });
@@ -228,17 +228,30 @@ describe('LayoutStore', () => {
     });
 
     it('should filter layouts by parent directory format', async () => {
-      setupBrowseResult(['modules/pfs-chronicle-generator/layouts/test.json']);
-      setupFetchJson({ id: 'pfs2.s1.scenario1', description: 'Season 1 Scenario' });
+      // Simulate browsing: root -> pfs2 dir -> s1 dir -> layout file
+      mockBrowse
+        .mockResolvedValueOnce({
+          files: [],
+          dirs: ['modules/pfs-chronicle-generator/assets/layouts/pfs2'],
+        })
+        .mockResolvedValueOnce({
+          files: [],
+          dirs: ['modules/pfs-chronicle-generator/assets/layouts/pfs2/s1'],
+        })
+        .mockResolvedValueOnce({
+          files: ['modules/pfs-chronicle-generator/assets/layouts/pfs2/s1/scenario1.json'],
+          dirs: [],
+        });
+      setupFetchJson({ id: 'pfs.s1-01', description: 'Season 1 Scenario' });
 
       layoutStore = await getStore();
       await layoutStore.initialize();
 
       const layouts = layoutStore.getLayoutsByParent('Season 1');
-      // Should convert "Season 1" to "s1" and match
+      // Should convert "Season 1" to "s1" and match via stored season
       expect(layouts).toEqual(
         expect.arrayContaining([
-          expect.objectContaining({ id: 'pfs2.s1.scenario1' }),
+          expect.objectContaining({ id: 'pfs.s1-01' }),
         ])
       );
     });

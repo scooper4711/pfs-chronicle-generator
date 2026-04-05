@@ -1,11 +1,12 @@
 import { Layout } from './model/layout';
 import { debug, warn, error } from './utils/logger.js';
 
-const LAYOUT_PATH = 'modules/pfs-chronicle-generator/layouts/';
+const LAYOUT_PATH = 'modules/pfs-chronicle-generator/assets/layouts/';
+const GAME_SYSTEM_ROOTS = new Set(['pfs2', 'sfs']);
 
 class LayoutStore {
     private readonly layouts: Map<string, Layout> = new Map();
-    private readonly layoutInfo: Map<string, { path: string, description: string }> = new Map();
+    private readonly layoutInfo: Map<string, { path: string, description: string, season: string, hidden: boolean }> = new Map();
     private readonly seasonDirectories: Map<string, string> = new Map(); // key: directory name, value: display name
 
     public async initialize() {
@@ -40,16 +41,20 @@ class LayoutStore {
     public getLayoutChoices(): Record<string, string> {
         const choices: Record<string, string> = {};
         for (const [id, info] of this.layoutInfo.entries()) {
-            choices[id] = info.description;
+            if (!info.hidden) {
+                choices[id] = info.description;
+            }
         }
         return choices;
     }
 
     public getLayouts(): { id: string, description: string }[] {
-        return Array.from(this.layoutInfo.entries()).map(([id, info]) => ({
-            id,
-            description: info.description
-        }));
+        return Array.from(this.layoutInfo.entries())
+            .filter(([_id, info]) => !info.hidden)
+            .map(([id, info]) => ({
+                id,
+                description: info.description
+            }));
     }
 
     private getDisplayNameForDirectory(dirName: string): string {
@@ -96,10 +101,7 @@ class LayoutStore {
         debug('Looking for layouts with dirFormat:', dirFormat);
         
         const layouts = Array.from(this.layoutInfo.entries())
-            .filter(([id, _info]) => {
-                const idParts = id.split('.');
-                return idParts.length > 1 && idParts[1].startsWith(dirFormat);
-            })
+            .filter(([_id, info]) => info.season === dirFormat && !info.hidden)
             .map(([id, info]) => ({
                 id,
                 description: info.description
@@ -108,48 +110,60 @@ class LayoutStore {
         return layouts;
     }
 
-    private async findAllLayouts(source: { source: string, target: string }) {
+    /**
+     * Determines the season context for a directory being browsed.
+     * Season directories are immediate children of a game-system root (e.g. pfs2/bounties).
+     */
+    private detectSeason(target: string, inheritedSeason?: string): { season?: string, isNewSeason: boolean } {
+        if (inheritedSeason) return { season: inheritedSeason, isNewSeason: false };
+
+        const segments = target.split('/').filter(Boolean);
+        const dirName = segments.pop() ?? '';
+        const parentDir = segments.pop();
+
+        if (parentDir && GAME_SYSTEM_ROOTS.has(parentDir) && dirName !== parentDir) {
+            return { season: dirName, isNewSeason: true };
+        }
+        return { season: undefined, isNewSeason: false };
+    }
+
+    /** Parses a single layout JSON file and registers it in layoutInfo. */
+    private async registerLayoutFile(file: string, season: string): Promise<void> {
+        try {
+            const fileContent = await fetch(file).then(r => r.text());
+            const jsonData = JSON.parse(fileContent);
+            const { id, description, flags } = jsonData;
+
+            if (!id || !description) {
+                warn(`Layout file ${file} missing required fields (id or description)`);
+                return;
+            }
+
+            const hidden = Array.isArray(flags) && flags.includes('hidden');
+            this.layoutInfo.set(id, { path: file, description, season, hidden });
+        } catch (parseError) {
+            warn(`Failed to parse JSON layout file ${file}:`, parseError);
+        }
+    }
+
+    private async findAllLayouts(source: { source: string, target: string }, inheritedSeason?: string) {
         try {
             debug(`Browsing for layouts in ${source.target}`);
             const browseResult = await foundry.applications.apps.FilePicker.browse(source.source, source.target);
             debug(`Found ${browseResult.files.length} files and ${browseResult.dirs.length} directories.`);
             
-            // Store directory as a season if it contains layouts
-            const dirName = source.target.split('/').pop();
-            if (dirName && source.target.includes('/pfs2/')) {
-                const parentDir = source.target.split('/').slice(-2)[0];
-                if (parentDir === 'pfs2' && dirName !== 'pfs2') {
-                    const displayName = this.getDisplayNameForDirectory(dirName);
-                    this.seasonDirectories.set(dirName, displayName);
-                }
+            const { season, isNewSeason } = this.detectSeason(source.target, inheritedSeason);
+
+            if (isNewSeason && season) {
+                this.seasonDirectories.set(season, this.getDisplayNameForDirectory(season));
             }
             
-            for (const file of browseResult.files) {
-                if (!file.endsWith(".json")) {
-                    continue;
-                }
-                
-                try {
-                    const fileContent = await fetch(file).then(r => r.text());
-                    const jsonData = JSON.parse(fileContent);
-                    const id = jsonData.id;
-                    const description = jsonData.description;
+            const jsonFiles = browseResult.files.filter((f: string) => f.endsWith('.json'));
+            await Promise.all(jsonFiles.map(file => this.registerLayoutFile(file, season ?? '')));
 
-                    if (!id || !description) {
-                        warn(`Layout file ${file} missing required fields (id or description)`);
-                        continue;
-                    }
-                    
-                    this.layoutInfo.set(id, { path: file, description: description });
-                } catch (parseError) {
-                    warn(`Failed to parse JSON layout file ${file}:`, parseError);
-                    continue;
-                }
-            }
-
-            // Process subdirectories
+            // Process subdirectories, passing the season context down
             await Promise.all(browseResult.dirs.map(dir => 
-                this.findAllLayouts({ source: source.source, target: dir })
+                this.findAllLayouts({ source: source.source, target: dir }, season)
             ));
         } catch (loadError) {
             if (game.isGM())
@@ -164,6 +178,7 @@ class LayoutStore {
         const merged: Layout = {
             ...parent,
             ...child,
+            flags: child.flags,
             presets: { ...(parent.presets || {}), ...(child.presets || {}) },
             canvas: { ...(parent.canvas || {}), ...(child.canvas || {}) },
             parameters: { ...(parent.parameters || {}), ...(child.parameters || {}) },
