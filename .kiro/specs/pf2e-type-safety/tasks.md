@@ -124,11 +124,11 @@ Replace `any` types across the pfs-chronicle-generator codebase with proper Type
     - Import `PartyActor` from `../handlers/event-listener-helpers`
     - _Requirements: 4.1, 4.2_
 
-- [ ] 9. Checkpoint - Verify compilation and tests
+- [x] 9. Checkpoint - Verify compilation and tests
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 10. Type hook callbacks in main.ts
-  - [ ] 10.1 Replace `any` types in `renderCharacterSheetPF2e` and `renderPartySheetPF2e` hook callbacks
+- [x] 10. Type hook callbacks in main.ts
+  - [x] 10.1 Replace `any` types in `renderCharacterSheetPF2e` and `renderPartySheetPF2e` hook callbacks
     - Change `sheet: any` to `sheet: CharacterSheetApp` in `renderCharacterSheetPF2e` callback
     - Change `html: any` to `html: JQuery` in `renderCharacterSheetPF2e` callback
     - Change `app: any` to `app: PartySheetApp` in `renderPartySheetPF2e` callback
@@ -138,20 +138,20 @@ Replace `any` types across the pfs-chronicle-generator codebase with proper Type
     - Import `CharacterSheetApp`, `PartySheetApp` from `event-listener-helpers` (already imported: `PartyActor`)
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-  - [ ] 10.2 Replace `as any` cast on `partySheet` in `renderPartyChronicleForm` and `attachEventListeners`
+  - [x] 10.2 Replace `as any` cast on `partySheet` in `renderPartyChronicleForm` and `attachEventListeners`
     - Change `partySheet: unknown` to `partySheet: PartySheetApp` in `renderPartyChronicleForm` and `attachEventListeners`
     - Replace `(partySheet as any)?.actor` with `partySheet.actor` using the `PartySheetApp` type
     - Retain `context as any` in the `renderTemplate` call (Requirement 8.3)
     - _Requirements: 2.7, 8.3_
 
-- [ ] 11. Verify preserved `any` usages remain intact
+- [x] 11. Verify preserved `any` usages remain intact
   - Confirm `globals.d.ts` retains `declare var game: any`
   - Confirm hook name strings retain `as any` casts
   - Confirm `renderTemplate` call retains `context as any`
   - Confirm test files retain `(global as any)` casts
   - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
-- [ ] 12. Final checkpoint - Compilation and full test suite verification
+- [x] 12. Final checkpoint - Compilation and full test suite verification
   - Run `npx tsc --noEmit` to verify zero new compile errors
   - Run `npx jest --run` to verify the full existing test suite passes
   - Verify no runtime behavior changes (compile-time only refactoring)

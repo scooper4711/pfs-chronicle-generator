@@ -20,6 +20,8 @@ import {
 } from './handlers/collapsible-section-handlers.js';
 import {
     PartyActor,
+    CharacterSheetApp,
+    PartySheetApp,
     attachSeasonAndLayoutListeners,
     attachFormFieldListeners,
     attachTreasureBundleListeners,
@@ -149,14 +151,14 @@ Hooks.on('ready', async () => {
     }
 });
 
-Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, _data: any) => {
+Hooks.on('renderCharacterSheetPF2e' as any, (sheet: CharacterSheetApp, html: JQuery, _data: any) => {
     const pfsTab = html.find('.tab[data-tab="pfs"]');
     if (pfsTab.length === 0) {
         return;
     }
 
     // --- Download and Delete Buttons ---
-    const chroniclePdf = sheet.actor.getFlag('pfs-chronicle-generator', 'chroniclePdf');
+    const chroniclePdf = sheet.actor.getFlag('pfs-chronicle-generator', 'chroniclePdf') as string | undefined;
 
     const downloadButton = document.createElement('button');
     downloadButton.innerHTML = '<i class="fas fa-download"></i> Download Chronicle';
@@ -172,7 +174,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, _data: any) 
             const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], {type: 'application/pdf'});
             // Check actor flags first, fall back to module setting for backward compatibility
-            const chronicleData = sheet.actor.getFlag('pfs-chronicle-generator', 'chronicleData');
+            const chronicleData = sheet.actor.getFlag('pfs-chronicle-generator', 'chronicleData') as Record<string, string> | undefined;
             const blankChroniclePath = chronicleData?.blankChroniclePath 
                 || game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
             const filename = generateChronicleFilename(sheet.actor.name, blankChroniclePath);
@@ -214,7 +216,7 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: any, html: any, _data: any) 
  * 
  * Requirements: party-chronicle-filling 1.1, 1.2
  */
-Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, _data: any) => {
+Hooks.on('renderPartySheetPF2e' as any, (app: PartySheetApp, html: JQuery, _data: any) => {
     // Only show PFS tab to GMs
     if (!game.user.isGM) return;
 
@@ -248,7 +250,7 @@ Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, _data: any) => {
 
         // Get party actors and filter to character actors only
         const partyActors = app.actor?.members || [];
-        const characterActors = partyActors.filter((actor: any) => actor?.type === 'character');
+        const characterActors = partyActors.filter((actor: PartyActor) => actor?.type === 'character');
         
         if (characterActors.length === 0) {
             pfsTab.html(`
@@ -282,7 +284,7 @@ Hooks.on('renderPartySheetPF2e' as any, (app: any, html: any, _data: any) => {
 function attachEventListeners(
     container: HTMLElement,
     partyActors: PartyActor[],
-    partySheet: unknown
+    partySheet: PartySheetApp
 ): void {
     // Season and layout change handlers
     attachSeasonAndLayoutListeners(container, partyActors);
@@ -303,11 +305,11 @@ function attachEventListeners(
     attachSaveButtonListener(container, partyActors);
 
     // Resolve the Party actor from the party sheet for zip archive storage
-    const partyActor = (partySheet as any)?.actor;
-    attachClearButtonListener(container, partyActors, partySheet, partyActor);
-    attachGenerateButtonListener(container, partyActors, partyActor);
+    const partyActor = partySheet?.actor;
+    attachClearButtonListener(container, partyActors, partySheet, partyActor!);
+    attachGenerateButtonListener(container, partyActors, partyActor!);
     attachCopySessionReportListener(container, partyActors);
-    attachExportButtonListener(container, partyActor);
+    attachExportButtonListener(container, partyActor!);
     
     // Portrait and file picker listeners
     attachPortraitListeners(container, partyActors);
@@ -391,11 +393,11 @@ async function initializeForm(
 export async function renderPartyChronicleForm(
     container: HTMLElement, 
     partyActors: PartyActor[], 
-    partySheet: unknown
+    partySheet: PartySheetApp
 ): Promise<void> {
     try {
         // Resolve the Party actor from the party sheet for zip archive storage
-        const partyActor = (partySheet as any)?.actor;
+        const partyActor = partySheet?.actor;
 
         // Prepare context using PartyChronicleApp
         const chronicleApp = new PartyChronicleApp(partyActors, {}, partyActor);

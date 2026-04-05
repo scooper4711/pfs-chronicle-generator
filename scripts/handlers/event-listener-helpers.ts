@@ -86,6 +86,7 @@ export interface PartySheetApp {
  */
 export interface CharacterSheetApp {
     actor: PartyActor;
+    render(force?: boolean): void;
 }
 
 /**
@@ -262,7 +263,7 @@ export function attachSaveButtonListener(
 export function attachClearButtonListener(
     container: HTMLElement,
     partyActors: PartyActor[],
-    partySheet: unknown,
+    partySheet: PartySheetApp,
     partyActor: FlagActor
 ): void {
     const clearButton = container.querySelector(BUTTON_SELECTORS.CLEAR_DATA);
@@ -293,7 +294,7 @@ export function attachClearButtonListener(
 async function handleClearButtonConfirmed(
     container: HTMLElement,
     partyActors: PartyActor[],
-    partySheet: unknown,
+    partySheet: PartySheetApp,
     partyActor: FlagActor
 ): Promise<void> {
     // Get current values to preserve
@@ -335,7 +336,7 @@ async function handleClearButtonConfirmed(
     ui.notifications?.info('Chronicle data cleared and defaults set');
     debug('Re-rendering form after clear');
     
-    // Re-render form (partySheet is typed as unknown since it's a Foundry VTT object)
+    // Re-render form
     const { renderPartyChronicleForm } = await import('../main.js');
     await renderPartyChronicleForm(container, partyActors, partySheet);
     
