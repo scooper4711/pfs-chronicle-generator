@@ -41,13 +41,18 @@ import { FlagActor, clearArchive, downloadArchive, hasArchive } from './chronicl
 import { debug } from '../utils/logger.js';
 
 /**
- * Actor type definition for party members
- * This provides type safety for actor objects used throughout the form
+ * Actor type definition for party members.
+ * 
+ * Represents a PF2e character actor with the properties accessed
+ * throughout the chronicle generator. Extends FlagActor for flag
+ * operations (getFlag, setFlag, unsetFlag).
  */
-export interface PartyActor {
+export interface PartyActor extends FlagActor {
     id: string;
     name: string;
+    img: string;
     type: string;
+    render(force?: boolean): void;
     system?: {
         details?: {
             level?: {
@@ -60,6 +65,24 @@ export interface PartyActor {
             currentFaction?: string;
         };
     };
+}
+
+/**
+ * Minimal type for the PF2e Party Sheet app passed to renderPartySheetPF2e hook.
+ * Provides access to the party actor and its members.
+ */
+export interface PartySheetApp {
+    actor?: {
+        members: PartyActor[];
+    } & FlagActor;
+}
+
+/**
+ * Minimal type for the PF2e Character Sheet app passed to renderCharacterSheetPF2e hook.
+ * Provides access to the character actor for flag operations and rendering.
+ */
+export interface CharacterSheetApp {
+    actor: PartyActor;
 }
 
 /**

@@ -49,6 +49,26 @@ const SECTIONS_WITH_SUMMARY = [
 ] as const;
 
 /**
+ * Type guard that checks if a string is a valid collapsible section ID.
+ *
+ * @param id - The string to check
+ * @returns True if the string is a member of VALID_SECTION_IDS
+ */
+export function isValidSectionId(id: string): id is typeof VALID_SECTION_IDS[number] {
+  return (VALID_SECTION_IDS as readonly string[]).includes(id);
+}
+
+/**
+ * Type guard that checks if a string is a section ID that has summary text.
+ *
+ * @param id - The string to check
+ * @returns True if the string is a member of SECTIONS_WITH_SUMMARY
+ */
+export function isSectionWithSummary(id: string): id is typeof SECTIONS_WITH_SUMMARY[number] {
+  return (SECTIONS_WITH_SUMMARY as readonly string[]).includes(id);
+}
+
+/**
  * Handles click events on collapsible section headers.
  * 
  * Toggles the collapse state of the section when the header is clicked.
@@ -136,7 +156,7 @@ export function toggleSectionCollapse(
   container: HTMLElement
 ): void {
   // Validate section ID
-  if (!VALID_SECTION_IDS.includes(sectionId as any)) {
+  if (!isValidSectionId(sectionId)) {
     warn(`Invalid section ID: "${sectionId}"`);
     return;
   }
@@ -193,7 +213,7 @@ export function updateSectionSummary(
   container: HTMLElement
 ): void {
   // Only update sections that have summary text
-  if (!SECTIONS_WITH_SUMMARY.includes(sectionId as any)) {
+  if (!isSectionWithSummary(sectionId)) {
     return;
   }
   

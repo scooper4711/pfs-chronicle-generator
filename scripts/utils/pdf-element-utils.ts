@@ -7,6 +7,9 @@ import { debug } from './logger.js';
  */
 export type ResolvedElement = Partial<Preset> & ContentElement;
 
+/** Chronicle field values keyed by field name, passed to PDF element utilities. */
+export type PdfFieldData = Record<string, unknown>;
+
 /**
  * Resolves preset inheritance for a content element.
  * Presets can inherit from other presets, creating a chain of property inheritance.
@@ -38,7 +41,7 @@ export function resolvePresets(element: ContentElement, layoutPresets: Record<st
  * @param extractor - Function to extract the desired part from the split parts
  * @returns The extracted part, or empty string if the society ID is missing or malformed
  */
-function extractSocietyIdPart(data: any, extractor: (parts: string[]) => string): string {
+function extractSocietyIdPart(data: PdfFieldData, extractor: (parts: string[]) => string): string {
     const societyid = data['societyid'];
     if (societyid && typeof societyid === 'string') {
         const parts = societyid.split('-');
@@ -81,7 +84,7 @@ function joinArrayValue(paramValue: unknown[], elementType?: string): string {
  * @param elementType - The type of element requesting the value (affects array joining)
  * @returns The resolved value, or undefined if the value cannot be resolved
  */
-export function resolveValue(value: string | undefined, data: any, elementType?: string): string | undefined {
+export function resolveValue(value: string | undefined, data: PdfFieldData, elementType?: string): string | undefined {
     if (!value) {
         return undefined;
     }
@@ -106,7 +109,7 @@ export function resolveValue(value: string | undefined, data: any, elementType?:
     if (Array.isArray(paramValue)) {
         return joinArrayValue(paramValue, elementType);
     }
-    return paramValue;
+    return typeof paramValue === 'string' ? paramValue : undefined;
 }
 
 /**

@@ -155,6 +155,27 @@ export interface PartyMember {
 }
 
 /**
+ * Expanded form data structure containing shared fields and per-character fields.
+ * Returned by extractFormData() and consumed by chronicle generation/validation.
+ */
+export interface ChronicleFormData {
+  shared: SharedFields;
+  characters: Record<string, UniqueFields>;
+}
+
+/** A season entry from the layout store. */
+export interface LayoutSeason {
+  id: string;
+  name: string;
+}
+
+/** A layout entry from the layout store. */
+export interface LayoutEntry {
+  id: string;
+  description: string;
+}
+
+/**
  * Context data prepared for the Handlebars template
  */
 export interface PartyChronicleContext {
@@ -165,10 +186,10 @@ export interface PartyChronicleContext {
   shared: Partial<SharedFields>;
   
   /** Available seasons for selection */
-  seasons: Array<{ id: string; name: string }>;
+  seasons: LayoutSeason[];
   
   /** Layouts available in the selected season */
-  layoutsInSeason: Array<{ id: string; description: string }>;
+  layoutsInSeason: LayoutEntry[];
   
   /** Currently selected season ID */
   selectedSeasonId: string;
