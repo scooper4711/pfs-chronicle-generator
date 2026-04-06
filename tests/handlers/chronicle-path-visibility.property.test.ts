@@ -76,7 +76,7 @@ const filePathArbitrary = fc.oneof(
   
   // Paths with subdirectories
   fc.tuple(
-    fc.constantFrom('chronicles/', 'data/chronicles/', 'modules/pfs/'),
+    fc.constantFrom('chronicles/', 'data/chronicles/', 'modules/pfs2/'),
     fc.array(fc.constantFrom('a', 'b', 'c', 'd', 'e', 'f', '1', '2', '3', '-', '_'), { minLength: 1, maxLength: 20 }).map(arr => arr.join('')),
     fc.constantFrom('.pdf', '.PDF')
   ).map(([dir, name, ext]) => `${dir}${name}${ext}`),
