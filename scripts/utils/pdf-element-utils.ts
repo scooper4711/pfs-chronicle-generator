@@ -77,7 +77,7 @@ export function resolveValue(value: string | undefined, data: PdfFieldData, elem
     if (Array.isArray(paramValue)) {
         return joinArrayValue(paramValue, elementType);
     }
-    return typeof paramValue === 'string' ? paramValue : undefined;
+    return typeof paramValue === 'string' ? paramValue : (typeof paramValue === 'number' ? String(paramValue) : undefined);
 }
 
 /**
