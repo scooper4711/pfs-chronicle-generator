@@ -142,8 +142,11 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       debug(`_prepareContext: chroniclePathExists = ${chroniclePathExists}`);
       
       // Get the selected layout to check if it has a default chronicle location
-      const selectedLayout = await layoutStore.getLayout(effectiveLayoutId);
-      const layoutHasDefault = !!selectedLayout?.defaultChronicleLocation;
+      let layoutHasDefault = false;
+      if (effectiveLayoutId) {
+        const selectedLayout = await layoutStore.getLayout(effectiveLayoutId);
+        layoutHasDefault = !!selectedLayout?.defaultChronicleLocation;
+      }
       debug(`_prepareContext: layoutHasDefault = ${layoutHasDefault}`);
       
       // Field should be hidden only if:
