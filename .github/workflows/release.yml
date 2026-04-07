@@ -37,11 +37,16 @@ env:
   # The URL used for the module's "Project URL" link on FoundryVTT's website.
   project_url: "https://github.com/${{github.repository}}"
 
-  # A URL that will always point to the latest manifest.
+  # A URL that will always point to the latest stable manifest.
   # FoundryVTT uses this URL to check whether the current module version that
   # is installed is the latest version. This URL should NOT change,
   # otherwise FoundryVTT won't be able to perform this check.
   latest_manifest_url: "https://github.com/${{github.repository}}/releases/latest/download/module.json"
+
+  # A URL that will always point to the latest beta manifest.
+  # Beta testers install using this URL. It points to a separate manifest file
+  # so that stable users are never offered beta updates.
+  beta_manifest_url: "https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.json"
 
   # The URL to the module archive associated with the module release being
   # processed by this workflow.
@@ -89,8 +94,12 @@ jobs:
       # Since the values for the "version" and "url" keys aren't known ahead of
       # time, the manifest file in the repository is updated with these values.
       #
-      # While this does modify the manifest file in-place, the changes are not
-      # commited to the repository, and only exist in the action's filesystem.
+      # For stable releases, the manifest URL points to /releases/latest/download/module.json
+      # so Foundry always checks the latest stable version.
+      #
+      # For pre-releases (beta), the manifest URL points to the specific release's
+      # module.json. This means beta users only see updates within the beta channel,
+      # and stable users are never offered beta versions.
       - name: Modify Module Manifest With Release-Specific Values
         id: sub_manifest_link_version
         uses: cschleiden/replace-tokens@v1
@@ -99,7 +108,7 @@ jobs:
         env:
           VERSION: ${{steps.get_version.outputs.version-without-v}}
           URL: ${{ env.project_url }}
-          MANIFEST: ${{ env.latest_manifest_url }}
+          MANIFEST: ${{ github.event.release.prerelease && env.beta_manifest_url || env.latest_manifest_url }}
           DOWNLOAD: ${{ env.release_module_url }}
 
       - name: Use Node.js
@@ -136,8 +145,7 @@ jobs:
             styles/                              \
             packs/                               \
             language/                            \
-            lang/                                \
-            layouts/
+            lang/                             \
           # Don't forget to add a backslash at the end of the line for any
           # additional files or directories!
 
@@ -157,9 +165,11 @@ jobs:
           body: ${{ github.event.release.body }}
 
       # Notify Foundry VTT of the new release via the Package Release API.
+      # Skipped for pre-releases (beta) to avoid directing stable users to beta versions.
       # Requires a FOUNDRY_RELEASE_TOKEN secret containing your package's
       # release token from https://foundryvtt.com/packages/pfs-chronicle-generator/edit
       - name: Notify Foundry VTT
+        if: ${{ !github.event.release.prerelease }}
         run: |
           # Read compatibility from the already-substituted module.json
           MINIMUM=$(jq -r '.compatibility.minimum' module.json)
