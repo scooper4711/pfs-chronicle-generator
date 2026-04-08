@@ -26,17 +26,29 @@ for arg in "$@"; do
 done
 
 # Get the latest semver tag
-LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+# In beta mode, include beta tags so we can detect v1.0.0-beta.2 and suggest beta.3
+if $IS_BETA; then
+  LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+(-beta\.[0-9]+)?$' | head -1)
+else
+  LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+fi
 
 if [[ -z "$LATEST_TAG" ]]; then
   echo "No existing version tags found. Starting at v0.1.0"
   NEXT_TAG="v0.1.0"
 else
-  # Parse current version
+  # Parse current version (strip beta suffix if present)
   VERSION="${LATEST_TAG#v}"
-  MAJOR=$(echo "$VERSION" | cut -d. -f1)
-  MINOR=$(echo "$VERSION" | cut -d. -f2)
-  PATCH=$(echo "$VERSION" | cut -d. -f3)
+  BASE_VERSION="${VERSION%%-beta.*}"
+  MAJOR=$(echo "$BASE_VERSION" | cut -d. -f1)
+  MINOR=$(echo "$BASE_VERSION" | cut -d. -f2)
+  PATCH=$(echo "$BASE_VERSION" | cut -d. -f3)
+  CURRENT_IS_BETA=false
+  CURRENT_BETA_NUM=0
+  if [[ "$VERSION" =~ -beta\.([0-9]+)$ ]]; then
+    CURRENT_IS_BETA=true
+    CURRENT_BETA_NUM="${BASH_REMATCH[1]}"
+  fi
 
   echo "Current version: $LATEST_TAG"
 
@@ -62,7 +74,7 @@ else
     echo "  Reason: $BUMP_REASON"
   fi
 
-  # Calculate next version
+  # Calculate next version (based on the base version, ignoring beta suffix)
   case "$BUMP" in
     major)
       NEXT_VERSION="v$((MAJOR + 1)).0.0"
@@ -80,11 +92,15 @@ else
   esac
 
   if $IS_BETA; then
-    # For beta, use the computed next version as the base
-    BETA_BASE="$NEXT_VERSION"
-    # Strip the leading 'v' for tag matching
-    BETA_COUNT=$(git tag --list "${BETA_BASE}-beta.*" | wc -l | tr -d ' ')
-    NEXT_TAG="${BETA_BASE}-beta.$((BETA_COUNT + 1))"
+    if $CURRENT_IS_BETA; then
+      # Already on a beta — increment the beta number on the same base
+      NEXT_TAG="v${BASE_VERSION}-beta.$((CURRENT_BETA_NUM + 1))"
+    else
+      # Starting a new beta series from the computed next version
+      BETA_BASE="$NEXT_VERSION"
+      BETA_COUNT=$(git tag --list "${BETA_BASE}-beta.*" | wc -l | tr -d ' ')
+      NEXT_TAG="${BETA_BASE}-beta.$((BETA_COUNT + 1))"
+    fi
   else
     NEXT_TAG="$NEXT_VERSION"
   fi
