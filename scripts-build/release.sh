@@ -14,6 +14,12 @@
 #
 set -euo pipefail
 
+# Abort if the working tree is dirty
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "Error: Working tree is not clean. Commit or stash changes before releasing."
+  exit 1
+fi
+
 IS_BETA=false
 FORCE_BUMP=""
 
