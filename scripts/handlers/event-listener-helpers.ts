@@ -350,7 +350,12 @@ async function handleClearButtonConfirmed(
 }
 
 /**
- * Determines default values based on adventure type (Bounty, Quest, or Scenario)
+ * Determines default values based on adventure type (Bounty, Quest, or Scenario).
+ * 
+ * Detects type by checking the scenario name prefix:
+ * - Bounty: starts with "Bxx" (e.g., "B1 The Whitefang Wyrm")
+ * - Quest: starts with "Qxx" (e.g., "Q14 The Swordlords Challenge")
+ * - Scenario: everything else (e.g., "7-01 Journeymakers Lodge")
  * 
  * @param scenarioName - Name of the scenario
  * @returns Object with default values for XP, treasure bundles, downtime days, and faction reputation
@@ -361,9 +366,9 @@ function determineAdventureDefaults(scenarioName: string): {
     defaultDowntimeDays: number;
     defaultChosenFactionRep: number;
 } {
-    const scenarioNameLower = scenarioName.toLowerCase();
-    const isBounty = scenarioNameLower.includes('bounty');
-    const isQuest = scenarioNameLower.includes('quest');
+    const scenarioNameLower = scenarioName.toLowerCase().trim();
+    const isBounty = /^b\d+\b/.test(scenarioNameLower);
+    const isQuest = /^q\d+\b/.test(scenarioNameLower);
     
     // Bounty: 1 XP, Quest: 2 XP, Scenario: 4 XP (default)
     return {

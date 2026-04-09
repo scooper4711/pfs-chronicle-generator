@@ -289,7 +289,7 @@ Enter the reputation values for each faction, and the module will format them co
 | **Quest** | 2 | 4 | 4 | 2 |
 | **Scenario** | 4 | 8 | 8 | 4 |
 
-> The module detects the type by looking for "Bounty" or "Quest" in the scenario name.
+> The module detects the type from the scenario name: names starting with "B" followed by a number are Bounties, "Q" followed by a number are Quests, and everything else defaults to Scenario.
 
 ---
 

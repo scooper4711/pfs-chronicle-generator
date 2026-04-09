@@ -197,9 +197,9 @@ describe('event-listener-helpers', () => {
       );
     });
 
-    it('should use bounty defaults when scenario name contains "bounty"', async () => {
+    it('should use bounty defaults when scenario name starts with Bxx', async () => {
       const scenarioInput = container.querySelector('#scenarioName') as HTMLInputElement;
-      scenarioInput.value = 'PFS Bounty #1: The Whitefang Wyrm';
+      scenarioInput.value = 'B1 The Whitefang Wyrm';
 
       attachClearButtonListener(container, partyActors, {}, mockPartyActor);
       const clearButton = container.querySelector('#clearData') as HTMLButtonElement;
@@ -213,9 +213,9 @@ describe('event-listener-helpers', () => {
       expect(savedData.shared.chosenFactionReputation).toBe(1);
     });
 
-    it('should use quest defaults when scenario name contains "quest"', async () => {
+    it('should use quest defaults when scenario name starts with Qxx', async () => {
       const scenarioInput = container.querySelector('#scenarioName') as HTMLInputElement;
-      scenarioInput.value = 'PFS Quest #1: The Sandstone Secret';
+      scenarioInput.value = 'Q14 The Swordlords Challenge';
 
       attachClearButtonListener(container, partyActors, {}, mockPartyActor);
       const clearButton = container.querySelector('#clearData') as HTMLButtonElement;
