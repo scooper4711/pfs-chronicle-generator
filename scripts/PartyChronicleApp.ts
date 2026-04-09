@@ -165,6 +165,8 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
         selectedSeasonId,
         selectedLayoutId: effectiveLayoutId,
         savedData,
+        gmCharacter: null,
+        gmCharacterFields: null,
         chroniclePathExists: shouldHideChroniclePathField,
         hasChronicleZip: this.partyActor ? hasArchive(this.partyActor) : false,
         buttons: [
