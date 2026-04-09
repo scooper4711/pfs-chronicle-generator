@@ -346,6 +346,101 @@ describe('GM Character PFS ID Validation Properties', () => {
 });
 
 
+describe('GM Character Data Persistence Properties', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockSavePartyChronicleData.mockResolvedValue(undefined);
+  });
+
+  /**
+   * Property 5: GM character data persistence round-trip
+   *
+   * For any valid GM character actor ID and any valid set of UniqueFields
+   * values, saving the GM character data to storage and then loading it
+   * should produce identical gmCharacterActorId and UniqueFields values.
+   *
+   * This test verifies data structure integrity through the storage interface:
+   * build a PartyChronicleData with GM character data, save it, set up the
+   * load mock to return the captured saved data, load it, and verify the
+   * round-tripped values are identical.
+   *
+   * Feature: gm-character-party-sheet, Property 5: GM character data persistence round-trip
+   * **Validates: Requirements 4.4, 8.1, 8.2**
+   */
+  it('round-trips gmCharacterActorId and UniqueFields through save/load', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        actorIdArbitrary,
+        uniqueFieldsArbitrary,
+        async (gmActorId, gmFields) => {
+          const originalData: PartyChronicleData = {
+            shared: {
+              gmPfsNumber: '12345',
+              scenarioName: 'Test Scenario',
+              eventCode: 'EVT001',
+              eventDate: '2024-01-01',
+              xpEarned: 4,
+              treasureBundles: 5,
+              downtimeDays: 2,
+              layoutId: 'layout-1',
+              seasonId: 'season-1',
+              blankChroniclePath: '/path/to/blank.pdf',
+              adventureSummaryCheckboxes: [],
+              strikeoutItems: [],
+              chosenFactionReputation: 2,
+              reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+              reportingA: false,
+              reportingB: false,
+              reportingC: false,
+              reportingD: false,
+              gmCharacterActorId: gmActorId,
+            },
+            characters: {
+              [gmActorId]: gmFields,
+            },
+          };
+
+          // Save the data — capture what was passed to the mock
+          mockSavePartyChronicleData.mockClear();
+          await savePartyChronicleData(originalData);
+
+          expect(mockSavePartyChronicleData).toHaveBeenCalledTimes(1);
+          const savedArg = mockSavePartyChronicleData.mock.calls[0][0];
+
+          // Set up load mock to return the captured saved data
+          mockLoadPartyChronicleData.mockResolvedValue({
+            timestamp: Date.now(),
+            data: savedArg,
+          });
+
+          // Load the data back
+          const loaded = await loadPartyChronicleData();
+
+          // Verify round-trip produces identical gmCharacterActorId
+          expect(loaded).not.toBeNull();
+          expect(loaded!.data.shared.gmCharacterActorId).toBe(gmActorId);
+
+          // Verify round-trip produces identical UniqueFields
+          const loadedFields = loaded!.data.characters[gmActorId];
+          expect(loadedFields).toBeDefined();
+          expect(loadedFields.characterName).toBe(gmFields.characterName);
+          expect(loadedFields.playerNumber).toBe(gmFields.playerNumber);
+          expect(loadedFields.characterNumber).toBe(gmFields.characterNumber);
+          expect(loadedFields.level).toBe(gmFields.level);
+          expect(loadedFields.taskLevel).toBe(gmFields.taskLevel);
+          expect(loadedFields.successLevel).toBe(gmFields.successLevel);
+          expect(loadedFields.proficiencyRank).toBe(gmFields.proficiencyRank);
+          expect(loadedFields.earnedIncome).toBe(gmFields.earnedIncome);
+          expect(loadedFields.goldSpent).toBe(gmFields.goldSpent);
+          expect(loadedFields.notes).toBe(gmFields.notes);
+          expect(loadedFields.consumeReplay).toBe(gmFields.consumeReplay);
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+});
+
 describe('GM Character Clear Properties', () => {
   beforeEach(() => {
     jest.clearAllMocks();

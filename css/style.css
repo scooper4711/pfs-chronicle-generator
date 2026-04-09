@@ -578,3 +578,80 @@
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group label .fa-question-circle:hover {
   color: var(--color-text-dark-primary);
 }
+
+/* GM Character Section Styling */
+/* Requirements: gm-character-party-sheet 2.2 */
+
+/* GM character section - subtle gold/amber accent to distinguish from party members */
+.sheet.party [data-tab=pfs] .activities .member-activity.gm-character-section {
+    border: 2px solid #b8860b;
+    border-image-source: none;
+    border-radius: 4px;
+    background-color: rgba(184, 134, 11, 0.06);
+}
+
+/* GM character drop zone - empty state */
+.sheet.party [data-tab=pfs] .activities .gm-character-drop-zone {
+    border: 2px dashed #b8860b;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 0.6rem;
+    text-align: center;
+    color: #5a4210;
+    background-color: rgba(184, 134, 11, 0.04);
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    cursor: default;
+}
+
+.sheet.party [data-tab=pfs] .activities .gm-character-drop-zone i {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+    display: block;
+    opacity: 0.6;
+}
+
+.sheet.party [data-tab=pfs] .activities .gm-character-drop-zone p {
+    margin: 0;
+    font-size: var(--font-size-12);
+    font-style: italic;
+}
+
+/* Drop zone hover/dragover visual feedback */
+.sheet.party [data-tab=pfs] .activities .gm-character-drop-zone:hover,
+.sheet.party [data-tab=pfs] .activities .gm-character-drop-zone.dragover {
+    background-color: rgba(184, 134, 11, 0.12);
+    border-color: #daa520;
+}
+
+/* "GM Credit" label badge */
+.sheet.party [data-tab=pfs] .activities .member-activity .gm-credit-label {
+    display: inline-block;
+    background-color: #8b6914;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    margin-left: 0.35rem;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* GM character clear button */
+.sheet.party [data-tab=pfs] .activities .member-activity .gm-clear-button {
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 0.15rem 0.35rem;
+    cursor: pointer;
+    color: #666;
+    font-size: var(--font-size-12);
+    margin-top: 0.25rem;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.sheet.party [data-tab=pfs] .activities .member-activity .gm-clear-button:hover {
+    color: #d32f2f;
+    border-color: #d32f2f;
+}

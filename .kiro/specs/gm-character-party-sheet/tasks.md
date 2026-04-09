@@ -48,51 +48,51 @@ Add a GM Character drop zone and data entry section to the Society tab. The GM c
     - Test replace: dropping new actor onto occupied section replaces current GM character
     - _Requirements: 1.3, 1.4, 1.5, 3.1, 3.2, 3.3, 3.4_
 
-- [-] 3. Checkpoint - Ensure all tests pass and commit
+- [x] 3. Checkpoint - Ensure all tests pass and commit
   - Ensure all tests pass, ask the user if questions arise.
   - Run `git add -A && git commit -S -m "feat: add GM character types, selectors, handlers, and tests"` to commit the type definitions, handler module, and associated tests as one cohesive unit.
 
-- [ ] 4. Add GM character section to Handlebars template and CSS
-  - [~] 4.1 Add GM character drop zone and character section to `templates/party-chronicle-filling.hbs`
+- [x] 4. Add GM character section to Handlebars template and CSS
+  - [x] 4.1 Add GM character drop zone and character section to `templates/party-chronicle-filling.hbs`
     - Add GM Character Drop Zone above the `{{#each partyMembers}}` loop with placeholder text when `gmCharacter` is null
     - When `gmCharacter` is not null, render the GM character section with portrait, name, Society ID, level, faction, and all data entry fields (task level, success level, proficiency rank, earned income, gold spent, notes, consume replay) using the same field structure as party member sections
     - Add a "GM Credit" label and a clear button (`#clearGmCharacter`) in the GM character section header
     - Add hidden input `#gmCharacterActorId` to persist the actor ID in the form
     - _Requirements: 1.1, 1.2, 2.1, 2.2, 2.3, 3.1_
 
-  - [~] 4.2 Add GM character CSS styles to `css/style.css`
+  - [x] 4.2 Add GM character CSS styles to `css/style.css`
     - Add distinct background color or border style for the GM character section (`.gm-character-section`)
     - Style the drop zone with dashed border and hover/dragover visual feedback
     - Style the "GM Credit" label badge
     - _Requirements: 2.2_
 
-- [ ] 5. Integrate GM character into context preparation and form data extraction
-  - [~] 5.1 Extend `PartyChronicleApp._prepareContext()` to resolve GM character
+- [x] 5. Integrate GM character into context preparation and form data extraction
+  - [x] 5.1 Extend `PartyChronicleApp._prepareContext()` to resolve GM character
     - Read `gmCharacterActorId` from saved shared fields
     - Resolve actor via `game.actors.get(gmCharacterActorId)`
     - If actor exists and `type === 'character'`, populate `gmCharacter` (PartyMember) and `gmCharacterFields` (UniqueFields from `savedData.characters[actorId]`) in context
     - If actor cannot be resolved, clear `gmCharacterActorId` from saved data and set `gmCharacter` to null
     - _Requirements: 4.4, 8.1, 8.2, 8.3_
 
-  - [~] 5.2 Extend `extractFormData()` in `handlers/form-data-extraction.ts` to include GM character
+  - [x] 5.2 Extend `extractFormData()` in `handlers/form-data-extraction.ts` to include GM character
     - Read `gmCharacterActorId` from the hidden input `#gmCharacterActorId`
     - If present, extract the GM character's unique fields from the DOM using the same field patterns as party members
     - Store `gmCharacterActorId` in `shared` and GM character fields in `characters[gmActorId]`
     - _Requirements: 4.3, 8.1_
 
-  - [~] 5.3 Extend `mapPartyFieldsToContext()` in `PartyChronicleApp.ts` to include `gmCharacterActorId`
+  - [x] 5.3 Extend `mapPartyFieldsToContext()` in `PartyChronicleApp.ts` to include `gmCharacterActorId`
     - Map `savedData.shared.gmCharacterActorId` to the shared context fields
     - _Requirements: 8.1, 8.2_
 
-  - [~] 5.4 Write property test for GM character data persistence round-trip (Property 5)
+  - [x] 5.4 Write property test for GM character data persistence round-trip (Property 5)
     - **Property 5: GM character data persistence round-trip**
     - **Validates: Requirements 4.4, 8.1, 8.2**
 
-  - [~] 5.5 Write property test for stale actor ID handling (Property 9)
+  - [x] 5.5 Write property test for stale actor ID handling (Property 9)
     - **Property 9: Stale GM character actor ID is gracefully cleared**
     - **Validates: Requirements 8.3**
 
-- [~] 6. Checkpoint - Ensure all tests pass and commit
+- [-] 6. Checkpoint - Ensure all tests pass and commit
   - Ensure all tests pass, ask the user if questions arise.
   - Run `git add -A && git commit -S -m "feat: add GM character UI, context preparation, and form data extraction"` to commit the template, CSS, context preparation, form data extraction, and associated tests.
 
