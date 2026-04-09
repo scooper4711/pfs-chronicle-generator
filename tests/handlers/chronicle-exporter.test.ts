@@ -8,7 +8,6 @@
  */
 
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
-import JSZip from 'jszip';
 
 // --- FoundryVTT global mocks ---
 
@@ -46,7 +45,7 @@ function createMockActor(flagValue: unknown): FlagActor {
   };
 }
 
-/** Minimal PDF-like bytes for testing (not a real PDF, but JSZip doesn't validate). */
+/** Minimal PDF-like bytes for testing. */
 const SAMPLE_PDF_BYTES = new Uint8Array([37, 80, 68, 70, 45, 49, 46, 52]);
 
 describe('ChronicleExporter', () => {
@@ -55,11 +54,11 @@ describe('ChronicleExporter', () => {
   });
 
   describe('createArchive', () => {
-    it('returns an empty JSZip instance with no files', () => {
+    it('returns an empty archive with no files', () => {
       const archive = createArchive();
 
-      expect(archive).toBeInstanceOf(JSZip);
-      expect(Object.keys(archive.files)).toHaveLength(0);
+      expect(archive.files).toBeInstanceOf(Map);
+      expect(archive.files.size).toBe(0);
     });
   });
 
@@ -73,7 +72,7 @@ describe('ChronicleExporter', () => {
       );
 
       expect(actualFilename).toBe('Valeros_1-01.pdf');
-      expect(archive.files['Valeros_1-01.pdf']).toBeDefined();
+      expect(archive.files.has('Valeros_1-01.pdf')).toBe(true);
       expect(existingFilenames.has('Valeros_1-01.pdf')).toBe(true);
     });
 
@@ -87,7 +86,7 @@ describe('ChronicleExporter', () => {
       );
 
       expect(secondFilename).toBe('Valeros_1-01_2.pdf');
-      expect(archive.files['Valeros_1-01_2.pdf']).toBeDefined();
+      expect(archive.files.has('Valeros_1-01_2.pdf')).toBe(true);
     });
   });
 

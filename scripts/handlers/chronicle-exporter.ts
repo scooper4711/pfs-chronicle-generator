@@ -2,12 +2,12 @@
  * Chronicle Exporter
  *
  * Encapsulates zip archive construction, storage, download, and lifecycle
- * management for bulk chronicle export. Each filled PDF is added to a JSZip
+ * management for bulk chronicle export. Each filled PDF is added to an
  * archive during generation; the finalized zip is stored as base64 on the
  * Party actor's flags and can be downloaded from the Society tab.
  */
 
-import JSZip from 'jszip';
+import { zipSync } from 'fflate';
 import { sanitizeFilename } from '../utils/filename-utils';
 
 /** Minimal interface for a Foundry actor that supports flag operations. */
@@ -18,6 +18,11 @@ export interface FlagActor {
   update(data: Record<string, unknown>): Promise<void>;
 }
 
+/** Simple archive that collects files for zip generation. */
+export interface ZipArchive {
+  files: Map<string, Uint8Array>;
+}
+
 const MODULE_ID = 'pfs-chronicle-generator';
 const ZIP_FLAG_KEY = 'chronicleZip';
 
@@ -25,8 +30,8 @@ const ZIP_FLAG_KEY = 'chronicleZip';
  * Creates a new empty zip archive for chronicle collection.
  * Called at the start of chronicle generation.
  */
-export function createArchive(): JSZip {
-  return new JSZip();
+export function createArchive(): ZipArchive {
+  return { files: new Map() };
 }
 
 /**
@@ -63,20 +68,20 @@ export function deduplicateFilename(
  * Adds a decoded PDF to the zip archive with a deduplicated filename.
  * Called after each successful PDF generation.
  *
- * @param archive - The JSZip instance
+ * @param archive - The archive to add the PDF to
  * @param pdfBytes - The raw PDF bytes
  * @param filename - The desired filename (from generateChronicleFilename)
  * @param existingFilenames - Set of filenames already in the archive
  * @returns The actual filename used (may have a numeric suffix)
  */
 export function addPdfToArchive(
-  archive: JSZip,
+  archive: ZipArchive,
   pdfBytes: Uint8Array,
   filename: string,
   existingFilenames: Set<string>
 ): string {
   const actualFilename = deduplicateFilename(filename, existingFilenames);
-  archive.file(actualFilename, pdfBytes);
+  archive.files.set(actualFilename, pdfBytes);
   existingFilenames.add(actualFilename);
   return actualFilename;
 }
@@ -95,15 +100,34 @@ export function hasArchive(partyActor: FlagActor): boolean {
 /**
  * Finalizes the zip and stores it as base64 on the Party actor's flags.
  *
- * @param archive - The JSZip instance with all PDFs added
+ * @param archive - The archive with all PDFs added
  * @param partyActor - The Foundry Party actor
  */
 export async function storeArchive(
-  archive: JSZip,
+  archive: ZipArchive,
   partyActor: FlagActor
 ): Promise<void> {
-  const base64 = await archive.generateAsync({ type: 'base64' });
+  const base64 = generateBase64Zip(archive);
   await partyActor.setFlag(MODULE_ID, ZIP_FLAG_KEY, base64);
+}
+
+/**
+ * Generates a base64-encoded zip from the archive's collected files.
+ *
+ * @param archive - The archive containing files to zip
+ * @returns Base64-encoded zip string
+ */
+export function generateBase64Zip(archive: ZipArchive): string {
+  const zipData: Record<string, Uint8Array> = {};
+  for (const [name, data] of archive.files) {
+    zipData[name] = data;
+  }
+  const zipped = zipSync(zipData);
+  let binary = '';
+  for (let i = 0; i < zipped.length; i++) {
+    binary += String.fromCharCode(zipped[i]);
+  }
+  return btoa(binary);
 }
 
 /**

@@ -9,8 +9,8 @@
 
 import { describe, it, expect } from '@jest/globals';
 import fc from 'fast-check';
-import JSZip from 'jszip';
-import { createArchive, addPdfToArchive, deduplicateFilename, generateZipFilename, hasArchive, storeArchive, clearArchive, FlagActor } from '../../scripts/handlers/chronicle-exporter';
+import { unzipSync } from 'fflate';
+import { createArchive, addPdfToArchive, deduplicateFilename, generateZipFilename, generateBase64Zip, hasArchive, storeArchive, clearArchive, FlagActor } from '../../scripts/handlers/chronicle-exporter';
 import { sanitizeFilename, generateChronicleFilename } from '../../scripts/utils/filename-utils';
 
 // Feature: chronicle-export, Property 2: Filename deduplication produces unique names
@@ -231,7 +231,7 @@ describe('Property 1: PDF added to zip with correct filename', () => {
 
           addPdfToArchive(archive, MINIMAL_PDF_BYTES, expectedFilename, existingFilenames);
 
-          const filesInArchive = Object.keys(archive.files);
+          const filesInArchive = [...archive.files.keys()];
           expect(filesInArchive).toHaveLength(1);
           expect(filesInArchive[0]).toBe(expectedFilename);
         }
@@ -282,18 +282,22 @@ describe('Property 3: Zip archive base64 round trip', () => {
         await storeArchive(archive, mockActor);
 
         // Decode the stored base64 back into a zip
-        const decodedZip = await JSZip.loadAsync(storedBase64, { base64: true });
+        const binaryStr = atob(storedBase64);
+        const zipBytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) {
+          zipBytes[i] = binaryStr.charCodeAt(i);
+        }
+        const decodedZip = unzipSync(zipBytes);
 
         // Verify each entry's content matches the original
         for (const entry of entries) {
-          const fileData = await decodedZip.file(entry.filename)?.async('uint8array');
+          const fileData = decodedZip[entry.filename];
           expect(fileData).toBeDefined();
           expect(Array.from(fileData!)).toEqual(Array.from(entry.content));
         }
 
         // Verify the zip contains exactly the expected number of entries
-        const decodedFileCount = Object.keys(decodedZip.files).length;
-        expect(decodedFileCount).toBe(entries.length);
+        expect(Object.keys(decodedZip).length).toBe(entries.length);
       }),
       { numRuns: 100 }
     );
@@ -353,14 +357,19 @@ describe('Property 7: storeArchive replaces previous archive', () => {
 
           // The stored value should be the second archive's base64
           // Verify by decoding and checking the second archive's content
-          const decodedZip = await JSZip.loadAsync(secondStoredBase64, { base64: true });
+          const binaryStr = atob(secondStoredBase64);
+          const zipBytes = new Uint8Array(binaryStr.length);
+          for (let i = 0; i < binaryStr.length; i++) {
+            zipBytes[i] = binaryStr.charCodeAt(i);
+          }
+          const decodedZip = unzipSync(zipBytes);
           const deduplicatedFilename2 = deduplicateFilename(filename2, new Set<string>());
-          const fileData = await decodedZip.file(deduplicatedFilename2)?.async('uint8array');
+          const fileData = decodedZip[deduplicatedFilename2];
           expect(fileData).toBeDefined();
           expect(Array.from(fileData!)).toEqual(Array.from(content2));
 
           // The decoded zip should contain exactly one file (the second archive's entry)
-          expect(Object.keys(decodedZip.files)).toHaveLength(1);
+          expect(Object.keys(decodedZip)).toHaveLength(1);
         }
       ),
       { numRuns: 100 }

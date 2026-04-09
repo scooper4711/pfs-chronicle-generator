@@ -20,7 +20,7 @@ import { mapToCharacterData, ChronicleData } from '../model/party-chronicle-mapp
 import { validateSharedFields, validateUniqueFields } from '../model/party-chronicle-validator.js';
 import { PdfGenerator } from '../PdfGenerator.js';
 import { PDFDocument } from 'pdf-lib';
-import { createArchive, addPdfToArchive, FlagActor } from './chronicle-exporter.js';
+import { createArchive, addPdfToArchive, generateBase64Zip, FlagActor } from './chronicle-exporter.js';
 import { generateChronicleFilename } from '../utils/filename-utils.js';
 import { PartyActor } from './event-listener-helpers.js';
 import { postChatNotification } from './chat-notifier.js';
@@ -361,7 +361,7 @@ async function flushPendingUpdates(
   }
 
   if (usedFilenames.size > 0) {
-    const base64 = await archive.generateAsync({ type: 'base64' });
+    const base64 = generateBase64Zip(archive);
     updatePromises.push(partyActor.update({
       'flags.pfs-chronicle-generator.chronicleZip': base64
     }));

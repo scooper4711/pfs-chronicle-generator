@@ -66,13 +66,14 @@ jest.mock('../../scripts/handlers/chat-notifier', () => ({
 }));
 
 jest.mock('../../scripts/handlers/chronicle-exporter', () => ({
-  createArchive: jest.fn(() => ({ file: jest.fn(), generateAsync: jest.fn<() => Promise<string>>().mockResolvedValue('mockBase64') })),
+  createArchive: jest.fn(() => ({ files: new Map() })),
   addPdfToArchive: jest.fn(
     (_archive: unknown, _bytes: unknown, filename: string, filenames: Set<string>) => {
       filenames.add(filename);
       return filename;
     }
   ),
+  generateBase64Zip: jest.fn(() => 'mockBase64'),
 }));
 
 // Suppress console noise during tests

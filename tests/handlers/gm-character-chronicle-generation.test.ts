@@ -75,8 +75,9 @@ const mockAddPdfToArchive = jest.fn(
 const mockStoreArchive = jest.fn<(a: unknown, b: unknown) => Promise<void>>().mockResolvedValue(undefined);
 
 jest.mock('../../scripts/handlers/chronicle-exporter', () => ({
-  createArchive: jest.fn(() => ({ file: jest.fn(), generateAsync: jest.fn<() => Promise<string>>().mockResolvedValue('mockBase64') })),
+  createArchive: jest.fn(() => ({ files: new Map() })),
   addPdfToArchive: (a: unknown, b: unknown, c: string, d: Set<string>) => mockAddPdfToArchive(a, b, c, d),
+  generateBase64Zip: jest.fn(() => 'mockBase64'),
 }));
 
 // Suppress console noise during tests
