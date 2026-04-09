@@ -80,9 +80,6 @@ jest.mock('../scripts/LayoutStore', () => ({
   },
 }));
 
-jest.mock('../scripts/LayoutDesignerApp', () => ({
-  LayoutDesignerApp: jest.fn(),
-}));
 
 jest.mock('../scripts/PartyChronicleApp', () => ({
   PartyChronicleApp: jest.fn().mockImplementation(() => ({
@@ -152,7 +149,6 @@ jest.spyOn(console, 'error').mockImplementation();
 // --- Import after mocks ---
 
 import { renderPartyChronicleForm } from '../scripts/main';
-import { LayoutDesignerApp } from '../scripts/LayoutDesignerApp';
 import { calculateTaskLevelOptions } from '../scripts/utils/earned-income-calculator';
 import {
   attachSeasonAndLayoutListeners,
@@ -209,29 +205,6 @@ describe('main.ts', () => {
       );
       expect(hiddenCall).toBeDefined();
       expect((hiddenCall[2] as Record<string, unknown>).config).toBe(false);
-    });
-
-    it('registers the layout designer menu', async () => {
-      await fireHook('init');
-
-      expect(mockRegisterMenu).toHaveBeenCalledWith(
-        'pfs-chronicle-generator',
-        'layoutDesigner',
-        expect.objectContaining({
-          name: 'Design Layout',
-          type: LayoutDesignerApp,
-          restricted: true,
-        })
-      );
-    });
-
-    it('exposes LayoutDesignerApp on the module API', async () => {
-      const mockModule = { api: {} };
-      (game.modules.get as jest.Mock).mockReturnValue(mockModule);
-
-      await fireHook('init');
-
-      expect(mockModule.api).toEqual({ LayoutDesignerApp });
     });
 
     it('registers the calculateTaskLevelOptions Handlebars helper', async () => {

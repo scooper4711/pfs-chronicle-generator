@@ -29,7 +29,6 @@ graph LR
 ```
 scripts/
 ├── main.ts                          Entry point (Hooks, settings, form rendering)
-├── LayoutDesignerApp.ts             Layout designer dialog (ApplicationV2)
 ├── LayoutStore.ts                   Layout discovery, loading, caching, inheritance
 ├── PartyChronicleApp.ts             Handlebars context preparation (ApplicationV2)
 ├── PdfGenerator.ts                  PDF rendering engine (pdf-lib)
@@ -83,8 +82,7 @@ scripts/
 
 | Module | Role |
 |--------|------|
-| `main.ts` | Foundry `Hooks.on('init')` and `Hooks.on('ready')` entry point. Registers world settings (GM name, PFS number, event info, debug mode) and the Layout Designer menu. Initializes `LayoutStore`. Injects the "Society" tab into the PF2e party sheet via `Hooks.on('renderPartySheetPF2e')` and individual character sheets via `Hooks.on('renderCharacterSheetPF2e')`. Renders the party chronicle form, attaches all event listeners, and initializes form state. Registers Handlebars helpers for task level options and treasure bundle values. |
-| `LayoutDesignerApp.ts` | Foundry ApplicationV2 dialog for fine-tuning chronicle layout JSON files. Draws content-element bounding boxes and percentage grids onto canvases for visual debugging. Persists season, layout, and blank chronicle PDF selections to Foundry settings. |
+| `main.ts` | Foundry `Hooks.on('init')` and `Hooks.on('ready')` entry point. Registers world settings (GM name, PFS number, event info, debug mode). Initializes `LayoutStore`. Injects the "Society" tab into the PF2e party sheet via `Hooks.on('renderPartySheetPF2e')` and individual character sheets via `Hooks.on('renderCharacterSheetPF2e')`. Renders the party chronicle form, attaches all event listeners, and initializes form state. Registers Handlebars helpers for task level options and treasure bundle values. |
 | `PartyChronicleApp.ts` | Prepares the Handlebars template context for the party chronicle form. Loads saved data, maps party actors to form fields, resolves layout-specific options, and checks whether a zip archive exists on the Party actor. Used only for context preparation (`_prepareContext`), not for rendering — event listeners are attached in `main.ts` (hybrid ApplicationV2 pattern). |
 
 ### Handlers (`scripts/handlers/`)
@@ -159,12 +157,11 @@ The dependency graph is split into focused diagrams by concern. Each diagram sho
 
 ### Entry Points → Top-Level Modules
 
-`main.ts` is the sole Foundry Hooks entry point. It delegates to the two ApplicationV2 classes, the layout store, and the handler/util layer.
+`main.ts` is the sole Foundry Hooks entry point. It delegates to PartyChronicleApp, the layout store, and the handler/util layer.
 
 ```mermaid
 graph TD
     MAIN["main.ts"]
-    LDA["LayoutDesignerApp.ts"]
     PCA["PartyChronicleApp.ts"]
     LS["LayoutStore.ts"]
     ELH["event-listener-helpers.ts"]
@@ -179,7 +176,6 @@ graph TD
     EIC["earned-income-calculator.ts"]
 
     MAIN --> LS
-    MAIN --> LDA
     MAIN --> PCA
     MAIN --> ELH
     MAIN --> PCH
@@ -191,9 +187,6 @@ graph TD
     MAIN --> LU
     MAIN --> EIC
     MAIN --> LOG
-
-    LDA --> LS
-    LDA --> PG["PdfGenerator.ts"]
 
     PCA --> LS
     PCA --> PCS
@@ -615,7 +608,6 @@ All layout positions use percentage-based coordinates relative to a canvas regio
 | Template | Purpose |
 |----------|---------|
 | `templates/party-chronicle-filling.hbs` | Main party chronicle form rendered inside the Foundry party sheet's Society tab. Contains shared fields (event details, reputation, rewards), per-character sections (society ID, earned income, notes), and action buttons (save, clear, generate, copy session report, export archive). |
-| `templates/layout-designer.hbs` | Layout Designer dialog for selecting season/layout and previewing grid/box overlays on chronicle PDFs. |
 
 ## Static Assets
 
@@ -623,7 +615,7 @@ All layout positions use percentage-based coordinates relative to a canvas regio
 |-----------|---------|
 | `layouts/` | Layout JSON files organized by game system (`pfs2/`) and season (`s1/`–`s7/`, plus bounties, quests, specials). See `LAYOUT_FORMAT.md`. |
 | `modules/` | Chronicle PDF assets organized by season module (year 5, 6, 7). |
-| `css/` | Stylesheet for the party chronicle form and layout designer (`css/style.css`). |
+| `css/` | Stylesheet for the party chronicle form (`css/style.css`). |
 | `dist/` | Compiled JavaScript output (entry point: `dist/main.js`, ESM format with sourcemap). |
 | `templates/` | Handlebars templates for the party chronicle form and layout designer. |
 

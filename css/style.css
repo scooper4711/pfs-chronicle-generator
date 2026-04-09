@@ -1,17 +1,3 @@
-/* Layout Designer window padding and minor styling */
-.pfs-layout-designer {
-    padding: 12px;
-}
-.pfs-layout-designer .form-group {
-    margin-bottom: 0.75rem;
-}
-.pfs-layout-designer fieldset {
-    margin-bottom: 1rem;
-}
-.pfs-layout-designer .pfscg-btn {
-    padding: 0.25rem 0.5rem;
-}
-
 /* Party Chronicle Filling - Society Tab Styling */
 /* Match the exploration tab's member-activity styling */
 .sheet.party [data-tab=pfs] .activities .member-activity {

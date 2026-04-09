@@ -1,12 +1,10 @@
-import { PDFDocument, PDFPage, rgb, degrees } from 'pdf-lib';
+import { PDFDocument, PDFPage } from 'pdf-lib';
 import { Layout, ContentElement } from './model/layout';
 import { getFont, getColor, getCanvasRect } from './utils/pdf-utils';
 import { 
     ResolvedElement, 
     resolvePresets, 
-    resolveValue, 
-    getAllContentElements, 
-    findContentElement 
+    resolveValue 
 } from './utils/pdf-element-utils';
 import { debug } from './utils/logger.js';
 
@@ -37,142 +35,6 @@ export class PdfGenerator {
             }
         }
     }
-
-    public async drawGrid(canvasName: string) {
-        const { width: pageWidth, height: pageHeight } = this.page.getSize();
-        const canvasRect = getCanvasRect(canvasName, this.layout.canvas!, pageWidth, pageHeight);
-        const { x, y, width, height } = canvasRect;
-
-        let spacing = 1;
-        if (width < 200 || height < 200) {
-            spacing = 5;
-        }
-        if (width < 100 || height < 100) {
-            spacing = 10;
-        }
-        if (width < 50 || height < 50) {
-            spacing = 20;
-        }
-
-        const font = await getFont(this.pdfDoc, 'helvetica');
-        const fontSize = 5;
-
-        // Draw vertical lines
-        for (let i = spacing; i < 100; i += spacing) {
-            const lineX = x + (i / 100) * width;
-            this.page.drawLine({
-                start: { x: lineX, y: pageHeight - y },
-                end: { x: lineX, y: pageHeight - (y + height) },
-                thickness: i % 5 === 0 ? 0.5 : 0.1,
-                color: rgb(0, 0, 1),
-            });
-            if (i % 5 === 0) {
-                const text = String(i);
-                const textWidth = font.widthOfTextAtSize(text, fontSize);
-                this.page.drawText(text, {
-                    x: lineX - textWidth / 2,
-                    y: pageHeight - y - 8,
-                    font,
-                    size: fontSize,
-                    color: rgb(0, 0, 1),
-                    rotate: degrees(-90),
-                });
-            }
-        }
-
-        // Draw horizontal lines
-        for (let i = spacing; i < 100; i += spacing) {
-            const lineY = y + (i / 100) * height;
-            this.page.drawLine({
-                start: { x, y: pageHeight - lineY },
-                end: { x: x + width, y: pageHeight - lineY },
-                thickness: i % 5 === 0 ? 0.5 : 0.1,
-                color: rgb(0, 0, 1),
-            });
-            if (i % 5 === 0) {
-                const text = String(i);
-                this.page.drawText(text, {
-                    x: x + 2,
-                    y: pageHeight - lineY - (fontSize / 2),
-                    font,
-                    size: fontSize,
-                    color: rgb(0, 0, 1),
-                });
-            }
-        }
-    }
-
-    public async drawBoxes(contentToHighlight?: string | ContentElement[]) {
-        if (contentToHighlight) {
-            if (typeof contentToHighlight === 'string') {
-                if (this.layout.content) {
-                    const element = findContentElement(this.layout.content, contentToHighlight);
-                    if (element) {
-                        await this.highlightContentElement(element);
-                    }
-                }
-            } else {
-                const allElements = getAllContentElements(contentToHighlight);
-                for (const element of allElements) {
-                    await this.highlightContentElement(element);
-                }
-            }
-        }
-    }
-
-    private async highlightContentElement(element: ContentElement) {
-        const props = resolvePresets(element, this.layout.presets);
-        const pageHeight = this.page.getHeight();
-        const font = await getFont(this.pdfDoc, 'helvetica');
-        if (!props.canvas) return;
-
-        const { width: pageWidth, height: pageHeightSize } = this.page.getSize();
-        const elementCanvasRect = getCanvasRect(props.canvas, this.layout.canvas!, pageWidth, pageHeightSize);
-        const x = props.x || 0;
-        const y = props.y || 0;
-
-        let boxX, boxY, boxWidth, boxHeight;
-
-        if (props.type === 'choice') {
-            const size = props.size || 0;
-            const linewidth = props.linewidth || 1;
-            boxX = elementCanvasRect.x + (x / 100) * elementCanvasRect.width;
-            boxY = elementCanvasRect.y + (y / 100) * elementCanvasRect.height;
-            boxWidth = (size / 100) * elementCanvasRect.width;
-            boxHeight = linewidth;
-        } else {
-            const x2 = props.x2 || 0;
-            const y2 = props.y2 || 0;
-            boxX = elementCanvasRect.x + (x / 100) * elementCanvasRect.width;
-            boxY = elementCanvasRect.y + (y / 100) * elementCanvasRect.height;
-            boxWidth = ((x2 - x) / 100) * elementCanvasRect.width;
-            boxHeight = ((y2 - y) / 100) * elementCanvasRect.height;
-        }
-
-        this.page.drawRectangle({
-            x: boxX,
-            y: pageHeight - boxY - boxHeight,
-            width: boxWidth,
-            height: boxHeight,
-            color: rgb(1, 0.71, 0.76),
-            opacity: 0.5,
-            borderColor: rgb(0, 0, 0),
-            borderWidth: 1,
-        });
-
-        const text = element.value || '';
-        const textWidth = font.widthOfTextAtSize(text, 8);
-        this.page.drawText(text, {
-            x: boxX + (boxWidth - textWidth) / 2,
-            y: pageHeight - boxY - boxHeight + (boxHeight - 8) / 2,
-            font,
-            size: 8,
-            color: rgb(0, 0, 0),
-        });
-    }
-
-
-
     private async drawElement(element: ContentElement) {
             const props: ResolvedElement = resolvePresets(element, this.layout.presets);
             debug('Drawing element:', { type: props.type, choices: props.choices });

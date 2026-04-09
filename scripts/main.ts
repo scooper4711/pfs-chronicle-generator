@@ -1,6 +1,5 @@
 import { layoutStore } from './LayoutStore.js';
 import { debug, error } from './utils/logger.js';
-import { LayoutDesignerApp } from './LayoutDesignerApp.js';
 import { PartyChronicleApp } from './PartyChronicleApp.js';
 import { generateChronicleFilename } from './utils/filename-utils.js';
 import { updateLayoutSpecificFields } from './utils/layout-utils.js';
@@ -71,14 +70,6 @@ function registerSettings(): void {
     hint: 'Temporary storage for party chronicle data being filled out.',
     scope: 'world', config: false, type: Object, default: undefined,
   });
-
-  game.settings.registerMenu(MODULE_ID, 'layoutDesigner', {
-    name: 'Design Layout', label: 'Design Layout',
-    hint: 'Open the layout designer to create and edit chronicle layouts.',
-    icon: 'fas fa-ruler-combined', type: LayoutDesignerApp, restricted: true,
-  });
-
-  game.modules.get(MODULE_ID).api = { LayoutDesignerApp };
 }
 
 /** Registers Handlebars helpers used by party chronicle templates. */

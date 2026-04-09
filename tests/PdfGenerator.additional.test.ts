@@ -1,7 +1,7 @@
 /**
  * Additional tests for PdfGenerator
  *
- * Covers drawGrid, drawBoxes, line, strikeout, checkbox, trigger, choice, multiline.
+ * Covers line, strikeout, checkbox, trigger, choice, multiline.
  */
 
 import { PDFDocument, PDFPage } from 'pdf-lib';
@@ -21,74 +21,6 @@ describe('PdfGenerator - additional element types', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
-  });
-
-  describe('drawGrid', () => {
-    it('should draw grid lines on a canvas', async () => {
-      const drawLineSpy = jest.spyOn(page, 'drawLine');
-      const layout: Layout = {
-        id: 'grid-test', description: 'Grid test',
-        canvas: { main: { x: 0, y: 0, x2: 100, y2: 100 } },
-        parameters: {}, presets: {}, content: [],
-      };
-      const gen = new PdfGenerator(pdfDoc, layout, {});
-      await gen.drawGrid('main');
-      expect(drawLineSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('drawBoxes', () => {
-    it('should highlight a named content element', async () => {
-      const spy = jest.spyOn(page, 'drawRectangle');
-      const layout: Layout = {
-        id: 'b1', description: 'b1',
-        canvas: { main: { x: 0, y: 0, x2: 100, y2: 100 } },
-        parameters: {}, presets: {},
-        content: [{ type: 'text', value: 'target', canvas: 'main', x: 10, y: 10, x2: 50, y2: 50 }],
-      };
-      const gen = new PdfGenerator(pdfDoc, layout, {});
-      await gen.drawBoxes('target');
-      expect(spy).toHaveBeenCalled();
-    });
-
-    it('should highlight an array of content elements', async () => {
-      const spy = jest.spyOn(page, 'drawRectangle');
-      const layout: Layout = {
-        id: 'b2', description: 'b2',
-        canvas: { main: { x: 0, y: 0, x2: 100, y2: 100 } },
-        parameters: {}, presets: {}, content: [],
-      };
-      const elems = [
-        { type: 'text' as const, value: 'e1', canvas: 'main', x: 0, y: 0, x2: 50, y2: 50 },
-        { type: 'text' as const, value: 'e2', canvas: 'main', x: 50, y: 50, x2: 100, y2: 100 },
-      ];
-      const gen = new PdfGenerator(pdfDoc, layout, {});
-      await gen.drawBoxes(elems);
-      expect(spy).toHaveBeenCalledTimes(2);
-    });
-
-    it('should do nothing when no content to highlight', async () => {
-      const spy = jest.spyOn(page, 'drawRectangle');
-      const layout: Layout = {
-        id: 'b3', description: 'b3', canvas: {}, parameters: {}, presets: {}, content: [],
-      };
-      const gen = new PdfGenerator(pdfDoc, layout, {});
-      await gen.drawBoxes();
-      expect(spy).not.toHaveBeenCalled();
-    });
-
-    it('should handle choice-type elements for box dimensions', async () => {
-      const spy = jest.spyOn(page, 'drawRectangle');
-      const layout: Layout = {
-        id: 'b4', description: 'b4',
-        canvas: { main: { x: 0, y: 0, x2: 100, y2: 100 } },
-        parameters: {}, presets: {},
-        content: [{ type: 'choice', value: 'ce', canvas: 'main', x: 10, y: 10 }],
-      };
-      const gen = new PdfGenerator(pdfDoc, layout, {});
-      await gen.drawBoxes('ce');
-      expect(spy).toHaveBeenCalled();
-    });
   });
 
   describe('line element', () => {

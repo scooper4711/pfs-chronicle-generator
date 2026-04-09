@@ -104,9 +104,6 @@ jest.mock('../scripts/LayoutStore', () => ({
   }
 }));
 
-jest.mock('../scripts/LayoutDesignerApp', () => ({
-  LayoutDesignerApp: jest.fn()
-}));
 
 jest.mock('../scripts/PartyChronicleApp', () => ({
   PartyChronicleApp: jest.fn().mockImplementation(() => ({
