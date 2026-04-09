@@ -73,18 +73,15 @@ jest.mock('../scripts/PdfGenerator', () => ({
 }));
 
 const mockPdfDocSave = jest.fn().mockResolvedValue(new Uint8Array([1, 2, 3]));
-const mockRegisterFontkit = jest.fn();
 
 jest.mock('pdf-lib', () => ({
   PDFDocument: {
     load: jest.fn().mockResolvedValue({
-      registerFontkit: mockRegisterFontkit,
       save: mockPdfDocSave,
     }),
   },
 }));
 
-jest.mock('@pdf-lib/fontkit', () => ({}));
 
 import { LayoutDesignerApp } from '../scripts/LayoutDesignerApp';
 import { PdfGenerator } from '../scripts/PdfGenerator';
@@ -528,14 +525,6 @@ describe('LayoutDesignerApp', () => {
         'application/pdf',
         'layout-preview.pdf'
       );
-    });
-
-    it('registers fontkit on the loaded PDF document', async () => {
-      (form.querySelector('input[name="drawBoxes"]') as HTMLInputElement).checked = true;
-
-      await formHandler(new Event('submit'), form);
-
-      expect(mockRegisterFontkit).toHaveBeenCalled();
     });
   });
 });

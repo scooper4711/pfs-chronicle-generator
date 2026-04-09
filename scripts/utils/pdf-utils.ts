@@ -1,38 +1,6 @@
 import { PDFDocument, PDFFont, RGB, rgb, StandardFonts } from 'pdf-lib';
 import { Canvas } from '../model/layout';
 
-/**
- * Resolves a web font name to its CDN URL and embeds it in the PDF document.
- * Supports Noto Sans, Eczar, Gelasio, Roboto Condensed, and Tauri.
- */
-async function embedWebFont(pdfDoc: PDFDocument, font: string): Promise<PDFFont> {
-    let fontUrl = '';
-    switch (font) {
-        case 'noto sans':
-        case 'noto':
-            fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff`;
-            break;
-        case 'eczar':
-            fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/eczar/files/eczar-latin-400-normal.woff`;
-            break;
-        case 'gelasio':
-            fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/gelasio/files/gelasio-latin-400-normal.woff`;
-            break;
-        case 'roboto condensed':
-        case 'roboto':
-            fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/roboto-condensed/files/roboto-condensed-latin-400-normal.woff`;
-            break;
-        case 'tauri':
-            fontUrl = `https://cdn.jsdelivr.net/npm/@fontsource/tauri/files/tauri-latin-400-normal.woff`;
-            break;
-    }
-    const fontBytes = await fetch(fontUrl).then(res => res.arrayBuffer());
-    return pdfDoc.embedFont(fontBytes);
-}
-
-/**
- * Resolves a standard PDF font name with weight and style to a StandardFonts enum value.
- */
 /** Lookup table mapping font family → weight → style to StandardFonts values. */
 const STANDARD_FONT_MAP: Record<string, Record<string, Record<string, string>>> = {
     helvetica: {
@@ -60,15 +28,12 @@ function resolveStandardFont(
     return STANDARD_FONT_MAP[font]?.[fontWeight]?.[fontStyle] ?? StandardFonts.Helvetica;
 }
 
-const WEB_FONT_PREFIXES = ['noto', 'eczar', 'gelasio', 'roboto', 'tauri'];
-
 /**
  * Resolves a font name, weight, and style to a PDFFont object.
- * Supports both standard PDF fonts (Helvetica, Times, Courier) and web fonts
- * (Noto Sans, Eczar, Gelasio, Roboto Condensed, Tauri) loaded from CDN.
+ * Supports standard PDF fonts: Helvetica, Times, and Courier.
  * 
  * @param pdfDoc - The PDF document to embed the font in
- * @param fontName - The name of the font (e.g., 'helvetica', 'times', 'noto sans')
+ * @param fontName - The name of the font (e.g., 'helvetica', 'times', 'courier')
  * @param fontWeight - The font weight ('normal' or 'bold')
  * @param fontStyle - The font style ('normal' or 'italic')
  * @returns A promise that resolves to the embedded PDFFont
@@ -80,11 +45,6 @@ export async function getFont(
     fontStyle: 'normal' | 'italic' = 'normal'
 ): Promise<PDFFont> {
     const font = fontName?.toLowerCase() || 'helvetica';
-
-    if (WEB_FONT_PREFIXES.some(prefix => font.startsWith(prefix))) {
-        return embedWebFont(pdfDoc, font);
-    }
-
     return pdfDoc.embedFont(resolveStandardFont(font, fontWeight, fontStyle));
 }
 

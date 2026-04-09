@@ -60,7 +60,6 @@ jest.mock('pdf-lib', () => ({
   },
 }));
 
-jest.mock('@pdf-lib/fontkit', () => ({}));
 
 const mockPostChatNotification = jest.fn<(...args: any[]) => Promise<void>>().mockResolvedValue(undefined);
 jest.mock('../../scripts/handlers/chat-notifier', () => ({

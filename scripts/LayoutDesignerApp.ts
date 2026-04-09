@@ -20,7 +20,6 @@ import { PdfGenerator } from './PdfGenerator.js';
 import { debug } from './utils/logger.js';
 import { Layout } from './model/layout.js';
 import { PDFDocument } from 'pdf-lib';
-import fontkit from '@pdf-lib/fontkit';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
 
@@ -227,7 +226,6 @@ export class LayoutDesignerApp extends HandlebarsApplicationMixin(ApplicationV2)
 
     const pdfBytes = await response.arrayBuffer();
     const pdfDoc = await PDFDocument.load(pdfBytes);
-    pdfDoc.registerFontkit(fontkit);
     const layout = await layoutStore.getLayout(layoutId);
 
     const generator = new PdfGenerator(pdfDoc, layout, {});

@@ -20,7 +20,6 @@ import { mapToCharacterData, ChronicleData } from '../model/party-chronicle-mapp
 import { validateSharedFields, validateUniqueFields } from '../model/party-chronicle-validator.js';
 import { PdfGenerator } from '../PdfGenerator.js';
 import { PDFDocument } from 'pdf-lib';
-import fontkit from '@pdf-lib/fontkit';
 import { createArchive, addPdfToArchive, FlagActor } from './chronicle-exporter.js';
 import { generateChronicleFilename } from '../utils/filename-utils.js';
 import { PartyActor } from './event-listener-helpers.js';
@@ -252,7 +251,6 @@ async function generateSingleCharacterPdf(
     }
 
     const pdfDoc = await PDFDocument.load(await response.arrayBuffer());
-    pdfDoc.registerFontkit(fontkit);
 
     const generator = new PdfGenerator(pdfDoc, layout, chronicleData);
     await generator.generate();
