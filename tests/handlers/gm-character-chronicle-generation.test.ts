@@ -72,7 +72,7 @@ const mockAddPdfToArchive = jest.fn(
     return filename;
   }
 );
-const mockStoreArchive = jest.fn<(a: unknown, b: unknown) => Promise<void>>().mockResolvedValue(undefined);
+const _mockStoreArchive = jest.fn<(a: unknown, b: unknown) => Promise<void>>().mockResolvedValue(undefined);
 
 jest.mock('../../scripts/handlers/chronicle-exporter', () => ({
   createArchive: jest.fn(() => ({ files: new Map() })),

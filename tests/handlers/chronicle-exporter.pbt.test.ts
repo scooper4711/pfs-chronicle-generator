@@ -10,7 +10,7 @@
 import { describe, it, expect } from '@jest/globals';
 import fc from 'fast-check';
 import { unzipSync } from 'fflate';
-import { createArchive, addPdfToArchive, deduplicateFilename, generateZipFilename, generateBase64Zip, hasArchive, storeArchive, clearArchive, FlagActor } from '../../scripts/handlers/chronicle-exporter';
+import { createArchive, addPdfToArchive, deduplicateFilename, generateZipFilename, hasArchive, storeArchive, clearArchive, FlagActor } from '../../scripts/handlers/chronicle-exporter';
 import { sanitizeFilename, generateChronicleFilename } from '../../scripts/utils/filename-utils';
 
 // Feature: chronicle-export, Property 2: Filename deduplication produces unique names
