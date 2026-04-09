@@ -92,86 +92,86 @@ Add a GM Character drop zone and data entry section to the Society tab. The GM c
     - **Property 9: Stale GM character actor ID is gracefully cleared**
     - **Validates: Requirements 8.3**
 
-- [-] 6. Checkpoint - Ensure all tests pass and commit
+- [x] 6. Checkpoint - Ensure all tests pass and commit
   - Ensure all tests pass, ask the user if questions arise.
   - Run `git add -A && git commit -S -m "feat: add GM character UI, context preparation, and form data extraction"` to commit the template, CSS, context preparation, form data extraction, and associated tests.
 
-- [ ] 7. Wire GM character event listeners in main.ts
-  - [~] 7.1 Attach GM character event listeners in `main.ts` `attachEventListeners()`
+- [x] 7. Wire GM character event listeners in main.ts
+  - [x] 7.1 Attach GM character event listeners in `main.ts` `attachEventListeners()`
     - Attach `dragover` and `drop` listeners on the GM Character Drop Zone, delegating to `handleGmCharacterDrop()`
     - Attach click listener on `#clearGmCharacter` button, delegating to `handleGmCharacterClear()`
     - Attach change listeners on GM character form fields for auto-save (same pattern as party member fields)
     - Attach earned income, treasure bundle, and downtime display update listeners for the GM character fields
     - _Requirements: 1.3, 3.1, 3.2, 3.3, 4.2, 4.3_
 
-  - [~] 7.2 Write unit tests for GM character event listener wiring
+  - [x] 7.2 Write unit tests for GM character event listener wiring
     - Test drop zone accepts dragover and drop events
     - Test clear button click triggers handler
     - Test GM character field changes trigger auto-save
     - _Requirements: 1.3, 3.1, 4.3_
 
-- [ ] 8. Integrate GM character into chronicle generation pipeline
-  - [~] 8.1 Extend `processAllPartyMembers()` in `handlers/chronicle-generation.ts` to include GM character
+- [x] 8. Integrate GM character into chronicle generation pipeline
+  - [x] 8.1 Extend `processAllPartyMembers()` in `handlers/chronicle-generation.ts` to include GM character
     - Accept optional GM character actor parameter
     - If GM character is present, include it in the generation loop alongside party actors
     - Generate PDF for GM character using the same pipeline (validate, map, render, archive)
     - Save GM character's chronicle PDF to the GM character actor's flags
     - _Requirements: 5.1, 5.2, 5.3_
 
-  - [~] 8.2 Extend `validateAllCharacterFields()` in `handlers/chronicle-generation.ts` to validate GM character
+  - [x] 8.2 Extend `validateAllCharacterFields()` in `handlers/chronicle-generation.ts` to validate GM character
     - Include GM character's unique fields in validation
     - Add PFS ID mismatch validation using `validateGmCharacterPfsId()`
     - _Requirements: 5.5, 7.1, 7.4_
 
-  - [~] 8.3 Extend `generateChroniclesFromPartyData()` to resolve and pass GM character actor
+  - [x] 8.3 Extend `generateChroniclesFromPartyData()` to resolve and pass GM character actor
     - Read `gmCharacterActorId` from form data shared fields
     - Resolve actor via `game.actors.get()`
     - Pass resolved actor to `processAllPartyMembers()` and `validateAllCharacterFields()`
     - Include GM character in chat notification listing
     - _Requirements: 5.1, 5.4_
 
-  - [~] 8.4 Write unit tests for GM character chronicle generation
+  - [x] 8.4 Write unit tests for GM character chronicle generation
     - Test GM character PDF is generated alongside party member PDFs
     - Test GM character PDF is included in zip archive
     - Test GM character is included in chat notification
     - Test validation errors for GM character are reported
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 9. Integrate GM character into session reporting
-  - [~] 9.1 Extend `buildSessionReport()` in `model/session-report-builder.ts` to include GM character SignUp
+- [x] 9. Integrate GM character into session reporting
+  - [x] 9.1 Extend `buildSessionReport()` in `model/session-report-builder.ts` to include GM character SignUp
     - Accept optional GM character actor and UniqueFields in `SessionReportBuildParams`
     - If GM character is present, build a `SignUp` entry with `isGM: true` and append to `signUps` array
     - _Requirements: 6.1, 6.2, 6.3_
 
-  - [~] 9.2 Extend `handleCopySessionReport()` in `handlers/session-report-handler.ts` to pass GM character
+  - [x] 9.2 Extend `handleCopySessionReport()` in `handlers/session-report-handler.ts` to pass GM character
     - Resolve GM character actor from form data `gmCharacterActorId`
     - Pass GM character actor and its UniqueFields to `buildSessionReport()`
     - Include PFS ID mismatch validation in session report validation
     - _Requirements: 6.1, 7.4_
 
-  - [~] 9.3 Write property test for GM character session report SignUp (Property 6)
+  - [x] 9.3 Write property test for GM character session report SignUp (Property 6)
     - **Property 6: GM character session report SignUp correctness**
     - **Validates: Requirements 6.1, 6.2, 6.3**
 
-  - [~] 9.4 Write unit tests for GM character session reporting
+  - [x] 9.4 Write unit tests for GM character session reporting
     - Test session report includes GM character SignUp with `isGM: true`
     - Test GM character SignUp has correct orgPlayNumber, characterNumber, characterName, faction, repEarned, consumeReplay
     - Test session report without GM character has no `isGM: true` entries
     - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 10. Integrate GM character into Clear Data flow
-  - [~] 10.1 Extend clear button handler in `event-listener-helpers.ts` to clear GM character data
+- [x] 10. Integrate GM character into Clear Data flow
+  - [x] 10.1 Extend clear button handler in `event-listener-helpers.ts` to clear GM character data
     - In `handleClearButtonConfirmed()`, ensure `gmCharacterActorId` is removed from the new default data
     - Ensure the GM character's entry is not included in `buildDefaultCharacterFields()` output
     - _Requirements: 3.4, 8.4_
 
-  - [~] 10.2 Write unit tests for Clear Data with GM character
+  - [x] 10.2 Write unit tests for Clear Data with GM character
     - Test Clear Data removes GM character assignment
     - Test Clear Data removes GM character from characters map
     - Test form re-renders with empty drop zone after clear
     - _Requirements: 3.4, 8.4_
 
-- [~] 11. Final checkpoint - Ensure all tests pass and commit
+- [-] 11. Final checkpoint - Ensure all tests pass and commit
   - Ensure all tests pass, ask the user if questions arise.
   - Run `git add -A && git commit -S -m "feat: integrate GM character into event listeners, generation, reporting, and clear data"` to commit the event listener wiring, chronicle generation, session reporting, clear data integration, and associated tests.
 

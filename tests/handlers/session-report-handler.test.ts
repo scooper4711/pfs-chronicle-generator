@@ -30,20 +30,27 @@ jest.mock('../../scripts/model/session-report-serializer', () => ({
   serializeSessionReport: jest.fn(),
 }));
 
+jest.mock('../../scripts/handlers/gm-character-handlers', () => ({
+  validateGmCharacterPfsId: jest.fn(),
+}));
+
 import { extractFormData } from '../../scripts/handlers/form-data-extraction';
 import { validateSessionReportFields } from '../../scripts/model/party-chronicle-validator';
 import { buildSessionReport } from '../../scripts/model/session-report-builder';
 import { serializeSessionReport } from '../../scripts/model/session-report-serializer';
+import { validateGmCharacterPfsId } from '../../scripts/handlers/gm-character-handlers';
 
 const mockExtractFormData = extractFormData as jest.Mock;
 const mockValidate = validateSessionReportFields as jest.Mock;
 const mockBuild = buildSessionReport as jest.Mock;
 const mockSerialize = serializeSessionReport as jest.Mock;
+const mockValidateGmPfsId = validateGmCharacterPfsId as jest.Mock;
 
 // Mock globals
 const mockWriteText = jest.fn();
 const mockInfo = jest.fn();
 const mockError = jest.fn();
+const mockActorsGet = jest.fn();
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -54,6 +61,10 @@ beforeEach(() => {
 
   (global as any).ui = {
     notifications: { info: mockInfo, error: mockError },
+  };
+
+  (global as any).game = {
+    actors: { get: mockActorsGet },
   };
 });
 
@@ -207,7 +218,112 @@ describe('handleCopySessionReport', () => {
         characters: validFormData.characters,
         partyActors: mockPartyActors,
         layoutId: 'pfs2.s5-18',
+        gmCharacterActor: undefined,
+        gmCharacterFields: undefined,
       });
+    });
+  });
+
+  describe('GM character integration', () => {
+    const gmActor = {
+      id: 'gm-actor-1',
+      name: 'GM Character',
+      system: { pfs: { playerNumber: 12345, characterNumber: 2001, currentFaction: 'EA' } },
+    };
+
+    const gmCharacterFields = { characterName: 'GM Character', consumeReplay: false };
+
+    const formDataWithGm = {
+      shared: {
+        eventDate: '2025-01-15',
+        gmPfsNumber: '12345',
+        layoutId: 'pfs2.s5-18',
+        gmCharacterActorId: 'gm-actor-1',
+      },
+      characters: {
+        'actor-1': { characterName: 'Valeros', consumeReplay: false },
+        'gm-actor-1': gmCharacterFields,
+      },
+    };
+
+    it('resolves GM character actor and passes to buildSessionReport', async () => {
+      mockExtractFormData.mockReturnValue(formDataWithGm);
+      mockValidate.mockReturnValue({ valid: true, errors: [] });
+      mockActorsGet.mockReturnValue(gmActor);
+      mockValidateGmPfsId.mockReturnValue(null);
+      mockBuild.mockReturnValue(mockReport);
+      mockSerialize.mockReturnValue('encoded');
+      mockWriteText.mockResolvedValue(undefined);
+
+      const container = createContainer();
+      await handleCopySessionReport(container, mockPartyActors, 'pfs2.s5-18', createMouseEvent());
+
+      expect(mockActorsGet).toHaveBeenCalledWith('gm-actor-1');
+      expect(mockValidateGmPfsId).toHaveBeenCalledWith(gmActor, '12345');
+      expect(mockBuild).toHaveBeenCalledWith(expect.objectContaining({
+        gmCharacterActor: gmActor,
+        gmCharacterFields,
+      }));
+      expect(mockWriteText).toHaveBeenCalled();
+    });
+
+    it('blocks report and displays error when PFS ID mismatch is detected', async () => {
+      mockExtractFormData.mockReturnValue(formDataWithGm);
+      mockValidate.mockReturnValue({ valid: true, errors: [] });
+      mockActorsGet.mockReturnValue(gmActor);
+      mockValidateGmPfsId.mockReturnValue('GM character PFS ID (99999) does not match GM PFS Number (12345)');
+
+      const container = createContainer();
+      await handleCopySessionReport(container, mockPartyActors, 'pfs2.s5-18', createMouseEvent());
+
+      // Should not proceed to build/serialize/copy
+      expect(mockBuild).not.toHaveBeenCalled();
+      expect(mockSerialize).not.toHaveBeenCalled();
+      expect(mockWriteText).not.toHaveBeenCalled();
+
+      // Should display the PFS ID mismatch error
+      const errorPanel = container.querySelector('#validationErrors') as HTMLElement;
+      expect(errorPanel.style.display).toBe('block');
+      const errorItems = container.querySelectorAll('#validationErrorList li');
+      expect(errorItems).toHaveLength(1);
+      expect(errorItems[0].textContent).toContain('does not match');
+    });
+
+    it('skips GM character resolution when gmCharacterActorId is not set', async () => {
+      mockExtractFormData.mockReturnValue(validFormData);
+      mockValidate.mockReturnValue({ valid: true, errors: [] });
+      mockBuild.mockReturnValue(mockReport);
+      mockSerialize.mockReturnValue('encoded');
+      mockWriteText.mockResolvedValue(undefined);
+
+      const container = createContainer();
+      await handleCopySessionReport(container, mockPartyActors, 'pfs2.s5-18', createMouseEvent());
+
+      expect(mockActorsGet).not.toHaveBeenCalled();
+      expect(mockValidateGmPfsId).not.toHaveBeenCalled();
+      expect(mockBuild).toHaveBeenCalledWith(expect.objectContaining({
+        gmCharacterActor: undefined,
+        gmCharacterFields: undefined,
+      }));
+    });
+
+    it('skips PFS ID validation when GM character actor cannot be resolved', async () => {
+      mockExtractFormData.mockReturnValue(formDataWithGm);
+      mockValidate.mockReturnValue({ valid: true, errors: [] });
+      mockActorsGet.mockReturnValue(undefined);
+      mockBuild.mockReturnValue(mockReport);
+      mockSerialize.mockReturnValue('encoded');
+      mockWriteText.mockResolvedValue(undefined);
+
+      const container = createContainer();
+      await handleCopySessionReport(container, mockPartyActors, 'pfs2.s5-18', createMouseEvent());
+
+      expect(mockActorsGet).toHaveBeenCalledWith('gm-actor-1');
+      expect(mockValidateGmPfsId).not.toHaveBeenCalled();
+      expect(mockBuild).toHaveBeenCalledWith(expect.objectContaining({
+        gmCharacterActor: undefined,
+        gmCharacterFields: gmCharacterFields,
+      }));
     });
   });
 });

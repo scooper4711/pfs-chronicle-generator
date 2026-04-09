@@ -362,7 +362,11 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
         setFlag: async () => {},
         unsetFlag: async () => {},
       };
-      await generateChroniclesFromPartyData(data, this.partyActors, noOpPartyActor);
+      const gmCharacterActorId = data.shared?.gmCharacterActorId;
+      const gmCharacterActor = gmCharacterActorId
+        ? game.actors.get(gmCharacterActorId) as PartyActor | undefined
+        : undefined;
+      await generateChroniclesFromPartyData(data, this.partyActors, noOpPartyActor, gmCharacterActor);
     }
 
   /**

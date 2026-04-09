@@ -12,7 +12,8 @@ import {
     SHARED_FIELD_SELECTORS,
     CHARACTER_FIELD_PATTERNS,
     BUTTON_SELECTORS,
-    GENERAL_SELECTORS
+    GENERAL_SELECTORS,
+    GM_CHARACTER_SELECTORS
 } from '../constants/dom-selectors.js';
 import {
     handleSeasonChange,
@@ -33,6 +34,10 @@ import {
     handleSectionHeaderClick,
     handleSectionHeaderKeydown
 } from './collapsible-section-handlers.js';
+import {
+    handleGmCharacterDrop,
+    handleGmCharacterClear
+} from './gm-character-handlers.js';
 import { createEarnedIncomeChangeHandler } from '../utils/earned-income-form-helpers.js';
 import { clearPartyChronicleData, savePartyChronicleData } from '../model/party-chronicle-storage.js';
 import { PartyChronicleData, UniqueFields } from '../model/party-chronicle-types.js';
@@ -483,7 +488,11 @@ export function attachGenerateButtonListener(
     generateButton?.addEventListener('click', async (event: Event) => {
         event.preventDefault();
         const formData = extractFormData(container, partyActors);
-        await generateChroniclesFromPartyData(formData, partyActors, partyActor);
+        const gmCharacterActorId = formData.shared?.gmCharacterActorId;
+        const gmCharacterActor = gmCharacterActorId
+            ? game.actors.get(gmCharacterActorId) as PartyActor | undefined
+            : undefined;
+        await generateChroniclesFromPartyData(formData, partyActors, partyActor, gmCharacterActor);
 
         const exportButton = container.querySelector(BUTTON_SELECTORS.EXPORT_CHRONICLES);
         if (exportButton && hasArchive(partyActor)) {
@@ -592,5 +601,54 @@ export function attachCollapsibleSectionListeners(container: HTMLElement): void 
         header.addEventListener('keydown', (event: Event) => {
             handleSectionHeaderKeydown(event as KeyboardEvent, container);
         });
+    });
+}
+
+/**
+ * Attaches GM character drop zone and clear button event listeners.
+ *
+ * The drop zone accepts Foundry actor drag-and-drop payloads. The clear
+ * button removes the current GM character assignment. Both delegate to
+ * handler functions in `gm-character-handlers.ts`.
+ *
+ * Note: GM character form field change listeners (auto-save, earned income,
+ * treasure bundle, downtime) are already covered by the existing wildcard
+ * `querySelectorAll` patterns in `attachFormFieldListeners`,
+ * `attachEarnedIncomeListeners`, `attachTreasureBundleListeners`, and
+ * `attachDowntimeDaysListeners` since GM character fields use the same
+ * `characters.{id}.fieldName` naming convention as party members.
+ *
+ * @param container - Form container element
+ * @param partyActors - Array of party member actors
+ * @param partySheet - Party sheet app instance for re-rendering
+ *
+ * Requirements: gm-character-party-sheet 1.3, 3.1, 3.2, 3.3, 4.2, 4.3
+ */
+export function attachGmCharacterListeners(
+    container: HTMLElement,
+    partyActors: PartyActor[],
+    partySheet: PartySheetApp
+): void {
+    const dropZone = container.querySelector<HTMLElement>(GM_CHARACTER_SELECTORS.DROP_ZONE);
+    if (dropZone) {
+        dropZone.addEventListener('dragover', (event: Event) => {
+            event.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', async (event: Event) => {
+            dropZone.classList.remove('dragover');
+            await handleGmCharacterDrop(event as DragEvent, container, partyActors, partySheet);
+        });
+    }
+
+    const clearButton = container.querySelector<HTMLButtonElement>(GM_CHARACTER_SELECTORS.CLEAR_BUTTON);
+    clearButton?.addEventListener('click', async (event: Event) => {
+        event.preventDefault();
+        await handleGmCharacterClear(container, partyActors, partySheet);
     });
 }

@@ -11,7 +11,9 @@
 import { extractFormData } from './form-data-extraction.js';
 import { validateSessionReportFields } from '../model/party-chronicle-validator.js';
 import { buildSessionReport } from '../model/session-report-builder.js';
+import type { SessionReportActor } from '../model/session-report-builder.js';
 import { serializeSessionReport } from '../model/session-report-serializer.js';
+import { validateGmCharacterPfsId } from './gm-character-handlers.js';
 import type { PartyActor } from './event-listener-helpers.js';
 
 /**
@@ -56,7 +58,7 @@ export async function handleCopySessionReport(
 ): Promise<void> {
   const formData = extractFormData(container, partyActors);
 
-  // Step 1: Validate
+  // Step 1: Validate session report fields
   const validation = validateSessionReportFields({
     shared: formData.shared,
     partyActors,
@@ -67,12 +69,34 @@ export async function handleCopySessionReport(
     return;
   }
 
+  // Step 1b: Resolve GM character and validate PFS ID mismatch (Req 6.1, 7.4)
+  const gmCharacterActorId = formData.shared?.gmCharacterActorId;
+  const gmCharacterActor = gmCharacterActorId
+    ? game.actors.get(gmCharacterActorId) as SessionReportActor | undefined
+    : undefined;
+  const gmCharacterFields = gmCharacterActorId
+    ? formData.characters[gmCharacterActorId]
+    : undefined;
+
+  if (gmCharacterActor && gmCharacterActorId) {
+    const pfsIdError = validateGmCharacterPfsId(
+      gmCharacterActor as PartyActor,
+      formData.shared.gmPfsNumber
+    );
+    if (pfsIdError) {
+      displayValidationErrors(container, [pfsIdError]);
+      return;
+    }
+  }
+
   // Step 2: Build
   const report = buildSessionReport({
     shared: formData.shared,
     characters: formData.characters,
     partyActors,
     layoutId,
+    gmCharacterActor,
+    gmCharacterFields,
   });
 
   // Step 3: Serialize (Alt/Option key skips base64)

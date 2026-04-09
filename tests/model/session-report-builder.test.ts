@@ -187,6 +187,95 @@ describe('buildSessionReport edge cases', () => {
   });
 });
 
+/**
+ * GM character session reporting tests.
+ *
+ * Validates that the GM character is included in the session report
+ * with isGM: true and correct field values.
+ *
+ * Requirements: gm-character-party-sheet 6.1, 6.2, 6.3
+ */
+describe('GM character session reporting', () => {
+  const gmActor: SessionReportActor = {
+    id: 'gm-char-1',
+    name: 'GM Character',
+    system: {
+      pfs: {
+        playerNumber: 54321,
+        characterNumber: 2003,
+        currentFaction: 'GA',
+      },
+    },
+  };
+
+  it('includes GM character SignUp with isGM: true (Req 6.1, 6.2)', () => {
+    const partyActor: SessionReportActor = {
+      id: 'p1',
+      name: 'Valeros',
+      system: { pfs: { playerNumber: 11111, characterNumber: 1, currentFaction: 'EA' } },
+    };
+    const params: SessionReportBuildParams = {
+      shared: createSharedFields({ chosenFactionReputation: 2 }),
+      characters: { p1: createUniqueFields({ characterName: 'Valeros' }) },
+      partyActors: [partyActor],
+      layoutId: 'pfs2.s5-18',
+      now: FIXED_NOW,
+      gmCharacterActor: gmActor,
+      gmCharacterFields: createUniqueFields({ characterName: 'GM Character', consumeReplay: true }),
+    };
+
+    const report = buildSessionReport(params);
+
+    const gmSignUps = report.signUps.filter((s) => s.isGM);
+    expect(gmSignUps).toHaveLength(1);
+    expect(report.signUps.filter((s) => !s.isGM)).toHaveLength(1);
+  });
+
+  it('populates GM character SignUp with correct field values (Req 6.3)', () => {
+    const params: SessionReportBuildParams = {
+      shared: createSharedFields({ chosenFactionReputation: 3 }),
+      characters: {},
+      partyActors: [],
+      layoutId: 'pfs2.s1-01',
+      now: FIXED_NOW,
+      gmCharacterActor: gmActor,
+      gmCharacterFields: createUniqueFields({ characterName: 'Zephyr', consumeReplay: true }),
+    };
+
+    const report = buildSessionReport(params);
+
+    expect(report.signUps).toHaveLength(1);
+    const gm = report.signUps[0];
+    expect(gm.isGM).toBe(true);
+    expect(gm.orgPlayNumber).toBe(54321);
+    expect(gm.characterNumber).toBe(2003);
+    expect(gm.characterName).toBe('Zephyr');
+    expect(gm.faction).toBe('Grand Archive');
+    expect(gm.repEarned).toBe(3);
+    expect(gm.consumeReplay).toBe(true);
+  });
+
+  it('produces no isGM: true entries when GM character is not provided (Req 6.1)', () => {
+    const partyActor: SessionReportActor = {
+      id: 'p1',
+      name: 'Seelah',
+      system: { pfs: { playerNumber: 22222, characterNumber: 2, currentFaction: 'VS' } },
+    };
+    const params: SessionReportBuildParams = {
+      shared: createSharedFields(),
+      characters: { p1: createUniqueFields({ characterName: 'Seelah' }) },
+      partyActors: [partyActor],
+      layoutId: 'pfs2.s1-01',
+      now: FIXED_NOW,
+    };
+
+    const report = buildSessionReport(params);
+
+    expect(report.signUps).toHaveLength(1);
+    expect(report.signUps.every((s) => s.isGM === false)).toBe(true);
+  });
+});
+
 describe('buildGameDateTime', () => {
   it('rounds minutes 0–14 down to :00', () => {
     expect(buildGameDateTime('2025-03-15', new Date('2025-03-15T10:00:00Z'))).toBe('2025-03-15T10:00:00+00:00');
