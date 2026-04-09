@@ -64,8 +64,8 @@ export interface SessionReport {
   /** Constant identifying Pathfinder Society 2nd Edition */
   gameSystem: 'PFS2E';
 
-  /** Always false — GM chronicle generation is not included */
-  generateGmChronicle: false;
+  /** Whether the GM is also generating a chronicle for their own character */
+  generateGmChronicle: boolean;
 
   /** GM's Paizo organized play number */
   gmOrgPlayNumber: number;

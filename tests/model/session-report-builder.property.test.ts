@@ -131,7 +131,7 @@ describe('Session Report Builder Properties', () => {
      * Feature: paizo-session-reporting, Property 2: Session report constant fields invariant
      * Validates: Requirements 4.3, 4.4, 4.6
      */
-    it('generateGmChronicle is always false', () => {
+    it('generateGmChronicle is false when no GM character is present', () => {
       fc.assert(
         fc.property(
           eventDateArbitrary,

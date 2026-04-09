@@ -198,7 +198,7 @@ export function buildSessionReport(params: SessionReportBuildParams): SessionRep
   return {
     gameDate: buildGameDateTime(shared.eventDate, params.now),
     gameSystem: 'PFS2E',
-    generateGmChronicle: false,
+    generateGmChronicle: signUps.some((s) => s.isGM),
     gmOrgPlayNumber: Number.parseInt(shared.gmPfsNumber, 10) || 0,
     repEarned: shared.chosenFactionReputation,
     reportingA: shared.reportingA,

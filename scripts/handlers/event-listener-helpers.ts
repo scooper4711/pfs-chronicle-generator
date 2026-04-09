@@ -641,6 +641,7 @@ export function attachGmCharacterListeners(
         });
 
         dropZone.addEventListener('drop', async (event: Event) => {
+            event.stopPropagation();
             dropZone.classList.remove('dragover');
             await handleGmCharacterDrop(event as DragEvent, container, partyActors, partySheet);
         });

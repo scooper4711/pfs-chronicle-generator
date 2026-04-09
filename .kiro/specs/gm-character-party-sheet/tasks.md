@@ -171,7 +171,7 @@ Add a GM Character drop zone and data entry section to the Society tab. The GM c
     - Test form re-renders with empty drop zone after clear
     - _Requirements: 3.4, 8.4_
 
-- [-] 11. Final checkpoint - Ensure all tests pass and commit
+- [x] 11. Final checkpoint - Ensure all tests pass and commit
   - Ensure all tests pass, ask the user if questions arise.
   - Run `git add -A && git commit -S -m "feat: integrate GM character into event listeners, generation, reporting, and clear data"` to commit the event listener wiring, chronicle generation, session reporting, clear data integration, and associated tests.
 
