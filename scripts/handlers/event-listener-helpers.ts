@@ -652,6 +652,22 @@ export function attachGmCharacterListeners(
         });
     }
 
+    // When a GM character is already assigned, the section replaces the drop zone.
+    // Attach drop listeners to the section so dragging a new actor replaces the current one.
+    const gmSection = container.querySelector<HTMLElement>(GM_CHARACTER_SELECTORS.SECTION);
+    if (gmSection) {
+        gmSection.addEventListener('dragover', (event: Event) => {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+
+        gmSection.addEventListener('drop', async (event: Event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            await handleGmCharacterDrop(event as DragEvent, container, partyActors, partySheet);
+        });
+    }
+
     const clearButton = container.querySelector<HTMLButtonElement>(GM_CHARACTER_SELECTORS.CLEAR_BUTTON);
     clearButton?.addEventListener('click', async (event: Event) => {
         event.preventDefault();
