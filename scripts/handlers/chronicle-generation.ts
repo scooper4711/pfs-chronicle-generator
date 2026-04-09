@@ -25,23 +25,27 @@ import { createArchive, addPdfToArchive, storeArchive, FlagActor } from './chron
 import { generateChronicleFilename } from '../utils/filename-utils.js';
 import { PartyActor } from './event-listener-helpers.js';
 import { postChatNotification } from './chat-notifier.js';
+import { validateGmCharacterPfsId } from './gm-character-handlers.js';
 
 /**
  * Validates all character fields (shared and unique) for chronicle generation
  * 
  * This helper function aggregates validation for both shared fields and all
- * character-specific fields. It returns a validation result that includes
- * all errors found across all characters.
+ * character-specific fields. When a GM character actor is provided and the
+ * form data has a gmCharacterActorId, PFS ID mismatch validation is also run.
  * 
  * @param data - Form data containing shared and character-specific fields
  * @param partyActors - Array of party member actors (used for character names)
+ * @param gmCharacterActor - Optional GM character actor for PFS ID validation
  * @returns Object with valid flag and array of all validation errors
  * 
  * Requirements: code-standards-refactoring 2.6, 2.7, 2.8, 3.1, 3.6
+ * Requirements: gm-character-party-sheet 5.5, 7.1, 7.4
  */
 function validateAllCharacterFields(
   data: ChronicleFormData,
-  partyActors: PartyActor[]
+  partyActors: PartyActor[],
+  gmCharacterActor?: PartyActor
 ): { valid: boolean; errors: string[] } {
   const allErrors: string[] = [];
   
@@ -49,13 +53,21 @@ function validateAllCharacterFields(
   const sharedValidation = validateSharedFields(data.shared || {});
   allErrors.push(...sharedValidation.errors);
   
-  // Validate unique fields for all characters
+  // Validate unique fields for all characters (includes GM character if present in data.characters)
   const characters = data.characters || {};
   for (const [actorId, unique] of Object.entries(characters)) {
-    const actor = partyActors.find(a => a.id === actorId);
+    const actor = partyActors.find(a => a.id === actorId) ?? (gmCharacterActor?.id === actorId ? gmCharacterActor : undefined);
     const characterName = actor?.name || actorId;
-    const result = validateUniqueFields(unique as UniqueFields, characterName);
+    const result = validateUniqueFields(unique, characterName);
     allErrors.push(...result.errors);
+  }
+  
+  // Validate GM character PFS ID mismatch
+  if (gmCharacterActor && data.shared?.gmCharacterActorId) {
+    const pfsIdError = validateGmCharacterPfsId(gmCharacterActor, data.shared.gmPfsNumber);
+    if (pfsIdError) {
+      allErrors.push(pfsIdError);
+    }
   }
   
   return {
@@ -305,10 +317,12 @@ async function generateSingleCharacterPdf(
  * @param layoutId - The selected layout ID
  * @param blankChroniclePath - Path to the blank chronicle PDF
  * @param partyActor - The Party actor for zip archive storage
+ * @param gmCharacterActor - Optional GM character actor to include in generation
  * @returns Promise that resolves to array of GenerationResult objects
  *
  * Requirements: code-standards-refactoring 2.6, 2.7, 2.8, 3.1, 3.6
  * Requirements: chronicle-export 1.1, 1.2, 1.4, 1.5, 1.6, 5.3
+ * Requirements: gm-character-party-sheet 5.1, 5.2, 5.3
  */
 async function processAllPartyMembers(
   data: ChronicleFormData,
@@ -316,13 +330,19 @@ async function processAllPartyMembers(
   layout: Layout,
   layoutId: string,
   blankChroniclePath: string,
-  partyActor: FlagActor
+  partyActor: FlagActor,
+  gmCharacterActor?: PartyActor
 ): Promise<GenerationResult[]> {
   const results: GenerationResult[] = [];
   const archive = createArchive();
   const usedFilenames = new Set<string>();
 
-  for (const actor of partyActors) {
+  // Build the full list of actors to process: party members + optional GM character
+  const allActors = gmCharacterActor
+    ? [...partyActors, gmCharacterActor]
+    : partyActors;
+
+  for (const actor of allActors) {
     // Extract and transform character chronicle data
     const chronicleData = extractCharacterChronicleData(
       data,
@@ -408,17 +428,21 @@ function displayGenerationResults(results: GenerationResult[]): void {
  * 
  * @param data - Form data containing shared and character-specific fields
  * @param partyActors - Array of party member actors
+ * @param partyActor - The Party actor for zip archive storage
+ * @param gmCharacterActor - Optional GM character actor for generation and validation
  * @returns Promise that resolves when all chronicles are generated
  * 
  * Requirements: code-standards-refactoring 2.1, 2.6, 2.7, 2.8, 3.1, 3.6
+ * Requirements: gm-character-party-sheet 5.1, 5.4, 5.5, 7.1, 7.4
  */
 export async function generateChroniclesFromPartyData(
   data: ChronicleFormData,
   partyActors: PartyActor[],
-  partyActor: FlagActor
+  partyActor: FlagActor,
+  gmCharacterActor?: PartyActor
 ): Promise<void> {
-  // Step 1: Validate all fields
-  const validation = validateAllCharacterFields(data, partyActors);
+  // Step 1: Validate all fields (including GM character PFS ID mismatch)
+  const validation = validateAllCharacterFields(data, partyActors, gmCharacterActor);
   if (!validation.valid) {
     ui.notifications?.error(`Validation failed: ${validation.errors.join(', ')}`);
     return;
@@ -430,14 +454,15 @@ export async function generateChroniclesFromPartyData(
     return; // Error already displayed by helper
   }
 
-  // Step 3: Process each party member
+  // Step 3: Process each party member (including GM character if present)
   const results = await processAllPartyMembers(
     data,
     partyActors,
     layoutConfig.layout,
     layoutConfig.layoutId,
     layoutConfig.blankChroniclePath,
-    partyActor
+    partyActor,
+    gmCharacterActor
   );
 
   // Step 4: Display summary notifications

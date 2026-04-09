@@ -70,6 +70,9 @@ export interface SharedFields {
 
   /** Reporting flag D checkbox (paizo-session-reporting 10.1, 1.2) */
   reportingD: boolean;
+
+  /** Actor ID of the GM's character for GM credit (undefined if not assigned) */
+  gmCharacterActorId?: string;
 }
 
 /**
@@ -211,6 +214,12 @@ export interface PartyChronicleContext {
 
   /** Whether a zip archive of chronicles is stored on the Party actor (chronicle-export 2.2, 2.3) */
   hasChronicleZip: boolean;
+
+  /** Resolved GM character data for template rendering (null if not assigned) */
+  gmCharacter: PartyMember | null;
+
+  /** GM character's saved unique fields (null if not assigned) */
+  gmCharacterFields: UniqueFields | null;
 
   /** Action buttons for the form */
   buttons: Array<{ type: string; icon: string; label: string }>;

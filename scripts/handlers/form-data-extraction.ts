@@ -9,6 +9,7 @@
 
 import type { PartyActor } from './event-listener-helpers.js';
 import type { ChronicleFormData, SharedFields, UniqueFields } from '../model/party-chronicle-types.js';
+import { GM_CHARACTER_SELECTORS } from '../constants/dom-selectors.js';
 
 /**
  * Extracts form data into PartyChronicleData structure
@@ -67,10 +68,28 @@ export function extractFormData(container: HTMLElement, partyActors: PartyActor[
         reportingD: (container.querySelector('#reportingD') as HTMLInputElement)?.checked || false,
     };
     
+    // Read GM character actor ID from hidden input (gm-character-party-sheet 4.3, 8.1)
+    const gmCharacterActorId = (container.querySelector(GM_CHARACTER_SELECTORS.ACTOR_ID_INPUT) as HTMLInputElement)?.value || '';
+    if (gmCharacterActorId) {
+        shared.gmCharacterActorId = gmCharacterActorId;
+    }
+    
     // Extract character-specific fields
     const characters: Record<string, UniqueFields> = {};
+    
+    // Build the list of actor IDs to extract: party actors + GM character (if assigned)
+    const actorsToExtract: PartyActor[] = [...partyActors];
+    if (gmCharacterActorId) {
+        // Add a minimal PartyActor entry for the GM character so the same extraction loop handles it.
+        // The GM character's hidden fields in the DOM use the same characters.{actorId}.* naming pattern.
+        const gmSection = container.querySelector(`[data-character-id="${gmCharacterActorId}"]`);
+        if (gmSection) {
+            actorsToExtract.push({ id: gmCharacterActorId, name: '', system: { details: { level: { value: 1 } } } } as PartyActor);
+        }
+    }
+    
     // eslint-disable-next-line complexity -- Flat field extraction pattern, low cognitive complexity
-    partyActors.forEach((actor: PartyActor) => {
+    actorsToExtract.forEach((actor: PartyActor) => {
         const actorId = actor.id;
         
         // Get task level value (can be "-" or a number)

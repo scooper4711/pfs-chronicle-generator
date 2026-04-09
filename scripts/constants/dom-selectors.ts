@@ -79,6 +79,16 @@ export const REPUTATION_SELECTORS = {
 } as const;
 
 /**
+ * GM character selectors (drop zone, section, clear button, hidden actor ID input)
+ */
+export const GM_CHARACTER_SELECTORS = {
+  DROP_ZONE: '#gmCharacterDropZone',
+  SECTION: '#gmCharacterSection',
+  CLEAR_BUTTON: '#clearGmCharacter',
+  ACTOR_ID_INPUT: '#gmCharacterActorId',
+} as const;
+
+/**
  * General selectors
  */
 export const GENERAL_SELECTORS = {

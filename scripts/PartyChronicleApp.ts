@@ -9,7 +9,7 @@
  */
 
 import { layoutStore } from './LayoutStore.js';
-import { loadPartyChronicleData } from './model/party-chronicle-storage.js';
+import { loadPartyChronicleData, savePartyChronicleData } from './model/party-chronicle-storage.js';
 import { FACTION_NAMES } from './model/faction-names.js';
 import { 
   PartyMember,
@@ -25,7 +25,7 @@ import { validateSharedFields, validateUniqueFields } from './model/party-chroni
 import { generateChroniclesFromPartyData } from './handlers/party-chronicle-handlers.js';
 import { FlagActor, hasArchive } from './handlers/chronicle-exporter.js';
 import { PartyActor } from './handlers/event-listener-helpers.js';
-import { debug } from './utils/logger.js';
+import { debug, warn } from './utils/logger.js';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
 import FormDataExtended = foundry.applications.ux.FormDataExtended;
@@ -107,18 +107,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       // Exclude: null actors, familiars, and NPCs
       const partyMembers: PartyMember[] = this.partyActors
         .filter(actor => actor?.type === 'character')
-        .map(actor => {
-          const factionKey = actor.system?.pfs?.currentFaction ?? '';
-          return {
-            id: actor.id,
-            name: actor.name,
-            img: actor.img,
-            level: actor.system?.details?.level?.value ?? 1,
-            playerNumber: actor.system?.pfs?.playerNumber?.toString() ?? '',
-            characterNumber: actor.system?.pfs?.characterNumber?.toString() ?? '',
-            faction: FACTION_NAMES[factionKey] ?? ''
-          };
-        });
+        .map(actor => PartyChronicleApp.mapActorToPartyMember(actor));
 
       // Load saved party chronicle data from world flags
       const savedStorage = await loadPartyChronicleData();
@@ -156,6 +145,9 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       const shouldHideChroniclePathField = layoutHasDefault && chroniclePathExists;
       debug(`_prepareContext: shouldHideChroniclePathField = ${shouldHideChroniclePathField}`);
 
+      // Resolve GM character from saved data
+      const { gmCharacter, gmCharacterFields } = await this.resolveGmCharacter(savedData);
+
       // Return PartyChronicleContext object
       return {
         partyMembers,
@@ -165,6 +157,8 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
         selectedSeasonId,
         selectedLayoutId: effectiveLayoutId,
         savedData,
+        gmCharacter,
+        gmCharacterFields,
         chroniclePathExists: shouldHideChroniclePathField,
         hasChronicleZip: this.partyActor ? hasArchive(this.partyActor) : false,
         buttons: [
@@ -265,9 +259,72 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       reportingB: savedData?.shared?.reportingB ?? false,
       reportingC: savedData?.shared?.reportingC ?? false,
       reportingD: savedData?.shared?.reportingD ?? false,
+      gmCharacterActorId: savedData?.shared?.gmCharacterActorId,
     };
   }
 
+  /**
+   * Maps a PartyActor to a PartyMember display object.
+   *
+   * Extracts id, name, img, level, playerNumber, characterNumber, and faction
+   * from the actor's system data. Used for both party members and the GM character.
+   *
+   * @param actor - The actor to map
+   * @returns PartyMember object for template rendering
+   */
+  // eslint-disable-next-line complexity -- Flat null-coalescing pattern for optional actor system fields
+  private static mapActorToPartyMember(actor: PartyActor): PartyMember {
+    const factionKey = actor.system?.pfs?.currentFaction ?? '';
+    return {
+      id: actor.id,
+      name: actor.name,
+      img: actor.img,
+      level: actor.system?.details?.level?.value ?? 1,
+      playerNumber: actor.system?.pfs?.playerNumber?.toString() ?? '',
+      characterNumber: actor.system?.pfs?.characterNumber?.toString() ?? '',
+      faction: FACTION_NAMES[factionKey] ?? ''
+    };
+  }
+
+  /**
+   * Resolves the GM character from saved data.
+   *
+   * Reads `gmCharacterActorId` from saved shared fields and attempts to
+   * resolve the actor via `game.actors.get()`. If the actor exists and is
+   * a character type, returns the populated PartyMember and UniqueFields.
+   * If the actor cannot be resolved (deleted/unavailable), clears the
+   * stale ID from saved data and returns null.
+   *
+   * @param savedData - Previously saved party chronicle data (if any)
+   * @returns Object with gmCharacter and gmCharacterFields (both null if not assigned)
+   *
+   * Requirements: gm-character-party-sheet 4.4, 8.1, 8.2, 8.3
+   */
+  private async resolveGmCharacter(savedData: PartyChronicleData | null): Promise<{
+    gmCharacter: PartyMember | null;
+    gmCharacterFields: UniqueFields | null;
+  }> {
+    const gmCharacterActorId = savedData?.shared?.gmCharacterActorId;
+    if (!gmCharacterActorId) {
+      return { gmCharacter: null, gmCharacterFields: null };
+    }
+
+    const actor = game.actors.get(gmCharacterActorId) as PartyActor | undefined;
+
+    if (actor?.type === 'character') {
+      const gmCharacter = PartyChronicleApp.mapActorToPartyMember(actor);
+      const gmCharacterFields = savedData?.characters?.[gmCharacterActorId] ?? null;
+      return { gmCharacter, gmCharacterFields };
+    }
+
+    // Actor not found or wrong type — clear stale ID from saved data
+    warn(`GM character actor ID "${gmCharacterActorId}" could not be resolved; clearing from saved data`);
+    if (savedData?.shared) {
+      delete savedData.shared.gmCharacterActorId;
+      await savePartyChronicleData(savedData);
+    }
+    return { gmCharacter: null, gmCharacterFields: null };
+  }
 
 
   /**
@@ -305,7 +362,11 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
         setFlag: async () => {},
         unsetFlag: async () => {},
       };
-      await generateChroniclesFromPartyData(data, this.partyActors, noOpPartyActor);
+      const gmCharacterActorId = data.shared?.gmCharacterActorId;
+      const gmCharacterActor = gmCharacterActorId
+        ? game.actors.get(gmCharacterActorId) as PartyActor | undefined
+        : undefined;
+      await generateChroniclesFromPartyData(data, this.partyActors, noOpPartyActor, gmCharacterActor);
     }
 
   /**

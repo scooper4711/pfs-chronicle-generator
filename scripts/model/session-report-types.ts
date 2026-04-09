@@ -16,8 +16,8 @@
  * details and the shared reputation earned for the chosen faction.
  */
 export interface SignUp {
-  /** Always false — GM chronicle is handled separately */
-  isGM: false;
+  /** Whether this sign-up is the GM's character */
+  isGM: boolean;
 
   /** Player's Paizo organized play number from actor.system.pfs.playerNumber */
   orgPlayNumber: number;
@@ -64,8 +64,8 @@ export interface SessionReport {
   /** Constant identifying Pathfinder Society 2nd Edition */
   gameSystem: 'PFS2E';
 
-  /** Always false — GM chronicle generation is not included */
-  generateGmChronicle: false;
+  /** Whether the GM is also generating a chronicle for their own character */
+  generateGmChronicle: boolean;
 
   /** GM's Paizo organized play number */
   gmOrgPlayNumber: number;

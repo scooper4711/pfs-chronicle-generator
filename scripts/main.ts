@@ -34,7 +34,8 @@ import {
     attachExportButtonListener,
     attachPortraitListeners,
     attachFilePickerListener,
-    attachCollapsibleSectionListeners
+    attachCollapsibleSectionListeners,
+    attachGmCharacterListeners
 } from './handlers/event-listener-helpers.js';
 
 /** Registers world-scoped Foundry settings shown in the module config. */
@@ -317,6 +318,9 @@ function attachEventListeners(
     
     // Collapsible section listeners
     attachCollapsibleSectionListeners(container);
+    
+    // GM character drop zone and clear button listeners
+    attachGmCharacterListeners(container, partyActors, partySheet);
 }
 
 /**

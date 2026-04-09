@@ -45,6 +45,10 @@ export interface SessionReportBuildParams {
   layoutId: string;
   /** Optional Date for deterministic testing of time-rounding logic */
   now?: Date;
+  /** Optional GM character actor for GM credit SignUp entry */
+  gmCharacterActor?: SessionReportActor;
+  /** Optional GM character unique fields (required when gmCharacterActor is provided) */
+  gmCharacterFields?: UniqueFields;
 }
 
 /**
@@ -67,6 +71,35 @@ function buildSignUp(
 
   return {
     isGM: false,
+    orgPlayNumber: actor.system?.pfs?.playerNumber ?? 0,
+    characterNumber: actor.system?.pfs?.characterNumber ?? 0,
+    characterName: characterFields.characterName,
+    consumeReplay: characterFields.consumeReplay,
+    repEarned: chosenFactionReputation,
+    faction: factionFullName,
+  };
+}
+
+/**
+ * Builds a SignUp entry for the GM character with `isGM: true`.
+ *
+ * @param actor - GM character actor with PFS data
+ * @param characterFields - GM character's unique fields (name, consumeReplay)
+ * @param chosenFactionReputation - Shared reputation value for the chosen faction
+ * @returns A SignUp entry with isGM set to true
+ *
+ * Requirements: gm-character-party-sheet 6.1, 6.2, 6.3
+ */
+function buildGmSignUp(
+  actor: SessionReportActor,
+  characterFields: UniqueFields,
+  chosenFactionReputation: number
+): SignUp {
+  const currentFaction = actor.system?.pfs?.currentFaction ?? '';
+  const factionFullName = FACTION_NAMES[currentFaction] ?? currentFaction;
+
+  return {
+    isGM: true,
     orgPlayNumber: actor.system?.pfs?.playerNumber ?? 0,
     characterNumber: actor.system?.pfs?.characterNumber ?? 0,
     characterName: characterFields.characterName,
@@ -152,16 +185,20 @@ export function buildGameDateTime(eventDate: string, now?: Date): string {
  * Requirements: paizo-session-reporting 4.1–4.11, 9.1–9.6
  */
 export function buildSessionReport(params: SessionReportBuildParams): SessionReport {
-  const { shared, characters, partyActors, layoutId } = params;
+  const { shared, characters, partyActors, layoutId, gmCharacterActor, gmCharacterFields } = params;
 
   const signUps = partyActors
     .filter((actor) => characters[actor.id] !== undefined)
     .map((actor) => buildSignUp(actor, characters[actor.id], shared.chosenFactionReputation));
 
+  if (gmCharacterActor && gmCharacterFields) {
+    signUps.push(buildGmSignUp(gmCharacterActor, gmCharacterFields, shared.chosenFactionReputation));
+  }
+
   return {
     gameDate: buildGameDateTime(shared.eventDate, params.now),
     gameSystem: 'PFS2E',
-    generateGmChronicle: false,
+    generateGmChronicle: signUps.some((s) => s.isGM),
     gmOrgPlayNumber: Number.parseInt(shared.gmPfsNumber, 10) || 0,
     repEarned: shared.chosenFactionReputation,
     reportingA: shared.reportingA,

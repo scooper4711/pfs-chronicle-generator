@@ -131,7 +131,7 @@ describe('Session Report Builder Properties', () => {
      * Feature: paizo-session-reporting, Property 2: Session report constant fields invariant
      * Validates: Requirements 4.3, 4.4, 4.6
      */
-    it('generateGmChronicle is always false', () => {
+    it('generateGmChronicle is false when no GM character is present', () => {
       fc.assert(
         fc.property(
           eventDateArbitrary,
@@ -362,6 +362,122 @@ describe('Session Report Builder Properties', () => {
         { numRuns: 100 }
       );
     });
+  });
+});
+
+describe('Property 6: GM character session report SignUp correctness', () => {
+
+  /** Arbitrary for a GM character actor's PFS data. */
+  const gmCharacterArbitrary = fc.record({
+    actorId: fc.stringMatching(/^gm-[a-zA-Z0-9]{1,16}$/),
+    playerNumber: fc.integer({ min: 1, max: 9999999 }),
+    characterNumber: fc.integer({ min: 1, max: 99 }),
+    characterName: fc.string({ minLength: 1, maxLength: 40 }),
+    currentFaction: factionCodeArbitrary,
+    consumeReplay: fc.boolean(),
+  });
+
+  /** Arbitrary for a party member actor (distinct from GM character). */
+  const partyMemberArbitrary = fc.record({
+    actorId: fc.stringMatching(/^pm-[a-zA-Z0-9]{1,16}$/),
+    playerNumber: fc.integer({ min: 1, max: 9999999 }),
+    characterNumber: fc.integer({ min: 1, max: 99 }),
+    characterName: fc.string({ minLength: 1, maxLength: 40 }),
+    currentFaction: factionCodeArbitrary,
+    consumeReplay: fc.boolean(),
+  });
+
+  /**
+   * For any GM character actor with PFS data and any valid UniqueFields,
+   * the session report's signUps array should contain exactly one entry
+   * where isGM === true, and that entry should have orgPlayNumber,
+   * characterNumber, characterName, consumeReplay, repEarned, and faction
+   * populated from the actor and UniqueFields data, while all other
+   * entries should have isGM === false.
+   *
+   * Feature: gm-character-party-sheet, Property 6: GM character session report SignUp correctness
+   * Validates: Requirements 6.1, 6.2, 6.3
+   */
+  it('signUps contains exactly one isGM=true entry with correct GM character fields', () => {
+    fc.assert(
+      fc.property(
+        gmCharacterArbitrary,
+        fc.uniqueArray(partyMemberArbitrary, {
+          minLength: 1,
+          maxLength: 6,
+          selector: (m) => m.actorId,
+        }),
+        fc.integer({ min: 0, max: 9 }),
+        layoutIdArbitrary,
+        (gmChar, partyMembers, chosenFactionReputation, layoutId) => {
+          const gmActor: SessionReportActor = {
+            id: gmChar.actorId,
+            name: gmChar.characterName,
+            system: {
+              pfs: {
+                playerNumber: gmChar.playerNumber,
+                characterNumber: gmChar.characterNumber,
+                currentFaction: gmChar.currentFaction,
+              },
+            },
+          };
+
+          const gmFields = createUniqueFields({
+            characterName: gmChar.characterName,
+            consumeReplay: gmChar.consumeReplay,
+          });
+
+          const partyActors: SessionReportActor[] = partyMembers.map((m) => ({
+            id: m.actorId,
+            name: m.characterName,
+            system: {
+              pfs: {
+                playerNumber: m.playerNumber,
+                characterNumber: m.characterNumber,
+                currentFaction: m.currentFaction,
+              },
+            },
+          }));
+
+          const characters: Record<string, UniqueFields> = {};
+          for (const m of partyMembers) {
+            characters[m.actorId] = createUniqueFields({
+              characterName: m.characterName,
+              consumeReplay: m.consumeReplay,
+            });
+          }
+
+          const params: SessionReportBuildParams = {
+            shared: createSharedFields({ chosenFactionReputation }),
+            characters,
+            partyActors,
+            layoutId,
+            gmCharacterActor: gmActor,
+            gmCharacterFields: gmFields,
+          };
+
+          const report = buildSessionReport(params);
+
+          // Exactly one SignUp has isGM === true
+          const gmSignUps = report.signUps.filter((s) => s.isGM === true);
+          expect(gmSignUps).toHaveLength(1);
+
+          // The GM SignUp has correct field values
+          const gmSignUp = gmSignUps[0];
+          expect(gmSignUp.orgPlayNumber).toBe(gmChar.playerNumber);
+          expect(gmSignUp.characterNumber).toBe(gmChar.characterNumber);
+          expect(gmSignUp.characterName).toBe(gmChar.characterName);
+          expect(gmSignUp.consumeReplay).toBe(gmChar.consumeReplay);
+          expect(gmSignUp.repEarned).toBe(chosenFactionReputation);
+          expect(gmSignUp.faction).toBe(FACTION_NAMES[gmChar.currentFaction]);
+
+          // All other SignUps have isGM === false
+          const nonGmSignUps = report.signUps.filter((s) => s.isGM === false);
+          expect(nonGmSignUps).toHaveLength(partyMembers.length);
+        }
+      ),
+      { numRuns: 100 }
+    );
   });
 });
 

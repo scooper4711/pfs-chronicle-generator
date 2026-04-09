@@ -58,8 +58,9 @@ export function handlePortraitClick(event: MouseEvent, partyActors: PartyActor[]
         return;
     }
     
-    const actor = partyActors.find(a => a?.id === characterId);
-    debug('Found actor:', actor);
+    const actor = partyActors.find(a => a?.id === characterId)
+        ?? (game.actors.get(characterId) as PartyActor | undefined);
+    debug('Found actor:', actor?.name ?? 'not found');
     
     if (actor?.sheet) {
         debug('Opening actor sheet');

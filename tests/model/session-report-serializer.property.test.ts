@@ -69,7 +69,7 @@ const bonusRepArbitrary: fc.Arbitrary<BonusRep> = fc.record({
 const sessionReportArbitrary: fc.Arbitrary<SessionReport> = fc.record({
   gameDate: eventDateArbitrary,
   gameSystem: fc.constant('PFS2E' as const),
-  generateGmChronicle: fc.constant(false as const),
+  generateGmChronicle: fc.boolean(),
   gmOrgPlayNumber: fc.integer({ min: 1, max: 9999999 }),
   repEarned: fc.constant(0 as const),
   reportingA: fc.boolean(),

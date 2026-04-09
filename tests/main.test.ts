@@ -142,6 +142,7 @@ jest.mock('../scripts/handlers/event-listener-helpers', () => ({
   attachPortraitListeners: jest.fn(),
   attachFilePickerListener: jest.fn(),
   attachCollapsibleSectionListeners: jest.fn(),
+  attachGmCharacterListeners: jest.fn(),
 }));
 
 // Suppress console noise
