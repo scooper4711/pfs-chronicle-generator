@@ -157,7 +157,7 @@ class LayoutStore {
                 this.findAllLayouts({ source: source.source, target: dir }, season)
             ));
         } catch (loadError) {
-            if (game.isGM())
+            if (game.user?.isGM)
                 error(`Failed to load layouts from ${source.target}`, loadError);
             else
                 error(`Non-GM user shouldn't initialize the LayoutStore`);
