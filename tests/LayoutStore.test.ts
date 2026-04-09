@@ -247,8 +247,8 @@ describe('LayoutStore', () => {
       layoutStore = await getStore();
       await layoutStore.initialize();
 
-      const layouts = layoutStore.getLayoutsByParent('Season 1');
-      // Should convert "Season 1" to "s1" and match via stored season
+      const layouts = layoutStore.getLayoutsByParent('s1');
+      // Should match layouts stored under the "s1" season directory
       expect(layouts).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ id: 'pfs.s1-01' }),

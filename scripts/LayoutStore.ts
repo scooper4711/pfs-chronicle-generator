@@ -58,10 +58,10 @@ class LayoutStore {
     }
 
     private getDisplayNameForDirectory(dirName: string): string {
-        // Handle sN format (e.g., s1 -> Season 1)
-        if (dirName.toLowerCase().match(/^s\d+$/)) {
-            const num = dirName.substring(1);
-            return `Season ${num}`;
+        // Handle seasonN or sN format (e.g., season4 -> Season 4, s1 -> Season 1)
+        const seasonMatch = dirName.toLowerCase().match(/^(?:season|s)(\d+)$/);
+        if (seasonMatch) {
+            return `Season ${seasonMatch[1]}`;
         }
 
         // Handle other directories with title case
@@ -89,19 +89,10 @@ class LayoutStore {
     public getLayoutsByParent(parent: string | null | undefined): Array<{ id: string, description: string }> {
         if (!parent) return [];
 
-        // Convert display name back to directory format if needed
-        let dirFormat = parent;
-        if (typeof parent === 'string') {
-            // Handle Season N -> sN conversion
-            dirFormat = parent.replace(/^Season (\d+)$/i, 's$1');
-            // Handle spaces -> underscores for other names
-            dirFormat = dirFormat.toLowerCase().replaceAll(' ', '_');
-        }
-
-        debug('Looking for layouts with dirFormat:', dirFormat);
+        debug('Looking for layouts in season:', parent);
         
         const layouts = Array.from(this.layoutInfo.entries())
-            .filter(([_id, info]) => info.season === dirFormat && !info.hidden)
+            .filter(([_id, info]) => info.season === parent && !info.hidden)
             .map(([id, info]) => ({
                 id,
                 description: info.description
