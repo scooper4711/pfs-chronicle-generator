@@ -88,9 +88,9 @@ Includes layouts for many PFS scenarios - just select and go
 <tr>
 <td width="50%">
 
-**🔧 Generic Layout Support**
+**🧑‍💼 GM Credit Character**
 
-Generate chronicles for any scenario, even without a specific layout
+Drag and drop your GM character to generate a chronicle and include it in session reporting
 
 </td>
 <td width="50%">
@@ -293,56 +293,45 @@ Enter the reputation values for each faction, and the module will format them co
 
 ---
 
-## 🔧 Generic Layout
+## 🧑‍💼 GM Credit Character
 
-> **Works with any chronicle PDF, even without a specific layout**
+> **Generate a chronicle for your own character as GM**
 
-If the module doesn't have a specific layout for your scenario, you can use the **Generic** layout. This works for any chronicle but has some limitations:
+If you're running a session for GM credit, you can include your own character in the chronicle generation and session reporting workflow.
 
-<table>
-<tr>
-<td width="50%" valign="top">
+### How to assign a GM character
 
-**✅ Supported:**
-- Character information (name, Society ID, level)
-- Event information (GM, scenario name, event code, date)
-- XP gained
-- Gold gained and spent
-- Treasure bundles
-- Earned income
-- Reputation
-- Notes
+1. Open the party sheet's **Society** tab
+2. At the top of the character list, you'll see a **GM Character Drop Zone**
+3. Drag and drop your character actor from the sidebar onto the drop zone
+4. Your character appears with a "GM Credit" label, visually distinct from the party members
 
-</td>
-<td width="50%" valign="top">
+### What the GM character gets
 
-**❌ Not Supported:**
-- Adventure summary checkboxes
-- Strikeout items (boons, items, etc.)
+- All the same data entry fields as party members (task level, success level, proficiency rank, earned income, gold spent, notes)
+- Shared reward settings (XP, treasure bundles, downtime, reputation) applied automatically
+- A filled chronicle PDF included in the generated zip alongside party member chronicles
+- The chronicle saved to the actor's flags so you can download it from the character sheet
 
-</td>
-</tr>
-</table>
+### Session reporting
 
-**To use the Generic layout:**
-1. Select "Generic" from the layout dropdown
-2. Browse for your chronicle PDF using the file picker
-3. Fill out the form and generate as normal
+When you click **Copy Session Report**, the GM character is included in the `signUps` array with `isGM: true`. The [PFS Session Reporter](https://github.com/scooper4711/pfs-session-reporter) browser extension uses this flag to populate the GM credit fields on the Paizo reporting form automatically.
 
----
+### PFS ID validation
 
-## 🎨 Layout Designer (Advanced)
+The module validates that your GM character's PFS ID (from the actor sheet) matches the GM PFS Number entered in the session info section. If they don't match, you'll see a validation error before generating chronicles or copying the session report.
 
-> **Create custom layouts for new scenarios**
+### Managing the GM character
 
-If you need to create a layout for a new chronicle, the module includes a Layout Designer tool. This is an advanced feature for users who want to add support for new scenarios.
+- To clear the assignment, click the **clear** button on the GM character section
+- To replace it, drag a different character onto the section
+- The assignment persists across form reloads — no need to re-assign each time
+- The **Clear Data** button removes the GM character along with all other form data
 
-**To access it:**
-1. Go to **Configure Settings** → **Module Settings**
-2. Find **PFS Chronicle Generator**
-3. Click **Select Layout**
+### Restrictions
 
-The Layout Designer lets you define where each field should appear on the chronicle PDF. You can draw grids and boxes to help with positioning.
+- Only character actors are accepted (not familiars, NPCs, or vehicles)
+- The GM character cannot be an actor that is already in the party member list
 
 ---
 
