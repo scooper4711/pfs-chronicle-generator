@@ -439,3 +439,9 @@ Special thanks to [razanur37's PFS Chronicle Filler](https://razanur37.github.io
 ## 📄 License
 
 This module is licensed under the MIT License.
+
+---
+
+## ⚖️ Community Use Policy
+
+This FoundryVTT Module (PFS Chronicle Generator) uses trademarks and/or copyrights owned by Paizo Inc., used under Paizo's Community Use Policy (paizo.com/licenses/communityuse). We are expressly prohibited from charging you to use or access this content. PFS Chronicle Generator is not published, endorsed, or specifically approved by Paizo. For more information about Paizo Inc. and Paizo products, visit paizo.com.
