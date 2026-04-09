@@ -42,6 +42,7 @@ function createMockActor(flagValue: unknown): FlagActor {
     getFlag: jest.fn<() => unknown>().mockReturnValue(flagValue),
     setFlag: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
     unsetFlag: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+    update: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
   };
 }
 

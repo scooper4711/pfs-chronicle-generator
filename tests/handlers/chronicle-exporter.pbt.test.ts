@@ -169,6 +169,7 @@ describe('Property 4: hasArchive reflects flag presence', () => {
       getFlag: (_scope: string, _key: string) => flagValue,
       setFlag: async () => {},
       unsetFlag: async () => {},
+      update: async () => {},
     };
   }
 
@@ -275,6 +276,7 @@ describe('Property 3: Zip archive base64 round trip', () => {
             storedBase64 = value as string;
           },
           unsetFlag: async () => {},
+          update: async () => {},
         };
 
         await storeArchive(archive, mockActor);
@@ -317,6 +319,7 @@ describe('Property 7: storeArchive replaces previous archive', () => {
       async unsetFlag(_scope: string, _key: string): Promise<void> {
         actor.storedValue = '';
       },
+      async update(): Promise<void> {},
     };
     return actor;
   }
@@ -383,6 +386,7 @@ describe('Property 6: clearArchive removes the archive', () => {
       async unsetFlag(_scope: string, _key: string): Promise<void> {
         storedValue = undefined;
       },
+      async update(): Promise<void> {},
     };
   }
 

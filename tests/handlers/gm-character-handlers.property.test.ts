@@ -49,6 +49,7 @@ function createActorWithPfsId(playerNumber: string): PartyActor {
     getFlag: () => undefined,
     setFlag: async () => {},
     unsetFlag: async () => {},
+    update: async () => {},
     system: {
       details: { level: { value: 5 } },
       pfs: {
@@ -133,6 +134,7 @@ function createDropActor(
     getFlag: () => undefined,
     setFlag: async () => {},
     unsetFlag: async () => {},
+    update: async () => {},
     system: {
       details: { level: { value: level } },
       pfs: { playerNumber: 12345, characterNumber: 2001, currentFaction: 'EA' },

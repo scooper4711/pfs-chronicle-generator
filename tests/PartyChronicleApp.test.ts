@@ -77,6 +77,7 @@ const actorArbitrary = fc.record({
   getFlag: fc.constant(jest.fn(() => undefined)),
   setFlag: fc.constant(jest.fn(async () => {})),
   unsetFlag: fc.constant(jest.fn(async () => {})),
+  update: fc.constant(jest.fn(async () => {})),
   system: fc.record({
     details: fc.record({
       level: fc.record({
@@ -200,6 +201,7 @@ describe('PartyChronicleApp Property Tests', () => {
               getFlag: fc.constant(jest.fn(() => undefined)),
               setFlag: fc.constant(jest.fn(async () => {})),
               unsetFlag: fc.constant(jest.fn(async () => {})),
+              update: fc.constant(jest.fn(async () => {})),
               system: fc.record({
                 details: fc.record({
                   level: fc.record({

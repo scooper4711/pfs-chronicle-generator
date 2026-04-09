@@ -98,6 +98,7 @@ describe('Clear Data with GM character (Req 3.4, 8.4)', () => {
     getFlag: jest.fn(),
     setFlag: jest.fn().mockResolvedValue(undefined),
     unsetFlag: jest.fn().mockResolvedValue(undefined),
+    update: jest.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(() => {
@@ -127,6 +128,7 @@ describe('Clear Data with GM character (Req 3.4, 8.4)', () => {
         getFlag: jest.fn(),
         setFlag: jest.fn(),
         unsetFlag: jest.fn(),
+        update: jest.fn(),
         system: { details: { level: { value: 5 } } },
       },
       {
@@ -138,6 +140,7 @@ describe('Clear Data with GM character (Req 3.4, 8.4)', () => {
         getFlag: jest.fn(),
         setFlag: jest.fn(),
         unsetFlag: jest.fn(),
+        update: jest.fn(),
         system: { details: { level: { value: 3 } } },
       },
     ];

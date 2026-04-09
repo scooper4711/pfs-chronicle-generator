@@ -15,6 +15,7 @@ export interface FlagActor {
   getFlag(scope: string, key: string): unknown;
   setFlag(scope: string, key: string, value: unknown): Promise<void>;
   unsetFlag(scope: string, key: string): Promise<void>;
+  update(data: Record<string, unknown>): Promise<void>;
 }
 
 const MODULE_ID = 'pfs-chronicle-generator';

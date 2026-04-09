@@ -361,6 +361,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
         getFlag: () => undefined,
         setFlag: async () => {},
         unsetFlag: async () => {},
+        update: async () => {},
       };
       const gmCharacterActorId = data.shared?.gmCharacterActorId;
       const gmCharacterActor = gmCharacterActorId

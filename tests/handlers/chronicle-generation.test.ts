@@ -67,14 +67,13 @@ jest.mock('../../scripts/handlers/chat-notifier', () => ({
 }));
 
 jest.mock('../../scripts/handlers/chronicle-exporter', () => ({
-  createArchive: jest.fn(() => ({ file: jest.fn() })),
+  createArchive: jest.fn(() => ({ file: jest.fn(), generateAsync: jest.fn<() => Promise<string>>().mockResolvedValue('mockBase64') })),
   addPdfToArchive: jest.fn(
     (_archive: unknown, _bytes: unknown, filename: string, filenames: Set<string>) => {
       filenames.add(filename);
       return filename;
     }
   ),
-  storeArchive: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
 }));
 
 // Suppress console noise during tests
@@ -94,6 +93,7 @@ function createMockPartyActor(): FlagActor {
     getFlag: jest.fn(() => undefined),
     setFlag: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
     unsetFlag: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+    update: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
   };
 }
 
@@ -127,6 +127,7 @@ function createActor(id: string, name: string): PartyActor {
     name,
     system: { details: { level: { value: 5 } }, pfs: { playerNumber: '12345', characterNumber: '01' } },
     setFlag: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+    update: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
   } as unknown as PartyActor;
 }
 
@@ -274,16 +275,10 @@ describe('Chronicle Generation', () => {
 
       await generateChroniclesFromPartyData(data, [actor], createMockPartyActor());
 
-      expect(actor.setFlag).toHaveBeenCalledWith(
-        'pfs-chronicle-generator',
-        'chronicleData',
-        expect.objectContaining({ char: 'Test Character' })
-      );
-      expect(actor.setFlag).toHaveBeenCalledWith(
-        'pfs-chronicle-generator',
-        'chroniclePdf',
-        expect.any(String)
-      );
+      expect(actor.update).toHaveBeenCalledWith({
+        'flags.pfs-chronicle-generator.chronicleData': expect.objectContaining({ char: 'Test Character' }),
+        'flags.pfs-chronicle-generator.chroniclePdf': expect.any(String),
+      });
     });
 
     it('generates chronicles for multiple party members', async () => {

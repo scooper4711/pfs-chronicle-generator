@@ -96,6 +96,7 @@ describe('event-listener-helpers', () => {
     getFlag: jest.fn(),
     setFlag: jest.fn().mockResolvedValue(undefined),
     unsetFlag: jest.fn().mockResolvedValue(undefined),
+    update: jest.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(() => {
@@ -126,6 +127,7 @@ describe('event-listener-helpers', () => {
         getFlag: jest.fn(),
         setFlag: jest.fn(),
         unsetFlag: jest.fn(),
+        update: jest.fn(),
         system: {
           details: { level: { value: 5 } },
         },
@@ -139,6 +141,7 @@ describe('event-listener-helpers', () => {
         getFlag: jest.fn(),
         setFlag: jest.fn(),
         unsetFlag: jest.fn(),
+        update: jest.fn(),
         system: {
           details: { level: { value: 3 } },
         },
@@ -228,7 +231,7 @@ describe('event-listener-helpers', () => {
 
     it('should handle actors without system data gracefully', async () => {
       const actorsNoSystem: PartyActor[] = [
-        { id: 'actor-3', name: 'NoSystem', img: '', type: 'character', render: jest.fn(), getFlag: jest.fn(), setFlag: jest.fn(), unsetFlag: jest.fn() },
+        { id: 'actor-3', name: 'NoSystem', img: '', type: 'character', render: jest.fn(), getFlag: jest.fn(), setFlag: jest.fn(), unsetFlag: jest.fn(), update: jest.fn() },
       ];
 
       attachClearButtonListener(container, actorsNoSystem, {}, mockPartyActor);

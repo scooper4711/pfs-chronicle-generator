@@ -254,4 +254,10 @@ export interface GenerationResult {
 
   /** Raw PDF bytes when generation succeeds (used for zip archive) */
   pdfBytes?: Uint8Array;
+
+  /** Flag data to write to the actor in a batched update */
+  flagData?: {
+    chronicleData: Record<string, unknown>;
+    chroniclePdf: string;
+  };
 }

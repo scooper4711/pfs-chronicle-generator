@@ -65,6 +65,7 @@ function createActor(overrides: Partial<PartyActor> & { id: string }): PartyActo
     getFlag: () => undefined,
     setFlag: async () => {},
     unsetFlag: async () => {},
+    update: async () => {},
     system: {
       details: { level: { value: 5 } },
       pfs: { playerNumber: 12345, characterNumber: 2001, currentFaction: 'EA' },

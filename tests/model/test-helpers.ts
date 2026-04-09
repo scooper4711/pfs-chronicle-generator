@@ -91,7 +91,8 @@ export function createMockActor(actorId: string, chosenFaction: string = 'EA'): 
     getFlag: jest.fn((module: string, key: string) => {
       if (key === 'chosenFaction') return chosenFaction;
       return undefined;
-    })
+    }),
+    update: jest.fn(async () => {})
   };
 }
 

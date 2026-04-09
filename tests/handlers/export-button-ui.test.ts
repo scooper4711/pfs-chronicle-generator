@@ -103,6 +103,7 @@ function createMockPartyActor() {
     getFlag: jest.fn(),
     setFlag: jest.fn().mockResolvedValue(undefined),
     unsetFlag: jest.fn().mockResolvedValue(undefined),
+    update: jest.fn().mockResolvedValue(undefined),
   };
 }
 
@@ -129,7 +130,7 @@ describe('Export button UI integration', () => {
   let container: HTMLElement;
   let mockPartyActor: ReturnType<typeof createMockPartyActor>;
   const partyActors: PartyActor[] = [
-    { id: 'actor-1', name: 'Valeros', img: '', type: 'character', render: jest.fn(), getFlag: jest.fn(), setFlag: jest.fn(), unsetFlag: jest.fn(), system: { details: { level: { value: 5 } } } },
+    { id: 'actor-1', name: 'Valeros', img: '', type: 'character', render: jest.fn(), getFlag: jest.fn(), setFlag: jest.fn(), unsetFlag: jest.fn(), update: jest.fn(), system: { details: { level: { value: 5 } } } },
   ];
 
   beforeEach(() => {

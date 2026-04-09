@@ -76,9 +76,8 @@ const mockAddPdfToArchive = jest.fn(
 const mockStoreArchive = jest.fn<(a: unknown, b: unknown) => Promise<void>>().mockResolvedValue(undefined);
 
 jest.mock('../../scripts/handlers/chronicle-exporter', () => ({
-  createArchive: jest.fn(() => ({ file: jest.fn() })),
+  createArchive: jest.fn(() => ({ file: jest.fn(), generateAsync: jest.fn<() => Promise<string>>().mockResolvedValue('mockBase64') })),
   addPdfToArchive: (a: unknown, b: unknown, c: string, d: Set<string>) => mockAddPdfToArchive(a, b, c, d),
-  storeArchive: (a: unknown, b: unknown) => mockStoreArchive(a, b),
 }));
 
 // Suppress console noise during tests
@@ -97,6 +96,7 @@ function createMockPartyActor(): FlagActor {
     getFlag: jest.fn(() => undefined),
     setFlag: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
     unsetFlag: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+    update: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
   };
 }
 
@@ -131,6 +131,7 @@ function createActor(id: string, name: string, playerNumber: string | number = '
     name,
     system: { details: { level: { value: 5 } }, pfs: { playerNumber, characterNumber: '01' } },
     setFlag: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+    update: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
   } as unknown as PartyActor;
 }
 
@@ -216,16 +217,10 @@ describe('GM Character Chronicle Generation', () => {
 
       await generateChroniclesFromPartyData(data, [], createMockPartyActor(), gmCharacter);
 
-      expect(gmCharacter.setFlag).toHaveBeenCalledWith(
-        'pfs-chronicle-generator',
-        'chronicleData',
-        expect.objectContaining({ char: 'Test Character' })
-      );
-      expect(gmCharacter.setFlag).toHaveBeenCalledWith(
-        'pfs-chronicle-generator',
-        'chroniclePdf',
-        expect.any(String)
-      );
+      expect(gmCharacter.update).toHaveBeenCalledWith({
+        'flags.pfs-chronicle-generator.chronicleData': expect.objectContaining({ char: 'Test Character' }),
+        'flags.pfs-chronicle-generator.chroniclePdf': expect.any(String),
+      });
     });
 
     it('generates only party member chronicles when no GM character is provided', async () => {
@@ -275,9 +270,12 @@ describe('GM Character Chronicle Generation', () => {
         characters: { 'gm-char-1': { characterName: 'GM Hero' } },
       } as unknown as ChronicleFormData;
 
-      await generateChroniclesFromPartyData(data, [], createMockPartyActor(), gmCharacter);
+      const partyActor = createMockPartyActor();
+      await generateChroniclesFromPartyData(data, [], partyActor, gmCharacter);
 
-      expect(mockStoreArchive).toHaveBeenCalledTimes(1);
+      expect(partyActor.update).toHaveBeenCalledWith(
+        expect.objectContaining({ 'flags.pfs-chronicle-generator.chronicleZip': expect.any(String) })
+      );
     });
   });
 

@@ -21,7 +21,7 @@ import { validateSharedFields, validateUniqueFields } from '../model/party-chron
 import { PdfGenerator } from '../PdfGenerator.js';
 import { PDFDocument } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import { createArchive, addPdfToArchive, storeArchive, FlagActor } from './chronicle-exporter.js';
+import { createArchive, addPdfToArchive, FlagActor } from './chronicle-exporter.js';
 import { generateChronicleFilename } from '../utils/filename-utils.js';
 import { PartyActor } from './event-listener-helpers.js';
 import { postChatNotification } from './chat-notifier.js';
@@ -243,43 +243,25 @@ async function generateSingleCharacterPdf(
   blankChroniclePath: string,
   actor: PartyActor
 ): Promise<GenerationResult> {
-  const characterId = actor.id;
-  const characterName = actor.name;
+  const { id: characterId, name: characterName } = actor;
 
   try {
-    // Save chronicle data to actor flags (add blankChroniclePath for filename generation)
-    const chronicleDataWithPath = {
-      ...chronicleData,
-      blankChroniclePath: blankChroniclePath
-    };
-    
-    await actor.setFlag('pfs-chronicle-generator', 'chronicleData', chronicleDataWithPath);
-
-    // Load blank PDF
     const response = await fetch(blankChroniclePath);
     if (!response.ok) {
       throw new Error(`Failed to fetch blank chronicle PDF: ${response.statusText}`);
     }
 
-    const pdfBytes = await response.arrayBuffer();
-    const pdfDoc = await PDFDocument.load(pdfBytes);
+    const pdfDoc = await PDFDocument.load(await response.arrayBuffer());
     pdfDoc.registerFontkit(fontkit);
 
-    // Generate filled PDF
     const generator = new PdfGenerator(pdfDoc, layout, chronicleData);
     await generator.generate();
 
-    // Convert PDF to base64
     const modifiedPdfBytes = await pdfDoc.save();
     let binary = '';
-    const len = modifiedPdfBytes.byteLength;
-    for (let i = 0; i < len; i++) {
+    for (let i = 0; i < modifiedPdfBytes.byteLength; i++) {
       binary += String.fromCodePoint(modifiedPdfBytes[i]);
     }
-    const base64String = btoa(binary);
-
-    // Save PDF to actor flags
-    await actor.setFlag('pfs-chronicle-generator', 'chroniclePdf', base64String);
 
     debug(`Successfully generated chronicle for ${characterName}`);
 
@@ -287,19 +269,17 @@ async function generateSingleCharacterPdf(
       characterId,
       characterName,
       success: true,
-      pdfBytes: modifiedPdfBytes
+      pdfBytes: modifiedPdfBytes,
+      flagData: {
+        chronicleData: { ...chronicleData, blankChroniclePath },
+        chroniclePdf: btoa(binary)
+      }
     };
-
   } catch (caughtError) {
     const errorMessage = caughtError instanceof Error ? caughtError.message : String(caughtError);
     error(`Failed to generate chronicle for ${characterName}:`, caughtError);
 
-    return {
-      characterId,
-      characterName,
-      success: false,
-      error: errorMessage
-    };
+    return { characterId, characterName, success: false, error: errorMessage };
   }
 }
 
@@ -336,30 +316,23 @@ async function processAllPartyMembers(
   const results: GenerationResult[] = [];
   const archive = createArchive();
   const usedFilenames = new Set<string>();
+  const pendingUpdates = new Map<PartyActor, Record<string, unknown>>();
 
-  // Build the full list of actors to process: party members + optional GM character
   const allActors = gmCharacterActor
     ? [...partyActors, gmCharacterActor]
     : partyActors;
 
   for (const actor of allActors) {
-    // Extract and transform character chronicle data
-    const chronicleData = extractCharacterChronicleData(
-      data,
-      actor,
-      layoutId,
-      blankChroniclePath
-    );
+    const chronicleData = extractCharacterChronicleData(data, actor, layoutId, blankChroniclePath);
+    const result = await generateSingleCharacterPdf(chronicleData, layout, blankChroniclePath, actor);
 
-    // Generate PDF and save to actor flags
-    const result = await generateSingleCharacterPdf(
-      chronicleData,
-      layout,
-      blankChroniclePath,
-      actor
-    );
+    if (result.success && result.flagData) {
+      pendingUpdates.set(actor, {
+        'flags.pfs-chronicle-generator.chronicleData': result.flagData.chronicleData,
+        'flags.pfs-chronicle-generator.chroniclePdf': result.flagData.chroniclePdf
+      });
+    }
 
-    // Add successful PDFs to the zip archive
     if (result.success && result.pdfBytes && result.pdfBytes.length > 0) {
       const filename = generateChronicleFilename(actor.name, blankChroniclePath);
       addPdfToArchive(archive, result.pdfBytes, filename, usedFilenames);
@@ -368,12 +341,35 @@ async function processAllPartyMembers(
     results.push(result);
   }
 
-  // Store the zip on the Party actor if at least one PDF was added
-  if (usedFilenames.size > 0) {
-    await storeArchive(archive, partyActor);
+  await flushPendingUpdates(pendingUpdates, archive, usedFilenames, partyActor);
+  return results;
+}
+
+/**
+ * Writes all queued actor flag data and the zip archive in a single parallel batch.
+ * Each actor receives one update() call instead of multiple setFlag() calls,
+ * reducing the number of Foundry document updates and sheet re-renders.
+ */
+async function flushPendingUpdates(
+  pendingUpdates: Map<PartyActor, Record<string, unknown>>,
+  archive: ReturnType<typeof createArchive>,
+  usedFilenames: Set<string>,
+  partyActor: FlagActor
+): Promise<void> {
+  const updatePromises: Promise<void>[] = [];
+
+  for (const [actor, flagData] of pendingUpdates) {
+    updatePromises.push(actor.update(flagData));
   }
 
-  return results;
+  if (usedFilenames.size > 0) {
+    const base64 = await archive.generateAsync({ type: 'base64' });
+    updatePromises.push(partyActor.update({
+      'flags.pfs-chronicle-generator.chronicleZip': base64
+    }));
+  }
+
+  await Promise.all(updatePromises);
 }
 
 /**
