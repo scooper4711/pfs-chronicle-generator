@@ -1,11 +1,11 @@
 {
-  "id": "pfs2.season3-layout-s3-10",
+  "id": "pfs2.season4-layout-s4-09",
   "parent": "pfs2",
-  "description": "Layout for Season 3 Chronicle Scenario 10",
+  "description": "Layout for Season 4 Chronicles 09+",
   "flags": [
     "hidden"
   ],
-  "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles/pfs2/season3/3-10-DelvethePallidDepthsChronicle.pdf",
+  "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles/pfs2/season4/4-09-KillerintheGoldenMaskChronicle.pdf",
   "parameters": {
     "Event Info": {
       "event": {
@@ -146,56 +146,56 @@
   "canvas": {
     "main": {
       "x": 6.1,
-      "y": 11.3,
-      "x2": 93.9,
-      "y2": 95.3,
+      "y": 11.4,
+      "x2": 93.8,
+      "y2": 95.4,
       "parent": "page"
     },
     "character_info": {
       "x": 0.0,
       "y": 0.0,
       "x2": 100.0,
-      "y2": 6.7,
+      "y2": 6.5,
       "parent": "main"
     },
     "reputation": {
       "x": 0.0,
-      "y": 46.0,
-      "x2": 80.0,
-      "y2": 52.7,
-      "parent": "main"
-    },
-    "summary": {
-      "x": 0.0,
-      "y": 8.5,
-      "x2": 100.0,
-      "y2": 26.9,
-      "parent": "main"
-    },
-    "items": {
-      "x": 0.0,
-      "y": 54.5,
-      "x2": 51.8,
-      "y2": 84.4,
-      "parent": "main"
-    },
-    "rewards": {
-      "x": 82.2,
-      "y": 28.8,
-      "x2": 100.0,
-      "y2": 52.7,
-      "parent": "main"
-    },
-    "notes": {
-      "x": 0.0,
-      "y": 86.3,
+      "y": 84.8,
       "x2": 100.0,
       "y2": 94.6,
       "parent": "main"
     },
+    "summary": {
+      "x": 0.0,
+      "y": 8.3,
+      "x2": 100.0,
+      "y2": 30.5,
+      "parent": "main"
+    },
+    "items": {
+      "x": 0.0,
+      "y": 50.4,
+      "x2": 40.0,
+      "y2": 83.0,
+      "parent": "main"
+    },
+    "rewards": {
+      "x": 82.2,
+      "y": 32.3,
+      "x2": 100.0,
+      "y2": 83.0,
+      "parent": "main"
+    },
+    "notes": {
+      "x": 40.1,
+      "y": 50.4,
+      "x2": 79.9,
+      "y2": 83.0,
+      "parent": "main"
+    },
     "session_info": {
       "x": 0.0,
-      "y": 94.8,
+      "y": 94.6,
       "x2": 100.0,
       "y2": 100.0,
       "parent": "main"
@@ -206,10 +206,10 @@
       "value": "param:event",
       "type": "text",
       "canvas": "session_info",
-      "x": 2.4,
-      "y": 20.7,
-      "x2": 50.1,
-      "y2": 61.4,
+      "x": 80.2,
+      "y": 20.3,
+      "x2": 99.4,
+      "y2": 60.0,
       "font": "Helvetica",
       "fontsize": 14,
       "align": "LB"
@@ -218,10 +218,10 @@
       "value": "param:eventcode",
       "type": "text",
       "canvas": "session_info",
-      "x": 52.3,
-      "y": 20.7,
-      "x2": 62.4,
-      "y2": 61.4,
+      "x": 2.3,
+      "y": 22.5,
+      "x2": 45.6,
+      "y2": 62.2,
       "font": "Helvetica",
       "fontsize": 14,
       "align": "LB"
@@ -230,10 +230,10 @@
       "value": "param:date",
       "type": "text",
       "canvas": "session_info",
-      "x": 64.1,
-      "y": 20.7,
-      "x2": 78.5,
-      "y2": 61.4,
+      "x": 47.4,
+      "y": 22.5,
+      "x2": 62.5,
+      "y2": 62.2,
       "font": "Helvetica",
       "fontsize": 14,
       "align": "CB"
@@ -242,10 +242,10 @@
       "value": "param:gmid",
       "type": "text",
       "canvas": "session_info",
-      "x": 80.2,
-      "y": 20.7,
-      "x2": 99.4,
-      "y2": 61.4,
+      "x": 64.1,
+      "y": 22.5,
+      "x2": 78.6,
+      "y2": 62.2,
       "font": "Helvetica",
       "fontsize": 14,
       "align": "CB"
@@ -254,10 +254,10 @@
       "value": "param:char",
       "type": "text",
       "canvas": "character_info",
-      "x": 1.6,
-      "y": 18.1,
-      "x2": 63.6,
-      "y2": 50.0,
+      "x": 1.5,
+      "y": 18.4,
+      "x2": 63.5,
+      "y2": 50.9,
       "font": "Helvetica",
       "fontsize": 14,
       "fontweight": "bold",
@@ -268,9 +268,9 @@
       "type": "text",
       "canvas": "character_info",
       "x": 67.3,
-      "y": 21.3,
-      "x2": 87.4,
-      "y2": 41.8,
+      "y": 23.7,
+      "x2": 87.3,
+      "y2": 44.6,
       "font": "Helvetica",
       "fontsize": 9,
       "fontweight": "bold",
@@ -280,10 +280,10 @@
       "value": "param:char_number_short",
       "type": "text",
       "canvas": "character_info",
-      "x": 90.3,
-      "y": 21.3,
-      "x2": 97.5,
-      "y2": 41.8,
+      "x": 90.2,
+      "y": 23.7,
+      "x2": 97.6,
+      "y2": 44.6,
       "font": "Helvetica",
       "fontsize": 9,
       "fontweight": "bold",
@@ -293,10 +293,10 @@
       "value": "param:xp_gained",
       "type": "text",
       "canvas": "rewards",
-      "x": 3.2,
-      "y": 24.4,
-      "x2": 98.7,
-      "y2": 33.3,
+      "x": 0.6,
+      "y": 19.5,
+      "x2": 99.4,
+      "y2": 28.4,
       "font": "Helvetica",
       "fontsize": 14,
       "align": "CM"
@@ -305,10 +305,10 @@
       "value": "param:gp_gained",
       "type": "text",
       "canvas": "rewards",
-      "x": 3.2,
-      "y": 73.1,
-      "x2": 98.7,
-      "y2": 82.1,
+      "x": 0.6,
+      "y": 63.6,
+      "x2": 99.4,
+      "y2": 71.8,
       "font": "Helvetica",
       "fontsize": 14,
       "align": "CM"
@@ -317,27 +317,27 @@
       "value": "param:notes",
       "type": "multiline",
       "canvas": "notes",
-      "x": 0.0,
-      "y": 0.0,
-      "x2": 100.0,
+      "x": 4.9,
+      "y": 5.1,
+      "x2": 95.7,
       "y2": 100.0,
       "font": "Helvetica",
       "fontsize": 11,
       "align": "LB",
-      "lines": 5
+      "lines": 18
     },
     {
       "value": "param:reputation",
       "type": "multiline",
       "canvas": "reputation",
-      "x": 2.6,
+      "x": 1.7,
       "y": 0.0,
-      "x2": 97.4,
+      "x2": 97.5,
       "y2": 100.0,
       "font": "Helvetica",
-      "fontsize": 11,
+      "fontsize": 10,
       "align": "LB",
-      "lines": 4
+      "lines": 6
     }
   ]
 }

@@ -1,11 +1,11 @@
 {
-  "id": "pfs2.season3-layout-s3-10",
+  "id": "pfs2.season4-layout-s4-08",
   "parent": "pfs2",
-  "description": "Layout for Season 3 Chronicle Scenario 10",
+  "description": "Layout for Season 4 Chronicles 08+",
   "flags": [
     "hidden"
   ],
-  "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles/pfs2/season3/3-10-DelvethePallidDepthsChronicle.pdf",
+  "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles/pfs2/season4/4-08-BattlesforStarsFateChronicle.pdf",
   "parameters": {
     "Event Info": {
       "event": {
@@ -160,35 +160,35 @@
     },
     "reputation": {
       "x": 0.0,
-      "y": 46.0,
+      "y": 40.0,
       "x2": 80.0,
-      "y2": 52.7,
+      "y2": 46.8,
       "parent": "main"
     },
     "summary": {
       "x": 0.0,
       "y": 8.5,
       "x2": 100.0,
-      "y2": 26.9,
+      "y2": 21.2,
       "parent": "main"
     },
     "items": {
       "x": 0.0,
-      "y": 54.5,
+      "y": 48.6,
       "x2": 51.8,
-      "y2": 84.4,
+      "y2": 82.9,
       "parent": "main"
     },
     "rewards": {
       "x": 82.2,
-      "y": 28.8,
+      "y": 23.0,
       "x2": 100.0,
-      "y2": 52.7,
+      "y2": 46.8,
       "parent": "main"
     },
     "notes": {
       "x": 0.0,
-      "y": 86.3,
+      "y": 84.8,
       "x2": 100.0,
       "y2": 94.6,
       "parent": "main"
@@ -268,9 +268,9 @@
       "type": "text",
       "canvas": "character_info",
       "x": 67.3,
-      "y": 21.3,
+      "y": 23.3,
       "x2": 87.4,
-      "y2": 41.8,
+      "y2": 43.8,
       "font": "Helvetica",
       "fontsize": 9,
       "fontweight": "bold",
@@ -281,9 +281,9 @@
       "type": "text",
       "canvas": "character_info",
       "x": 90.3,
-      "y": 21.3,
+      "y": 23.3,
       "x2": 97.5,
-      "y2": 41.8,
+      "y2": 43.8,
       "font": "Helvetica",
       "fontsize": 9,
       "fontweight": "bold",
@@ -294,9 +294,9 @@
       "type": "text",
       "canvas": "rewards",
       "x": 3.2,
-      "y": 24.4,
+      "y": 24.5,
       "x2": 98.7,
-      "y2": 33.3,
+      "y2": 33.5,
       "font": "Helvetica",
       "fontsize": 14,
       "align": "CM"
@@ -306,9 +306,9 @@
       "type": "text",
       "canvas": "rewards",
       "x": 3.2,
-      "y": 73.1,
+      "y": 73.5,
       "x2": 98.7,
-      "y2": 82.1,
+      "y2": 82.5,
       "font": "Helvetica",
       "fontsize": 14,
       "align": "CM"
@@ -317,27 +317,27 @@
       "value": "param:notes",
       "type": "multiline",
       "canvas": "notes",
-      "x": 0.0,
-      "y": 0.0,
-      "x2": 100.0,
+      "x": 0.2,
+      "y": -0.1,
+      "x2": 99.9,
       "y2": 100.0,
       "font": "Helvetica",
       "fontsize": 11,
       "align": "LB",
-      "lines": 5
+      "lines": 6
     },
     {
       "value": "param:reputation",
       "type": "multiline",
       "canvas": "reputation",
-      "x": 2.6,
-      "y": 0.0,
-      "x2": 97.4,
+      "x": 0.3,
+      "y": 0.4,
+      "x2": 99.9,
       "y2": 100.0,
       "font": "Helvetica",
-      "fontsize": 11,
+      "fontsize": 10,
       "align": "LB",
-      "lines": 4
+      "lines": 5
     }
   ]
 }
