@@ -202,27 +202,91 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: CharacterSheetApp, html: JQu
 });
 
 /**
+ * Whether the module registered with the new region-based callback API.
+ * When true, the renderPartySheetPF2e hook skips form rendering (the system handles it).
+ */
+let usingRegionCallbacks = false;
+
+/**
  * Attempts to register the Society tab via the pf2e system's registerModuleTab API.
- * Falls back to manual DOM injection in the render hook when unavailable.
+ * 
+ * If the system supports registerModuleTab with render callbacks, registers with
+ * renderCallback and activateListeners so the system manages rendering through its
+ * region-based lifecycle. This eliminates the setTimeout hack and enables automatic
+ * re-rendering when party membership changes.
+ * 
+ * Falls back to the legacy renderPartySheetPF2e hook approach when registerModuleTab
+ * is unavailable.
  */
 function registerPartySheetTab(): void {
-  // Foundry stores registered sheet classes at CONFIG.Actor.sheetClasses.<type>.<id>.cls
   const sheetClass = (globalThis as any).CONFIG?.Actor?.sheetClasses?.party?.['pf2e.PartySheetPF2e']?.cls;
-  if (sheetClass && typeof sheetClass.registerModuleTab === 'function') {
-    sheetClass.registerModuleTab('pfs', 'Society');
-    debug('Registered Society tab via PartySheetPF2e.registerModuleTab');
+  if (!sheetClass || typeof sheetClass.registerModuleTab !== 'function') return;
+
+  sheetClass.registerModuleTab('pfs', 'Society', {
+    renderCallback: regionRenderCallback,
+    activateListeners: regionActivateListeners,
+  });
+  usingRegionCallbacks = true;
+  debug('Registered Society tab with region render callbacks');
+}
+
+/**
+ * Region render callback invoked by the PF2e system's #renderRegions lifecycle.
+ * 
+ * Returns the rendered HTML string for the Society tab content. The system
+ * sets the tab element's innerHTML to this string, then calls activateListeners.
+ * 
+ * @param app - The PartySheetPF2e app instance
+ * @param element - The tab content div element
+ * @param _data - The sheet data object from getData()
+ * @returns The rendered HTML string for the tab content
+ */
+async function regionRenderCallback(app: PartySheetApp, _element: HTMLElement, _data: object): Promise<string> {
+  const partyActors = (app.actor?.members || [])
+    .filter((actor: PartyActor) => actor?.type === 'character');
+
+  if (partyActors.length === 0) {
+    return `
+      <div style="padding: 2rem; text-align: center;">
+        <p>No party members found. Add characters to the party first.</p>
+      </div>
+    `;
   }
+
+  const chronicleApp = new PartyChronicleApp(partyActors, {}, app.actor);
+  const context: PartyChronicleContext = await chronicleApp._prepareContext();
+
+  const template = 'modules/pfs-chronicle-generator/templates/party-chronicle-filling.hbs';
+  return foundry.applications.handlebars.renderTemplate(template, context as any);
+}
+
+/**
+ * Region activateListeners callback invoked by the PF2e system after rendering.
+ * 
+ * Attaches all event listeners and initializes form state. Called after the system
+ * sets innerHTML from the renderCallback result.
+ * 
+ * @param app - The PartySheetPF2e app instance
+ * @param element - The tab content div element with rendered HTML
+ */
+function regionActivateListeners(app: PartySheetApp, element: HTMLElement): void {
+  const partyActors = (app.actor?.members || [])
+    .filter((actor: PartyActor) => actor?.type === 'character');
+
+  if (partyActors.length === 0) return;
+
+  attachEventListeners(element, partyActors, app);
+  initializeForm(element, partyActors);
 }
 
 /**
  * Hook: renderPartySheetPF2e
  * 
- * Detects when the party sheet is rendered and injects a GM-only "PFS" tab.
- * Matches the structure from templates/actors/party/sheet.hbs with data-tab attributes.
+ * When using the region callback API, this hook only captures the app reference
+ * for use by the render callbacks. The system handles rendering via #renderRegions.
  * 
- * If registerModuleTab was used, the tab nav link and content div already exist
- * in the DOM (rendered by the system's HBS template). Otherwise, falls back to
- * manual DOM injection.
+ * When using the legacy path (no callback API), this hook injects the GM-only
+ * "PFS" tab and renders the form directly, with a setTimeout to wait for DOM readiness.
  * 
  * Requirements: party-chronicle-filling 1.1, 1.2
  */
@@ -230,7 +294,10 @@ Hooks.on('renderPartySheetPF2e' as any, (app: PartySheetApp, html: JQuery, _data
     // Only show PFS tab to GMs
     if (!game.user.isGM) return;
 
-    // Wait for content to be fully rendered
+    // When using region callbacks, the system handles rendering — nothing else to do
+    if (usingRegionCallbacks) return;
+
+    // Legacy path: manual DOM injection with setTimeout
     setTimeout(() => {
         const container = html.find('section.container');
         if (container.length === 0) return;
