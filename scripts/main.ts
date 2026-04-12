@@ -231,6 +231,18 @@ interface ScrollSnapshot {
 }
 let savedScrollPositions: ScrollSnapshot | null = null;
 
+/**
+ * Saved focus state for the Society tab. Tracks which element had focus
+ * (by id) and the cursor/selection position so the GM doesn't lose their
+ * place in a text field when a player update triggers a re-render.
+ */
+interface FocusSnapshot {
+    elementId: string;
+    selectionStart: number | null;
+    selectionEnd: number | null;
+}
+let savedFocusState: FocusSnapshot | null = null;
+
 /** Restores previously-saved scroll positions after the Society tab is rebuilt. */
 function restoreScrollPositions(html: JQuery): void {
     if (!savedScrollPositions) return;
@@ -247,6 +259,35 @@ function restoreScrollPositions(html: JQuery): void {
     if (content) content.scrollTop = savedScrollPositions.content;
 
     debug('Restored Society tab scroll positions');
+}
+
+/** Restores focus to the previously-focused element after the Society tab is rebuilt. */
+function restoreFocusState(html: JQuery): void {
+    if (!savedFocusState) return;
+
+    const snapshot = savedFocusState;
+    const pfsTab = html.find('.tab[data-tab="pfs"]');
+    if (pfsTab.length === 0) return;
+
+    // Defer focus restoration to after the browser completes its layout pass.
+    // Without this, Foundry's own post-render focus management can steal focus
+    // away from our element immediately after we set it.
+    requestAnimationFrame(() => {
+        const element = pfsTab[0].querySelector<HTMLElement>(`#${CSS.escape(snapshot.elementId)}`);
+        if (!element) return;
+
+        element.focus();
+
+        // Restore cursor/selection position for text inputs and textareas
+        if (
+            (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) &&
+            snapshot.selectionStart !== null
+        ) {
+            element.setSelectionRange(snapshot.selectionStart, snapshot.selectionEnd);
+        }
+
+        debug(`Restored focus to #${snapshot.elementId}`);
+    });
 }
 
 /**
@@ -326,6 +367,43 @@ function trackScrollPositions(html: JQuery): void {
         });
     }
 }
+
+/**
+ * Installs focusin/focusout listeners on the Society tab to continuously
+ * track which element has focus and the cursor position. Called after content
+ * is rendered so form elements exist in the DOM.
+ */
+function trackFocusState(html: JQuery): void {
+    const pfsTab = html.find('.tab[data-tab="pfs"]');
+    if (pfsTab.length === 0) return;
+
+    const updateSelection = (target: HTMLElement): void => {
+        if (!target.id) return;
+        savedFocusState = {
+            elementId: target.id,
+            selectionStart: (target as HTMLInputElement).selectionStart ?? null,
+            selectionEnd: (target as HTMLInputElement).selectionEnd ?? null,
+        };
+    };
+
+    pfsTab[0].addEventListener('focusin', (event: FocusEvent) => {
+        updateSelection(event.target as HTMLElement);
+    });
+
+    // Track cursor movement continuously so the snapshot stays current
+    for (const eventName of ['keyup', 'click', 'select'] as const) {
+        pfsTab[0].addEventListener(eventName, (event: Event) => {
+            const target = event.target as HTMLElement;
+            if (target.id && document.activeElement === target) {
+                updateSelection(target);
+            }
+        });
+    }
+
+    // Note: we intentionally do NOT clear savedFocusState on focusout.
+    // When a re-render destroys the DOM, focusout fires before our hook
+    // runs, which would wipe the state we need to restore.
+}
 Hooks.on('renderPartySheetPF2e' as any, (app: PartySheetApp, html: JQuery, _data: any) => {
     // Only show PFS tab to GMs
     if (!game.user.isGM) return;
@@ -378,10 +456,13 @@ Hooks.on('renderPartySheetPF2e' as any, (app: PartySheetApp, html: JQuery, _data
         `);
     } else {
         renderPartyChronicleForm(pfsTab[0], characterActors, app).then(() => {
-            // Restore scroll positions first, then attach scroll listeners
-            // so the restore doesn't trigger the listeners with stale values
+            // Restore UI state, then attach listeners for continuous tracking.
+            // Order matters: restore before listeners so restoring doesn't
+            // overwrite saved state with stale values.
             restoreScrollPositions(html);
+            restoreFocusState(html);
             trackScrollPositions(html);
+            trackFocusState(html);
         });
     }
 });
