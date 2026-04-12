@@ -134,7 +134,7 @@ function buildDefaultUniqueFields(
     proficiencyRank: 'trained',
     earnedIncome: 0,
     goldSpent: 0,
-    notes: '',
+    notes: 'GM Credit',
     consumeReplay: false
   };
 }
