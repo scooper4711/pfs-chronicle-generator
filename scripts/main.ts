@@ -98,7 +98,6 @@ Hooks.on('init', async () => {
 // Hidden settings registered and initialized on ready
 Hooks.on('ready', async () => {
     await layoutStore.initialize();
-    registerPartySheetTab();
     const seasons = layoutStore.getSeasons();
     const seasonChoices: Record<string, string> = Object.fromEntries(
         seasons.map(season => [season.id, season.name])
@@ -202,27 +201,10 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: CharacterSheetApp, html: JQu
 });
 
 /**
- * Attempts to register the Society tab via the pf2e system's registerModuleTab API.
- * Falls back to manual DOM injection in the render hook when unavailable.
- */
-function registerPartySheetTab(): void {
-  // Foundry stores registered sheet classes at CONFIG.Actor.sheetClasses.<type>.<id>.cls
-  const sheetClass = (globalThis as any).CONFIG?.Actor?.sheetClasses?.party?.['pf2e.PartySheetPF2e']?.cls;
-  if (sheetClass && typeof sheetClass.registerModuleTab === 'function') {
-    sheetClass.registerModuleTab('pfs', 'Society');
-    debug('Registered Society tab via PartySheetPF2e.registerModuleTab');
-  }
-}
-
-/**
  * Hook: renderPartySheetPF2e
  * 
  * Detects when the party sheet is rendered and injects a GM-only "PFS" tab.
  * Matches the structure from templates/actors/party/sheet.hbs with data-tab attributes.
- * 
- * If registerModuleTab was used, the tab nav link and content div already exist
- * in the DOM (rendered by the system's HBS template). Otherwise, falls back to
- * manual DOM injection.
  * 
  * Requirements: party-chronicle-filling 1.1, 1.2
  */
@@ -232,29 +214,31 @@ Hooks.on('renderPartySheetPF2e' as any, (app: PartySheetApp, html: JQuery, _data
 
     // Wait for content to be fully rendered
     setTimeout(() => {
+        // Find the sub-nav (tab navigation)
+        const subNav = html.find('nav.sub-nav');
+        if (subNav.length === 0) return;
+
+        // Check if PFS tab already exists
+        if (subNav.find('[data-tab="pfs"]').length > 0) return;
+
+        // Create the Society tab button
+        const pfsTabButton = $(`<a data-tab="pfs">Society</a>`);
+
+        // Add the tab button to the navigation (after inventory tab)
+        const inventoryTab = subNav.find('[data-tab="inventory"]');
+        if (inventoryTab.length > 0) {
+            inventoryTab.after(pfsTabButton);
+        } else {
+            subNav.append(pfsTabButton);
+        }
+
+        // Find the container (where tab content goes)
         const container = html.find('section.container');
         if (container.length === 0) return;
 
-        // Check if the system already rendered the tab via registerModuleTab
-        let pfsTab = container.find('> .tab[data-tab="pfs"]');
-
-        if (pfsTab.length === 0) {
-            // Fallback: manually inject the tab nav link and content div
-            const subNav = html.find('nav.sub-nav');
-            if (subNav.length === 0) return;
-            if (subNav.find('[data-tab="pfs"]').length > 0) return;
-
-            const pfsTabButton = $(`<a data-tab="pfs">Society</a>`);
-            const inventoryTab = subNav.find('[data-tab="inventory"]');
-            if (inventoryTab.length > 0) {
-                inventoryTab.after(pfsTabButton);
-            } else {
-                subNav.append(pfsTabButton);
-            }
-
-            pfsTab = $(`<div class="tab" data-tab="pfs"></div>`);
-            container.append(pfsTab);
-        }
+        // Create the Society tab content
+        const pfsTab = $(`<div class="tab" data-tab="pfs"></div>`);
+        container.append(pfsTab);
 
         // Get party actors and filter to character actors only
         const partyActors = app.actor?.members || [];
