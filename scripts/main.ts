@@ -219,6 +219,37 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: CharacterSheetApp, html: JQu
 let lastActivePartyTab: string | null = null;
 
 /**
+ * Saved scroll positions for the Society tab's scrollable elements.
+ * Foundry's built-in _saveScrollPositions/_restoreScrollPositions can't help
+ * here because our tab content is destroyed and recreated on each re-render.
+ * We track the scroll top of the tab itself, the sidebar, and the content area.
+ */
+interface ScrollSnapshot {
+    tab: number;
+    sidebar: number;
+    content: number;
+}
+let savedScrollPositions: ScrollSnapshot | null = null;
+
+/** Restores previously-saved scroll positions after the Society tab is rebuilt. */
+function restoreScrollPositions(html: JQuery): void {
+    if (!savedScrollPositions) return;
+
+    const pfsTab = html.find('.tab[data-tab="pfs"]');
+    if (pfsTab.length === 0) return;
+
+    pfsTab[0].scrollTop = savedScrollPositions.tab;
+
+    const sidebar = pfsTab.find('.sidebar')[0];
+    if (sidebar) sidebar.scrollTop = savedScrollPositions.sidebar;
+
+    const content = pfsTab.find('.content')[0];
+    if (content) content.scrollTop = savedScrollPositions.content;
+
+    debug('Restored Society tab scroll positions');
+}
+
+/**
  * Re-binds the Foundry AppV1 Tabs controller after injecting a new tab,
  * then restores the tab the GM was actually on before the re-render.
  *
@@ -253,9 +284,8 @@ function rebindTabController(app: PartySheetApp, html: JQuery): void {
 
 /**
  * Installs a click listener on the tab nav to track which tab the GM selects.
- * This survives re-renders because we read it back in rebindTabController.
  */
-function trackActiveTab(html: JQuery): void {
+function trackTabClicks(html: JQuery): void {
     const subNav = html.find('nav.sub-nav');
     subNav.on('click', '[data-tab]', function () {
         const tab = $(this).data('tab') as string;
@@ -264,6 +294,37 @@ function trackActiveTab(html: JQuery): void {
             debug(`Tracked active party tab: "${tab}"`);
         }
     });
+}
+
+/**
+ * Installs scroll listeners on the Society tab's scrollable elements to
+ * continuously track scroll positions. Called after content is rendered so
+ * the sidebar and content elements exist in the DOM.
+ */
+function trackScrollPositions(html: JQuery): void {
+    const pfsTab = html.find('.tab[data-tab="pfs"]');
+    if (pfsTab.length === 0) return;
+
+    pfsTab[0].addEventListener('scroll', () => {
+        savedScrollPositions = savedScrollPositions || { tab: 0, sidebar: 0, content: 0 };
+        savedScrollPositions.tab = pfsTab[0].scrollTop;
+    });
+
+    const sidebar = pfsTab.find('.sidebar')[0];
+    if (sidebar) {
+        sidebar.addEventListener('scroll', () => {
+            savedScrollPositions = savedScrollPositions || { tab: 0, sidebar: 0, content: 0 };
+            savedScrollPositions.sidebar = sidebar.scrollTop;
+        });
+    }
+
+    const content = pfsTab.find('.content')[0];
+    if (content) {
+        content.addEventListener('scroll', () => {
+            savedScrollPositions = savedScrollPositions || { tab: 0, sidebar: 0, content: 0 };
+            savedScrollPositions.content = content.scrollTop;
+        });
+    }
 }
 Hooks.on('renderPartySheetPF2e' as any, (app: PartySheetApp, html: JQuery, _data: any) => {
     // Only show PFS tab to GMs
@@ -302,8 +363,8 @@ Hooks.on('renderPartySheetPF2e' as any, (app: PartySheetApp, html: JQuery, _data
     // click handlers, then activate() restores the previously-active tab.
     rebindTabController(app, html);
 
-    // Track tab clicks so we can restore the active tab across re-renders
-    trackActiveTab(html);
+    // Track tab clicks for tab preservation (works on the nav, doesn't need content)
+    trackTabClicks(html);
 
     // Get party actors and filter to character actors only
     const partyActors = app.actor?.members || [];
@@ -316,7 +377,12 @@ Hooks.on('renderPartySheetPF2e' as any, (app: PartySheetApp, html: JQuery, _data
             </div>
         `);
     } else {
-        renderPartyChronicleForm(pfsTab[0], characterActors, app);
+        renderPartyChronicleForm(pfsTab[0], characterActors, app).then(() => {
+            // Restore scroll positions first, then attach scroll listeners
+            // so the restore doesn't trigger the listeners with stale values
+            restoreScrollPositions(html);
+            trackScrollPositions(html);
+        });
     }
 });
 
