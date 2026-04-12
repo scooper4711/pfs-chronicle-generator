@@ -208,52 +208,116 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: CharacterSheetApp, html: JQu
  * 
  * Requirements: party-chronicle-filling 1.1, 1.2
  */
+
+/**
+ * Tracks the last active tab on the party sheet so we can restore it across
+ * re-renders. Foundry's Tabs controller resets to the `initial` tab ("overview")
+ * whenever the sheet re-renders from template, because the injected "pfs" tab
+ * doesn't exist in the template. We intercept tab clicks to remember the real
+ * active tab and restore it after re-injection.
+ */
+let lastActivePartyTab: string | null = null;
+
+/**
+ * Re-binds the Foundry AppV1 Tabs controller after injecting a new tab,
+ * then restores the tab the GM was actually on before the re-render.
+ *
+ * AppV1 sheets store an array of Tabs controllers in `_tabs`. Each controller
+ * manages click handlers on `[data-tab]` elements inside its `navSelector` and
+ * toggles the matching content panel inside `contentSelector`. When we inject a
+ * new tab after initial render, the controller doesn't know about it. Calling
+ * `bind(html)` re-scans the DOM and re-attaches click handlers, then
+ * `activate(tab)` switches to the correct tab.
+ *
+ * Reference: PartySheetPF2e.defaultOptions.tabs defines a single controller
+ * with navSelector "form > nav" and contentSelector ".container".
+ */
+function rebindTabController(app: PartySheetApp, html: JQuery): void {
+    const tabControllers = (app as any)._tabs;
+    if (!Array.isArray(tabControllers) || tabControllers.length === 0) {
+        debug('No _tabs controllers found on party sheet app; skipping rebind.');
+        return;
+    }
+
+    const tabController = tabControllers[0];
+
+    // Re-scan the DOM for [data-tab] elements and attach click handlers
+    tabController.bind(html[0]);
+
+    // Restore the tab the GM was actually on. Foundry's controller will have
+    // reset to "overview" because the fresh DOM didn't include our "pfs" tab.
+    const tabToRestore = lastActivePartyTab || tabController.active;
+    tabController.activate(tabToRestore);
+    debug(`Rebound tab controller; active tab restored to "${tabToRestore}".`);
+}
+
+/**
+ * Installs a click listener on the tab nav to track which tab the GM selects.
+ * This survives re-renders because we read it back in rebindTabController.
+ */
+function trackActiveTab(html: JQuery): void {
+    const subNav = html.find('nav.sub-nav');
+    subNav.on('click', '[data-tab]', function () {
+        const tab = $(this).data('tab') as string;
+        if (tab) {
+            lastActivePartyTab = tab;
+            debug(`Tracked active party tab: "${tab}"`);
+        }
+    });
+}
 Hooks.on('renderPartySheetPF2e' as any, (app: PartySheetApp, html: JQuery, _data: any) => {
     // Only show PFS tab to GMs
     if (!game.user.isGM) return;
 
-    // Wait for content to be fully rendered
-    setTimeout(() => {
-        // Find the sub-nav (tab navigation)
-        const subNav = html.find('nav.sub-nav');
-        if (subNav.length === 0) return;
+    // Find the sub-nav (tab navigation)
+    const subNav = html.find('nav.sub-nav');
+    if (subNav.length === 0) return;
 
-        // Check if PFS tab already exists
-        if (subNav.find('[data-tab="pfs"]').length > 0) return;
+    // Check if PFS tab already exists
+    if (subNav.find('[data-tab="pfs"]').length > 0) return;
 
-        // Create the Society tab button
-        const pfsTabButton = $(`<a data-tab="pfs">Society</a>`);
+    // Create the Society tab button
+    const pfsTabButton = $(`<a data-tab="pfs">Society</a>`);
 
-        // Add the tab button to the navigation (after inventory tab)
-        const inventoryTab = subNav.find('[data-tab="inventory"]');
-        if (inventoryTab.length > 0) {
-            inventoryTab.after(pfsTabButton);
-        } else {
-            subNav.append(pfsTabButton);
-        }
+    // Add the tab button to the navigation (after inventory tab)
+    const inventoryTab = subNav.find('[data-tab="inventory"]');
+    if (inventoryTab.length > 0) {
+        inventoryTab.after(pfsTabButton);
+    } else {
+        subNav.append(pfsTabButton);
+    }
 
-        // Find the container (where tab content goes)
-        const container = html.find('section.container');
-        if (container.length === 0) return;
+    // Find the container (where tab content goes)
+    const container = html.find('section.container');
+    if (container.length === 0) return;
 
-        // Create the Society tab content
-        const pfsTab = $(`<div class="tab" data-tab="pfs"></div>`);
-        container.append(pfsTab);
+    // Create the Society tab content
+    const pfsTab = $(`<div class="tab" data-tab="pfs"></div>`);
+    container.append(pfsTab);
 
-        // Get party actors and filter to character actors only
-        const partyActors = app.actor?.members || [];
-        const characterActors = partyActors.filter((actor: PartyActor) => actor?.type === 'character');
-        
-        if (characterActors.length === 0) {
-            pfsTab.html(`
-                <div style="padding: 2rem; text-align: center;">
-                    <p>No party members found. Add characters to the party first.</p>
-                </div>
-            `);
-        } else {
-            renderPartyChronicleForm(pfsTab[0], characterActors, app);
-        }
-    }, 150); // Delay to ensure content is rendered
+    // Re-bind the Foundry Tabs controller so it recognizes the new "pfs" tab.
+    // AppV1 stores tab controllers in _tabs[]; the party sheet has one at index 0
+    // with navSelector "form > nav" and contentSelector ".container".
+    // Calling bind() re-scans the nav for [data-tab] elements and attaches
+    // click handlers, then activate() restores the previously-active tab.
+    rebindTabController(app, html);
+
+    // Track tab clicks so we can restore the active tab across re-renders
+    trackActiveTab(html);
+
+    // Get party actors and filter to character actors only
+    const partyActors = app.actor?.members || [];
+    const characterActors = partyActors.filter((actor: PartyActor) => actor?.type === 'character');
+    
+    if (characterActors.length === 0) {
+        pfsTab.html(`
+            <div style="padding: 2rem; text-align: center;">
+                <p>No party members found. Add characters to the party first.</p>
+            </div>
+        `);
+    } else {
+        renderPartyChronicleForm(pfsTab[0], characterActors, app);
+    }
 });
 
 /**
