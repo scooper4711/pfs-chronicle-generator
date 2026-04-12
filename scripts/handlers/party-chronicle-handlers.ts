@@ -171,6 +171,40 @@ export function updateDowntimeDaysDisplay(
 }
 
 /**
+ * Determines the default XP earned for a season and updates the XP dropdown
+ * and downtime days display accordingly.
+ *
+ * Season directory naming convention:
+ * - "bounties" → 1 XP (bounties grant no downtime)
+ * - "quests"   → 2 XP (series 2 quests, q14+)
+ * - anything else (seasonN) → 4 XP (standard scenario)
+ *
+ * @param seasonId - The season directory name (e.g. "bounties", "quests", "season5")
+ * @param container - Container element for the form
+ */
+function updateXpForSeason(seasonId: string, container: HTMLElement): void {
+  const normalizedSeason = seasonId.toLowerCase();
+  let defaultXp: number;
+
+  if (normalizedSeason === 'bounties') {
+    defaultXp = 1;
+  } else if (normalizedSeason === 'quests') {
+    defaultXp = 2;
+  } else {
+    defaultXp = 4;
+  }
+
+  const xpSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
+  if (xpSelect) {
+    xpSelect.value = defaultXp.toString();
+    debug(`Auto-selected XP earned: ${defaultXp} for season "${seasonId}"`);
+  }
+
+  updateDowntimeDaysDisplay(defaultXp, container);
+  updateSectionSummary('shared-rewards', container);
+}
+
+/**
  * Updates the displayed earned income value for a specific character.
  * 
  * This handler is called when task level, success level, proficiency rank, or downtime days changes.
@@ -318,6 +352,9 @@ export async function handleSeasonChange(
         layoutDropdown.value = layouts[0].id;
         layoutDropdown.dispatchEvent(new Event('change', { bubbles: true }));
     }
+    
+    // Auto-select XP earned based on season type
+    updateXpForSeason(seasonId, container);
     
     // Auto-save
     await saveFormData(container, partyActors);
