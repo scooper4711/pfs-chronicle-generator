@@ -575,6 +575,7 @@
     border-image-source: none;
     border-radius: 4px;
     background-color: rgba(184, 134, 11, 0.06);
+    padding: 0.6rem 1rem;
 }
 
 /* GM character drop zone - empty state */
