@@ -11,7 +11,7 @@
 ![GitHub Release](https://img.shields.io/github/v/release/scooper4711/pfs-chronicle-generator)
 ![GitHub Downloads](https://img.shields.io/github/downloads/scooper4711/pfs-chronicle-generator/total)
 ![License](https://img.shields.io/github/license/scooper4711/pfs-chronicle-generator)
-![Foundry v13](https://img.shields.io/badge/Foundry-v13-informational)
+![Foundry v13+](https://img.shields.io/badge/Foundry-v13%20%7C%20v14-informational)
 ![CI](https://img.shields.io/github/actions/workflow/status/scooper4711/pfs-chronicle-generator/ci.yml?label=CI)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=scooper4711_pfs-chronicle-generator&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=scooper4711_pfs-chronicle-generator)
@@ -45,7 +45,7 @@
 
 ### Requirements
 
-- **Foundry VTT**: Version 13
+- **Foundry VTT**: Version 13 or 14
 - **Game System**: Pathfinder 2e (PF2e)
 
 ---
@@ -124,7 +124,6 @@ Open your party sheet and click on the **Society** tab.
 The module includes pre-configured layouts for many scenarios. When you select a scenario from the dropdown, the appropriate chronicle PDF is automatically selected.
 
 If your scenario isn't in the list, you can:
-- Use the **Generic** layout (works for any scenario, but doesn't support checkboxes or strikeouts)
 - Browse for a chronicle PDF manually using the file picker
 
 ### 4️⃣ Fill Out the Form
@@ -397,7 +396,7 @@ Check that all required fields are filled out:
 
 1. Check the browser console (F12) for error messages
 2. Make sure the chronicle PDF file exists and is accessible
-3. Try using the Generic layout to see if it's a layout-specific issue
+3. Try using a different layout to see if it's a layout-specific issue
 
 ---
 
