@@ -109,13 +109,14 @@
     font-weight: 600;
     padding-right: 0.25rem;
     white-space: nowrap;
-    flex-shrink: 0;
+    flex: 0 0 auto;
+    width: 120px;
 }
 
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group input,
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group select,
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group textarea {
-    flex: 1;
+    flex: 1 1 0%;
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
