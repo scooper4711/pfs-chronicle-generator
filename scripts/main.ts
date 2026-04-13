@@ -6,10 +6,15 @@ import { updateLayoutSpecificFields } from './utils/layout-utils.js';
 import { updateValidationDisplay } from './handlers/validation-display.js';
 import { PartyChronicleContext } from './model/party-chronicle-types.js';
 import { calculateTaskLevelOptions } from './utils/earned-income-calculator.js';
+import { getCreditsAwarded } from './utils/treasure-bundle-calculator.js';
+import { getZeroCurrencyDisplay, getCurrencyLabel } from './utils/currency-formatter.js';
+import { isStarfinder } from './utils/game-system-detector.js';
+import type { GameSystem } from './utils/game-system-detector.js';
 import { 
     extractFormData,
     saveFormData,
     updateAllTreasureBundleDisplays,
+    updateAllCreditsAwardedDisplays,
     updateDowntimeDaysDisplay,
     updateAllEarnedIncomeDisplays
 } from './handlers/party-chronicle-handlers.js';
@@ -88,6 +93,19 @@ function registerHandlebarsHelpers(): void {
     const { getTreasureBundleValue } = require('./utils/treasure-bundle-calculator.js');
     return getTreasureBundleValue(level);
   });
+
+  // Requirements: starfinder-support 3.5, 3.7, 5.2
+  Handlebars.registerHelper('getCreditsAwarded', function(level: number) {
+    return getCreditsAwarded(level);
+  });
+
+  Handlebars.registerHelper('getZeroCurrencyDisplay', function(gameSystem: string) {
+    return getZeroCurrencyDisplay(gameSystem as GameSystem);
+  });
+
+  Handlebars.registerHelper('getCurrencyLabel', function(gameSystem: string) {
+    return getCurrencyLabel(gameSystem as GameSystem);
+  });
 }
 
 Hooks.on('init', async () => {
@@ -143,7 +161,13 @@ Hooks.on('ready', async () => {
     }
 });
 
-Hooks.on('renderCharacterSheetPF2e' as any, (sheet: CharacterSheetApp, html: JQuery, _data: any) => {
+/**
+ * Handles character sheet rendering for both PF2e and SF2e systems.
+ * Adds Download/Delete Chronicle buttons to the PFS tab.
+ *
+ * Requirements: starfinder-support 2.3
+ */
+function handleCharacterSheetRender(sheet: CharacterSheetApp, html: JQuery): void {
     const pfsTab = html.find('.tab[data-tab="pfs"]');
     if (pfsTab.length === 0) {
         return;
@@ -198,6 +222,15 @@ Hooks.on('renderCharacterSheetPF2e' as any, (sheet: CharacterSheetApp, html: JQu
         });
         pfsTab.append(deleteButton);
     }
+}
+
+Hooks.on('renderCharacterSheetPF2e' as any, (sheet: CharacterSheetApp, html: JQuery, _data: any) => {
+    handleCharacterSheetRender(sheet, html);
+});
+
+// Requirements: starfinder-support 2.3
+Hooks.on('renderCharacterSheetSF2e' as any, (sheet: CharacterSheetApp, html: JQuery, _data: any) => {
+    handleCharacterSheetRender(sheet, html);
 });
 
 /**
@@ -405,6 +438,21 @@ function trackFocusState(html: JQuery): void {
     // runs, which would wipe the state we need to restore.
 }
 Hooks.on('renderPartySheetPF2e' as any, (app: PartySheetApp, html: JQuery, _data: any) => {
+    handlePartySheetRender(app, html);
+});
+
+// Requirements: starfinder-support 2.2
+Hooks.on('renderPartySheetSF2e' as any, (app: PartySheetApp, html: JQuery, _data: any) => {
+    handlePartySheetRender(app, html);
+});
+
+/**
+ * Handles party sheet rendering for both PF2e and SF2e systems.
+ * Injects a GM-only "Society" tab into the party sheet.
+ *
+ * Requirements: party-chronicle-filling 1.1, 1.2, starfinder-support 2.2
+ */
+function handlePartySheetRender(app: PartySheetApp, html: JQuery): void {
     // Only show PFS tab to GMs
     if (!game.user.isGM) return;
 
@@ -435,10 +483,6 @@ Hooks.on('renderPartySheetPF2e' as any, (app: PartySheetApp, html: JQuery, _data
     container.append(pfsTab);
 
     // Re-bind the Foundry Tabs controller so it recognizes the new "pfs" tab.
-    // AppV1 stores tab controllers in _tabs[]; the party sheet has one at index 0
-    // with navSelector "form > nav" and contentSelector ".container".
-    // Calling bind() re-scans the nav for [data-tab] elements and attaches
-    // click handlers, then activate() restores the previously-active tab.
     rebindTabController(app, html);
 
     // Track tab clicks for tab preservation (works on the nav, doesn't need content)
@@ -457,15 +501,13 @@ Hooks.on('renderPartySheetPF2e' as any, (app: PartySheetApp, html: JQuery, _data
     } else {
         renderPartyChronicleForm(pfsTab[0], characterActors, app).then(() => {
             // Restore UI state, then attach listeners for continuous tracking.
-            // Order matters: restore before listeners so restoring doesn't
-            // overwrite saved state with stale values.
             restoreScrollPositions(html);
             restoreFocusState(html);
             trackScrollPositions(html);
             trackFocusState(html);
         });
     }
-});
+}
 
 /**
  * Attaches all event listeners to the party chronicle form
@@ -550,10 +592,15 @@ async function initializeForm(
         });
     }
     
-    // Initialize treasure bundle displays on initial render
-    const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
-    const initialTreasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
-    updateAllTreasureBundleDisplays(initialTreasureBundles, container);
+    // Initialize treasure bundle / credits awarded displays on initial render
+    // Requirements: starfinder-support 5.2
+    if (isStarfinder()) {
+        updateAllCreditsAwardedDisplays(container);
+    } else {
+        const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+        const initialTreasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
+        updateAllTreasureBundleDisplays(initialTreasureBundles, container);
+    }
     
     // Initialize downtime days display based on XP earned
     // Requirements: earned-income-calculation 2.4, 2.5, 7.3

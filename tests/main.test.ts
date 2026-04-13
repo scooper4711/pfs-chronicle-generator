@@ -365,13 +365,15 @@ describe('main.ts', () => {
   });
 
   describe('Hooks registration count', () => {
-    it('registers callbacks for init, ready, renderCharacterSheetPF2e, and renderPartySheetPF2e', () => {
+    it('registers callbacks for init, ready, PF2e and SF2e character/party sheet hooks', () => {
       const registeredHooks = Object.keys(hooksCallbacks);
       expect(registeredHooks).toContain('init');
       expect(registeredHooks).toContain('ready');
       expect(registeredHooks).toContain('renderCharacterSheetPF2e');
+      expect(registeredHooks).toContain('renderCharacterSheetSF2e');
       expect(registeredHooks).toContain('renderPartySheetPF2e');
-      expect(registeredHooks).toHaveLength(4);
+      expect(registeredHooks).toContain('renderPartySheetSF2e');
+      expect(registeredHooks).toHaveLength(6);
     });
   });
 });

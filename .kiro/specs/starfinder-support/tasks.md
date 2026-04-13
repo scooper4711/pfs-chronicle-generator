@@ -39,7 +39,7 @@ Add Starfinder Society (SFS) support to the PFS Chronicle Generator so the modul
 - [x] 2. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 3. Modify earned income calculator for Starfinder support
+- [x] 3. Modify earned income calculator for Starfinder support
   - [x] 3.1 Add `STARFINDER_INCOME_TABLE` to `scripts/utils/earned-income-calculator.ts`
     - Build programmatically from `INCOME_TABLE` using `Math.ceil(value * 10)` for every entry (including critical success sub-table at level 20)
     - Computed once at module load time as a constant via `buildStarfinderIncomeTable()` helper
@@ -64,7 +64,7 @@ Add Starfinder Society (SFS) support to the PFS Chronicle Generator so the modul
     - **Property 7: Starfinder Downtime Days Fixed at 8** — always returns 8 in SF mode regardless of XP/TB inputs
     - **Validates: Requirements 4.1, 4.2, 4.3, 4.5, 4.6, 6.3, 9.1, 9.2**
 
-- [ ] 4. Add Credits Awarded table and modify treasure bundle calculator
+- [x] 4. Add Credits Awarded table and modify treasure bundle calculator
   - [x] 4.1 Add `CREDITS_AWARDED_TABLE`, `getCreditsAwarded()`, and modify `calculateCurrencyGained()` and `formatCurrencyValue()` in `scripts/utils/treasure-bundle-calculator.ts`
     - `CREDITS_AWARDED_TABLE`: levels 1-10 mapping to flat credit amounts (140, 220, 380, 640, 1000, 1500, 2200, 3000, 4400, 6000)
     - `getCreditsAwarded(level)`: returns 0 for levels outside 1-10
@@ -84,7 +84,7 @@ Add Starfinder Society (SFS) support to the PFS Chronicle Generator so the modul
 - [x] 5. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Modify scenario identifier and session report builder
+- [x] 6. Modify scenario identifier and session report builder
   - [x] 6.1 Update `scripts/model/scenario-identifier.ts` to handle Starfinder layout IDs
     - Add `SF_SCENARIO_PATTERN = /^sfs2\.s(\d+-\d+)$/` regex
     - Check SF pattern first, then PF pattern, then fallback (strip `sfs2.` or `pfs2.` prefix)
@@ -115,7 +115,7 @@ Add Starfinder Society (SFS) support to the PFS Chronicle Generator so the modul
 - [x] 7. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 8. Modify template, types, mapper, app, and handlers for Starfinder UI
+- [x] 8. Modify template, types, mapper, app, and handlers for Starfinder UI
   - [x] 8.1 Add `gameSystem` field to `PartyChronicleContext` in `scripts/model/party-chronicle-types.ts`
     - Type: `'pf2e' | 'sf2e'`
     - _Requirements: 7.3_
@@ -147,18 +147,18 @@ Add Starfinder Society (SFS) support to the PFS Chronicle Generator so the modul
     - Add new `updateAllCreditsAwardedDisplays(container)` function for Starfinder mode
     - _Requirements: 7.6, 7.7, 5.2_
 
-- [ ] 9. Update main entry point and module manifest
-  - [~] 9.1 Update `scripts/main.ts` for Starfinder hooks and Handlebars helpers
+- [x] 9. Update main entry point and module manifest
+  - [x] 9.1 Update `scripts/main.ts` for Starfinder hooks and Handlebars helpers
     - Register hooks for `renderPartySheetSF2e` and `renderCharacterSheetSF2e` (in addition to existing PF2e hooks)
     - Register new Handlebars helpers: `getCreditsAwarded`, `getZeroCurrencyDisplay`, `getCurrencyLabel`
     - `initializeForm`: call `updateAllCreditsAwardedDisplays` when in Starfinder mode instead of `updateAllTreasureBundleDisplays`
     - _Requirements: 2.2, 2.3, 3.5, 3.7, 5.2_
 
-  - [~] 9.2 Update `module.json` to declare SF2e system compatibility
+  - [x] 9.2 Update `module.json` to declare SF2e system compatibility
     - Add `{ "id": "sf2e", "type": "system", "compatibility": {} }` to `relationships.systems` array
     - _Requirements: 2.1_
 
-- [~] 10. Final checkpoint — Ensure all tests pass
+- [x] 10. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
