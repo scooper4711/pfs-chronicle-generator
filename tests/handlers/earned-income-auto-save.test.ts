@@ -297,7 +297,7 @@ describe('Earned Income Auto-Save Tests', () => {
       // Verify character fields
       expect(formData.characters.actor1.characterName).toBe('Character 1');
       expect(formData.characters.actor1.level).toBe(5);
-      expect(formData.characters.actor1.goldSpent).toBe(5.0);
+      expect(formData.characters.actor1.currencySpent).toBe(5.0);
       expect(formData.characters.actor1.notes).toBe('Test notes 1');
     });
   });

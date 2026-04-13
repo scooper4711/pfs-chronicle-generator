@@ -87,7 +87,7 @@ const buildParamsArbitrary = sharedFieldsArbitrary.chain((shared) =>
           successLevel: 'success',
           proficiencyRank: 'trained',
           earnedIncome: 0,
-          goldSpent: 0,
+          currencySpent: 0,
           notes: '',
           consumeReplay: char.consumeReplay,
         },

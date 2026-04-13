@@ -60,7 +60,7 @@ export function createUniqueFields(overrides: Partial<UniqueFields> = {}): Uniqu
     successLevel: 'success',
     proficiencyRank: 'trained',
     earnedIncome: 0,
-    goldSpent: 5,
+    currencySpent: 5,
     notes: 'Test notes',
     consumeReplay: false,
     ...overrides

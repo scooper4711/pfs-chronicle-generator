@@ -50,7 +50,7 @@ describe('mapToCharacterData', () => {
     successLevel: 'success',
     proficiencyRank: 'trained',
     earnedIncome: 0,
-    goldSpent: 0,
+    currencySpent: 0,
     notes: '',
     consumeReplay: false,
     ...overrides
@@ -85,7 +85,7 @@ describe('mapToCharacterData', () => {
       taskLevel: 1,
       successLevel: 'success',
       proficiencyRank: 'trained',
-      goldSpent: 10,
+      currencySpent: 10,
       notes: 'Saved the village from bandits'
     });
 
@@ -110,10 +110,10 @@ describe('mapToCharacterData', () => {
     // Earned income: level 1 trained = 0.2 gp/day × 4 days = 0.8 gp
     expect(result.income_earned).toBe(0.8);
     // Level 3 treasure bundle value is 3.8, so 2 × 3.8 = 7.6
-    expect(result.treasure_bundles_gp).toBe(7.6);
+    expect(result.treasure_bundle_value).toBe(7.6);
     // gp_gained = treasure_bundles_gp + income_earned = 7.6 + 0.8 = 8.4
-    expect(result.gp_gained).toBe(8.4);
-    expect(result.gp_spent).toBe(10);
+    expect(result.currency_gained).toBe(8.4);
+    expect(result.currency_spent).toBe(10);
 
     // Notes and reputation (reputation is now calculated)
     expect(result.notes).toBe('Saved the village from bandits');
@@ -137,7 +137,7 @@ describe('mapToCharacterData', () => {
       playerNumber: '67890', characterNumber: '02',
       level: 5,
       taskLevel: '-',
-      goldSpent: 0,
+      currencySpent: 0,
       notes: ''
     });
 
@@ -150,11 +150,11 @@ describe('mapToCharacterData', () => {
     expect(result.notes).toBe('');
     expect(result.reputation).toEqual([]); // No reputation since all values are 0
     // With 0 treasure bundles, treasure_bundles_gp should be 0
-    expect(result.treasure_bundles_gp).toBe(0);
+    expect(result.treasure_bundle_value).toBe(0);
     // With task level "-", income_earned should be 0
     expect(result.income_earned).toBe(0);
     // gp_gained = 0 + 0 = 0
-    expect(result.gp_gained).toBe(0);
+    expect(result.currency_gained).toBe(0);
   });
 
   it('should handle zero values correctly', () => {
@@ -168,7 +168,7 @@ describe('mapToCharacterData', () => {
       playerNumber: '11111', characterNumber: '03',
       level: 1,
       taskLevel: '-',
-      goldSpent: 0,
+      currencySpent: 0,
       notes: ''
     });
 
@@ -177,9 +177,9 @@ describe('mapToCharacterData', () => {
 
     expect(result.xp_gained).toBe(0);
     expect(result.income_earned).toBe(0);
-    expect(result.treasure_bundles_gp).toBe(0);
-    expect(result.gp_gained).toBe(0);
-    expect(result.gp_spent).toBe(0);
+    expect(result.treasure_bundle_value).toBe(0);
+    expect(result.currency_gained).toBe(0);
+    expect(result.currency_spent).toBe(0);
   });
 
   it('should preserve special characters in text fields', () => {
@@ -198,7 +198,7 @@ describe('mapToCharacterData', () => {
       taskLevel: 2,
       successLevel: 'success',
       proficiencyRank: 'trained',
-      goldSpent: 10,
+      currencySpent: 10,
       notes: 'Notes with "quotes" & special chars'
     });
 
@@ -228,8 +228,8 @@ describe('mapToCharacterData', () => {
       taskLevel: '-'
     });
     const result1 = mapToCharacterData(shared, unique1, actor);
-    expect(result1.treasure_bundles_gp).toBe(4.2);
-    expect(result1.gp_gained).toBe(4.2);
+    expect(result1.treasure_bundle_value).toBe(4.2);
+    expect(result1.currency_gained).toBe(4.2);
 
     // Test level 10: 3 × 60 = 180
     const unique10 = createUniqueFields({
@@ -239,8 +239,8 @@ describe('mapToCharacterData', () => {
       taskLevel: '-'
     });
     const result10 = mapToCharacterData(shared, unique10, actor);
-    expect(result10.treasure_bundles_gp).toBe(180);
-    expect(result10.gp_gained).toBe(180);
+    expect(result10.treasure_bundle_value).toBe(180);
+    expect(result10.currency_gained).toBe(180);
 
     // Test level 20: 3 × 3680 = 11040
     const unique20 = createUniqueFields({
@@ -250,8 +250,8 @@ describe('mapToCharacterData', () => {
       taskLevel: '-'
     });
     const result20 = mapToCharacterData(shared, unique20, actor);
-    expect(result20.treasure_bundles_gp).toBe(11040);
-    expect(result20.gp_gained).toBe(11040);
+    expect(result20.treasure_bundle_value).toBe(11040);
+    expect(result20.currency_gained).toBe(11040);
   });
 
   it('should calculate gp_gained as treasure_bundles_gp + income_earned', () => {
@@ -267,7 +267,7 @@ describe('mapToCharacterData', () => {
       taskLevel: 3,
       successLevel: 'success',
       proficiencyRank: 'trained',
-      goldSpent: 0,
+      currencySpent: 0,
       notes: ''
     });
 
@@ -275,11 +275,11 @@ describe('mapToCharacterData', () => {
     const result = mapToCharacterData(shared, unique, actor);
 
     // Level 5: 2 × 10 = 20
-    expect(result.treasure_bundles_gp).toBe(20);
+    expect(result.treasure_bundle_value).toBe(20);
     // Level 3 trained success: 0.5 gp/day × 3 days = 1.5 gp
     expect(result.income_earned).toBe(1.5);
     // gp_gained = 20 + 1.5 = 21.5
-    expect(result.gp_gained).toBe(21.5);
+    expect(result.currency_gained).toBe(21.5);
   });
 
   it('should use exact parameter names for PDF compatibility', () => {
@@ -295,7 +295,7 @@ describe('mapToCharacterData', () => {
       taskLevel: 0,
       successLevel: 'success',
       proficiencyRank: 'trained',
-      goldSpent: 0,
+      currencySpent: 0,
       notes: ''
     });
 
@@ -354,7 +354,7 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
     successLevel: 'success',
     proficiencyRank: 'trained',
     earnedIncome: 0,
-    goldSpent: 0,
+    currencySpent: 0,
     notes: '',
     consumeReplay: false,
     ...overrides
@@ -597,9 +597,9 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
     // Level 5: 2 × 10 = 20 gp (treasure bundles)
     // Level 3 trained: 0.5 gp/day × 4 days = 2 gp (earned income)
     // Total: 20 + 2 = 22 gp
-    expect(result1.treasure_bundles_gp).toBe(20);
+    expect(result1.treasure_bundle_value).toBe(20);
     expect(result1.income_earned).toBe(2);
-    expect(result1.gp_gained).toBe(22);
+    expect(result1.currency_gained).toBe(22);
 
     // Test case 2: Only treasure bundles (task level "-")
     const shared2 = createSharedFields({
@@ -616,9 +616,9 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
     // Level 10: 3 × 60 = 180 gp (treasure bundles)
     // Task level "-": 0 gp (earned income)
     // Total: 180 + 0 = 180 gp
-    expect(result2.treasure_bundles_gp).toBe(180);
+    expect(result2.treasure_bundle_value).toBe(180);
     expect(result2.income_earned).toBe(0);
-    expect(result2.gp_gained).toBe(180);
+    expect(result2.currency_gained).toBe(180);
 
     // Test case 3: Only earned income (no treasure bundles)
     const shared3 = createSharedFields({
@@ -635,9 +635,9 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
     // No treasure bundles: 0 gp
     // Level 13 master: 15 gp/day × 8 days = 120 gp (earned income)
     // Total: 0 + 120 = 120 gp
-    expect(result3.treasure_bundles_gp).toBe(0);
+    expect(result3.treasure_bundle_value).toBe(0);
     expect(result3.income_earned).toBe(120);
-    expect(result3.gp_gained).toBe(120);
+    expect(result3.currency_gained).toBe(120);
 
     // Test case 4: Neither (task level "-" and no treasure bundles)
     const shared4 = createSharedFields({
@@ -654,9 +654,9 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
     // No treasure bundles: 0 gp
     // Task level "-": 0 gp (earned income)
     // Total: 0 + 0 = 0 gp
-    expect(result4.treasure_bundles_gp).toBe(0);
+    expect(result4.treasure_bundle_value).toBe(0);
     expect(result4.income_earned).toBe(0);
-    expect(result4.gp_gained).toBe(0);
+    expect(result4.currency_gained).toBe(0);
   });
 
   /**
@@ -759,14 +759,14 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.char_number_short).toBe(unique.characterNumber.substring(1));
         expect(result.char).toBe(unique.characterName);
         expect(result.level).toBe(unique.level);
-        expect(result.gp_spent).toBe(unique.goldSpent);
+        expect(result.currency_spent).toBe(unique.goldSpent);
         expect(result.notes).toBe(unique.notes);
         
         // Verify calculated fields exist and are numbers
         expect(typeof result.income_earned).toBe('number');
-        expect(typeof result.treasure_bundles_gp).toBe('number');
-        expect(typeof result.gp_gained).toBe('number');
-        expect(result.gp_gained).toBeGreaterThanOrEqual(0);
+        expect(typeof result.treasure_bundle_value).toBe('number');
+        expect(typeof result.currency_gained).toBe('number');
+        expect(result.currency_gained).toBeGreaterThanOrEqual(0);
       }),
       { numRuns: 100 }
     );
@@ -837,12 +837,12 @@ describe('Property 6: Data Combination Correctness', () => {
         // Numeric fields should be identical
         expect(result.xp_gained).toStrictEqual(shared.xpEarned);
         expect(result.level).toStrictEqual(unique.level);
-        expect(result.gp_spent).toStrictEqual(unique.goldSpent);
+        expect(result.currency_spent).toStrictEqual(unique.goldSpent);
         
         // Calculated fields should be numbers
         expect(typeof result.income_earned).toBe('number');
-        expect(typeof result.treasure_bundles_gp).toBe('number');
-        expect(typeof result.gp_gained).toBe('number');
+        expect(typeof result.treasure_bundle_value).toBe('number');
+        expect(typeof result.currency_gained).toBe('number');
 
         // Array fields should be identical (deep equality)
         expect(result.summary_checkbox).toStrictEqual(shared.adventureSummaryCheckboxes);
@@ -911,11 +911,11 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.reputation).toEqual([]);
         
         // With 0 treasure bundles, treasure_bundles_gp should be 0
-        expect(result.treasure_bundles_gp).toBe(0);
+        expect(result.treasure_bundle_value).toBe(0);
         // With task level "-", income_earned should be 0
         expect(result.income_earned).toBe(0);
         // gp_gained should be 0 when both are 0
-        expect(result.gp_gained).toBe(0);
+        expect(result.currency_gained).toBe(0);
       }),
       { numRuns: 100 }
     );
@@ -973,11 +973,11 @@ describe('Property 6: Data Combination Correctness', () => {
         // Verify zero values are preserved (not treated as falsy)
         expect(result.xp_gained).toBe(0);
         expect(result.income_earned).toBe(0);
-        expect(result.gp_spent).toBe(0);
+        expect(result.currency_spent).toBe(0);
         
         // treasure_bundles_gp and gp_gained depend on treasure bundles
-        expect(typeof result.treasure_bundles_gp).toBe('number');
-        expect(typeof result.gp_gained).toBe('number');
+        expect(typeof result.treasure_bundle_value).toBe('number');
+        expect(typeof result.currency_gained).toBe('number');
       }),
       { numRuns: 100 }
     );

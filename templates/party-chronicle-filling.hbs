@@ -355,8 +355,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="goldSpent-{{gmCharacter.id}}"><i class="fas fa-money-bill-wave"></i> Gold Spent</label>
-                        <input type="number" id="goldSpent-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.goldSpent" value="{{#if gmCharacterFields}}{{lookup gmCharacterFields 'goldSpent'}}{{else}}0{{/if}}" step="0.01" data-tooltip="Optionally record gold spent during the adventure. If left at zero, the field will be left blank for the player to fill in.">
+                        <label for="currencySpent-{{gmCharacter.id}}"><i class="fas fa-money-bill-wave"></i> Currency Spent</label>
+                        <input type="number" id="currencySpent-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.currencySpent" value="{{#if gmCharacterFields}}{{lookup gmCharacterFields 'currencySpent'}}{{else}}0{{/if}}" step="0.01" data-tooltip="Optionally record currency spent during the adventure. If left at zero, the field will be left blank for the player to fill in.">
                     </div>
 
                     <div class="form-group full-width">
@@ -453,8 +453,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="goldSpent-{{this.id}}"><i class="fas fa-money-bill-wave"></i> Gold Spent</label>
-                        <input type="number" id="goldSpent-{{this.id}}" name="characters.{{this.id}}.goldSpent" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'goldSpent'}}{{else}}0{{/if}}" step="0.01" data-tooltip="Optionally record gold spent during the adventure. If left at zero, the field will be left blank for the player to fill in.">
+                        <label for="currencySpent-{{this.id}}"><i class="fas fa-money-bill-wave"></i> Currency Spent</label>
+                        <input type="number" id="currencySpent-{{this.id}}" name="characters.{{this.id}}.currencySpent" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'currencySpent'}}{{else}}0{{/if}}" step="0.01" data-tooltip="Optionally record currency spent during the adventure. If left at zero, the field will be left blank for the player to fill in.">
                     </div>
                     
                     <div class="form-group full-width">

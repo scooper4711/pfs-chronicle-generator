@@ -195,7 +195,7 @@ describe('Chronicle Path Persistence Property Tests', () => {
           successLevel: 'success',
           proficiencyRank: 'trained',
           earnedIncome: 10.5,
-          goldSpent: 5.0,
+          currencySpent: 5.0,
           notes: 'Test notes 1',
           consumeReplay: false
         },
@@ -207,7 +207,7 @@ describe('Chronicle Path Persistence Property Tests', () => {
           successLevel: 'success',
           proficiencyRank: 'trained',
           earnedIncome: 8.0,
-          goldSpent: 3.5,
+          currencySpent: 3.5,
           notes: 'Test notes 2',
           consumeReplay: false
         }
@@ -493,7 +493,7 @@ describe('Chronicle Path Persistence Property Tests', () => {
               expect(characters.actor1.characterNumber).toBe('2001');
               expect(characters.actor1.level).toBe(5);
               expect(characters.actor1.earnedIncome).toBe(10.5);
-              expect(characters.actor1.goldSpent).toBe(5.0);
+              expect(characters.actor1.currencySpent).toBe(5.0);
               expect(characters.actor1.notes).toBe('Test notes 1');
 
               expect(characters.actor2.characterName).toBe('Character 2');
@@ -501,7 +501,7 @@ describe('Chronicle Path Persistence Property Tests', () => {
               expect(characters.actor2.characterNumber).toBe('2002');
               expect(characters.actor2.level).toBe(3);
               expect(characters.actor2.earnedIncome).toBe(8.0);
-              expect(characters.actor2.goldSpent).toBe(3.5);
+              expect(characters.actor2.currencySpent).toBe(3.5);
               expect(characters.actor2.notes).toBe('Test notes 2');
             }
 

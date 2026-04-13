@@ -2,16 +2,17 @@
  * Treasure Bundle Calculator
  * 
  * Provides lookup tables and calculation functions for converting treasure bundles
- * (shared party rewards) into character-specific gold values based on character level.
+ * (shared party rewards) into character-specific currency values based on character level.
  * 
- * Source: Pathfinder Society Guide
+ * Source: Pathfinder Society Guide (PF2e values; Starfinder values TBD)
  */
 
 /**
- * Lookup table mapping character levels (1-20) to treasure bundle values in gold pieces.
+ * Lookup table mapping character levels (1-20) to treasure bundle values in currency.
  * 
- * Each treasure bundle is worth a different amount of gold depending on the character's level.
+ * Each treasure bundle is worth a different amount depending on the character's level.
  * These values are from the official Pathfinder Society Guide and must be exact.
+ * TODO: Add Starfinder treasure bundle values when Starfinder support is added.
  */
 export const TREASURE_BUNDLE_VALUES: Record<number, number> = {
   1: 1.4,
@@ -63,7 +64,7 @@ export function getTreasureBundleValue(level: number): number {
  * 
  * Requirements: treasure-bundle-calculation 2.1, 2.2, 2.3, 2.4
  */
-export function calculateTreasureBundlesGp(
+export function calculateTreasureBundleValue(
   treasureBundles: number,
   characterLevel: number
 ): number {
@@ -78,31 +79,32 @@ export function calculateTreasureBundlesGp(
 }
 
 /**
- * Calculates the total gold gained (treasure bundles + income earned).
+ * Calculates the total currency gained (treasure bundles + income earned).
  * 
- * Formula: treasure_bundles_gp + income_earned
+ * Formula: treasure_bundle_value + income_earned
  * Result is rounded to 2 decimal places.
  * 
- * @param treasureBundlesGp - Gold from treasure bundles
- * @param incomeEarned - Gold from income earned
- * @returns Total gold gained, rounded to 2 decimal places
+ * @param treasureBundleValue - Currency from treasure bundles
+ * @param incomeEarned - Currency from income earned
+ * @returns Total currency gained, rounded to 2 decimal places
  * 
  * Requirements: treasure-bundle-calculation 4.1, 4.2
  */
-export function calculateGpGained(
-  treasureBundlesGp: number,
+export function calculateCurrencyGained(
+  treasureBundleValue: number,
   incomeEarned: number
 ): number {
-  const totalGold = treasureBundlesGp + incomeEarned;
+  const totalGold = treasureBundleValue + incomeEarned;
   return Math.round(totalGold * 100) / 100;
 }
 
 /**
- * Formats a gold value for display with 2 decimal places and "gp" suffix.
+ * Formats a currency value for display with 2 decimal places and unit suffix.
+ * Currently hardcoded to "gp" for PF2e; will be system-aware when Starfinder is added.
  * 
- * @param value - Gold value to format
+ * @param value - Currency value to format
  * @returns Formatted string (e.g., "10.50 gp")
  */
-export function formatGoldValue(value: number): string {
+export function formatCurrencyValue(value: number): string {
   return `${value.toFixed(2)} gp`;
 }

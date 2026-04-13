@@ -12,7 +12,7 @@
 import { describe, it, expect } from '@jest/globals';
 import { mapToCharacterData } from '../scripts/model/party-chronicle-mapper';
 import { createSharedFields, createUniqueFields, createMockActor } from './model/test-helpers';
-import { calculateTreasureBundlesGp, calculateGpGained } from '../scripts/utils/treasure-bundle-calculator';
+import { calculateTreasureBundleValue, calculateCurrencyGained } from '../scripts/utils/treasure-bundle-calculator';
 import { calculateEarnedIncome } from '../scripts/utils/earned-income-calculator';
 
 describe('Treasure Bundle Calculation - Integration Tests', () => {
@@ -42,13 +42,13 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
         const result = mapToCharacterData(shared, unique, actor);
 
         // Verify treasure_bundles_gp is calculated correctly
-        expect(result.treasure_bundles_gp).toBe(expectedTreasureBundlesGp);
+        expect(result.treasure_bundle_value).toBe(expectedTreasureBundlesGp);
         
         // Verify gp_gained includes both treasure bundles and income earned
         // Requirement 3.1, 3.2, 3.3: Calculate total gold gained
         // With task level 3, success, trained, 8 downtime days: 0.5 * 8 = 4 gp
         const expectedGpGained = expectedTreasureBundlesGp + 4;
-        expect(result.gp_gained).toBe(expectedGpGained);
+        expect(result.currency_gained).toBe(expectedGpGained);
         
         // Verify income_earned is calculated correctly
         expect(result.income_earned).toBe(4);
@@ -69,11 +69,11 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       const result = mapToCharacterData(shared, unique, actor);
 
       // With 0 treasure bundles, treasure_bundles_gp should be 0
-      expect(result.treasure_bundles_gp).toBe(0);
+      expect(result.treasure_bundle_value).toBe(0);
       
       // gp_gained should equal income_earned when treasure bundles is 0
       // With task level 3, success, trained, 8 downtime days: 0.5 * 8 = 4 gp
-      expect(result.gp_gained).toBe(4);
+      expect(result.currency_gained).toBe(4);
       expect(result.income_earned).toBe(4);
     });
 
@@ -98,8 +98,8 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
         const actor = createMockActor(`actor-${level}`, 'EA');
         const result = mapToCharacterData(shared, unique, actor);
 
-        expect(result.treasure_bundles_gp).toBe(expectedTreasureBundlesGp);
-        expect(result.gp_gained).toBe(expectedTreasureBundlesGp);
+        expect(result.treasure_bundle_value).toBe(expectedTreasureBundlesGp);
+        expect(result.currency_gained).toBe(expectedTreasureBundlesGp);
       });
     });
 
@@ -129,9 +129,9 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
         const actor = createMockActor(`actor-${level}-${taskLevel}`, 'EA');
         const result = mapToCharacterData(sharedWithDowntime, unique, actor);
 
-        expect(result.treasure_bundles_gp).toBe(expectedTreasureBundlesGp);
+        expect(result.treasure_bundle_value).toBe(expectedTreasureBundlesGp);
         expect(result.income_earned).toBeCloseTo(expectedIncomeEarned, 2);
-        expect(result.gp_gained).toBeCloseTo(expectedGpGained, 2);
+        expect(result.currency_gained).toBeCloseTo(expectedGpGained, 2);
       });
     });
 
@@ -180,9 +180,9 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       const actor1 = createMockActor('actor-1', 'EA');
       const result1 = mapToCharacterData(shared, unique1, actor1);
 
-      expect(result1.treasure_bundles_gp).toBe(4.2);
+      expect(result1.treasure_bundle_value).toBe(4.2);
       // 4.2 + 4 (earned income) = 8.2
-      expect(result1.gp_gained).toBe(8.2);
+      expect(result1.currency_gained).toBe(8.2);
 
       // Level 2: 2.2 gp per bundle, 3 × 2.2 = 6.6
       const unique2 = createUniqueFields({
@@ -192,9 +192,9 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       const actor2 = createMockActor('actor-2', 'EA');
       const result2 = mapToCharacterData(shared, unique2, actor2);
 
-      expect(result2.treasure_bundles_gp).toBe(6.6);
+      expect(result2.treasure_bundle_value).toBe(6.6);
       // 6.6 + 4 (earned income) = 10.6
-      expect(result2.gp_gained).toBe(10.6);
+      expect(result2.currency_gained).toBe(10.6);
     });
 
     it('should handle all character levels 1-20 correctly', () => {
@@ -235,8 +235,8 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
         const actor = createMockActor(`actor-${level}`, 'EA');
         const result = mapToCharacterData(shared, unique, actor);
 
-        expect(result.treasure_bundles_gp).toBe(value);
-        expect(result.gp_gained).toBe(value);
+        expect(result.treasure_bundle_value).toBe(value);
+        expect(result.currency_gained).toBe(value);
       });
     });
   });
@@ -270,9 +270,9 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
         const actor = createMockActor(`actor-${index}`, 'EA');
         const result = mapToCharacterData(sharedWithDowntime, unique, actor);
 
-        expect(result.treasure_bundles_gp).toBe(expectedTreasureBundlesGp);
+        expect(result.treasure_bundle_value).toBe(expectedTreasureBundlesGp);
         expect(result.income_earned).toBeCloseTo(expectedIncomeEarned, 2);
-        expect(result.gp_gained).toBeCloseTo(expectedGpGained, 2);
+        expect(result.currency_gained).toBeCloseTo(expectedGpGained, 2);
       });
     });
 
@@ -290,8 +290,8 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       const result = mapToCharacterData(shared, unique, actor);
 
       // Level 10: 5 × 60 = 300
-      expect(result.treasure_bundles_gp).toBe(300);
-      expect(result.gp_gained).toBe(300);
+      expect(result.treasure_bundle_value).toBe(300);
+      expect(result.currency_gained).toBe(300);
       expect(result.income_earned).toBe(0);
     });
 
@@ -311,10 +311,10 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       const actor = createMockActor('actor-1', 'EA');
       const result = mapToCharacterData(shared, unique, actor);
 
-      expect(result.treasure_bundles_gp).toBe(0);
+      expect(result.treasure_bundle_value).toBe(0);
       // With 8 downtime days and level 10 master proficiency (6 gp/day), we get 48 gp
       // Adjusting expectation to match actual calculation
-      expect(result.gp_gained).toBe(48);
+      expect(result.currency_gained).toBe(48);
       expect(result.income_earned).toBe(48);
     });
 
@@ -335,8 +335,8 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       const actor = createMockActor('actor-1', 'EA');
       const result = mapToCharacterData(shared, unique, actor);
 
-      expect(result.treasure_bundles_gp).toBe(0);
-      expect(result.gp_gained).toBe(0);
+      expect(result.treasure_bundle_value).toBe(0);
+      expect(result.currency_gained).toBe(0);
       expect(result.income_earned).toBe(0);
     });
 
@@ -357,10 +357,10 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       const result = mapToCharacterData(shared, unique, actor);
 
       // Level 20: 2 × 3680 = 7360
-      expect(result.treasure_bundles_gp).toBe(7360);
+      expect(result.treasure_bundle_value).toBe(7360);
       // Level 20 legendary critical success = 300 gp/day × 8 days = 2400 gp
       // 7360 + 2400 = 9760
-      expect(result.gp_gained).toBe(9760);
+      expect(result.currency_gained).toBe(9760);
       expect(result.income_earned).toBe(2400);
     });
   });
@@ -386,11 +386,11 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       const result3 = mapToCharacterData(shared, unique, actor);
 
       // All results should be identical
-      expect(result1.treasure_bundles_gp).toBe(result2.treasure_bundles_gp);
-      expect(result2.treasure_bundles_gp).toBe(result3.treasure_bundles_gp);
+      expect(result1.treasure_bundle_value).toBe(result2.treasure_bundle_value);
+      expect(result2.treasure_bundle_value).toBe(result3.treasure_bundle_value);
       
-      expect(result1.gp_gained).toBe(result2.gp_gained);
-      expect(result2.gp_gained).toBe(result3.gp_gained);
+      expect(result1.currency_gained).toBe(result2.currency_gained);
+      expect(result2.currency_gained).toBe(result3.currency_gained);
       
       expect(result1.income_earned).toBe(result2.income_earned);
       expect(result2.income_earned).toBe(result3.income_earned);
@@ -408,8 +408,8 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       const calculatedIncome = calculateEarnedIncome(taskLevel, successLevel, proficiencyRank, downtimeDays);
       
       // Calculate using utility functions directly
-      const expectedTreasureBundlesGp = calculateTreasureBundlesGp(treasureBundles, level);
-      const expectedGpGained = calculateGpGained(expectedTreasureBundlesGp, calculatedIncome);
+      const expectedTreasureBundlesGp = calculateTreasureBundleValue(treasureBundles, level);
+      const expectedGpGained = calculateCurrencyGained(expectedTreasureBundlesGp, calculatedIncome);
 
       // Calculate using mapper
       const shared = createSharedFields({ treasureBundles, downtimeDays });
@@ -418,8 +418,8 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       const result = mapToCharacterData(shared, unique, actor);
 
       // Results should match
-      expect(result.treasure_bundles_gp).toBe(expectedTreasureBundlesGp);
-      expect(result.gp_gained).toBe(expectedGpGained);
+      expect(result.treasure_bundle_value).toBe(expectedTreasureBundlesGp);
+      expect(result.currency_gained).toBe(expectedGpGained);
       expect(result.income_earned).toBe(calculatedIncome);
     });
   });
@@ -479,9 +479,9 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       expect(typeof result.date).toBe('string');
       expect(typeof result.xp_gained).toBe('number');
       expect(typeof result.income_earned).toBe('number');
-      expect(typeof result.treasure_bundles_gp).toBe('number');
-      expect(typeof result.gp_gained).toBe('number');
-      expect(typeof result.gp_spent).toBe('number');
+      expect(typeof result.treasure_bundle_value).toBe('number');
+      expect(typeof result.currency_gained).toBe('number');
+      expect(typeof result.currency_spent).toBe('number');
       expect(typeof result.notes).toBe('string');
       expect(Array.isArray(result.reputation)).toBe(true);
       expect(Array.isArray(result.summary_checkbox)).toBe(true);

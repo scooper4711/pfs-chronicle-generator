@@ -109,7 +109,7 @@ export function extractFormData(container: HTMLElement, partyActors: PartyActor[
             proficiencyRank: (container.querySelector(`select[name="characters.${actorId}.proficiencyRank"]`) as HTMLSelectElement)?.value || 'trained',
             earnedIncome: Number.parseFloat((container.querySelector(`input[name="characters.${actorId}.earnedIncome"]`) as HTMLInputElement)?.value) || 0,
             // Read from visible editable fields
-            goldSpent: Number.parseFloat((container.querySelector(`#goldSpent-${actorId}`) as HTMLInputElement)?.value) || 0,
+            currencySpent: Number.parseFloat((container.querySelector(`#currencySpent-${actorId}`) as HTMLInputElement)?.value) || 0,
             notes: (container.querySelector(`#notes-${actorId}`) as HTMLTextAreaElement)?.value || '',
             // Read session reporting fields
             consumeReplay: (container.querySelector(`input[name="characters.${actorId}.consumeReplay"]`) as HTMLInputElement)?.checked || false,

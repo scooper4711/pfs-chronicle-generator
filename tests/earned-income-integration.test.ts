@@ -81,8 +81,8 @@ describe('Earned Income Calculation - Integration Tests', () => {
         expect(result.income_earned).toBe(expectedIncome);
         
         // Verify gp_gained includes both treasure bundles and income earned
-        const expectedGpGained = result.treasure_bundles_gp + expectedIncome;
-        expect(result.gp_gained).toBe(expectedGpGained);
+        const expectedGpGained = result.treasure_bundle_value + expectedIncome;
+        expect(result.currency_gained).toBe(expectedGpGained);
       });
     });
 
@@ -314,7 +314,7 @@ describe('Earned Income Calculation - Integration Tests', () => {
       expect(result.income_earned).toBe(2.0);  // 0.5 × 4 = 2.0
       
       // Verify it's included in gp_gained
-      expect(result.gp_gained).toBeGreaterThanOrEqual(result.income_earned);
+      expect(result.currency_gained).toBeGreaterThanOrEqual(result.income_earned);
     });
 
     /**
@@ -599,10 +599,10 @@ describe('Earned Income Calculation - Integration Tests', () => {
       expect(result.income_earned).toBe(2.0);
       
       // Treasure bundles: 3 × 10 gp (level 5) = 30 gp
-      expect(result.treasure_bundles_gp).toBe(30);
+      expect(result.treasure_bundle_value).toBe(30);
       
       // Total gp_gained: 30 + 2.0 = 32.0 gp
-      expect(result.gp_gained).toBe(32.0);
+      expect(result.currency_gained).toBe(32.0);
     });
   });
 

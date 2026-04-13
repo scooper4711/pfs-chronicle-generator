@@ -372,7 +372,7 @@ describe('Form Data Extraction Property Tests', () => {
             expect(formData.characters.actor1.taskLevel).toBe(3);
             expect(formData.characters.actor1.successLevel).toBe('success');
             expect(formData.characters.actor1.proficiencyRank).toBe('trained');
-            expect(formData.characters.actor1.goldSpent).toBe(5.0);
+            expect(formData.characters.actor1.currencySpent).toBe(5.0);
             expect(formData.characters.actor1.notes).toBe('Test notes 1');
 
             expect(formData.characters.actor2.characterName).toBe('Character 2');
@@ -382,7 +382,7 @@ describe('Form Data Extraction Property Tests', () => {
             expect(formData.characters.actor2.taskLevel).toBe(3);
             expect(formData.characters.actor2.successLevel).toBe('success');
             expect(formData.characters.actor2.proficiencyRank).toBe('trained');
-            expect(formData.characters.actor2.goldSpent).toBe(3.5);
+            expect(formData.characters.actor2.currencySpent).toBe(3.5);
             expect(formData.characters.actor2.notes).toBe('Test notes 2');
           }
         ),

@@ -111,7 +111,7 @@ describe('Party Chronicle Form Preservation Tests', () => {
                   successLevel: 'success',
                   proficiencyRank: 'trained',
                   earnedIncome: 50,
-                  goldSpent: formData.goldSpent,
+                  currencySpent: formData.goldSpent,
                   notes: formData.notes,
                   consumeReplay: false
                 }
@@ -139,7 +139,7 @@ describe('Party Chronicle Form Preservation Tests', () => {
             expect(loaded!.data.shared.xpEarned).toBe(formData.xpEarned);
             expect(loaded!.data.shared.treasureBundles).toBe(formData.treasureBundles);
             expect(loaded!.data.shared.downtimeDays).toBe(formData.downtimeDays);
-            expect(loaded!.data.characters.char1.goldSpent).toBe(formData.goldSpent);
+            expect(loaded!.data.characters.char1.currencySpent).toBe(formData.goldSpent);
             expect(loaded!.data.characters.char1.notes).toBe(formData.notes);
           }
         ),
@@ -200,7 +200,7 @@ describe('Party Chronicle Form Preservation Tests', () => {
                   successLevel: 'critical_success',
                   proficiencyRank: 'expert',
                   earnedIncome: 50,
-                  goldSpent: testData.goldSpent,
+                  currencySpent: testData.goldSpent,
                   notes: testData.notes,
                   consumeReplay: false
                 }
@@ -243,7 +243,7 @@ describe('Party Chronicle Form Preservation Tests', () => {
                   successLevel: 'success',
                   proficiencyRank: 'trained',
                   earnedIncome: 0,
-                  goldSpent: 0,
+                  currencySpent: 0,
                   notes: '',
                   consumeReplay: false
                 }
@@ -265,7 +265,7 @@ describe('Party Chronicle Form Preservation Tests', () => {
             expect(loaded!.data.shared.layoutId).toBe(testData.layoutId);
             
             // Verify character-specific fields are cleared
-            expect(loaded!.data.characters['char1'].goldSpent).toBe(0);
+            expect(loaded!.data.characters['char1'].currencySpent).toBe(0);
             expect(loaded!.data.characters['char1'].notes).toBe('');
           }),
         { numRuns: 30 }

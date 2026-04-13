@@ -52,7 +52,7 @@ describe('Party Chronicle Storage', () => {
             playerNumber: '12345', characterNumber: '01',
             level: 5,
             earnedIncome: 10,
-            goldSpent: 5,
+            currencySpent: 5,
             notes: 'Test notes'
           })
         }
@@ -214,7 +214,7 @@ describe('Party Chronicle Storage', () => {
             characterName: 'Hero One',
             playerNumber: '12345', characterNumber: '01',
             level: 5,
-            goldSpent: 5,
+            currencySpent: 5,
             notes: ''
           })
         }
@@ -411,14 +411,14 @@ describe('Party Chronicle Storage', () => {
             characterName: 'Hero One',
             playerNumber: '12345', characterNumber: '01',
             level: 5,
-            goldSpent: 5,
+            currencySpent: 5,
             notes: 'Test notes'
           }),
           'actor-2': createUniqueFields({
             characterName: 'Hero Two',
             playerNumber: '12345', characterNumber: '02',
             level: 3,
-            goldSpent: 3,
+            currencySpent: 3,
             notes: 'More notes'
           })
         }

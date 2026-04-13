@@ -407,7 +407,7 @@ function buildDefaultCharacterFields(partyActors: PartyActor[]): { [actorId: str
                 successLevel: 'success',
                 proficiencyRank: 'trained',
                 earnedIncome: 0,
-                goldSpent: 0,
+                currencySpent: 0,
                 notes: '',
                 consumeReplay: false
             };

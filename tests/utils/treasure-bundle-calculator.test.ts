@@ -1,9 +1,9 @@
 import {
   TREASURE_BUNDLE_VALUES,
   getTreasureBundleValue,
-  calculateTreasureBundlesGp,
-  calculateGpGained,
-  formatGoldValue
+  calculateTreasureBundleValue,
+  calculateCurrencyGained,
+  formatCurrencyValue
 } from '../../scripts/utils/treasure-bundle-calculator';
 
 describe('treasure-bundle-calculator', () => {
@@ -64,92 +64,92 @@ describe('treasure-bundle-calculator', () => {
   describe('calculateTreasureBundlesGp', () => {
     it('should calculate correct gold for various treasure bundle counts and levels', () => {
       // Level 1: 1.4 gp per bundle
-      expect(calculateTreasureBundlesGp(1, 1)).toBe(1.4);
-      expect(calculateTreasureBundlesGp(5, 1)).toBe(7);
-      expect(calculateTreasureBundlesGp(10, 1)).toBe(14);
+      expect(calculateTreasureBundleValue(1, 1)).toBe(1.4);
+      expect(calculateTreasureBundleValue(5, 1)).toBe(7);
+      expect(calculateTreasureBundleValue(10, 1)).toBe(14);
 
       // Level 5: 10 gp per bundle
-      expect(calculateTreasureBundlesGp(1, 5)).toBe(10);
-      expect(calculateTreasureBundlesGp(3, 5)).toBe(30);
-      expect(calculateTreasureBundlesGp(10, 5)).toBe(100);
+      expect(calculateTreasureBundleValue(1, 5)).toBe(10);
+      expect(calculateTreasureBundleValue(3, 5)).toBe(30);
+      expect(calculateTreasureBundleValue(10, 5)).toBe(100);
 
       // Level 10: 60 gp per bundle
-      expect(calculateTreasureBundlesGp(1, 10)).toBe(60);
-      expect(calculateTreasureBundlesGp(2, 10)).toBe(120);
+      expect(calculateTreasureBundleValue(1, 10)).toBe(60);
+      expect(calculateTreasureBundleValue(2, 10)).toBe(120);
 
       // Level 20: 3680 gp per bundle
-      expect(calculateTreasureBundlesGp(1, 20)).toBe(3680);
-      expect(calculateTreasureBundlesGp(5, 20)).toBe(18400);
+      expect(calculateTreasureBundleValue(1, 20)).toBe(3680);
+      expect(calculateTreasureBundleValue(5, 20)).toBe(18400);
     });
 
     it('should return 0 when treasure bundles is 0', () => {
-      expect(calculateTreasureBundlesGp(0, 1)).toBe(0);
-      expect(calculateTreasureBundlesGp(0, 10)).toBe(0);
-      expect(calculateTreasureBundlesGp(0, 20)).toBe(0);
+      expect(calculateTreasureBundleValue(0, 1)).toBe(0);
+      expect(calculateTreasureBundleValue(0, 10)).toBe(0);
+      expect(calculateTreasureBundleValue(0, 20)).toBe(0);
     });
 
     it('should return 0 for invalid character levels', () => {
-      expect(calculateTreasureBundlesGp(5, 0)).toBe(0);
-      expect(calculateTreasureBundlesGp(5, -1)).toBe(0);
-      expect(calculateTreasureBundlesGp(5, 21)).toBe(0);
-      expect(calculateTreasureBundlesGp(5, 100)).toBe(0);
+      expect(calculateTreasureBundleValue(5, 0)).toBe(0);
+      expect(calculateTreasureBundleValue(5, -1)).toBe(0);
+      expect(calculateTreasureBundleValue(5, 21)).toBe(0);
+      expect(calculateTreasureBundleValue(5, 100)).toBe(0);
     });
 
     it('should round to 2 decimal places', () => {
       // Level 2: 2.2 gp per bundle
       // 3 bundles = 6.6 gp (already 1 decimal place)
-      expect(calculateTreasureBundlesGp(3, 2)).toBe(6.6);
+      expect(calculateTreasureBundleValue(3, 2)).toBe(6.6);
 
       // Level 1: 1.4 gp per bundle
       // 7 bundles = 9.8 gp (already 1 decimal place)
-      expect(calculateTreasureBundlesGp(7, 1)).toBe(9.8);
+      expect(calculateTreasureBundleValue(7, 1)).toBe(9.8);
     });
   });
 
   describe('calculateGpGained', () => {
     it('should calculate total gold gained correctly', () => {
-      expect(calculateGpGained(10, 5)).toBe(15);
-      expect(calculateGpGained(100, 50)).toBe(150);
-      expect(calculateGpGained(1.4, 2.6)).toBe(4);
+      expect(calculateCurrencyGained(10, 5)).toBe(15);
+      expect(calculateCurrencyGained(100, 50)).toBe(150);
+      expect(calculateCurrencyGained(1.4, 2.6)).toBe(4);
     });
 
     it('should handle zero values', () => {
-      expect(calculateGpGained(0, 0)).toBe(0);
-      expect(calculateGpGained(10, 0)).toBe(10);
-      expect(calculateGpGained(0, 5)).toBe(5);
+      expect(calculateCurrencyGained(0, 0)).toBe(0);
+      expect(calculateCurrencyGained(10, 0)).toBe(10);
+      expect(calculateCurrencyGained(0, 5)).toBe(5);
     });
 
     it('should round to 2 decimal places', () => {
-      expect(calculateGpGained(10.555, 5.444)).toBe(16);
-      expect(calculateGpGained(1.111, 2.222)).toBe(3.33);
-      expect(calculateGpGained(10.1, 5.05)).toBe(15.15);
+      expect(calculateCurrencyGained(10.555, 5.444)).toBe(16);
+      expect(calculateCurrencyGained(1.111, 2.222)).toBe(3.33);
+      expect(calculateCurrencyGained(10.1, 5.05)).toBe(15.15);
     });
 
     it('should handle large values', () => {
-      expect(calculateGpGained(18400, 100)).toBe(18500);
-      expect(calculateGpGained(3680, 250.5)).toBe(3930.5);
+      expect(calculateCurrencyGained(18400, 100)).toBe(18500);
+      expect(calculateCurrencyGained(3680, 250.5)).toBe(3930.5);
     });
   });
 
   describe('formatGoldValue', () => {
     it('should format gold values with 2 decimal places and gp suffix', () => {
-      expect(formatGoldValue(10)).toBe('10.00 gp');
-      expect(formatGoldValue(10.5)).toBe('10.50 gp');
-      expect(formatGoldValue(10.55)).toBe('10.55 gp');
+      expect(formatCurrencyValue(10)).toBe('10.00 gp');
+      expect(formatCurrencyValue(10.5)).toBe('10.50 gp');
+      expect(formatCurrencyValue(10.55)).toBe('10.55 gp');
     });
 
     it('should handle zero', () => {
-      expect(formatGoldValue(0)).toBe('0.00 gp');
+      expect(formatCurrencyValue(0)).toBe('0.00 gp');
     });
 
     it('should handle large values', () => {
-      expect(formatGoldValue(18400)).toBe('18400.00 gp');
-      expect(formatGoldValue(3680.5)).toBe('3680.50 gp');
+      expect(formatCurrencyValue(18400)).toBe('18400.00 gp');
+      expect(formatCurrencyValue(3680.5)).toBe('3680.50 gp');
     });
 
     it('should format values with more than 2 decimal places', () => {
-      expect(formatGoldValue(10.555)).toBe('10.55 gp');
-      expect(formatGoldValue(10.556)).toBe('10.56 gp');
+      expect(formatCurrencyValue(10.555)).toBe('10.55 gp');
+      expect(formatCurrencyValue(10.556)).toBe('10.56 gp');
     });
   });
 });

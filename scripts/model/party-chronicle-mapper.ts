@@ -9,7 +9,7 @@
 
 import { SharedFields, UniqueFields } from './party-chronicle-types.js';
 import { calculateReputation } from './reputation-calculator.js';
-import { calculateTreasureBundlesGp, calculateGpGained } from '../utils/treasure-bundle-calculator.js';
+import { calculateTreasureBundleValue, calculateCurrencyGained } from '../utils/treasure-bundle-calculator.js';
 import { calculateEarnedIncome } from '../utils/earned-income-calculator.js';
 import { PartyActor } from '../handlers/event-listener-helpers.js';
 
@@ -34,9 +34,9 @@ export interface ChronicleData {
   // Rewards
   xp_gained: number;
   income_earned: number;
-  treasure_bundles_gp: number;
-  gp_gained: number;
-  gp_spent: number;
+  treasure_bundle_value: number;
+  currency_gained: number;
+  currency_spent: number;
   
   // Notes and reputation
   notes: string;
@@ -87,15 +87,15 @@ export interface ChronicleData {
  *   characterNumber: '2001',
  *   level: 3,
  *   incomeEarned: 8,
- *   goldSpent: 10,
+ *   currencySpent: 10,
  *   notes: 'Saved the village'
  * };
  * 
  * const actor = { system: { pfs: { currentFaction: 'EA' } } };
  * 
  * const chronicleData = mapToCharacterData(shared, unique, actor);
- * // chronicleData.treasure_bundles_gp is calculated as 2 × 3.8 = 7.6
- * // chronicleData.gp_gained is calculated as 7.6 + 8 = 15.6
+ * // chronicleData.treasure_bundle_value is calculated as 2 × 3.8 = 7.6
+ * // chronicleData.currency_gained is calculated as 7.6 + 8 = 15.6
  * // chronicleData.reputation is ["Envoy's Alliance: +4", "Grand Archive: +1"]
  * ```
  * 
@@ -115,13 +115,13 @@ export function mapToCharacterData(
   );
   
   // Calculate treasure bundle gold based on character level
-  const treasureBundlesGp = calculateTreasureBundlesGp(
+  const treasureBundleValue = calculateTreasureBundleValue(
     shared.treasureBundles,
     unique.level
   );
   
   // Calculate total gold gained
-  const gpGained = calculateGpGained(treasureBundlesGp, incomeEarned);
+  const currencyGained = calculateCurrencyGained(treasureBundleValue, incomeEarned);
   
   // Calculate reputation using the reputation calculator
   const reputationLines = calculateReputation(shared, actor);
@@ -145,9 +145,9 @@ export function mapToCharacterData(
     
     // Character-specific rewards - calculated values
     income_earned: incomeEarned,
-    treasure_bundles_gp: treasureBundlesGp,
-    gp_gained: gpGained,
-    gp_spent: unique.goldSpent,
+    treasure_bundle_value: treasureBundleValue,
+    currency_gained: currencyGained,
+    currency_spent: unique.currencySpent,
     
     // Character-specific notes from unique fields
     notes: unique.notes,

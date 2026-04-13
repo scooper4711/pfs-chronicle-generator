@@ -433,7 +433,7 @@ describe('GM Character Data Persistence Properties', () => {
           expect(loadedFields.successLevel).toBe(gmFields.successLevel);
           expect(loadedFields.proficiencyRank).toBe(gmFields.proficiencyRank);
           expect(loadedFields.earnedIncome).toBe(gmFields.earnedIncome);
-          expect(loadedFields.goldSpent).toBe(gmFields.goldSpent);
+          expect(loadedFields.currencySpent).toBe(gmFields.currencySpent);
           expect(loadedFields.notes).toBe(gmFields.notes);
           expect(loadedFields.consumeReplay).toBe(gmFields.consumeReplay);
         }

@@ -104,7 +104,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
               characterName: 'Test Character',
               playerNumber: '12345', characterNumber: '01',
               level: 5,
-              goldSpent: 0,
+              currencySpent: 0,
               taskLevel: taskLevel,
               successLevel: undefined,
               proficiencyRank: 'trained'
@@ -124,7 +124,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
               characterName: 'Test Character',
               playerNumber: '12345', characterNumber: '01',
               level: 5,
-              goldSpent: 0,
+              currencySpent: 0,
               taskLevel: taskLevel,
               successLevel: 'success',
               proficiencyRank: undefined
@@ -144,7 +144,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
               characterName: 'Test Character',
               playerNumber: '12345', characterNumber: '01',
               level: 5,
-              goldSpent: 0,
+              currencySpent: 0,
               taskLevel: taskLevel,
               successLevel: 'success',
               proficiencyRank: 'trained'
@@ -174,7 +174,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
               characterName: 'Test Character',
               playerNumber: '12345', characterNumber: '01',
               level: 5,
-              goldSpent: 0,
+              currencySpent: 0,
               taskLevel: '-',
               successLevel: successLevel,
               proficiencyRank: proficiencyRank
@@ -205,7 +205,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
               characterName: 'Test Character',
               playerNumber: '12345', characterNumber: '01',
               level: 5,
-              goldSpent: 0,
+              currencySpent: 0,
               taskLevel: 5,
               successLevel: invalidSuccessLevel,
               proficiencyRank: 'trained'
@@ -236,7 +236,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
               characterName: 'Test Character',
               playerNumber: '12345', characterNumber: '01',
               level: 5,
-              goldSpent: 0,
+              currencySpent: 0,
               taskLevel: 5,
               successLevel: 'success',
               proficiencyRank: invalidProficiencyRank
@@ -265,7 +265,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
               characterName: 'Test Character',
               playerNumber: '12345', characterNumber: '01',
               level: 5,
-              goldSpent: 0,
+              currencySpent: 0,
               taskLevel: 5,
               successLevel: successLevel,
               proficiencyRank: 'trained'
@@ -293,7 +293,7 @@ describe('Party Chronicle Validator Property-Based Tests', () => {
               characterName: 'Test Character',
               playerNumber: '12345', characterNumber: '01',
               level: 5,
-              goldSpent: 0,
+              currencySpent: 0,
               taskLevel: 5,
               successLevel: 'success',
               proficiencyRank: proficiencyRank

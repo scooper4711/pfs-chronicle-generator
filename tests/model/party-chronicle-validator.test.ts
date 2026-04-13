@@ -1012,7 +1012,7 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       playerNumber: '12345', characterNumber: '01',
       level: 3,
-      goldSpent: 10,
+      currencySpent: 10,
       notes: 'Saved the village',
       taskLevel: 1,
       successLevel: 'success',
@@ -1031,7 +1031,7 @@ describe('validateUniqueFields', () => {
       characterName: '',
       playerNumber: '12345', characterNumber: '01',
       level: 3,
-      goldSpent: 10,
+      currencySpent: 10,
       notes: ''
     };
 
@@ -1046,7 +1046,7 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       playerNumber: '', characterNumber: '',
       level: 3,
-      goldSpent: 10,
+      currencySpent: 10,
       notes: ''
     };
 
@@ -1061,7 +1061,7 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       playerNumber: '12345', characterNumber: '',
       level: 3,
-      goldSpent: 10,
+      currencySpent: 10,
       notes: ''
     };
 
@@ -1075,7 +1075,7 @@ describe('validateUniqueFields', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
       playerNumber: '12345', characterNumber: '01',
-      goldSpent: 10,
+      currencySpent: 10,
       notes: ''
     };
 
@@ -1090,7 +1090,7 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       playerNumber: '12345', characterNumber: '01',
       level: 0,
-      goldSpent: 10,
+      currencySpent: 10,
       notes: ''
     };
 
@@ -1102,7 +1102,7 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       playerNumber: '12345', characterNumber: '01',
       level: 21,
-      goldSpent: 10,
+      currencySpent: 10,
       notes: ''
     };
 
@@ -1116,7 +1116,7 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       playerNumber: '12345', characterNumber: '01',
       level: 3.5,
-      goldSpent: 10,
+      currencySpent: 10,
       notes: ''
     };
 
@@ -1148,7 +1148,7 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       playerNumber: '12345', characterNumber: '01',
       level: 1,
-      goldSpent: 0,
+      currencySpent: 0,
       notes: '',
       taskLevel: '-',
       successLevel: 'success',
@@ -1167,7 +1167,7 @@ describe('validateUniqueFields', () => {
       characterName: 'Valeros',
       playerNumber: '12345', characterNumber: '01',
       level: 3,
-      goldSpent: 10,
+      currencySpent: 10,
       notes: '',
       taskLevel: 1,
       successLevel: 'success',
@@ -1186,7 +1186,7 @@ describe('validateUniqueFields', () => {
       characterName: '',
       playerNumber: '', characterNumber: '',
       level: 3,
-      goldSpent: 10,
+      currencySpent: 10,
       notes: ''
     };
 
@@ -1241,7 +1241,7 @@ describe('validateAllFields', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
@@ -1252,7 +1252,7 @@ describe('validateAllFields', () => {
         characterName: 'Seoni',
         playerNumber: '67890', characterNumber: '02',
         level: 5,
-        goldSpent: 0,
+        currencySpent: 0,
         notes: ''
       } as UniqueFields
     };
@@ -1289,7 +1289,7 @@ describe('validateAllFields', () => {
         characterName: 'Valeros',
         playerNumber: '', characterNumber: '',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: ''
       } as Partial<UniqueFields>
     };
@@ -1331,14 +1331,14 @@ describe('validateAllFields', () => {
         characterName: 'Valeros',
         playerNumber: '', characterNumber: '',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: ''
       } as Partial<UniqueFields>,
       'actor-2': {
         characterName: 'Seoni',
         playerNumber: '', characterNumber: '',
         level: 5,
-        goldSpent: 0,
+        currencySpent: 0,
         notes: ''
       } as Partial<UniqueFields>
     };
@@ -1379,7 +1379,7 @@ describe('validateAllFields', () => {
         characterName: 'Valeros',
         playerNumber: '', characterNumber: '',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: ''
       } as Partial<UniqueFields>
     };
@@ -1617,7 +1617,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: '-'
       };
@@ -1633,7 +1633,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 0,
         successLevel: 'success',
@@ -1651,7 +1651,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 20,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 20,
         successLevel: 'success',
@@ -1670,7 +1670,7 @@ describe('validateUniqueFields - Earned Income', () => {
           characterName: 'Valeros',
           playerNumber: '12345', characterNumber: '01',
           level: Math.max(level, 1),
-          goldSpent: 10,
+          currencySpent: 10,
           notes: '',
           taskLevel: level,
           successLevel: 'success',
@@ -1689,7 +1689,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: -1,
         successLevel: 'success',
@@ -1707,7 +1707,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 21,
         successLevel: 'success',
@@ -1725,7 +1725,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 'invalid' as any,
         successLevel: 'success',
@@ -1745,7 +1745,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'critical_failure',
@@ -1763,7 +1763,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'failure',
@@ -1781,7 +1781,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
@@ -1799,7 +1799,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'critical_success',
@@ -1817,7 +1817,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'invalid',
@@ -1837,7 +1837,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
@@ -1855,7 +1855,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
@@ -1873,7 +1873,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
@@ -1891,7 +1891,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
@@ -1909,7 +1909,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
@@ -1929,7 +1929,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         proficiencyRank: 'trained'
@@ -1947,7 +1947,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success'
@@ -1965,7 +1965,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1
         // both successLevel and proficiencyRank are missing
@@ -1983,7 +1983,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: '-'
         // successLevel and proficiencyRank are missing, but that's OK
@@ -2000,7 +2000,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: '-'
         // successLevel and proficiencyRank are missing, but that's OK
@@ -2017,7 +2017,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: '-',
         successLevel: 'success',
@@ -2035,7 +2035,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1
         // both successLevel and proficiencyRank are missing
@@ -2055,7 +2055,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 5,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 3,
         successLevel: 'success',
@@ -2074,7 +2074,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: 'Valeros',
         playerNumber: '12345', characterNumber: '01',
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 25,  // Invalid
         successLevel: 'invalid',  // Invalid
@@ -2095,7 +2095,7 @@ describe('validateUniqueFields - Earned Income', () => {
         characterName: '',  // Invalid
         playerNumber: '', characterNumber: '',  // Invalid
         level: 3,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: '',
         taskLevel: 1,
         // successLevel missing - Invalid

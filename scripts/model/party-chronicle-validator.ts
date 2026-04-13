@@ -144,7 +144,7 @@ export function validateSharedFields(shared: Partial<SharedFields>): ValidationR
  *   characterNumber: '',  // Missing!
  *   level: 3,
  *   incomeEarned: 8,
- *   goldSpent: 10,
+ *   currencySpent: 10,
  *   notes: ''
  * };
  * 
@@ -209,8 +209,8 @@ export function validateUniqueFields(
   // Note: Earned Income is calculated automatically and doesn't need validation
   // Requirements: earned-income-calculation 6.1, 6.7
   
-  // Validate Gold Spent
-  errors.push(...validateNumberField(unique.goldSpent, 'Gold Spent', { 
+  // Validate Currency Spent
+  errors.push(...validateNumberField(unique.currencySpent, 'Currency Spent', { 
     min: 0 
   }, prefix));
   

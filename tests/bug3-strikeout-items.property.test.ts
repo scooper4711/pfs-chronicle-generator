@@ -69,7 +69,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
               level: 3,
               taskLevel: 1,
               earnedIncome: 8,
-              goldSpent: 10,
+              currencySpent: 10,
               notes: 'Test notes'
             });
             
@@ -129,7 +129,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
               level: 3,
               taskLevel: 1,
               earnedIncome: 8,
-              goldSpent: 10,
+              currencySpent: 10,
               notes: 'Test notes'
             });
             
@@ -176,7 +176,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
         level: 3,
         taskLevel: 1,
         earnedIncome: 8,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: 'Test notes'
       });
       
@@ -220,7 +220,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
               level: 3,
               taskLevel: 1,
               earnedIncome: 8,
-              goldSpent: 10,
+              currencySpent: 10,
               notes: 'Test notes'
             });
             
@@ -277,7 +277,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
               level: 3,
               taskLevel: 1,
               earnedIncome: 8,
-              goldSpent: 10,
+              currencySpent: 10,
               notes: 'Test notes'
             });
             
@@ -335,7 +335,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
               level: 3,
               taskLevel: 1,
               earnedIncome: 8,
-              goldSpent: 10,
+              currencySpent: 10,
               notes: 'Test notes'
             });
             
@@ -387,7 +387,7 @@ describe('Strikeout Items Bug Condition Exploration', () => {
         level: 3,
         taskLevel: 1,
         earnedIncome: 8,
-        goldSpent: 10,
+        currencySpent: 10,
         notes: 'Test notes'
       });
       

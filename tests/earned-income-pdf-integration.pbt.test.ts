@@ -53,7 +53,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
               successLevel,
               proficiencyRank,
               earnedIncome: 0,
-              goldSpent: 0,
+              currencySpent: 0,
               notes: ''
             });
 
@@ -112,7 +112,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
               successLevel,
               proficiencyRank,
               earnedIncome: 0,
-              goldSpent: 0,
+              currencySpent: 0,
               notes: ''
             });
 
@@ -129,12 +129,12 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
 
             // Verify gp_gained includes both treasure_bundles_gp and income_earned
             // Requirement 12.2, 12.3: Total gold gained should include earned income
-            expect(result.gp_gained).toBeGreaterThanOrEqual(result.income_earned);
-            expect(result.gp_gained).toBeGreaterThanOrEqual(result.treasure_bundles_gp);
+            expect(result.currency_gained).toBeGreaterThanOrEqual(result.income_earned);
+            expect(result.currency_gained).toBeGreaterThanOrEqual(result.treasure_bundle_value);
             
             // Verify the calculation is correct
-            const expectedGpGained = Math.round((result.treasure_bundles_gp + expectedIncome) * 100) / 100;
-            expect(result.gp_gained).toBe(expectedGpGained);
+            const expectedGpGained = Math.round((result.treasure_bundle_value + expectedIncome) * 100) / 100;
+            expect(result.currency_gained).toBe(expectedGpGained);
           }
         ),
         { numRuns: 100 }
@@ -163,7 +163,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
               successLevel,
               proficiencyRank,
               earnedIncome: 0,
-              goldSpent: 0,
+              currencySpent: 0,
               notes: ''
             });
 
@@ -206,7 +206,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
               level: characterLevel,
               taskLevel: '-',
               earnedIncome: 0,
-              goldSpent: 0,
+              currencySpent: 0,
               notes: ''
             });
 
@@ -217,7 +217,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
             expect(result.income_earned).toBe(0);
             
             // Verify gp_gained only includes treasure bundles
-            expect(result.gp_gained).toBe(result.treasure_bundles_gp);
+            expect(result.currency_gained).toBe(result.treasure_bundle_value);
           }
         ),
         { numRuns: 100 }
@@ -247,7 +247,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
               successLevel: 'critical_success',
               proficiencyRank,
               earnedIncome: 0,
-              goldSpent: 0,
+              currencySpent: 0,
               notes: ''
             });
 
@@ -290,7 +290,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
               successLevel: 'critical_success',
               proficiencyRank,
               earnedIncome: 0,
-              goldSpent: 0,
+              currencySpent: 0,
               notes: ''
             });
 
@@ -350,7 +350,7 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
               successLevel,
               proficiencyRank,
               earnedIncome: 0,
-              goldSpent: 0,
+              currencySpent: 0,
               notes: ''
             });
 
@@ -364,8 +364,8 @@ describe('Earned Income PDF Generation Integration - Property-Based Tests', () =
             // Verify all results are identical (deterministic calculation)
             expect(result1.income_earned).toBe(result2.income_earned);
             expect(result2.income_earned).toBe(result3.income_earned);
-            expect(result1.gp_gained).toBe(result2.gp_gained);
-            expect(result2.gp_gained).toBe(result3.gp_gained);
+            expect(result1.currency_gained).toBe(result2.currency_gained);
+            expect(result2.currency_gained).toBe(result3.currency_gained);
           }
         ),
         { numRuns: 100 }

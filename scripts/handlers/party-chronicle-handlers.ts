@@ -17,7 +17,7 @@ import { layoutStore } from '../LayoutStore.js';
 import { savePartyChronicleData } from '../model/party-chronicle-storage.js';
 import { updateLayoutSpecificFields } from '../utils/layout-utils.js';
 import { updateValidationDisplay } from './validation-display.js';
-import { calculateTreasureBundlesGp, formatGoldValue } from '../utils/treasure-bundle-calculator.js';
+import { calculateTreasureBundleValue, formatCurrencyValue } from '../utils/treasure-bundle-calculator.js';
 import { calculateDowntimeDays, calculateEarnedIncome, formatIncomeValue } from '../utils/earned-income-calculator.js';
 import { extractFormData } from './form-data-extraction.js';
 import { generateChroniclesFromPartyData } from './chronicle-generation.js';
@@ -95,8 +95,8 @@ export function updateTreasureBundleDisplay(
   );
   
   if (displayElement) {
-    const treasureBundlesGp = calculateTreasureBundlesGp(treasureBundles, characterLevel);
-    displayElement.textContent = formatGoldValue(treasureBundlesGp);
+    const treasureBundleValue = calculateTreasureBundleValue(treasureBundles, characterLevel);
+    displayElement.textContent = formatCurrencyValue(treasureBundleValue);
   }
 }
 

@@ -187,7 +187,7 @@ function extractUniqueFields(rawCharacters: Record<string, Partial<UniqueFields>
     successLevel: uniqueFields.successLevel || 'success',
     proficiencyRank: uniqueFields.proficiencyRank || 'trained',
     earnedIncome: Number(uniqueFields.earnedIncome) || 0,
-    goldSpent: Number(uniqueFields.goldSpent) || 0,
+    currencySpent: Number(uniqueFields.currencySpent) || 0,
     notes: uniqueFields.notes || '',
     consumeReplay: Boolean(uniqueFields.consumeReplay)
   };

@@ -133,7 +133,7 @@ function buildDefaultUniqueFields(
     successLevel: 'success',
     proficiencyRank: 'trained',
     earnedIncome: 0,
-    goldSpent: 0,
+    currencySpent: 0,
     notes: 'GM Credit',
     consumeReplay: false
   };

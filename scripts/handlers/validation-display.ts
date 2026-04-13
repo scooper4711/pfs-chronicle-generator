@@ -242,8 +242,8 @@ function renderCharacterErrors(
                     const formGroup = goldField?.closest('.form-group');
                     formGroup?.classList.add('has-error');
                 }
-                if (errorWithoutPrefix.includes('Gold Spent')) {
-                    const spentField = container.querySelector(`#goldSpent-${actorId}`);
+                if (errorWithoutPrefix.includes('Currency Spent')) {
+                    const spentField = container.querySelector(`#currencySpent-${actorId}`);
                     const formGroup = spentField?.closest('.form-group');
                     formGroup?.classList.add('has-error');
                 }

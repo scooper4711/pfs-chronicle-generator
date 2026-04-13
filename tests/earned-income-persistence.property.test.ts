@@ -179,7 +179,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                   successLevel: 'success',
                   proficiencyRank: 'trained',
                   earnedIncome: 0,
-                  goldSpent: 0,
+                  currencySpent: 0,
                   notes: '',
                   consumeReplay: false,
                 },
@@ -473,7 +473,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                   successLevel: 'success',
                   proficiencyRank: 'trained',
                   earnedIncome: 0,
-                  goldSpent: 0,
+                  currencySpent: 0,
                   notes: '',
                   consumeReplay: false,
                 },
@@ -574,7 +574,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                   successLevel: fields.successLevel,
                   proficiencyRank: fields.proficiencyRank,
                   earnedIncome: 0,
-                  goldSpent: 0,
+                  currencySpent: 0,
                   notes: '',
                   consumeReplay: false,
                 },
@@ -594,7 +594,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
               characters: {
                 actor1: {
                   ...initialData.characters.actor1,
-                  goldSpent: fields.goldSpent,
+                  currencySpent: fields.goldSpent,
                 },
               },
             };

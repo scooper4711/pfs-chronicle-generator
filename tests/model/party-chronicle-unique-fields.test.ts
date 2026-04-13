@@ -10,7 +10,7 @@
 import fc from 'fast-check';
 import { PartyChronicleData, UniqueFields } from '../../scripts/model/party-chronicle-types';
 import { mapToCharacterData } from '../../scripts/model/party-chronicle-mapper';
-import { calculateTreasureBundlesGp, calculateGpGained } from '../../scripts/utils/treasure-bundle-calculator';
+import { calculateTreasureBundleValue, calculateCurrencyGained } from '../../scripts/utils/treasure-bundle-calculator';
 import { calculateEarnedIncome } from '../../scripts/utils/earned-income-calculator';
 import { PartyActor } from '../../scripts/handlers/event-listener-helpers';
 
@@ -138,16 +138,16 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               );
               
               // Calculate expected gold values
-              const expectedTreasureBundlesGp = calculateTreasureBundlesGp(shared.treasureBundles, unique.level);
-              const expectedGpGained = calculateGpGained(expectedTreasureBundlesGp, expectedEarnedIncome);
+              const expectedTreasureBundlesGp = calculateTreasureBundleValue(shared.treasureBundles, unique.level);
+              const expectedGpGained = calculateCurrencyGained(expectedTreasureBundlesGp, expectedEarnedIncome);
               
               // Verify character-specific fields match this character's unique data
               expect(chronicleData.char).toBe(unique.characterName);
               expect(chronicleData.societyid).toBe(unique.playerNumber);
               expect(chronicleData.level).toBe(unique.level);
               expect(chronicleData.income_earned).toBe(expectedEarnedIncome);
-              expect(chronicleData.gp_gained).toBe(expectedGpGained);
-              expect(chronicleData.gp_spent).toBe(unique.goldSpent);
+              expect(chronicleData.currency_gained).toBe(expectedGpGained);
+              expect(chronicleData.currency_spent).toBe(unique.goldSpent);
               expect(chronicleData.notes).toBe(unique.notes);
 
               // Property: Verify this character's data does NOT contain other characters' unique values
@@ -162,8 +162,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 );
                 
                 // Calculate expected values for other character
-                const otherExpectedTreasureBundlesGp = calculateTreasureBundlesGp(shared.treasureBundles, otherUnique.level);
-                const otherExpectedGpGained = calculateGpGained(otherExpectedTreasureBundlesGp, otherExpectedEarnedIncome);
+                const otherExpectedTreasureBundlesGp = calculateTreasureBundleValue(shared.treasureBundles, otherUnique.level);
+                const otherExpectedGpGained = calculateCurrencyGained(otherExpectedTreasureBundlesGp, otherExpectedEarnedIncome);
                 
                 // If the values are different, ensure they don't leak
                 if (otherUnique.characterName !== unique.characterName) {
@@ -179,10 +179,10 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                   expect(chronicleData.income_earned).not.toBe(otherExpectedEarnedIncome);
                 }
                 if (expectedGpGained !== otherExpectedGpGained) {
-                  expect(chronicleData.gp_gained).not.toBe(otherExpectedGpGained);
+                  expect(chronicleData.currency_gained).not.toBe(otherExpectedGpGained);
                 }
                 if (otherUnique.goldSpent !== unique.goldSpent) {
-                  expect(chronicleData.gp_spent).not.toBe(otherUnique.goldSpent);
+                  expect(chronicleData.currency_spent).not.toBe(otherUnique.goldSpent);
                 }
                 if (otherUnique.notes !== unique.notes) {
                   expect(chronicleData.notes).not.toBe(otherUnique.notes);
@@ -258,16 +258,16 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             );
             
             // Calculate expected gold values
-            const expectedTreasureBundlesGp = calculateTreasureBundlesGp(shared.treasureBundles, unique.level);
-            const expectedGpGained = calculateGpGained(expectedTreasureBundlesGp, expectedEarnedIncome);
+            const expectedTreasureBundlesGp = calculateTreasureBundleValue(shared.treasureBundles, unique.level);
+            const expectedGpGained = calculateCurrencyGained(expectedTreasureBundlesGp, expectedEarnedIncome);
 
             // Property: Single character's unique fields are correctly applied
             expect(chronicleData.char).toBe(unique.characterName);
             expect(chronicleData.societyid).toBe(unique.playerNumber);
             expect(chronicleData.level).toBe(unique.level);
             expect(chronicleData.income_earned).toBe(expectedEarnedIncome);
-            expect(chronicleData.gp_gained).toBe(expectedGpGained);
-            expect(chronicleData.gp_spent).toBe(unique.goldSpent);
+            expect(chronicleData.currency_gained).toBe(expectedGpGained);
+            expect(chronicleData.currency_spent).toBe(unique.goldSpent);
             expect(chronicleData.notes).toBe(unique.notes);
           }
         ),
@@ -347,7 +347,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 successLevel: 'success',
                 proficiencyRank: 'trained',
                 earnedIncome: Math.floor(Math.random() * 100),
-                goldSpent: Math.floor(Math.random() * 1000),
+                currencySpent: Math.floor(Math.random() * 1000),
                 notes: `Notes for ${actorId.substring(0, 8)}`,
                 consumeReplay: false
               };
@@ -419,7 +419,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 successLevel: 'success',
                 proficiencyRank: 'trained',
                 earnedIncome: index * 10,
-                goldSpent: index * 50,
+                currencySpent: index * 50,
                 notes: `Notes ${index + 1}`,
                 consumeReplay: false
               };
@@ -460,7 +460,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 successLevel: 'success',
                 proficiencyRank: 'trained',
                 earnedIncome: 10,
-                goldSpent: 20,
+                currencySpent: 20,
                 notes: 'Test notes',
                 consumeReplay: false
               };
