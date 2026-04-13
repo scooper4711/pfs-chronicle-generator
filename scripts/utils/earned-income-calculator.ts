@@ -2,12 +2,17 @@
  * Earned Income Calculator
  * 
  * Provides income table, DC lookup table, and calculation functions for
- * Pathfinder Society Earn Income downtime activity.
+ * Pathfinder Society and Starfinder Society Earn Income downtime activity.
  * 
  * Requirements: earned-income-calculation 1.1, 1.2, 1.4, 1.5, 1.8, 1.9, 3.5, 4.3,
  *               5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7,
  *               6.8, 8.1, 8.2, 8.3, 8.4
+ *               starfinder-support 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 6.3, 3.3, 9.1
  */
+
+import type { GameSystem } from './game-system-detector';
+import { getGameSystem } from './game-system-detector';
+import { formatCurrency } from './currency-formatter';
 
 /**
  * DC by level lookup table for Pathfinder 2e
@@ -85,6 +90,43 @@ export const INCOME_TABLE: Record<number, Record<string, number | Record<string,
 };
 
 /**
+ * Builds the Starfinder income table by multiplying each Pathfinder value by 10
+ * and rounding up to the nearest whole number.
+ *
+ * Handles the special level 20 critical success sub-table.
+ *
+ * Requirements: starfinder-support 4.1, 4.2, 9.1
+ */
+function buildStarfinderIncomeTable(): Record<number, Record<string, number | Record<string, number>>> {
+  const sfTable: Record<number, Record<string, number | Record<string, number>>> = {};
+  for (const [levelStr, ranks] of Object.entries(INCOME_TABLE)) {
+    const level = Number(levelStr);
+    sfTable[level] = {};
+    for (const [rank, value] of Object.entries(ranks)) {
+      if (rank === 'critical' && typeof value === 'object') {
+        const critTable: Record<string, number> = {};
+        for (const [critRank, critValue] of Object.entries(value)) {
+          critTable[critRank] = Math.ceil(critValue * 10);
+        }
+        sfTable[level][rank] = critTable;
+      } else {
+        sfTable[level][rank] = Math.ceil((value as number) * 10);
+      }
+    }
+  }
+  return sfTable;
+}
+
+/**
+ * Starfinder income table derived from INCOME_TABLE.
+ * Each value is Math.ceil(pathfinder_value * 10) — Credits instead of gp.
+ * Computed once at module load time.
+ *
+ * Requirements: starfinder-support 4.1, 4.2, 9.1
+ */
+export const STARFINDER_INCOME_TABLE = buildStarfinderIncomeTable();
+
+/**
  * Gets the DC for a specific task level
  * 
  * @param level - Task level (0-20)
@@ -119,7 +161,14 @@ export function getDCForLevel(level: number): number {
  * 
  * Requirements: earned-income-calculation 2.1, 2.4
  */
-export function calculateDowntimeDays(xpEarned: number, treasureBundles?: number): number {
+export function calculateDowntimeDays(xpEarned: number, treasureBundles?: number, gameSystem?: GameSystem): number {
+  const system = gameSystem ?? getGameSystem();
+
+  // Starfinder: always 8 downtime days (XP is always 4, downtime = XP × 2)
+  if (system === 'sf2e') {
+    return 8;
+  }
+
   // Series 1 Quest: 1 XP + 2.5 TB = 2 downtime days
   if (xpEarned === 1 && treasureBundles === 2.5) {
     return 2;
@@ -197,6 +246,13 @@ export function calculateTaskLevelOptions(characterLevel: number): TaskLevelOpti
 }
 
 /**
+ * Selects the income table for the given game system.
+ */
+function selectIncomeTable(gameSystem: GameSystem): Record<number, Record<string, number | Record<string, number>>> {
+  return gameSystem === 'sf2e' ? STARFINDER_INCOME_TABLE : INCOME_TABLE;
+}
+
+/**
  * Gets income per day from the income table
  * Handles critical success by treating task level as 1 higher (clamped to 0-20 range)
  * Handles level 20 critical success special case
@@ -206,14 +262,17 @@ export function calculateTaskLevelOptions(characterLevel: number): TaskLevelOpti
  * @param taskLevel - Task level (0-20 or "-")
  * @param successLevel - Success level (critical_failure, failure, success, critical_success)
  * @param proficiencyRank - Proficiency rank (trained, expert, master, legendary)
- * @returns Income per day in gold pieces
+ * @param gameSystem - The active game system (defaults to detected system)
+ * @returns Income per day in the system's currency
  * 
  * Requirements: earned-income-calculation 3.5, 4.3, 5.1, 5.2, 5.3, 6.2, 6.4, 6.5, 6.6
+ *               starfinder-support 4.1, 4.6
  */
 export function getIncomePerDay(
   taskLevel: number | string,
   successLevel: string,
-  proficiencyRank: string
+  proficiencyRank: string,
+  gameSystem?: GameSystem
 ): number {
   // Task level "-" means opt-out, return 0
   if (taskLevel === '-') {
@@ -231,29 +290,31 @@ export function getIncomePerDay(
   if (Number.isNaN(level) || level < 0 || level > 20) {
     return 0;
   }
+
+  const table = selectIncomeTable(gameSystem ?? getGameSystem());
   
   // Handle critical success
   if (successLevel === 'critical_success') {
     // Level 20 critical success has special values
     if (level === 20) {
-      const criticalTable = INCOME_TABLE[20].critical as Record<string, number>;
+      const criticalTable = table[20].critical as Record<string, number>;
       return criticalTable[proficiencyRank] || 0;
     }
     
     // For other levels, use task level + 1 (clamped to valid range)
     const effectiveLevel = Math.min(level + 1, 20);
-    const levelData = INCOME_TABLE[effectiveLevel];
+    const levelData = table[effectiveLevel];
     return (levelData[proficiencyRank] as number) || 0;
   }
   
   // Handle failure
   if (successLevel === 'failure') {
-    const levelData = INCOME_TABLE[level];
+    const levelData = table[level];
     return (levelData.failure as number) || 0;
   }
   
   // Handle success (default)
-  const levelData = INCOME_TABLE[level];
+  const levelData = table[level];
   return (levelData[proficiencyRank] as number) || 0;
 }
 
@@ -273,26 +334,36 @@ export function calculateEarnedIncome(
   taskLevel: number | string,
   successLevel: string,
   proficiencyRank: string,
-  downtimeDays: number
+  downtimeDays: number,
+  gameSystem?: GameSystem
 ): number {
+  const system = gameSystem ?? getGameSystem();
+
   // Get income per day
-  const incomePerDay = getIncomePerDay(taskLevel, successLevel, proficiencyRank);
+  const incomePerDay = getIncomePerDay(taskLevel, successLevel, proficiencyRank, system);
   
   // Calculate total income
   const totalIncome = incomePerDay * downtimeDays;
   
-  // Round to 2 decimal places
+  // Starfinder: round up to whole-number Credits
+  if (system === 'sf2e') {
+    return Math.ceil(totalIncome);
+  }
+
+  // Pathfinder: round to 2 decimal places
   return Math.round(totalIncome * 100) / 100;
 }
 
 /**
- * Formats income value for display
+ * Formats income value for display using the system-appropriate currency format.
  * 
- * @param value - Income value in gold pieces
- * @returns Formatted string with 2 decimal places and "gp" suffix
+ * @param value - Income value
+ * @param gameSystem - The active game system (defaults to detected system)
+ * @returns Formatted string (e.g., "10.50 gp" for PF2e, "105 Credits" for SF2e)
  * 
- * Requirements: earned-income-calculation 6.8
+ * Requirements: earned-income-calculation 6.8, starfinder-support 3.3
  */
-export function formatIncomeValue(value: number): string {
-  return `${value.toFixed(2)} gp`;
+export function formatIncomeValue(value: number, gameSystem?: GameSystem): string {
+  const system = gameSystem ?? getGameSystem();
+  return formatCurrency(value, system);
 }
