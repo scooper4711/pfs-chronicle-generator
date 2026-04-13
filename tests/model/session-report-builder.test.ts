@@ -14,6 +14,15 @@ import type { SharedFields } from '../../scripts/model/party-chronicle-types';
 /** Fixed time for deterministic gameDate output: 2025-06-15T14:10:00Z → rounds to 14:00 */
 const FIXED_NOW = new Date('2025-06-15T14:10:00Z');
 
+/** Set up a minimal game global so getGameSystem() defaults to pf2e */
+beforeEach(() => {
+  (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+});
+
+afterEach(() => {
+  delete (globalThis as any).game;
+});
+
 describe('buildSessionReport edge cases', () => {
   it('defaults orgPlayNumber to 0 when actor has no system data', () => {
     const actor: SessionReportActor = { id: 'a1', name: 'No System' };

@@ -84,6 +84,15 @@ function buildParams(overrides: {
   };
 }
 
+/** Set up a minimal game global so getGameSystem() defaults to pf2e */
+beforeEach(() => {
+  (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+});
+
+afterEach(() => {
+  delete (globalThis as any).game;
+});
+
 describe('Session Report Builder Properties', () => {
   describe('Property 2: Session report constant fields invariant', () => {
 

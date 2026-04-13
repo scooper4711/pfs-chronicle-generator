@@ -81,34 +81,34 @@ Add Starfinder Society (SFS) support to the PFS Chronicle Generator so the modul
     - **Property 6: Starfinder Currency Gained from Credits Awarded** — `calculateCurrencyGained` in SF mode returns `CREDITS_AWARDED_TABLE[level] + earnedIncome`, and Credits Awarded is a positive whole number
     - **Validates: Requirements 5.2, 5.4, 5.6, 9.3**
 
-- [~] 5. Checkpoint — Ensure all tests pass
+- [x] 5. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 6. Modify scenario identifier and session report builder
-  - [~] 6.1 Update `scripts/model/scenario-identifier.ts` to handle Starfinder layout IDs
+  - [x] 6.1 Update `scripts/model/scenario-identifier.ts` to handle Starfinder layout IDs
     - Add `SF_SCENARIO_PATTERN = /^sfs2\.s(\d+-\d+)$/` regex
     - Check SF pattern first, then PF pattern, then fallback (strip `sfs2.` or `pfs2.` prefix)
     - _Requirements: 8.3, 8.4_
 
-  - [~] 6.2 Write unit tests for Starfinder scenario identifiers (`tests/model/scenario-identifier-starfinder.test.ts`)
+  - [x] 6.2 Write unit tests for Starfinder scenario identifiers (`tests/model/scenario-identifier-starfinder.test.ts`)
     - Test SF layout ID parsing (e.g., "sfs2.s1-01" → "SFS2E 1-01"), fallback for non-standard SF IDs
     - Verify existing PF2e parsing is unchanged
     - _Requirements: 8.3, 8.4_
 
-  - [~] 6.3 Write property test for Starfinder scenario identifiers (`tests/model/scenario-identifier-starfinder.pbt.test.ts`)
+  - [x] 6.3 Write property test for Starfinder scenario identifiers (`tests/model/scenario-identifier-starfinder.pbt.test.ts`)
     - **Property 9: Starfinder Scenario Identifier Parsing** — for any valid season/scenario numbers, `buildScenarioIdentifier("sfs2.s{season}-{scenario}")` returns `"SFS2E {season}-{scenario}"`
     - **Validates: Requirements 8.3**
 
-  - [~] 6.4 Update `scripts/model/session-report-builder.ts` and `scripts/model/session-report-types.ts` for Starfinder game system
+  - [x] 6.4 Update `scripts/model/session-report-builder.ts` and `scripts/model/session-report-types.ts` for Starfinder game system
     - Widen `SessionReport.gameSystem` type from `'PFS2E'` to `'PFS2E' | 'SFS2E'`
     - Import `getGameSystem` in builder; set `gameSystem` to `'SFS2E'` when detected system is `'sf2e'`
     - _Requirements: 8.1, 8.2_
 
-  - [~] 6.5 Write unit tests for Starfinder session report (`tests/model/session-report-builder-starfinder.test.ts`)
+  - [x] 6.5 Write unit tests for Starfinder session report (`tests/model/session-report-builder-starfinder.test.ts`)
     - Test gameSystem field is 'SFS2E' when detector returns sf2e, 'PFS2E' when pf2e
     - _Requirements: 8.1, 8.2_
 
-  - [~] 6.6 Write property test for Starfinder session report (`tests/model/session-report-builder-starfinder.pbt.test.ts`)
+  - [x] 6.6 Write property test for Starfinder session report (`tests/model/session-report-builder-starfinder.pbt.test.ts`)
     - **Property 8: Session Report Game System Matches Detected System** — gameSystem field matches detected system for all valid build params
     - **Validates: Requirements 8.1, 8.2**
 

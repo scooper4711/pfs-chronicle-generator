@@ -12,6 +12,7 @@ import { FACTION_NAMES } from './faction-names.js';
 import type { SharedFields, UniqueFields } from './party-chronicle-types.js';
 import { buildScenarioIdentifier } from './scenario-identifier.js';
 import type { BonusRep, SessionReport, SignUp } from './session-report-types.js';
+import { getGameSystem } from '../utils/game-system-detector.js';
 
 /**
  * Minimal actor shape required by the session report builder.
@@ -186,6 +187,7 @@ export function buildGameDateTime(eventDate: string, now?: Date): string {
  */
 export function buildSessionReport(params: SessionReportBuildParams): SessionReport {
   const { shared, characters, partyActors, layoutId, gmCharacterActor, gmCharacterFields } = params;
+  const gameSystem = getGameSystem() === 'sf2e' ? 'SFS2E' : 'PFS2E';
 
   const signUps = partyActors
     .filter((actor) => characters[actor.id] !== undefined)
@@ -197,7 +199,7 @@ export function buildSessionReport(params: SessionReportBuildParams): SessionRep
 
   return {
     gameDate: buildGameDateTime(shared.eventDate, params.now),
-    gameSystem: 'PFS2E',
+    gameSystem,
     generateGmChronicle: signUps.some((s) => s.isGM),
     gmOrgPlayNumber: Number.parseInt(shared.gmPfsNumber, 10) || 0,
     repEarned: shared.chosenFactionReputation,

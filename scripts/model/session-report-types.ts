@@ -61,8 +61,8 @@ export interface SessionReport {
   /** ISO 8601 date from the Event Date field */
   gameDate: string;
 
-  /** Constant identifying Pathfinder Society 2nd Edition */
-  gameSystem: 'PFS2E';
+  /** Game system identifier: PFS2E for Pathfinder, SFS2E for Starfinder */
+  gameSystem: 'PFS2E' | 'SFS2E';
 
   /** Whether the GM is also generating a chronicle for their own character */
   generateGmChronicle: boolean;

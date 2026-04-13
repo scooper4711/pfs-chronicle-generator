@@ -126,6 +126,15 @@ function decodeUtf16LeFromBase64(base64: string): string {
   return decoder.decode(bytes);
 }
 
+/** Set up a minimal game global so getGameSystem() defaults to pf2e */
+beforeEach(() => {
+  (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+});
+
+afterEach(() => {
+  delete (globalThis as any).game;
+});
+
 describe('Bug Condition Exploration: Session Report Encoding Fix', () => {
   /**
    * Property 1a: UTF-16LE Encoding Round-Trip
