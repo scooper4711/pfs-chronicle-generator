@@ -69,6 +69,7 @@
             </div>
         </li>
         
+        {{#unless (eq gameSystem "sf2e")}}
         <li class="box summary collapsible-section" data-section-id="reputation">
             <header class="collapsible-header" role="button" tabindex="0" 
                     aria-expanded="false" aria-controls="reputation-content">
@@ -175,6 +176,7 @@
                 </div>
             </div>
         </li>
+        {{/unless}}
         
         <li class="box summary collapsible-section" data-section-id="shared-rewards">
             <header class="collapsible-header" role="button" tabindex="0" 
