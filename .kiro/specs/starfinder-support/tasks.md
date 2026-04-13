@@ -112,26 +112,26 @@ Add Starfinder Society (SFS) support to the PFS Chronicle Generator so the modul
     - **Property 8: Session Report Game System Matches Detected System** — gameSystem field matches detected system for all valid build params
     - **Validates: Requirements 8.1, 8.2**
 
-- [~] 7. Checkpoint — Ensure all tests pass
+- [x] 7. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 8. Modify template, types, mapper, app, and handlers for Starfinder UI
-  - [~] 8.1 Add `gameSystem` field to `PartyChronicleContext` in `scripts/model/party-chronicle-types.ts`
+  - [x] 8.1 Add `gameSystem` field to `PartyChronicleContext` in `scripts/model/party-chronicle-types.ts`
     - Type: `'pf2e' | 'sf2e'`
     - _Requirements: 7.3_
 
-  - [~] 8.2 Update `scripts/model/party-chronicle-mapper.ts` for system-aware calculations
+  - [x] 8.2 Update `scripts/model/party-chronicle-mapper.ts` for system-aware calculations
     - Import `getGameSystem` from detector
     - When Starfinder, use `getCreditsAwarded(level)` instead of `calculateTreasureBundleValue(bundles, level)`
     - Pass `gameSystem` to `calculateEarnedIncome` and `calculateCurrencyGained`
     - _Requirements: 5.6, 4.5_
 
-  - [~] 8.3 Update `scripts/PartyChronicleApp.ts` to pass `gameSystem` in context
+  - [x] 8.3 Update `scripts/PartyChronicleApp.ts` to pass `gameSystem` in context
     - Import `getGameSystem` from detector
     - Add `gameSystem: getGameSystem()` to the object returned by `_prepareContext`
     - _Requirements: 7.3_
 
-  - [~] 8.4 Update `templates/party-chronicle-filling.hbs` for conditional Starfinder rendering
+  - [x] 8.4 Update `templates/party-chronicle-filling.hbs` for conditional Starfinder rendering
     - XP Earned: hide dropdown in SF mode, show fixed "4 XP" with hidden input `value="4"`
     - Treasure Bundles: hide entire dropdown in SF mode (`{{#unless (eq gameSystem "sf2e")}}`)
     - Per-character: show "Credits Awarded" (from `getCreditsAwarded`) in SF mode instead of treasure bundle value
@@ -140,7 +140,7 @@ Add Starfinder Society (SFS) support to the PFS Chronicle Generator so the modul
     - Tooltips: use system-appropriate text (no Bounty/Quest references in SF mode)
     - _Requirements: 3.5, 3.6, 3.7, 3.8, 5.1, 5.2, 5.5, 6.1, 6.2, 6.4, 6.5, 7.1, 7.2, 7.4, 7.5_
 
-  - [~] 8.5 Update `scripts/handlers/party-chronicle-handlers.ts` for system-aware display updates
+  - [x] 8.5 Update `scripts/handlers/party-chronicle-handlers.ts` for system-aware display updates
     - `updateEarnedIncomeDisplay`: pass `getGameSystem()` to `calculateEarnedIncome` and `formatIncomeValue`
     - `updateTreasureBundleDisplay`: pass `getGameSystem()` to `formatCurrencyValue`
     - `updateDowntimeDaysDisplay`: pass `getGameSystem()` to `calculateDowntimeDays`

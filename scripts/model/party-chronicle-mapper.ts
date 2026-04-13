@@ -9,8 +9,9 @@
 
 import { SharedFields, UniqueFields } from './party-chronicle-types.js';
 import { calculateReputation } from './reputation-calculator.js';
-import { calculateTreasureBundleValue, calculateCurrencyGained } from '../utils/treasure-bundle-calculator.js';
+import { calculateTreasureBundleValue, calculateCurrencyGained, getCreditsAwarded } from '../utils/treasure-bundle-calculator.js';
 import { calculateEarnedIncome } from '../utils/earned-income-calculator.js';
+import { getGameSystem } from '../utils/game-system-detector.js';
 import { PartyActor } from '../handlers/event-listener-helpers.js';
 
 /**
@@ -107,21 +108,22 @@ export function mapToCharacterData(
   actor: PartyActor
 ): ChronicleData {
   // Calculate earned income based on inputs
+  const gameSystem = getGameSystem();
   const incomeEarned = calculateEarnedIncome(
     unique.taskLevel,
     unique.successLevel,
     unique.proficiencyRank,
-    shared.downtimeDays
+    shared.downtimeDays,
+    gameSystem
   );
   
-  // Calculate treasure bundle gold based on character level
-  const treasureBundleValue = calculateTreasureBundleValue(
-    shared.treasureBundles,
-    unique.level
-  );
+  // Calculate treasure bundle gold or credits awarded based on game system
+  const treasureBundleValue = gameSystem === 'sf2e'
+    ? getCreditsAwarded(unique.level)
+    : calculateTreasureBundleValue(shared.treasureBundles, unique.level);
   
-  // Calculate total gold gained
-  const currencyGained = calculateCurrencyGained(treasureBundleValue, incomeEarned);
+  // Calculate total currency gained
+  const currencyGained = calculateCurrencyGained(treasureBundleValue, incomeEarned, gameSystem);
   
   // Calculate reputation using the reputation calculator
   const reputationLines = calculateReputation(shared, actor);

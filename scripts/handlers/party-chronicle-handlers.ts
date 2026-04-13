@@ -17,8 +17,10 @@ import { layoutStore } from '../LayoutStore.js';
 import { savePartyChronicleData } from '../model/party-chronicle-storage.js';
 import { updateLayoutSpecificFields } from '../utils/layout-utils.js';
 import { updateValidationDisplay } from './validation-display.js';
-import { calculateTreasureBundleValue, formatCurrencyValue } from '../utils/treasure-bundle-calculator.js';
+import { calculateTreasureBundleValue, formatCurrencyValue, getCreditsAwarded } from '../utils/treasure-bundle-calculator.js';
 import { calculateDowntimeDays, calculateEarnedIncome, formatIncomeValue } from '../utils/earned-income-calculator.js';
+import { getGameSystem } from '../utils/game-system-detector.js';
+import { formatCurrency } from '../utils/currency-formatter.js';
 import { extractFormData } from './form-data-extraction.js';
 import { generateChroniclesFromPartyData } from './chronicle-generation.js';
 import { updateSectionSummary } from './collapsible-section-handlers.js';
@@ -96,7 +98,7 @@ export function updateTreasureBundleDisplay(
   
   if (displayElement) {
     const treasureBundleValue = calculateTreasureBundleValue(treasureBundles, characterLevel);
-    displayElement.textContent = formatCurrencyValue(treasureBundleValue);
+    displayElement.textContent = formatCurrencyValue(treasureBundleValue, getGameSystem());
   }
 }
 
@@ -130,6 +132,31 @@ export function updateAllTreasureBundleDisplays(
 }
 
 /**
+ * Updates Credits Awarded displays for all characters in Starfinder mode.
+ *
+ * Iterates through all party member sections and sets the credits awarded value
+ * from `getCreditsAwarded(level)` formatted via `formatCurrency`.
+ *
+ * @param container - Container element for the form
+ *
+ * Requirements: starfinder-support 5.2, 7.5
+ */
+export function updateAllCreditsAwardedDisplays(container: HTMLElement): void {
+  const memberActivities = container.querySelectorAll('.member-activity');
+
+  memberActivities.forEach((activity) => {
+    const levelInput = activity.querySelector<HTMLInputElement>('input[name$=".level"]');
+    const displayElement = activity.querySelector('.credits-awarded-value');
+
+    if (levelInput && displayElement) {
+      const characterLevel = Number.parseInt(levelInput.value, 10);
+      const credits = getCreditsAwarded(characterLevel);
+      displayElement.textContent = formatCurrency(credits, 'sf2e');
+    }
+  });
+}
+
+/**
  * Updates the downtime days display based on XP earned and treasure bundles.
  * 
  * This handler is called when the XP Earned or Treasure Bundles dropdown changes.
@@ -152,7 +179,7 @@ export function updateDowntimeDaysDisplay(
   const treasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
   
   // Calculate downtime days based on XP earned and treasure bundles
-  const downtimeDays = calculateDowntimeDays(xpEarned, treasureBundles);
+  const downtimeDays = calculateDowntimeDays(xpEarned, treasureBundles, getGameSystem());
   
   // Update the downtime days display element
   const displayElement = container.querySelector('.downtime-days-value');
@@ -247,8 +274,9 @@ export function updateEarnedIncomeDisplay(
   debug('Display element found:', !!displayElement);
   
   if (displayElement) {
-    const earnedIncome = calculateEarnedIncome(taskLevel, successLevel, proficiencyRank, downtimeDays);
-    const formattedValue = formatIncomeValue(earnedIncome);
+    const gameSystem = getGameSystem();
+    const earnedIncome = calculateEarnedIncome(taskLevel, successLevel, proficiencyRank, downtimeDays, gameSystem);
+    const formattedValue = formatIncomeValue(earnedIncome, gameSystem);
     debug('Calculated earned income:', earnedIncome, 'formatted:', formattedValue);
     displayElement.textContent = formattedValue;
     

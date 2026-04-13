@@ -221,6 +221,9 @@ export interface PartyChronicleContext {
   /** GM character's saved unique fields (null if not assigned) */
   gmCharacterFields: UniqueFields | null;
 
+  /** Active game system identifier for conditional template rendering (starfinder-support 7.3) */
+  gameSystem: 'pf2e' | 'sf2e';
+
   /** Action buttons for the form */
   buttons: Array<{ type: string; icon: string; label: string }>;
 }

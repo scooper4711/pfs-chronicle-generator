@@ -26,6 +26,7 @@ import { generateChroniclesFromPartyData } from './handlers/party-chronicle-hand
 import { FlagActor, hasArchive } from './handlers/chronicle-exporter.js';
 import { PartyActor } from './handlers/event-listener-helpers.js';
 import { debug, warn } from './utils/logger.js';
+import { getGameSystem } from './utils/game-system-detector.js';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
 import FormDataExtended = foundry.applications.ux.FormDataExtended;
@@ -161,6 +162,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
         gmCharacterFields,
         chroniclePathExists: shouldHideChroniclePathField,
         hasChronicleZip: this.partyActor ? hasArchive(this.partyActor) : false,
+        gameSystem: getGameSystem(),
         buttons: [
           { type: "submit", icon: "fa-solid fa-file-pdf", label: "Generate Chronicles" }
         ]

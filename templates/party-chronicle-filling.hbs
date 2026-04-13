@@ -79,7 +79,11 @@
             <div class="summary-data collapsible-content" id="reputation-content">
                 <div class="form-group">
                     <label for="chosenFactionReputation">Chosen Faction
+                        {{#if (eq gameSystem "sf2e")}}
+                        <span class="fas fa-question-circle" data-tooltip="Reputation awarded to each PC's primary faction. This is the standard reputation earned for completing the adventure — typically +4 for a Scenario. Each PC receives this amount for whichever faction they have selected on their character sheet."></span>
+                        {{else}}
                         <span class="fas fa-question-circle" data-tooltip="Reputation awarded to each PC's primary faction. This is the standard reputation earned for completing the adventure — typically +2 for a Quest or Bounty and +4 for a Scenario. Each PC receives this amount for whichever faction they have selected on their character sheet."></span>
+                        {{/if}}
                     </label>
                     <select id="chosenFactionReputation" name="shared.chosenFactionReputation">
                         <option value="0" {{#if (eq shared.chosenFactionReputation 0)}}selected{{/if}}>-</option>
@@ -180,6 +184,16 @@
                 <span class="section-summary"></span>
             </header>
             <div class="summary-data collapsible-content" id="shared-rewards-content">
+                {{#if (eq gameSystem "sf2e")}}
+                <div class="form-group">
+                    <label for="xpEarned">
+                        XP Earned
+                        <span class="fas fa-question-circle" data-tooltip="Starfinder Society scenarios always award 4 XP."></span>
+                    </label>
+                    <div class="xp-fixed-value">4 XP</div>
+                    <input type="hidden" id="xpEarned" name="shared.xpEarned" value="4">
+                </div>
+                {{else}}
                 <div class="form-group">
                     <label for="xpEarned">
                         XP Earned
@@ -191,7 +205,9 @@
                         <option value="4" {{#if (or (eq shared.xpEarned 4) (not shared.xpEarned))}}selected{{/if}}>Scenario (4 XP)</option>
                     </select>
                 </div>
+                {{/if}}
                 
+                {{#unless (eq gameSystem "sf2e")}}
                 <div class="form-group">
                     <label for="treasureBundles">
                         Treasure
@@ -210,11 +226,16 @@
                         <option value="10" {{#if (eq shared.treasureBundles 10)}}selected{{/if}}>10 TB</option>
                     </select>
                 </div>
+                {{/unless}}
                 
                 <div class="form-group">
                     <label>
                         Downtime Days
+                        {{#if (eq gameSystem "sf2e")}}
+                        <i class="fas fa-question-circle" data-tooltip="Starfinder Society scenarios always grant 8 Downtime Days."></i>
+                        {{else}}
                         <i class="fas fa-question-circle" data-tooltip="Scenarios and Quests grant two days of Downtime per XP earned. Bounties are missions the PC undertakes during their Downtime and thus grant no Downtime."></i>
+                        {{/if}}
                     </label>
                     <div class="downtime-days-value">0</div>
                     <input type="hidden" id="downtimeDays" name="shared.downtimeDays" value="{{shared.downtimeDays}}">
@@ -320,7 +341,7 @@
 
                         <div class="form-group">
                             <label for="successLevel-{{gmCharacter.id}}"><i class="fas fa-dice-d20"></i> Success Level</label>
-                            <select id="successLevel-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.successLevel" data-tooltip="The result of the character's Earn Income check for downtime. Defaults to Success. This affects how much gold the character earns during downtime.">
+                            <select id="successLevel-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.successLevel" data-tooltip="The result of the character's Earn Income check for downtime. Defaults to Success. This affects how much currency the character earns during downtime.">
                                 <option value="critical_failure" {{#if (eq (lookup gmCharacterFields 'successLevel') 'critical_failure')}}selected{{/if}}>Critical Failure</option>
                                 <option value="failure" {{#if (eq (lookup gmCharacterFields 'successLevel') 'failure')}}selected{{/if}}>Failure</option>
                                 <option value="success" {{#if (or (eq (lookup gmCharacterFields 'successLevel') 'success') (not (lookup gmCharacterFields 'successLevel')))}}selected{{/if}}>Success</option>
@@ -343,19 +364,26 @@
 
                         <div class="form-group">
                             <label><i class="fas fa-coins"></i> Earned Income</label>
-                            <div class="earned-income-value" data-tooltip="Calculated from Task Level, Success Level, Proficiency Rank, and Downtime Days.">0.00 gp</div>
+                            <div class="earned-income-value" data-tooltip="Calculated from Task Level, Success Level, Proficiency Rank, and Downtime Days.">{{getZeroCurrencyDisplay gameSystem}}</div>
                             <input type="hidden" name="characters.{{gmCharacter.id}}.earnedIncome" value="0" class="earned-income-hidden">
                         </div>
                     </div>
 
-                    {{!-- Treasure Bundle Value display --}}
+                    {{!-- Treasure Bundle Value / Credits Awarded display --}}
+                    {{#if (eq gameSystem "sf2e")}}
+                    <div class="form-group">
+                        <label><i class="fas fa-coins"></i> Credits Awarded</label>
+                        <div class="credits-awarded-value">{{getCreditsAwarded gmCharacter.level}} Credits</div>
+                    </div>
+                    {{else}}
                     <div class="form-group">
                         <label><i class="fas fa-treasure-chest"></i> Treasure Bundles</label>
                         <div class="treasure-bundle-value" data-tooltip="Calculated from shared Treasure Bundles field. Each TB is worth {{getTreasureBundleValue gmCharacter.level}} gp at level {{gmCharacter.level}}.">0.00 gp</div>
                     </div>
+                    {{/if}}
 
                     <div class="form-group">
-                        <label for="currencySpent-{{gmCharacter.id}}"><i class="fas fa-money-bill-wave"></i> Currency Spent</label>
+                        <label for="currencySpent-{{gmCharacter.id}}"><i class="fas fa-money-bill-wave"></i> {{#if (eq gameSystem "sf2e")}}Credits Spent{{else}}Currency Spent{{/if}}</label>
                         <input type="number" id="currencySpent-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.currencySpent" value="{{#if gmCharacterFields}}{{lookup gmCharacterFields 'currencySpent'}}{{else}}0{{/if}}" step="0.01" data-tooltip="Optionally record currency spent during the adventure. If left at zero, the field will be left blank for the player to fill in.">
                     </div>
 
@@ -418,7 +446,7 @@
                         
                         <div class="form-group">
                             <label for="successLevel-{{this.id}}"><i class="fas fa-dice-d20"></i> Success Level</label>
-                            <select id="successLevel-{{this.id}}" name="characters.{{this.id}}.successLevel" data-tooltip="The result of the character's Earn Income check for downtime. Defaults to Success. This affects how much gold the character earns during downtime.">
+                            <select id="successLevel-{{this.id}}" name="characters.{{this.id}}.successLevel" data-tooltip="The result of the character's Earn Income check for downtime. Defaults to Success. This affects how much currency the character earns during downtime.">
                                 <option value="critical_failure" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'critical_failure')}}selected{{/if}}>Critical Failure</option>
                                 <option value="failure" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'failure')}}selected{{/if}}>Failure</option>
                                 <option value="success" {{#if (or (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'success') (not (lookup (lookup ../savedData.characters this.id) 'successLevel')))}}selected{{/if}}>Success</option>
@@ -441,19 +469,26 @@
                         
                         <div class="form-group">
                             <label><i class="fas fa-coins"></i> Earned Income</label>
-                            <div class="earned-income-value" data-tooltip="Calculated from Task Level, Success Level, Proficiency Rank, and Downtime Days.">0.00 gp</div>
+                            <div class="earned-income-value" data-tooltip="Calculated from Task Level, Success Level, Proficiency Rank, and Downtime Days.">{{getZeroCurrencyDisplay ../gameSystem}}</div>
                             <input type="hidden" name="characters.{{this.id}}.earnedIncome" value="0" class="earned-income-hidden">
                         </div>
                     </div>
                     
-                    {{!-- Treasure Bundle Value display (read-only, calculated from treasure bundles × level) --}}
+                    {{!-- Treasure Bundle Value / Credits Awarded display --}}
+                    {{#if (eq ../gameSystem "sf2e")}}
+                    <div class="form-group">
+                        <label><i class="fas fa-coins"></i> Credits Awarded</label>
+                        <div class="credits-awarded-value">{{getCreditsAwarded this.level}} Credits</div>
+                    </div>
+                    {{else}}
                     <div class="form-group">
                         <label><i class="fas fa-treasure-chest"></i> Treasure Bundles</label>
                         <div class="treasure-bundle-value" data-tooltip="Calculated from shared Treasure Bundles field. Each TB is worth {{getTreasureBundleValue this.level}} gp at level {{this.level}}.">0.00 gp</div>
                     </div>
+                    {{/if}}
                     
                     <div class="form-group">
-                        <label for="currencySpent-{{this.id}}"><i class="fas fa-money-bill-wave"></i> Currency Spent</label>
+                        <label for="currencySpent-{{this.id}}"><i class="fas fa-money-bill-wave"></i> {{#if (eq ../gameSystem "sf2e")}}Credits Spent{{else}}Currency Spent{{/if}}</label>
                         <input type="number" id="currencySpent-{{this.id}}" name="characters.{{this.id}}.currencySpent" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'currencySpent'}}{{else}}0{{/if}}" step="0.01" data-tooltip="Optionally record currency spent during the adventure. If left at zero, the field will be left blank for the player to fill in.">
                     </div>
                     
