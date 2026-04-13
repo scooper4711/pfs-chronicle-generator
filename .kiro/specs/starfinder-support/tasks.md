@@ -65,19 +65,19 @@ Add Starfinder Society (SFS) support to the PFS Chronicle Generator so the modul
     - **Validates: Requirements 4.1, 4.2, 4.3, 4.5, 4.6, 6.3, 9.1, 9.2**
 
 - [ ] 4. Add Credits Awarded table and modify treasure bundle calculator
-  - [~] 4.1 Add `CREDITS_AWARDED_TABLE`, `getCreditsAwarded()`, and modify `calculateCurrencyGained()` and `formatCurrencyValue()` in `scripts/utils/treasure-bundle-calculator.ts`
+  - [x] 4.1 Add `CREDITS_AWARDED_TABLE`, `getCreditsAwarded()`, and modify `calculateCurrencyGained()` and `formatCurrencyValue()` in `scripts/utils/treasure-bundle-calculator.ts`
     - `CREDITS_AWARDED_TABLE`: levels 1-10 mapping to flat credit amounts (140, 220, 380, 640, 1000, 1500, 2200, 3000, 4400, 6000)
     - `getCreditsAwarded(level)`: returns 0 for levels outside 1-10
     - `calculateCurrencyGained`: add optional `gameSystem` parameter; when Starfinder, use credits awarded + earned income
     - `formatCurrencyValue`: delegate to `formatCurrency` from currency-formatter
     - _Requirements: 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 3.4, 3.6_
 
-  - [~] 4.2 Write unit tests for Credits Awarded (`tests/utils/treasure-bundle-calculator-starfinder.test.ts`)
+  - [x] 4.2 Write unit tests for Credits Awarded (`tests/utils/treasure-bundle-calculator-starfinder.test.ts`)
     - Test exact table values for all 10 levels, out-of-range levels, currency gained in SF mode
     - Verify existing PF2e treasure bundle behavior is unchanged
     - _Requirements: 5.2, 5.3, 5.4, 5.7, 9.3, 9.4_
 
-  - [~] 4.3 Write property test for Credits Awarded (`tests/utils/treasure-bundle-calculator-starfinder.pbt.test.ts`)
+  - [x] 4.3 Write property test for Credits Awarded (`tests/utils/treasure-bundle-calculator-starfinder.pbt.test.ts`)
     - **Property 6: Starfinder Currency Gained from Credits Awarded** — `calculateCurrencyGained` in SF mode returns `CREDITS_AWARDED_TABLE[level] + earnedIncome`, and Credits Awarded is a positive whole number
     - **Validates: Requirements 5.2, 5.4, 5.6, 9.3**
 

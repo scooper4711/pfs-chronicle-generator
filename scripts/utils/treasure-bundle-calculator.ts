@@ -3,16 +3,53 @@
  * 
  * Provides lookup tables and calculation functions for converting treasure bundles
  * (shared party rewards) into character-specific currency values based on character level.
+ * In Starfinder mode, a flat Credits Awarded table replaces treasure bundles.
  * 
- * Source: Pathfinder Society Guide (PF2e values; Starfinder values TBD)
+ * Requirements: treasure-bundle-calculation 1.1-4.2
+ *               starfinder-support 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 3.4, 3.6
  */
+
+import type { GameSystem } from './game-system-detector';
+import { getGameSystem } from './game-system-detector';
+import { formatCurrency } from './currency-formatter';
+
+/**
+ * Starfinder Credits Awarded by character level (SFS Guide, levels 1-10 only).
+ * Starfinder Society does not use treasure bundles — each character receives a flat
+ * Credits award determined entirely by their level.
+ *
+ * Requirements: starfinder-support 5.2, 5.3, 5.4
+ */
+export const CREDITS_AWARDED_TABLE: Record<number, number> = {
+  1: 140,
+  2: 220,
+  3: 380,
+  4: 640,
+  5: 1000,
+  6: 1500,
+  7: 2200,
+  8: 3000,
+  9: 4400,
+  10: 6000,
+};
+
+/**
+ * Gets the Credits Awarded for a Starfinder character level.
+ *
+ * @param level - Character level (1-10 for Starfinder Society)
+ * @returns Credits awarded, or 0 for levels outside 1-10
+ *
+ * Requirements: starfinder-support 5.2, 5.3, 5.5
+ */
+export function getCreditsAwarded(level: number): number {
+  return CREDITS_AWARDED_TABLE[level] ?? 0;
+}
 
 /**
  * Lookup table mapping character levels (1-20) to treasure bundle values in currency.
  * 
  * Each treasure bundle is worth a different amount depending on the character's level.
  * These values are from the official Pathfinder Society Guide and must be exact.
- * TODO: Add Starfinder treasure bundle values when Starfinder support is added.
  */
 export const TREASURE_BUNDLE_VALUES: Record<number, number> = {
   1: 1.4,
@@ -79,32 +116,45 @@ export function calculateTreasureBundleValue(
 }
 
 /**
- * Calculates the total currency gained (treasure bundles + income earned).
+ * Calculates the total currency gained (treasure bundles/credits awarded + income earned).
  * 
- * Formula: treasure_bundle_value + income_earned
- * Result is rounded to 2 decimal places.
+ * In Pathfinder mode the first parameter is the treasure bundle value; in Starfinder mode
+ * the caller passes the Credits Awarded value instead. The function simply adds the two
+ * values and rounds appropriately for the active system.
  * 
- * @param treasureBundleValue - Currency from treasure bundles
+ * @param treasureBundleValue - Currency from treasure bundles (PF2e) or credits awarded (SF2e)
  * @param incomeEarned - Currency from income earned
- * @returns Total currency gained, rounded to 2 decimal places
+ * @param gameSystem - Active game system (defaults to detected system)
+ * @returns Total currency gained
  * 
- * Requirements: treasure-bundle-calculation 4.1, 4.2
+ * Requirements: treasure-bundle-calculation 4.1, 4.2, starfinder-support 5.6, 5.7
  */
 export function calculateCurrencyGained(
   treasureBundleValue: number,
-  incomeEarned: number
+  incomeEarned: number,
+  gameSystem?: GameSystem
 ): number {
-  const totalGold = treasureBundleValue + incomeEarned;
-  return Math.round(totalGold * 100) / 100;
+  const system = gameSystem ?? getGameSystem();
+  const total = treasureBundleValue + incomeEarned;
+
+  if (system === 'sf2e') {
+    return Math.ceil(total);
+  }
+
+  return Math.round(total * 100) / 100;
 }
 
 /**
- * Formats a currency value for display with 2 decimal places and unit suffix.
- * Currently hardcoded to "gp" for PF2e; will be system-aware when Starfinder is added.
+ * Formats a currency value for display using the system-appropriate format.
+ * Delegates to the shared Currency_Formatter.
  * 
  * @param value - Currency value to format
- * @returns Formatted string (e.g., "10.50 gp")
+ * @param gameSystem - Active game system (defaults to detected system)
+ * @returns Formatted string (e.g., "10.50 gp" or "105 Credits")
+ *
+ * Requirements: starfinder-support 3.4, 3.6
  */
-export function formatCurrencyValue(value: number): string {
-  return `${value.toFixed(2)} gp`;
+export function formatCurrencyValue(value: number, gameSystem?: GameSystem): string {
+  const system = gameSystem ?? getGameSystem();
+  return formatCurrency(value, system);
 }

@@ -7,6 +7,13 @@ import {
 } from '../../scripts/utils/treasure-bundle-calculator';
 
 describe('treasure-bundle-calculator', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
   describe('TREASURE_BUNDLE_VALUES', () => {
     it('should contain all 20 character levels', () => {
       expect(Object.keys(TREASURE_BUNDLE_VALUES).length).toBe(20);
