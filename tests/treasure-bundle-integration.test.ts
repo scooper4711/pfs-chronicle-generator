@@ -9,13 +9,20 @@
  * Requirements: treasure-bundle-calculation 2.1, 2.2, 2.3, 2.4, 4.1, 4.2, 4.3, 4.4, 5.3, 5.4, 8.1, 8.2, 8.3, 8.4, 8.5
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import { mapToCharacterData } from '../scripts/model/party-chronicle-mapper';
 import { createSharedFields, createUniqueFields, createMockActor } from './model/test-helpers';
 import { calculateTreasureBundleValue, calculateCurrencyGained } from '../scripts/utils/treasure-bundle-calculator';
 import { calculateEarnedIncome } from '../scripts/utils/earned-income-calculator';
 
 describe('Treasure Bundle Calculation - Integration Tests', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
   describe('Complete Workflow: Enter treasure bundles → Calculate values → Generate PDFs', () => {
     it('should calculate correct gold values for party members at different levels', () => {
       // Requirement 2.1, 2.2, 2.3, 2.4: Calculate treasure bundle gold for different levels
@@ -149,8 +156,8 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       const result = mapToCharacterData(shared, unique, actor);
 
       // Verify exact parameter names exist
-      expect(result).toHaveProperty('treasure_bundles_gp');
-      expect(result).toHaveProperty('gp_gained');
+      expect(result).toHaveProperty('treasure_bundle_value');
+      expect(result).toHaveProperty('currency_gained');
       expect(result).toHaveProperty('income_earned');
       
       // Verify no legacy goldEarned field
@@ -158,8 +165,8 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       
       // Verify parameter names are exactly as specified (not camelCase or other variants)
       const keys = Object.keys(result);
-      expect(keys).toContain('treasure_bundles_gp');
-      expect(keys).toContain('gp_gained');
+      expect(keys).toContain('treasure_bundle_value');
+      expect(keys).toContain('currency_gained');
       expect(keys).toContain('income_earned');
       expect(keys).not.toContain('treasureBundlesGp');
       expect(keys).not.toContain('gpGained');
@@ -447,9 +454,9 @@ describe('Treasure Bundle Calculation - Integration Tests', () => {
       expect(result).toHaveProperty('date');
       expect(result).toHaveProperty('xp_gained');
       expect(result).toHaveProperty('income_earned');
-      expect(result).toHaveProperty('treasure_bundles_gp');
-      expect(result).toHaveProperty('gp_gained');
-      expect(result).toHaveProperty('gp_spent');
+      expect(result).toHaveProperty('treasure_bundle_value');
+      expect(result).toHaveProperty('currency_gained');
+      expect(result).toHaveProperty('currency_spent');
       expect(result).toHaveProperty('notes');
       expect(result).toHaveProperty('reputation');
       expect(result).toHaveProperty('summary_checkbox');

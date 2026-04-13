@@ -111,7 +111,7 @@ const uniqueFieldsArbitrary: fc.Arbitrary<UniqueFields> = fc.record({
   successLevel: successLevelArbitrary,
   proficiencyRank: proficiencyRankArbitrary,
   earnedIncome: fc.integer({ min: 0, max: 9999 }),
-  goldSpent: fc.integer({ min: 0, max: 9999 }),
+  currencySpent: fc.integer({ min: 0, max: 9999 }),
   notes: fc.string({ maxLength: 50 }),
   consumeReplay: fc.boolean(),
 });

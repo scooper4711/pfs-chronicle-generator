@@ -2,13 +2,20 @@
  * Unit tests for party chronicle data mapping functions
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import * as fc from 'fast-check';
 import { mapToCharacterData } from '../../scripts/model/party-chronicle-mapper';
 import { SharedFields, UniqueFields } from '../../scripts/model/party-chronicle-types';
 import type { PartyActor } from '../../scripts/handlers/event-listener-helpers';
 
 describe('mapToCharacterData', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
   const createMockActor = (actorId: string, currentFaction: string | null = null) => ({
     id: actorId,
     system: {
@@ -303,8 +310,8 @@ describe('mapToCharacterData', () => {
     const result = mapToCharacterData(shared, unique, actor);
 
     // Verify exact parameter names exist
-    expect(result).toHaveProperty('treasure_bundles_gp');
-    expect(result).toHaveProperty('gp_gained');
+    expect(result).toHaveProperty('treasure_bundle_value');
+    expect(result).toHaveProperty('currency_gained');
     expect(result).toHaveProperty('income_earned');
     
     // Verify no legacy goldEarned field
@@ -313,6 +320,14 @@ describe('mapToCharacterData', () => {
 });
 
 describe('mapToCharacterData - Earned Income Calculation', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
+
   const createMockActor = (actorId: string, currentFaction: string | null = null) => ({
     id: actorId,
     system: {
@@ -694,6 +709,14 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
 });
 
 describe('Property 6: Data Combination Correctness', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
+
   // Feature: party-chronicle-filling, Property 6: Data combination correctness
   it('should contain both all shared field values and character-specific unique field values', () => {
     const sharedFieldsArb = fc.record({
@@ -733,7 +756,7 @@ describe('Property 6: Data Combination Correctness', () => {
       successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
       proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
       earnedIncome: fc.integer({ min: 0, max: 1000 }),
-      goldSpent: fc.integer({ min: 0, max: 10000 }),
+      currencySpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.string({ maxLength: 500 }),
       consumeReplay: fc.boolean(),
     });
@@ -759,7 +782,7 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.char_number_short).toBe(unique.characterNumber.substring(1));
         expect(result.char).toBe(unique.characterName);
         expect(result.level).toBe(unique.level);
-        expect(result.currency_spent).toBe(unique.goldSpent);
+        expect(result.currency_spent).toBe(unique.currencySpent);
         expect(result.notes).toBe(unique.notes);
         
         // Verify calculated fields exist and are numbers
@@ -811,7 +834,7 @@ describe('Property 6: Data Combination Correctness', () => {
       successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
       proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
       earnedIncome: fc.integer({ min: 0, max: 1000 }),
-      goldSpent: fc.integer({ min: 0, max: 10000 }),
+      currencySpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.string({ maxLength: 500 }),
       consumeReplay: fc.boolean(),
     });
@@ -837,7 +860,7 @@ describe('Property 6: Data Combination Correctness', () => {
         // Numeric fields should be identical
         expect(result.xp_gained).toStrictEqual(shared.xpEarned);
         expect(result.level).toStrictEqual(unique.level);
-        expect(result.currency_spent).toStrictEqual(unique.goldSpent);
+        expect(result.currency_spent).toStrictEqual(unique.currencySpent);
         
         // Calculated fields should be numbers
         expect(typeof result.income_earned).toBe('number');
@@ -891,7 +914,7 @@ describe('Property 6: Data Combination Correctness', () => {
       successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
       proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
       earnedIncome: fc.integer({ min: 0, max: 1000 }),
-      goldSpent: fc.integer({ min: 0, max: 10000 }),
+      currencySpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.constant(''),
       consumeReplay: fc.boolean()
     });
@@ -960,7 +983,7 @@ describe('Property 6: Data Combination Correctness', () => {
       successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
       proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
       earnedIncome: fc.constant(0),
-      goldSpent: fc.constant(0),
+      currencySpent: fc.constant(0),
       notes: fc.string({ maxLength: 500 }),
       consumeReplay: fc.boolean(),
     });
@@ -1024,7 +1047,7 @@ describe('Property 6: Data Combination Correctness', () => {
       successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
       proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
       earnedIncome: fc.integer({ min: 0, max: 1000 }),
-      goldSpent: fc.integer({ min: 0, max: 10000 }),
+      currencySpent: fc.integer({ min: 0, max: 10000 }),
       notes: stringArb,
       consumeReplay: fc.boolean(),
     });

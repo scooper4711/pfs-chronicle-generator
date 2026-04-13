@@ -119,7 +119,7 @@ describe('Form Data Extraction Property Tests', () => {
       <select name="characters.actor1.successLevel"><option value="success" selected>Success</option></select>
       <select name="characters.actor1.proficiencyRank"><option value="trained" selected>Trained</option></select>
       <input type="number" id="earnedIncome-actor1" value="10.5">
-      <input type="number" id="goldSpent-actor1" value="5.0">
+      <input type="number" id="currencySpent-actor1" value="5.0">
       <textarea id="notes-actor1">Test notes 1</textarea>
       <input type="checkbox" name="characters.actor1.consumeReplay">
       
@@ -131,7 +131,7 @@ describe('Form Data Extraction Property Tests', () => {
       <select name="characters.actor2.successLevel"><option value="success" selected>Success</option></select>
       <select name="characters.actor2.proficiencyRank"><option value="trained" selected>Trained</option></select>
       <input type="number" id="earnedIncome-actor2" value="8.0">
-      <input type="number" id="goldSpent-actor2" value="3.5">
+      <input type="number" id="currencySpent-actor2" value="3.5">
       <textarea id="notes-actor2">Test notes 2</textarea>
       <input type="checkbox" name="characters.actor2.consumeReplay">
     `;

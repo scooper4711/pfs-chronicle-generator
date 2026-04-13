@@ -694,7 +694,7 @@ describe('Party Chronicle Storage', () => {
         successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
         proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
         earnedIncome: fc.float({ min: 0, max: 1000, noNaN: true }),
-        goldSpent: fc.integer({ min: 0, max: 10000 }),
+        currencySpent: fc.integer({ min: 0, max: 10000 }),
         notes: fc.string({ maxLength: 500 }),
         consumeReplay: fc.boolean()
       });
@@ -833,7 +833,7 @@ describe('Party Chronicle Storage', () => {
         successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
         proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
         earnedIncome: fc.integer({ min: 0, max: 1000 }),
-        goldSpent: fc.integer({ min: 0, max: 10000 }),
+        currencySpent: fc.integer({ min: 0, max: 10000 }),
         notes: stringArb,
         consumeReplay: fc.boolean()
       });

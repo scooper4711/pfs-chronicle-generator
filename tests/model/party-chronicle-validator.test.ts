@@ -1140,7 +1140,7 @@ describe('validateUniqueFields', () => {
     const result = validateUniqueFields(unique);
 
     expect(result.valid).toBe(false);
-    expect(result.errors).toContain('Gold Spent is required');
+    expect(result.errors).toContain('Currency Spent is required');
   });
 
   it('should accept zero values for numeric fields', () => {

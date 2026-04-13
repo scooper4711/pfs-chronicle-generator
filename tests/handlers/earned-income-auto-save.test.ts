@@ -78,7 +78,7 @@ describe('Earned Income Auto-Save Tests', () => {
         <option value="master">Master</option>
         <option value="legendary">Legendary</option>
       </select>
-      <input type="number" id="goldSpent-actor1" value="5.0">
+      <input type="number" id="currencySpent-actor1" value="5.0">
       <textarea id="notes-actor1">Test notes 1</textarea>
       
       <!-- Character 2 fields -->
@@ -105,7 +105,7 @@ describe('Earned Income Auto-Save Tests', () => {
         <option value="master">Master</option>
         <option value="legendary">Legendary</option>
       </select>
-      <input type="number" id="goldSpent-actor2" value="3.5">
+      <input type="number" id="currencySpent-actor2" value="3.5">
       <textarea id="notes-actor2">Test notes 2</textarea>
     `;
     

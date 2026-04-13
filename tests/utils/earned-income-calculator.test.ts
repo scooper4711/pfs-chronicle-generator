@@ -8,7 +8,7 @@
  *               5.1, 5.2, 5.3, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 8.2
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import {
   DC_BY_LEVEL,
   INCOME_TABLE,
@@ -21,6 +21,15 @@ import {
 } from '../../scripts/utils/earned-income-calculator';
 
 describe('Earned Income Calculator Unit Tests', () => {
+  // Set up minimal game global so getGameSystem() defaults to 'pf2e'
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
+
   describe('getDCForLevel', () => {
     it('should return correct DC for level 0', () => {
       expect(getDCForLevel(0)).toBe(14);

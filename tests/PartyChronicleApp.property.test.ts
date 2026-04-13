@@ -98,7 +98,7 @@ const uniqueFieldsArbitrary: fc.Arbitrary<UniqueFields> = fc.record({
   successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
   proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
   earnedIncome: fc.integer({ min: 0, max: 9999 }),
-  goldSpent: fc.integer({ min: 0, max: 9999 }),
+  currencySpent: fc.integer({ min: 0, max: 9999 }),
   notes: fc.string({ maxLength: 50 }),
   consumeReplay: fc.boolean(),
 });

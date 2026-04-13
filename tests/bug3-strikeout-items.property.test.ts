@@ -14,7 +14,7 @@
  */
 
 import fc from 'fast-check';
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import { mapToCharacterData } from '../scripts/model/party-chronicle-mapper';
 import { SharedFields, UniqueFields } from '../scripts/model/party-chronicle-types';
 import { createSharedFields, createUniqueFields } from './model/test-helpers';
@@ -38,6 +38,13 @@ import { PartyActor } from '../scripts/handlers/event-listener-helpers';
  * Feature: party-chronicle-form-bugs, Property 1: Fault Condition
  */
 describe('Strikeout Items Bug Condition Exploration', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
   describe('Property 1: Fault Condition - Strikeout Items Passed Through Data Flow', () => {
     
     /**

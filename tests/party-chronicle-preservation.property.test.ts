@@ -76,7 +76,7 @@ describe('Party Chronicle Form Preservation Tests', () => {
             downtimeDays: fc.integer({ min: 0, max: 8 }),
             layoutId: fc.string({ minLength: 1, maxLength: 50 }),
             seasonId: fc.string({ minLength: 1, maxLength: 50 }),
-            goldSpent: fc.double({ min: 0, max: 1000, noNaN: true }),
+            currencySpent: fc.double({ min: 0, max: 1000, noNaN: true }),
             notes: fc.string({ maxLength: 200 })
           }),
           async (formData) => {
@@ -111,7 +111,7 @@ describe('Party Chronicle Form Preservation Tests', () => {
                   successLevel: 'success',
                   proficiencyRank: 'trained',
                   earnedIncome: 50,
-                  currencySpent: formData.goldSpent,
+                  currencySpent: formData.currencySpent,
                   notes: formData.notes,
                   consumeReplay: false
                 }
@@ -139,7 +139,7 @@ describe('Party Chronicle Form Preservation Tests', () => {
             expect(loaded!.data.shared.xpEarned).toBe(formData.xpEarned);
             expect(loaded!.data.shared.treasureBundles).toBe(formData.treasureBundles);
             expect(loaded!.data.shared.downtimeDays).toBe(formData.downtimeDays);
-            expect(loaded!.data.characters.char1.currencySpent).toBe(formData.goldSpent);
+            expect(loaded!.data.characters.char1.currencySpent).toBe(formData.currencySpent);
             expect(loaded!.data.characters.char1.notes).toBe(formData.notes);
           }
         ),
@@ -165,7 +165,7 @@ describe('Party Chronicle Form Preservation Tests', () => {
             eventCode: fc.string({ minLength: 1, maxLength: 50 }),
             seasonId: fc.string({ minLength: 1, maxLength: 50 }),
             layoutId: fc.string({ minLength: 1, maxLength: 50 }),
-            goldSpent: fc.double({ min: 10, max: 1000, noNaN: true }),
+            currencySpent: fc.double({ min: 10, max: 1000, noNaN: true }),
             notes: fc.string({ minLength: 1, maxLength: 200 })
           }),
           async (testData) => {
@@ -200,7 +200,7 @@ describe('Party Chronicle Form Preservation Tests', () => {
                   successLevel: 'critical_success',
                   proficiencyRank: 'expert',
                   earnedIncome: 50,
-                  currencySpent: testData.goldSpent,
+                  currencySpent: testData.currencySpent,
                   notes: testData.notes,
                   consumeReplay: false
                 }

@@ -30,7 +30,7 @@ const uniqueFieldsArbitrary = fc.record({
   successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
   proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
   earnedIncome: fc.integer({ min: 0, max: 1000 }),
-  goldSpent: fc.integer({ min: 0, max: 1000 }),
+  currencySpent: fc.integer({ min: 0, max: 1000 }),
   notes: fc.string({ maxLength: 200 }),
   consumeReplay: fc.boolean()
 });
@@ -92,6 +92,13 @@ const createMockActor = (actorId: string, currentFaction: string | null = null) 
 }) as unknown as PartyActor;
 
 describe('Party Chronicle Unique Field Property Tests', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
   describe('Property 3: Unique Field Isolation', () => {
     /**
      * **Validates: Requirements 3.2**
@@ -147,7 +154,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               expect(chronicleData.level).toBe(unique.level);
               expect(chronicleData.income_earned).toBe(expectedEarnedIncome);
               expect(chronicleData.currency_gained).toBe(expectedGpGained);
-              expect(chronicleData.currency_spent).toBe(unique.goldSpent);
+              expect(chronicleData.currency_spent).toBe(unique.currencySpent);
               expect(chronicleData.notes).toBe(unique.notes);
 
               // Property: Verify this character's data does NOT contain other characters' unique values
@@ -181,8 +188,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 if (expectedGpGained !== otherExpectedGpGained) {
                   expect(chronicleData.currency_gained).not.toBe(otherExpectedGpGained);
                 }
-                if (otherUnique.goldSpent !== unique.goldSpent) {
-                  expect(chronicleData.currency_spent).not.toBe(otherUnique.goldSpent);
+                if (otherUnique.currencySpent !== unique.currencySpent) {
+                  expect(chronicleData.currency_spent).not.toBe(otherUnique.currencySpent);
                 }
                 if (otherUnique.notes !== unique.notes) {
                   expect(chronicleData.notes).not.toBe(otherUnique.notes);
@@ -267,7 +274,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             expect(chronicleData.level).toBe(unique.level);
             expect(chronicleData.income_earned).toBe(expectedEarnedIncome);
             expect(chronicleData.currency_gained).toBe(expectedGpGained);
-            expect(chronicleData.currency_spent).toBe(unique.goldSpent);
+            expect(chronicleData.currency_spent).toBe(unique.currencySpent);
             expect(chronicleData.notes).toBe(unique.notes);
           }
         ),
@@ -366,7 +373,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               expect(partyData.characters[actorId]).toHaveProperty('characterNumber');
               expect(partyData.characters[actorId]).toHaveProperty('level');
               expect(partyData.characters[actorId]).toHaveProperty('earnedIncome');
-              expect(partyData.characters[actorId]).toHaveProperty('goldSpent');
+              expect(partyData.characters[actorId]).toHaveProperty('currencySpent');
               expect(partyData.characters[actorId]).toHaveProperty('notes');
             });
 
@@ -523,7 +530,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               'characterNumber',
               'level',
               'earnedIncome',
-              'goldSpent',
+              'currencySpent',
               'notes'
             ];
 

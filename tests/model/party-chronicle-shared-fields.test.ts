@@ -67,7 +67,7 @@ const uniqueFieldsArbitrary = fc.record({
   successLevel: fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success'),
   proficiencyRank: fc.constantFrom('trained', 'expert', 'master', 'legendary'),
   earnedIncome: fc.integer({ min: 0, max: 1000 }),
-  goldSpent: fc.integer({ min: 0, max: 1000 }),
+  currencySpent: fc.integer({ min: 0, max: 1000 }),
   notes: fc.string({ maxLength: 200 }),
   consumeReplay: fc.boolean(),
 });
@@ -78,6 +78,13 @@ const uniqueFieldsArbitrary = fc.record({
 const actorIdArbitrary = fc.uuid();
 
 describe('Party Chronicle Shared Field Property Tests', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
   const mockActor = { id: 'test-actor', system: { pfs: { currentFaction: 'EA' } } } as unknown as PartyActor;
 
   describe('Property 2: Shared Field Propagation', () => {

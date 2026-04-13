@@ -123,6 +123,13 @@ function getDisplayedIncome(container: HTMLElement, characterId: string): string
 }
 
 describe('Party Chronicle Handlers Property-Based Tests - Reactive Updates', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
   // Feature: earned-income-calculation, Property 9: Reactive Display Updates
   // **Validates: Requirements 7.3**
   describe('Property 9: Reactive Display Updates', () => {

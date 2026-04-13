@@ -8,7 +8,7 @@
  *               5.1, 5.2, 5.3, 6.2, 6.3, 6.4, 6.7, 8.1, 8.2, 8.4
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import fc from 'fast-check';
 import {
   DC_BY_LEVEL,
@@ -20,6 +20,15 @@ import {
 } from '../../scripts/utils/earned-income-calculator';
 
 describe('Earned Income Calculator Property-Based Tests', () => {
+  // Set up minimal game global so getGameSystem() defaults to 'pf2e'
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
+
   // Feature: earned-income-calculation, Property 1: Task Level Options Generation
   // **Validates: Requirements 1.2, 1.4, 1.5, 1.8, 1.9, 8.1, 8.4**
   describe('Property 1: Task Level Options Generation', () => {

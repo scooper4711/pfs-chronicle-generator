@@ -7,7 +7,7 @@
  * Requirements: earned-income-calculation 12.1, 12.2, 12.3
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import fc from 'fast-check';
 import { mapToCharacterData } from '../scripts/model/party-chronicle-mapper';
 import { SharedFields, UniqueFields } from '../scripts/model/party-chronicle-types';
@@ -16,6 +16,13 @@ import { createSharedFields, createUniqueFields } from './model/test-helpers';
 import { PartyActor } from '../scripts/handlers/event-listener-helpers';
 
 describe('Earned Income PDF Generation Integration - Property-Based Tests', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
   const createMockActor = (actorId: string, currentFaction: string | null = null) => ({
     id: actorId,
     system: {

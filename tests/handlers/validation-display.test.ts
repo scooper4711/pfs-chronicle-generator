@@ -50,8 +50,8 @@ function createFormContainer(): HTMLElement {
         <input id="goldEarned-actor1" />
       </div>
       <div class="form-group">
-        <label for="goldSpent-actor1">Gold Spent</label>
-        <input id="goldSpent-actor1" />
+        <label for="currencySpent-actor1">Currency Spent</label>
+        <input id="currencySpent-actor1" />
       </div>
     </div>
   `;

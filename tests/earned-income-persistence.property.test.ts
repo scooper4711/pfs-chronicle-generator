@@ -100,7 +100,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
       characterNumber: fc.stringMatching(/^2\d{1,5}$/),
       level: fc.integer({ min: 1, max: 20 }),
       earnedIncome: fc.double({ min: 0, max: 1000, noNaN: true }),
-      goldSpent: fc.double({ min: 0, max: 1000, noNaN: true }),
+      currencySpent: fc.double({ min: 0, max: 1000, noNaN: true }),
       notes: fc.string({ maxLength: 200 }),
       consumeReplay: fc.boolean(),
     });
@@ -223,7 +223,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 successLevel: 'success',
                 proficiencyRank: 'trained',
                 earnedIncome: 0,
-                goldSpent: 0,
+                currencySpent: 0,
                 notes: '',
               };
             });
@@ -291,7 +291,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 successLevel: char.successLevel,
                 proficiencyRank: 'trained',
                 earnedIncome: 0,
-                goldSpent: 0,
+                currencySpent: 0,
                 notes: '',
               };
             });
@@ -359,7 +359,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                 successLevel: 'success',
                 proficiencyRank: char.proficiencyRank,
                 earnedIncome: 0,
-                goldSpent: 0,
+                currencySpent: 0,
                 notes: '',
               };
             });
@@ -540,7 +540,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
             // Other fields that might be updated
             gmPfsNumber: fc.string({ minLength: 1, maxLength: 20 }),
             scenarioName: fc.string({ minLength: 1, maxLength: 100 }),
-            goldSpent: fc.double({ min: 0, max: 1000, noNaN: true }),
+            currencySpent: fc.double({ min: 0, max: 1000, noNaN: true }),
           }),
           async (fields) => {
             // Save initial data with earned income fields
@@ -594,7 +594,7 @@ describe('Earned Income Data Persistence - Property Tests', () => {
               characters: {
                 actor1: {
                   ...initialData.characters.actor1,
-                  currencySpent: fields.goldSpent,
+                  currencySpent: fields.currencySpent,
                 },
               },
             };

@@ -7,11 +7,18 @@
  * Validates: Requirements 6.8, 7.2
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import fc from 'fast-check';
 import { formatIncomeValue } from '../scripts/utils/earned-income-calculator';
 
 describe('Earned Income Display Formatting - Property Tests', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
   /**
    * Property 8: Display Formatting
    * 

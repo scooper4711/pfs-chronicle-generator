@@ -12,12 +12,19 @@
  *               7.1, 7.2, 7.3, 7.4, 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 12.1, 12.2, 12.3
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import { mapToCharacterData } from '../scripts/model/party-chronicle-mapper';
 import { createSharedFields, createUniqueFields, createMockActor } from './model/test-helpers';
 import { formatIncomeValue } from '../scripts/utils/earned-income-calculator';
 
 describe('Earned Income Calculation - Integration Tests', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
   describe('Complete Workflow: Enter downtime days → select inputs → see calculated income → generate PDFs', () => {
     /**
      * Test the complete workflow with party members at different levels

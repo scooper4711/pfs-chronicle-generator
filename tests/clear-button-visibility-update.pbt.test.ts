@@ -205,7 +205,7 @@ describe('Clear Button Chronicle Path Visibility Bug Condition Exploration', () 
                   successLevel: 'success',
                   proficiencyRank: 'trained',
                   earnedIncome: 50,
-                  goldSpent: 10,
+                  currencySpent: 10,
                   notes: 'Test notes',
                   consumeReplay: false
                 }
@@ -274,7 +274,7 @@ describe('Clear Button Chronicle Path Visibility Bug Condition Exploration', () 
                   successLevel: 'success',
                   proficiencyRank: 'trained',
                   earnedIncome: 0,
-                  goldSpent: 0,
+                  currencySpent: 0,
                   notes: '',
                   consumeReplay: false
                 }
