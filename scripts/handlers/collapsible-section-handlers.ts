@@ -217,13 +217,12 @@ export function updateSectionSummary(
     return;
   }
   
-  // Find section element
+  // Find section element (may be absent for conditionally-rendered sections)
   const section = container.querySelector(
     `.collapsible-section[data-section-id="${sectionId}"]`
   ) as HTMLElement;
   
   if (!section) {
-    warn(`Could not find section element for ID: "${sectionId}"`);
     return;
   }
   
@@ -298,7 +297,6 @@ export function initializeCollapseSections(container: HTMLElement): void {
     ) as HTMLElement;
     
     if (!section) {
-      warn(`Could not find section element for ID: "${sectionId}"`);
       continue;
     }
     

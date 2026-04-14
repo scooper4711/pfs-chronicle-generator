@@ -40,3 +40,9 @@ export function isStarfinder(): boolean {
 export function isPathfinder(): boolean {
   return getGameSystem() === 'pf2e';
 }
+
+/** Maps game system IDs to layout directory root names. */
+export function getGameSystemRoot(gameSystem?: GameSystem): string {
+  const system = gameSystem ?? getGameSystem();
+  return system === 'sf2e' ? 'sfs2' : 'pfs2';
+}

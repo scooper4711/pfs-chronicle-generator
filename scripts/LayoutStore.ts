@@ -2,12 +2,12 @@ import { Layout } from './model/layout';
 import { debug, warn, error } from './utils/logger.js';
 
 const LAYOUT_PATH = 'modules/pfs-chronicle-generator/assets/layouts/';
-const GAME_SYSTEM_ROOTS = new Set(['pfs2', 'sfs']);
+const GAME_SYSTEM_ROOTS = new Set(['pfs2', 'sfs2']);
 
 class LayoutStore {
     private readonly layouts: Map<string, Layout> = new Map();
-    private readonly layoutInfo: Map<string, { path: string, description: string, season: string, hidden: boolean }> = new Map();
-    private readonly seasonDirectories: Map<string, string> = new Map(); // key: directory name, value: display name
+    private readonly layoutInfo: Map<string, { path: string, description: string, season: string, gameSystemRoot: string, hidden: boolean }> = new Map();
+    private readonly seasonDirectories: Map<string, { name: string, gameSystemRoot: string }> = new Map();
 
     public async initialize() {
         await this.findAllLayouts({ source: "data", target: LAYOUT_PATH });
@@ -70,16 +70,16 @@ class LayoutStore {
             .join(' ');
     }
 
-    public getSeasons(): Array<{ id: string, name: string }> {
+    public getSeasons(gameSystemRoot: string): Array<{ id: string, name: string }> {
         return Array.from(this.seasonDirectories.entries())
-            .map(([id, name]) => ({ id, name }))
+            .filter(([_id, entry]) => entry.gameSystemRoot === gameSystemRoot)
+            .map(([id, entry]) => ({ id, name: entry.name }))
             .sort((a, b) => {
-                // Put numbered seasons first
-                const aNum = Number.parseInt(a.id);
-                const bNum = Number.parseInt(b.id);
-                if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
-                    return aNum - bNum;
-                }
+                const aDir = a.id.includes('/') ? a.id.split('/').pop()! : a.id;
+                const bDir = b.id.includes('/') ? b.id.split('/').pop()! : b.id;
+                const aNum = Number.parseInt(aDir);
+                const bNum = Number.parseInt(bDir);
+                if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) return aNum - bNum;
                 if (!Number.isNaN(aNum)) return -1;
                 if (!Number.isNaN(bNum)) return 1;
                 return a.name.localeCompare(b.name);
@@ -105,7 +105,7 @@ class LayoutStore {
      * Determines the season context for a directory being browsed.
      * Season directories are immediate children of a game-system root (e.g. pfs2/bounties).
      */
-    private detectSeason(target: string, inheritedSeason?: string): { season?: string, isNewSeason: boolean } {
+    private detectSeason(target: string, inheritedSeason?: string): { season?: string, gameSystemRoot?: string, isNewSeason: boolean } {
         if (inheritedSeason) return { season: inheritedSeason, isNewSeason: false };
 
         const segments = target.split('/').filter(Boolean);
@@ -113,13 +113,14 @@ class LayoutStore {
         const parentDir = segments.pop();
 
         if (parentDir && GAME_SYSTEM_ROOTS.has(parentDir) && dirName !== parentDir) {
-            return { season: dirName, isNewSeason: true };
+            const compositeId = `${parentDir}/${dirName}`;
+            return { season: compositeId, gameSystemRoot: parentDir, isNewSeason: true };
         }
         return { season: undefined, isNewSeason: false };
     }
 
     /** Parses a single layout JSON file and registers it in layoutInfo. */
-    private async registerLayoutFile(file: string, season: string): Promise<void> {
+    private async registerLayoutFile(file: string, season: string, gameSystemRoot: string): Promise<void> {
         try {
             const fileContent = await fetch(file).then(r => r.text());
             const jsonData = JSON.parse(fileContent);
@@ -131,7 +132,7 @@ class LayoutStore {
             }
 
             const hidden = Array.isArray(flags) && flags.includes('hidden');
-            this.layoutInfo.set(id, { path: file, description, season, hidden });
+            this.layoutInfo.set(id, { path: file, description, season, gameSystemRoot, hidden });
         } catch (parseError) {
             warn(`Failed to parse JSON layout file ${file}:`, parseError);
         }
@@ -143,14 +144,15 @@ class LayoutStore {
             const browseResult = await foundry.applications.apps.FilePicker.browse(source.source, source.target);
             debug(`Found ${browseResult.files.length} files and ${browseResult.dirs.length} directories.`);
             
-            const { season, isNewSeason } = this.detectSeason(source.target, inheritedSeason);
+            const { season, gameSystemRoot, isNewSeason } = this.detectSeason(source.target, inheritedSeason);
 
-            if (isNewSeason && season) {
-                this.seasonDirectories.set(season, this.getDisplayNameForDirectory(season));
+            if (isNewSeason && season && gameSystemRoot) {
+                const dirName = season.split('/').pop()!;
+                this.seasonDirectories.set(season, { name: this.getDisplayNameForDirectory(dirName), gameSystemRoot });
             }
             
             const jsonFiles = browseResult.files.filter((f: string) => f.endsWith('.json'));
-            await Promise.all(jsonFiles.map(file => this.registerLayoutFile(file, season ?? '')));
+            await Promise.all(jsonFiles.map(file => this.registerLayoutFile(file, season ?? '', gameSystemRoot ?? '')));
 
             // Process subdirectories, passing the season context down
             await Promise.all(browseResult.dirs.map(dir => 

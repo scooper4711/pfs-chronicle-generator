@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, beforeEach } from '@jest/globals';
-import { getGameSystem, isStarfinder, isPathfinder } from '../../scripts/utils/game-system-detector';
+import { getGameSystem, isStarfinder, isPathfinder, getGameSystemRoot } from '../../scripts/utils/game-system-detector';
 
 function setupGameGlobal(systemId: string, anachronismActive?: boolean) {
   const modules = new Map<string, { active: boolean }>();
@@ -100,6 +100,26 @@ describe('Game System Detector', () => {
     it('should return false when anachronism module is active', () => {
       setupGameGlobal('pf2e', true);
       expect(isPathfinder()).toBe(false);
+    });
+  });
+
+  describe('getGameSystemRoot', () => {
+    it('should return pfs2 for pf2e', () => {
+      expect(getGameSystemRoot('pf2e')).toBe('pfs2');
+    });
+
+    it('should return sfs2 for sf2e', () => {
+      expect(getGameSystemRoot('sf2e')).toBe('sfs2');
+    });
+
+    it('should use getGameSystem() when no argument is provided', () => {
+      setupGameGlobal('sf2e');
+      expect(getGameSystemRoot()).toBe('sfs2');
+    });
+
+    it('should default to pfs2 when no argument and system is pf2e', () => {
+      setupGameGlobal('pf2e', false);
+      expect(getGameSystemRoot()).toBe('pfs2');
     });
   });
 });

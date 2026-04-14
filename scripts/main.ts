@@ -8,7 +8,7 @@ import { PartyChronicleContext } from './model/party-chronicle-types.js';
 import { calculateTaskLevelOptions } from './utils/earned-income-calculator.js';
 import { getCreditsAwarded } from './utils/treasure-bundle-calculator.js';
 import { getZeroCurrencyDisplay, getCurrencyLabel } from './utils/currency-formatter.js';
-import { isStarfinder } from './utils/game-system-detector.js';
+import { isStarfinder, getGameSystemRoot } from './utils/game-system-detector.js';
 import type { GameSystem } from './utils/game-system-detector.js';
 import { 
     extractFormData,
@@ -116,7 +116,7 @@ Hooks.on('init', async () => {
 // Hidden settings registered and initialized on ready
 Hooks.on('ready', async () => {
     await layoutStore.initialize();
-    const seasons = layoutStore.getSeasons();
+    const seasons = layoutStore.getSeasons(getGameSystemRoot());
     const seasonChoices: Record<string, string> = Object.fromEntries(
         seasons.map(season => [season.id, season.name])
     );

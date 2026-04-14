@@ -293,16 +293,13 @@ describe('collapsible-section-handlers', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should warn when section element is not found', () => {
+    it('should silently skip when section element is not found', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       // 'shared-rewards' has summary but no DOM element in our container
       updateSectionSummary('shared-rewards', container);
 
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '[PFS Chronicle]',
-        'Could not find section element for ID: "shared-rewards"'
-      );
+      expect(consoleSpy).not.toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
 
@@ -384,18 +381,15 @@ describe('collapsible-section-handlers', () => {
       expect(reputationSummary.textContent).toBe('Reputation - +2');
     });
 
-    it('should warn and skip when section element is not found in loop', () => {
+    it('should silently skip when section element is not found in loop', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       // Use an empty container — no sections exist
       const emptyContainer = document.createElement('div');
       initializeCollapseSections(emptyContainer);
 
-      // Should warn for each VALID_SECTION_ID that's missing
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '[PFS Chronicle]',
-        'Could not find section element for ID: "event-details"'
-      );
+      // Should silently skip missing sections (conditionally-rendered sections are expected)
+      expect(consoleSpy).not.toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
 

@@ -209,8 +209,10 @@ export function updateDowntimeDaysDisplay(
  * @param seasonId - The season directory name (e.g. "bounties", "quests", "season5")
  * @param container - Container element for the form
  */
-function updateXpForSeason(seasonId: string, container: HTMLElement): void {
-  const normalizedSeason = seasonId.toLowerCase();
+export function updateXpForSeason(seasonId: string, container: HTMLElement): void {
+  // Extract directory name from composite key (e.g., "pfs2/bounties" -> "bounties")
+  const dirName = seasonId.includes('/') ? seasonId.split('/').pop()! : seasonId;
+  const normalizedSeason = dirName.toLowerCase();
   let defaultXp: number;
 
   if (normalizedSeason === 'bounties') {

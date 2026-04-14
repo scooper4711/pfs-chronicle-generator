@@ -4,6 +4,8 @@
  * Tests layout loading, caching, merging, and season/layout retrieval.
  */
 
+// Module scope to avoid TypeScript variable collisions with other test files
+export {};
 
 // We need to test the class directly, but it's exported as a singleton.
 // We'll re-import the module for each test to get a fresh instance.
@@ -20,7 +22,7 @@ const mockBrowse = jest.fn();
   },
 };
 
-(global as any).game = { isGM: () => true };
+(global as any).game = { user: { isGM: true } };
 
 // Mock fetch
 const mockFetch = jest.fn();
@@ -186,7 +188,7 @@ describe('LayoutStore', () => {
   });
 
   describe('getSeasons', () => {
-    it('should return seasons sorted numerically', async () => {
+    it('should return seasons with composite keys sorted numerically', async () => {
       // Simulate browsing into pfs2 subdirectories
       mockBrowse
         .mockResolvedValueOnce({
@@ -208,13 +210,14 @@ describe('LayoutStore', () => {
       layoutStore = await getStore();
       await layoutStore.initialize();
 
-      const seasons = layoutStore.getSeasons();
-      // Seasons are stored when browsing pfs2 subdirectories
-      // The directory names s1, s2, s3 should be sorted numerically
-      if (seasons.length > 0) {
-        const names = seasons.map((s: any) => s.name);
-        expect(names).toEqual(expect.arrayContaining([]));
-      }
+      const seasons = layoutStore.getSeasons('pfs2');
+      expect(seasons).toHaveLength(3);
+      // Composite keys should be pfs2/s1, pfs2/s2, pfs2/s3
+      const ids = seasons.map((s: any) => s.id);
+      expect(ids).toEqual(['pfs2/s1', 'pfs2/s2', 'pfs2/s3']);
+      // Display names should still be human-readable
+      const names = seasons.map((s: any) => s.name);
+      expect(names).toEqual(['Season 1', 'Season 2', 'Season 3']);
     });
   });
 
@@ -227,7 +230,7 @@ describe('LayoutStore', () => {
       expect(layoutStore.getLayoutsByParent(undefined)).toEqual([]);
     });
 
-    it('should filter layouts by parent directory format', async () => {
+    it('should filter layouts by composite season key', async () => {
       // Simulate browsing: root -> pfs2 dir -> s1 dir -> layout file
       mockBrowse
         .mockResolvedValueOnce({
@@ -247,8 +250,8 @@ describe('LayoutStore', () => {
       layoutStore = await getStore();
       await layoutStore.initialize();
 
-      const layouts = layoutStore.getLayoutsByParent('s1');
-      // Should match layouts stored under the "s1" season directory
+      // Use composite key pfs2/s1 instead of bare s1
+      const layouts = layoutStore.getLayoutsByParent('pfs2/s1');
       expect(layouts).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ id: 'pfs.s1-01' }),
@@ -311,22 +314,22 @@ describe('LayoutStore', () => {
       mockBrowse
         .mockResolvedValueOnce({
           files: [],
-          dirs: ['modules/pfs-chronicle-generator/layouts/pfs2'],
+          dirs: ['modules/pfs-chronicle-generator/assets/layouts/pfs2'],
         })
         .mockResolvedValueOnce({
           files: [],
-          dirs: ['modules/pfs-chronicle-generator/layouts/pfs2/special_events'],
+          dirs: ['modules/pfs-chronicle-generator/assets/layouts/pfs2/special_events'],
         })
         .mockResolvedValue({ files: [], dirs: [] });
 
       layoutStore = await getStore();
       await layoutStore.initialize();
 
-      const seasons = layoutStore.getSeasons();
-      const specialEvents = seasons.find((s: any) => s.id === 'special_events');
-      if (specialEvents) {
-        expect(specialEvents.name).toBe('Special Events');
-      }
+      const seasons = layoutStore.getSeasons('pfs2');
+      // Composite key is pfs2/special_events, display name is still Special Events
+      const specialEvents = seasons.find((s: any) => s.id === 'pfs2/special_events');
+      expect(specialEvents).toBeDefined();
+      expect(specialEvents!.name).toBe('Special Events');
     });
   });
 });

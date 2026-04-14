@@ -26,7 +26,7 @@ import { generateChroniclesFromPartyData } from './handlers/party-chronicle-hand
 import { FlagActor, hasArchive } from './handlers/chronicle-exporter.js';
 import { PartyActor } from './handlers/event-listener-helpers.js';
 import { debug, warn } from './utils/logger.js';
-import { getGameSystem } from './utils/game-system-detector.js';
+import { getGameSystem, getGameSystemRoot } from './utils/game-system-detector.js';
 import ApplicationV2 = foundry.applications.api.ApplicationV2;
 import HandlebarsApplicationMixin = foundry.applications.api.HandlebarsApplicationMixin;
 import FormDataExtended = foundry.applications.ux.FormDataExtended;
@@ -176,17 +176,36 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
    * @param savedData - Previously saved party chronicle data (if any)
    * @returns Object containing seasons, layouts, and selected IDs
    */
+  /**
+   * Resolves a season ID to a valid composite key, handling migration from bare IDs.
+   * Falls back to the first available season if no match is found.
+   */
+  private resolveSeasonId(
+    candidateId: string,
+    seasons: LayoutSeason[]
+  ): string {
+    if (!candidateId) return seasons.length > 0 ? seasons[0].id : '';
+    if (seasons.some(s => s.id === candidateId)) return candidateId;
+
+    // Migrate bare season IDs (e.g., "season1") to composite keys (e.g., "pfs2/season1")
+    const match = seasons.find(s => s.id.endsWith(`/${candidateId}`));
+    if (match) return match.id;
+
+    return seasons.length > 0 ? seasons[0].id : '';
+  }
+
   private loadPartyLayoutData(savedData: PartyChronicleData | null): {
     seasons: LayoutSeason[];
     layoutsInSeason: LayoutEntry[];
     selectedSeasonId: string;
     effectiveLayoutId: string;
   } {
-    const seasons = layoutStore.getSeasons();
+    const seasons = layoutStore.getSeasons(getGameSystemRoot());
     const settingSeasonId = game.settings.get('pfs-chronicle-generator', 'season') as string;
     const currentLayoutId = game.settings.get('pfs-chronicle-generator', 'layout') as string;
 
-    let selectedSeasonId = savedData?.shared?.seasonId || settingSeasonId || (seasons.length > 0 ? seasons[0].id : '');
+    const rawSeasonId = savedData?.shared?.seasonId || settingSeasonId || '';
+    let selectedSeasonId = this.resolveSeasonId(rawSeasonId, seasons);
     const selectedLayoutId = savedData?.shared?.layoutId || currentLayoutId || '';
 
     // If a layout is set but doesn't belong to the selected season, adjust season accordingly
