@@ -32,11 +32,36 @@ for arg in "$@"; do
 done
 
 # Get the latest semver tag
-# In beta mode, include beta tags so we can detect v1.0.0-beta.2 and suggest beta.3
+# Always find the latest stable tag. In beta mode, also check for an active
+# beta series that is *ahead* of the latest stable release.
+LATEST_STABLE=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+
 if $IS_BETA; then
-  LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+(-beta\.[0-9]+)?$' | head -1)
+  LATEST_BETA=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+-beta\.[0-9]+$' | head -1)
+
+  if [[ -n "$LATEST_STABLE" && -n "$LATEST_BETA" ]]; then
+    # Extract base versions for comparison
+    STABLE_VER="${LATEST_STABLE#v}"
+    BETA_BASE_VER="${LATEST_BETA#v}"
+    BETA_BASE_VER="${BETA_BASE_VER%%-beta.*}"
+
+    # Compare: only use the beta tag if its base version is strictly newer
+    # than the stable release (e.g., v1.1.0-beta.3 when stable is v1.0.0).
+    # If stable >= beta base (e.g., v1.0.0 released after v1.0.0-beta.x),
+    # the beta series is complete — start fresh from stable.
+    HIGHER=$(printf '%s\n%s\n' "$STABLE_VER" "$BETA_BASE_VER" | sort -V | tail -1)
+    if [[ "$HIGHER" == "$BETA_BASE_VER" && "$STABLE_VER" != "$BETA_BASE_VER" ]]; then
+      LATEST_TAG="$LATEST_BETA"
+    else
+      LATEST_TAG="$LATEST_STABLE"
+    fi
+  elif [[ -n "$LATEST_BETA" ]]; then
+    LATEST_TAG="$LATEST_BETA"
+  else
+    LATEST_TAG="${LATEST_STABLE:-}"
+  fi
 else
-  LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -1)
+  LATEST_TAG="${LATEST_STABLE:-}"
 fi
 
 if [[ -z "$LATEST_TAG" ]]; then
