@@ -126,17 +126,26 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       const shared = this.mapPartyFieldsToContext(savedData, effectiveLayoutId, selectedSeasonId);
 
       // Check if chronicle path file exists and if layout has a default location
-      const chroniclePath = savedData?.shared?.blankChroniclePath || '';
+      let layoutDefaultChronicleLocation: string | undefined;
+      if (effectiveLayoutId) {
+        const selectedLayout = await layoutStore.getLayout(effectiveLayoutId);
+        layoutDefaultChronicleLocation = selectedLayout?.defaultChronicleLocation;
+      }
+
+      // When the layout has a default chronicle location, use it as the authoritative
+      // blank chronicle path. This ensures the correct game system's chronicle PDF is
+      // used (e.g., Starfinder layout always uses the Starfinder chronicle, even if
+      // saved data still references a Pathfinder chronicle from a previous session).
+      if (layoutDefaultChronicleLocation) {
+        shared.blankChroniclePath = layoutDefaultChronicleLocation;
+      }
+
+      const chroniclePath = shared.blankChroniclePath || '';
       debug(`_prepareContext: chroniclePath = "${chroniclePath}"`);
       const chroniclePathExists = await this.checkFileExists(chroniclePath);
       debug(`_prepareContext: chroniclePathExists = ${chroniclePathExists}`);
       
-      // Get the selected layout to check if it has a default chronicle location
-      let layoutHasDefault = false;
-      if (effectiveLayoutId) {
-        const selectedLayout = await layoutStore.getLayout(effectiveLayoutId);
-        layoutHasDefault = !!selectedLayout?.defaultChronicleLocation;
-      }
+      const layoutHasDefault = !!layoutDefaultChronicleLocation;
       debug(`_prepareContext: layoutHasDefault = ${layoutHasDefault}`);
       
       // Field should be hidden only if:
