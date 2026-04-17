@@ -1,7 +1,7 @@
 {
   "name": "pfs-chronicle-generator",
   "version": "1.0.0",
-  "description": "A module to generate Pathfinder Society Chronicles.",
+  "description": "A module to generate Pathfinder & Starfinder Society Chronicles.",
   "main": "scripts/main.js",
   "scripts": {
     "build": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap",

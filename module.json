@@ -1,6 +1,6 @@
 {
   "id": "pfs-chronicle-generator",
-  "title": "Pathfinder Society Chronicle Generator",
+  "title": "Pathfinder & Starfinder Society Chronicle Generator",
   "description": "A module to fill-in Pathfinder and Starfinder Society Chronicles.",
   "version": "#{VERSION}#",
   "compatibility": {
