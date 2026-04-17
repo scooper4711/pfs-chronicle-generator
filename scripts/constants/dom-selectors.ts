@@ -49,7 +49,7 @@ export const CHARACTER_FIELD_SELECTORS = {
   OVERRIDE_CURRENCY_VALUE: (characterId: string) => `input[name="characters.${characterId}.overrideCurrencyValue"]`,
   CALCULATED_XP_LABEL: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .calculated-xp-label`,
   CALCULATED_CURRENCY_LABEL: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .calculated-currency-label`,
-  EARNED_INCOME_LABEL: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .earned-income-label`,
+  EARNED_INCOME_VALUE: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .earned-income-value`,
 } as const;
 
 /**

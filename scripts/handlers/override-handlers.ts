@@ -64,8 +64,8 @@ export function handleOverrideXpChange(
  * Handles the Override Currency checkbox change for a specific character.
  * 
  * When checked: enables the Override Currency input and adds strikethrough to both
- * the Calculated Currency Label and the Earned Income Label. When unchecked: disables
- * the input and removes strikethrough from both labels.
+ * the Calculated Currency Label and the Earned Income Value. When unchecked: disables
+ * the input and removes strikethrough from both.
  * 
  * @param characterId - The actor ID of the character
  * @param container - HTMLElement wrapping the form container
@@ -85,8 +85,8 @@ export function handleOverrideCurrencyChange(
   const calculatedLabel = container.querySelector<HTMLElement>(
     CHARACTER_FIELD_SELECTORS.CALCULATED_CURRENCY_LABEL(characterId)
   );
-  const earnedIncomeLabel = container.querySelector<HTMLElement>(
-    CHARACTER_FIELD_SELECTORS.EARNED_INCOME_LABEL(characterId)
+  const earnedIncomeValue = container.querySelector<HTMLElement>(
+    CHARACTER_FIELD_SELECTORS.EARNED_INCOME_VALUE(characterId)
   );
 
   if (!checkbox || !input) {
@@ -98,14 +98,14 @@ export function handleOverrideCurrencyChange(
 
   input.disabled = !isChecked;
 
-  const labels = [calculatedLabel, earnedIncomeLabel].filter(
+  const elements = [calculatedLabel, earnedIncomeValue].filter(
     (el): el is HTMLElement => el !== null
   );
-  for (const label of labels) {
+  for (const element of elements) {
     if (isChecked) {
-      label.classList.add(CSS_CLASSES.STRIKETHROUGH_OVERRIDE);
+      element.classList.add(CSS_CLASSES.STRIKETHROUGH_OVERRIDE);
     } else {
-      label.classList.remove(CSS_CLASSES.STRIKETHROUGH_OVERRIDE);
+      element.classList.remove(CSS_CLASSES.STRIKETHROUGH_OVERRIDE);
     }
   }
 

@@ -69,7 +69,7 @@ The PFS Chronicle Generator automatically calculates `xp_gained` and `currency_g
 
 1. THE Advanced_Section SHALL contain an Override_Currency_Checkbox
 2. WHILE the active game system is Pathfinder, THE Override_Currency_Checkbox SHALL be labeled "Override GP Gained"
-3. WHILE the active game system is Starfinder, THE Override_Currency_Checkbox SHALL be labeled "Override Credits Gained"
+3. WHILE the active game system is Starfinder, THE Override_Currency_Checkbox SHALL be labeled "Override Credits"
 4. THE Advanced_Section SHALL contain an Override_Currency_Input next to the Override_Currency_Checkbox
 5. WHILE the Override_Currency_Checkbox is unchecked, THE Override_Currency_Input SHALL be disabled (not accepting input)
 6. WHEN the GM checks the Override_Currency_Checkbox, THE Override_Currency_Input SHALL become enabled

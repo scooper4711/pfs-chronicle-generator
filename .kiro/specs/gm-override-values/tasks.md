@@ -181,7 +181,7 @@ Add override controls for XP and currency values to each character card in the S
 - [x] 15. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 16. Commit event listener wiring
+- [x] 16. Commit event listener wiring
   - Commit with message `feat: Wire override event listeners and form initialization`
   - Stage all files changed in task 14 plus updated spec task file
 

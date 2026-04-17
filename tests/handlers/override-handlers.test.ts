@@ -45,7 +45,7 @@ function createCharacterCard(
   card.innerHTML = `
     <div class="calculated-xp-label">4 XP</div>
     <div class="calculated-currency-label">25.5 GP</div>
-    <div class="earned-income-label">Earned Income</div>
+    <div class="earned-income-value">0.00 gp</div>
     <input type="checkbox" name="characters.${characterId}.overrideXp"
            ${options.xpChecked ? 'checked' : ''}>
     <input type="number" name="characters.${characterId}.overrideXpValue"
@@ -107,7 +107,7 @@ describe('override-handlers', () => {
   });
 
   describe('handleOverrideCurrencyChange', () => {
-    it('enables input and adds strikethrough to currency label AND earned income label when checked', () => {
+    it('enables input and adds strikethrough to currency label AND earned income value when checked', () => {
       const card = createCharacterCard('actor-1', { currencyChecked: true });
       container.appendChild(card);
 
@@ -117,11 +117,11 @@ describe('override-handlers', () => {
         'input[name="characters.actor-1.overrideCurrencyValue"]'
       );
       const currencyLabel = container.querySelector('.calculated-currency-label');
-      const earnedIncomeLabel = container.querySelector('.earned-income-label');
+      const earnedIncomeValue = container.querySelector('.earned-income-value');
 
       expect(input!.disabled).toBe(false);
       expect(currencyLabel!.classList.contains('strikethrough-override')).toBe(true);
-      expect(earnedIncomeLabel!.classList.contains('strikethrough-override')).toBe(true);
+      expect(earnedIncomeValue!.classList.contains('strikethrough-override')).toBe(true);
     });
 
     it('disables input and removes strikethrough when checkbox is unchecked', () => {
@@ -130,9 +130,9 @@ describe('override-handlers', () => {
 
       // First add strikethrough to verify it gets removed
       const currencyLabel = container.querySelector('.calculated-currency-label')!;
-      const earnedIncomeLabel = container.querySelector('.earned-income-label')!;
+      const earnedIncomeValue = container.querySelector('.earned-income-value')!;
       currencyLabel.classList.add('strikethrough-override');
-      earnedIncomeLabel.classList.add('strikethrough-override');
+      earnedIncomeValue.classList.add('strikethrough-override');
 
       handleOverrideCurrencyChange('actor-1', container);
 
@@ -142,7 +142,7 @@ describe('override-handlers', () => {
 
       expect(input!.disabled).toBe(true);
       expect(currencyLabel.classList.contains('strikethrough-override')).toBe(false);
-      expect(earnedIncomeLabel.classList.contains('strikethrough-override')).toBe(false);
+      expect(earnedIncomeValue.classList.contains('strikethrough-override')).toBe(false);
     });
 
     it('handles missing elements gracefully', () => {
@@ -168,13 +168,13 @@ describe('override-handlers', () => {
       );
       const xpLabel = container.querySelector('.calculated-xp-label');
       const currencyLabel = container.querySelector('.calculated-currency-label');
-      const earnedIncomeLabel = container.querySelector('.earned-income-label');
+      const earnedIncomeValue = container.querySelector('.earned-income-value');
 
       expect(xpInput!.disabled).toBe(false);
       expect(currencyInput!.disabled).toBe(false);
       expect(xpLabel!.classList.contains('strikethrough-override')).toBe(true);
       expect(currencyLabel!.classList.contains('strikethrough-override')).toBe(true);
-      expect(earnedIncomeLabel!.classList.contains('strikethrough-override')).toBe(true);
+      expect(earnedIncomeValue!.classList.contains('strikethrough-override')).toBe(true);
     });
 
     it('applies correct states from saved data when overrides are unchecked', () => {
