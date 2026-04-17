@@ -28,7 +28,7 @@ import {
     updateTreasureBundleDisplay,
     updateAllEarnedIncomeDisplays,
     updateDowntimeDaysDisplay,
-    updateChroniclePathVisibility
+    updateTreasureBundlesForXp,
 } from './party-chronicle-handlers.js';
 import {
     handleSectionHeaderClick,
@@ -43,11 +43,11 @@ import {
     handleOverrideCurrencyChange
 } from './override-handlers.js';
 import { createEarnedIncomeChangeHandler } from '../utils/earned-income-form-helpers.js';
-import { clearPartyChronicleData, savePartyChronicleData } from '../model/party-chronicle-storage.js';
-import { PartyChronicleData, UniqueFields } from '../model/party-chronicle-types.js';
 import { handleCopySessionReport } from './session-report-handler.js';
-import { FlagActor, clearArchive, downloadArchive, hasArchive } from './chronicle-exporter.js';
-import { debug } from '../utils/logger.js';
+import { FlagActor, downloadArchive, hasArchive } from './chronicle-exporter.js';
+
+// Re-export clear button listener so existing imports keep working
+export { attachClearButtonListener } from './clear-button-handlers.js';
 
 /**
  * Actor type definition for party members.
@@ -190,6 +190,7 @@ export function attachDowntimeDaysListeners(container: HTMLElement): void {
     xpEarnedSelect?.addEventListener('change', (event: Event) => {
         const select = event.target as HTMLSelectElement;
         const xpEarned = Number.parseInt(select.value, 10) || 0;
+        updateTreasureBundlesForXp(xpEarned, container);
         updateDowntimeDaysDisplay(xpEarned, container);
     });
     
@@ -260,226 +261,6 @@ export function attachSaveButtonListener(
         await saveFormData(container, partyActors);
         ui.notifications?.info('Chronicle data saved successfully');
     });
-}
-
-/**
- * Attaches clear button event listener with confirmation dialog
- * 
- * @param container - Form container element
- * @param partyActors - Array of party member actors
- * @param partySheet - Party sheet app instance for re-rendering
- */
-export function attachClearButtonListener(
-    container: HTMLElement,
-    partyActors: PartyActor[],
-    partySheet: PartySheetApp,
-    partyActor: FlagActor
-): void {
-    const clearButton = container.querySelector(BUTTON_SELECTORS.CLEAR_DATA);
-    clearButton?.addEventListener('click', async (event: Event) => {
-        event.preventDefault();
-        
-        const confirmed = await foundry.applications.api.DialogV2.confirm({
-            window: { title: 'Clear Chronicle Data' },
-            content: '<p>Are you sure you want to clear all saved chronicle data? This cannot be undone.</p>',
-            rejectClose: false,
-            modal: true
-        });
-
-        if (confirmed) {
-            await handleClearButtonConfirmed(container, partyActors, partySheet, partyActor);
-        }
-    });
-}
-
-/**
- * Handles the clear button action after user confirmation
- * Extracted to reduce complexity of the clear button listener
- * 
- * @param container - Form container element
- * @param partyActors - Array of party member actors
- * @param partySheet - Party sheet app instance for re-rendering
- */
-async function handleClearButtonConfirmed(
-    container: HTMLElement,
-    partyActors: PartyActor[],
-    partySheet: PartySheetApp,
-    partyActor: FlagActor
-): Promise<void> {
-    // Get current values to preserve
-    const gmPfsNumber = (container.querySelector(SHARED_FIELD_SELECTORS.GM_PFS_NUMBER) as HTMLInputElement)?.value || '';
-    const scenarioName = (container.querySelector(SHARED_FIELD_SELECTORS.SCENARIO_NAME) as HTMLInputElement)?.value || '';
-    const eventCode = (container.querySelector(SHARED_FIELD_SELECTORS.EVENT_CODE) as HTMLInputElement)?.value || '';
-    const chroniclePath = (container.querySelector(SHARED_FIELD_SELECTORS.BLANK_CHRONICLE_PATH) as HTMLInputElement)?.value || '';
-    const seasonSelect = container.querySelector(SHARED_FIELD_SELECTORS.SEASON) as HTMLSelectElement;
-    const layoutSelect = container.querySelector(SHARED_FIELD_SELECTORS.LAYOUT) as HTMLSelectElement;
-    const seasonId = seasonSelect?.value || '';
-    const layoutId = layoutSelect?.value || '';
-    
-    // Determine adventure type and set smart defaults
-    const { defaultXp, defaultTreasureBundles, defaultDowntimeDays, defaultChosenFactionRep } = 
-        determineAdventureDefaults(scenarioName);
-    
-    // Clear all data first
-    await clearPartyChronicleData();
-    await clearArchive(partyActor);
-    
-    // Create new data with preserved values and smart defaults
-    const newData = createDefaultChronicleData({
-        gmPfsNumber,
-        scenarioName,
-        eventCode,
-        chroniclePath,
-        layoutId,
-        seasonId,
-        defaultXp,
-        defaultTreasureBundles,
-        defaultDowntimeDays,
-        defaultChosenFactionRep
-    }, partyActors);
-    
-    // Save the new data with defaults
-    debug('Saving new data with defaults:', newData);
-    await savePartyChronicleData(newData);
-    
-    ui.notifications?.info('Chronicle data cleared and defaults set');
-    debug('Re-rendering form after clear');
-    
-    // Re-render form
-    const { renderPartyChronicleForm } = await import('../main.js');
-    await renderPartyChronicleForm(container, partyActors, partySheet);
-    
-    debug('Update chronicle path visibility after re-rendering');
-    await updateChroniclePathVisibility(chroniclePath, container, layoutId);
-}
-
-/**
- * Determines default values based on adventure type (Bounty, Quest, or Scenario).
- * 
- * Detects type by checking the scenario name prefix:
- * - Bounty: starts with "Bxx" (e.g., "B1 The Whitefang Wyrm")
- * - Quest: starts with "Qxx" (e.g., "Q14 The Swordlords Challenge")
- * - Scenario: everything else (e.g., "7-01 Journeymakers Lodge")
- * 
- * @param scenarioName - Name of the scenario
- * @returns Object with default values for XP, treasure bundles, downtime days, and faction reputation
- */
-function determineAdventureDefaults(scenarioName: string): {
-    defaultXp: number;
-    defaultTreasureBundles: number;
-    defaultDowntimeDays: number;
-    defaultChosenFactionRep: number;
-} {
-    const scenarioNameLower = scenarioName.toLowerCase().trim();
-    const isBounty = /^b\d+\b/.test(scenarioNameLower);
-    const isQuest = /^q\d+\b/.test(scenarioNameLower);
-    
-    // Bounty: 1 XP, Quest: 2 XP, Scenario: 4 XP (default)
-    return {
-        defaultXp: isBounty ? 1 : (isQuest ? 2 : 4),
-        defaultTreasureBundles: isBounty ? 2 : (isQuest ? 4 : 8),
-        defaultDowntimeDays: isBounty ? 0 : (isQuest ? 4 : 8),
-        defaultChosenFactionRep: isBounty ? 1 : (isQuest ? 2 : 4)
-    };
-}
-
-/**
- * Builds default UniqueFields for each party actor
- * 
- * @param partyActors - Array of party member actors
- * @returns Map of actor IDs to default UniqueFields
- */
-function buildDefaultCharacterFields(partyActors: PartyActor[]): { [actorId: string]: UniqueFields } {
-    const characters: { [actorId: string]: UniqueFields } = {};
-    
-    partyActors.forEach((actor) => {
-        if (actor?.id) {
-            const characterLevel = actor.system?.details?.level?.value || 1;
-            const defaultTaskLevel = Math.max(0, characterLevel - 2);
-            
-            debug('Setting defaults for character:', actor.name, {
-                characterLevel,
-                defaultTaskLevel
-            });
-            
-            characters[actor.id] = {
-                characterName: actor.name || '',
-                playerNumber: '',
-                characterNumber: '',
-                level: characterLevel,
-                taskLevel: defaultTaskLevel,
-                successLevel: 'success',
-                proficiencyRank: 'trained',
-                earnedIncome: 0,
-                currencySpent: 0,
-                notes: '',
-                consumeReplay: false,
-                overrideXp: false,
-                overrideXpValue: 0,
-                overrideCurrency: false,
-                overrideCurrencyValue: 0
-            };
-        }
-    });
-    
-    return characters;
-}
-
-/** Parameters for creating default chronicle data after a clear operation */
-interface ClearDefaults {
-    gmPfsNumber: string;
-    scenarioName: string;
-    eventCode: string;
-    chroniclePath: string;
-    layoutId: string;
-    seasonId: string;
-    defaultXp: number;
-    defaultTreasureBundles: number;
-    defaultDowntimeDays: number;
-    defaultChosenFactionRep: number;
-}
-
-/**
- * Creates default chronicle data structure with preserved and default values
- * 
- * @param defaults - Preserved field values and adventure-type defaults
- * @param partyActors - Array of party member actors
- * @returns Chronicle data structure with defaults
- */
-function createDefaultChronicleData(
-    defaults: ClearDefaults,
-    partyActors: PartyActor[]
-): PartyChronicleData {
-    return {
-        shared: {
-            gmPfsNumber: defaults.gmPfsNumber,
-            scenarioName: defaults.scenarioName,
-            eventCode: defaults.eventCode,
-            eventDate: '',
-            xpEarned: defaults.defaultXp,
-            treasureBundles: defaults.defaultTreasureBundles,
-            downtimeDays: defaults.defaultDowntimeDays,
-            layoutId: defaults.layoutId,
-            seasonId: defaults.seasonId,
-            blankChroniclePath: defaults.chroniclePath,
-            adventureSummaryCheckboxes: [],
-            strikeoutItems: [],
-            chosenFactionReputation: defaults.defaultChosenFactionRep,
-            reputationValues: {
-                EA: 0,
-                GA: 0,
-                HH: 0,
-                VS: 0,
-                RO: 0,
-                VW: 0
-            },
-            reportingA: false,
-            reportingB: false,
-            reportingC: false,
-            reportingD: false,
-        },
-        characters: buildDefaultCharacterFields(partyActors)
-    };
 }
 
 /**
@@ -565,7 +346,6 @@ export function attachExportButtonListener(
     });
 }
 
-
 /**
  * Attaches portrait click event listeners
  * 
@@ -620,10 +400,6 @@ export function attachCollapsibleSectionListeners(container: HTMLElement): void 
 /**
  * Attaches override checkbox change event listeners for XP and currency overrides.
  * 
- * Queries all override XP and currency checkboxes, extracts the character ID
- * from each checkbox's name attribute, and attaches change listeners that
- * delegate to the appropriate override handler.
- * 
  * @param container - Form container element
  * 
  * Requirements: gm-override-values 1.4, 1.5, 3.3, 3.4, 4.5, 4.6
@@ -657,17 +433,6 @@ export function attachOverrideListeners(container: HTMLElement): void {
 /**
  * Attaches GM character drop zone and clear button event listeners.
  *
- * The drop zone accepts Foundry actor drag-and-drop payloads. The clear
- * button removes the current GM character assignment. Both delegate to
- * handler functions in `gm-character-handlers.ts`.
- *
- * Note: GM character form field change listeners (auto-save, earned income,
- * treasure bundle, downtime) are already covered by the existing wildcard
- * `querySelectorAll` patterns in `attachFormFieldListeners`,
- * `attachEarnedIncomeListeners`, `attachTreasureBundleListeners`, and
- * `attachDowntimeDaysListeners` since GM character fields use the same
- * `characters.{id}.fieldName` naming convention as party members.
- *
  * @param container - Form container element
  * @param partyActors - Array of party member actors
  * @param partySheet - Party sheet app instance for re-rendering
@@ -697,8 +462,6 @@ export function attachGmCharacterListeners(
         });
     }
 
-    // When a GM character is already assigned, the section replaces the drop zone.
-    // Attach drop listeners to the section so dragging a new actor replaces the current one.
     const gmSection = container.querySelector<HTMLElement>(GM_CHARACTER_SELECTORS.SECTION);
     if (gmSection) {
         gmSection.addEventListener('dragover', (event: Event) => {
