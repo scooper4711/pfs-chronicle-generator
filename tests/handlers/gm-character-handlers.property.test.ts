@@ -114,6 +114,10 @@ const uniqueFieldsArbitrary: fc.Arbitrary<UniqueFields> = fc.record({
   currencySpent: fc.integer({ min: 0, max: 9999 }),
   notes: fc.string({ maxLength: 50 }),
   consumeReplay: fc.boolean(),
+  overrideXp: fc.boolean(),
+  overrideXpValue: fc.integer({ min: 0, max: 100 }),
+  overrideCurrency: fc.boolean(),
+  overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
 });
 
 /**

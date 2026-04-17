@@ -8,7 +8,7 @@
  * @jest-environment jsdom
  */
 
-import { attachClearButtonListener, PartyActor } from '../../scripts/handlers/event-listener-helpers';
+import { attachClearButtonListener, attachOverrideListeners, attachCollapsibleSectionListeners, PartyActor } from '../../scripts/handlers/event-listener-helpers';
 
 // Track calls to clearPartyChronicleData and savePartyChronicleData
 const mockClearPartyChronicleData = jest.fn().mockResolvedValue(undefined);
@@ -45,6 +45,13 @@ jest.mock('../../scripts/handlers/collapsible-section-handlers', () => ({
 
 jest.mock('../../scripts/utils/earned-income-form-helpers', () => ({
   createEarnedIncomeChangeHandler: jest.fn(() => jest.fn()),
+}));
+
+const mockHandleOverrideXpChange = jest.fn();
+const mockHandleOverrideCurrencyChange = jest.fn();
+jest.mock('../../scripts/handlers/override-handlers', () => ({
+  handleOverrideXpChange: (...args: unknown[]) => mockHandleOverrideXpChange(...args),
+  handleOverrideCurrencyChange: (...args: unknown[]) => mockHandleOverrideCurrencyChange(...args),
 }));
 
 jest.mock('../../scripts/handlers/session-report-handler', () => ({
@@ -254,6 +261,63 @@ describe('event-listener-helpers', () => {
 
       expect(mockClearPartyChronicleData).not.toHaveBeenCalled();
       expect(mockSavePartyChronicleData).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('attachOverrideListeners', () => {
+    it('attaches change listeners to XP override checkboxes that call handleOverrideXpChange', () => {
+      container.innerHTML = `
+        <input type="checkbox" name="characters.actor-1.overrideXp">
+        <input type="checkbox" name="characters.actor-2.overrideXp">
+      `;
+
+      attachOverrideListeners(container);
+
+      const checkboxes = container.querySelectorAll<HTMLInputElement>('input[name$=".overrideXp"]');
+      checkboxes[0].dispatchEvent(new Event('change'));
+
+      expect(mockHandleOverrideXpChange).toHaveBeenCalledWith('actor-1', container);
+    });
+
+    it('attaches change listeners to currency override checkboxes that call handleOverrideCurrencyChange', () => {
+      container.innerHTML = `
+        <input type="checkbox" name="characters.actor-1.overrideCurrency">
+      `;
+
+      attachOverrideListeners(container);
+
+      const checkbox = container.querySelector<HTMLInputElement>('input[name$=".overrideCurrency"]')!;
+      checkbox.dispatchEvent(new Event('change'));
+
+      expect(mockHandleOverrideCurrencyChange).toHaveBeenCalledWith('actor-1', container);
+    });
+
+    it('handles empty container with no override checkboxes', () => {
+      container.innerHTML = '';
+
+      expect(() => attachOverrideListeners(container)).not.toThrow();
+      expect(mockHandleOverrideXpChange).not.toHaveBeenCalled();
+      expect(mockHandleOverrideCurrencyChange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('attachCollapsibleSectionListeners', () => {
+    it('attaches click and keydown listeners to collapsible section headers', () => {
+      container.innerHTML = `
+        <div class="collapsible-section" data-section-id="event-details">
+          <header class="collapsible-header" role="button" tabindex="0">
+            <span class="section-title">Event Details</span>
+          </header>
+        </div>
+      `;
+
+      attachCollapsibleSectionListeners(container);
+
+      const header = container.querySelector('.collapsible-header') as HTMLElement;
+      header.click();
+
+      const { handleSectionHeaderClick } = require('../../scripts/handlers/collapsible-section-handlers');
+      expect(handleSectionHeaderClick).toHaveBeenCalled();
     });
   });
 });

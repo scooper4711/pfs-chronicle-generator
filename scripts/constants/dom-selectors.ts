@@ -43,6 +43,13 @@ export const CHARACTER_FIELD_SELECTORS = {
   TREASURE_BUNDLE_DISPLAY: (characterId: string) => `#treasureBundleGpDisplay-${characterId}`,
   CONSUME_REPLAY: (characterId: string) => `input[name="characters.${characterId}.consumeReplay"]`,
   FACTION_DISPLAY: (characterId: string) => `#factionDisplay-${characterId}`,
+  OVERRIDE_XP: (characterId: string) => `input[name="characters.${characterId}.overrideXp"]`,
+  OVERRIDE_XP_VALUE: (characterId: string) => `input[name="characters.${characterId}.overrideXpValue"]`,
+  OVERRIDE_CURRENCY: (characterId: string) => `input[name="characters.${characterId}.overrideCurrency"]`,
+  OVERRIDE_CURRENCY_VALUE: (characterId: string) => `input[name="characters.${characterId}.overrideCurrencyValue"]`,
+  CALCULATED_XP_LABEL: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .calculated-xp-label`,
+  CALCULATED_CURRENCY_LABEL: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .calculated-currency-label`,
+  EARNED_INCOME_VALUE: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .earned-income-value`,
 } as const;
 
 /**
@@ -53,6 +60,8 @@ export const CHARACTER_FIELD_PATTERNS = {
   TASK_LEVEL_ALL: 'select[name$=".taskLevel"]',
   SUCCESS_LEVEL_ALL: 'select[name$=".successLevel"]',
   PROFICIENCY_RANK_ALL: 'select[name$=".proficiencyRank"]',
+  OVERRIDE_XP_ALL: 'input[name$=".overrideXp"]',
+  OVERRIDE_CURRENCY_ALL: 'input[name$=".overrideCurrency"]',
 } as const;
 
 /**
@@ -103,4 +112,5 @@ export const CSS_CLASSES = {
   CHRONICLE_PATH_VISIBLE: 'chronicle-path-visible',
   COLLAPSIBLE_SECTION: 'collapsible-section',
   COLLAPSED: 'collapsed',
+  STRIKETHROUGH_OVERRIDE: 'strikethrough-override',
 } as const;

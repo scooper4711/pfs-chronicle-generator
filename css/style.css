@@ -558,6 +558,62 @@
     display: none;
 }
 
+/* Advanced Section (per-character collapsible in content area) */
+/* Requirements: gm-override-values 1.1, 1.2, 1.3, 1.4, 1.5, 1.6 */
+.sheet.party [data-tab=pfs] .content .advanced-section {
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--color-border-light-tertiary, #ccc);
+    padding-top: 0.25rem;
+}
+
+.sheet.party [data-tab=pfs] .content .advanced-section .collapsible-header {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.25rem 0;
+    user-select: none;
+}
+
+.sheet.party [data-tab=pfs] .content .advanced-section .collapsible-header:hover {
+    text-decoration: underline;
+}
+
+.sheet.party [data-tab=pfs] .content .advanced-section .collapsible-header:focus {
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+}
+
+.sheet.party [data-tab=pfs] .content .advanced-section .collapsible-header .chevron {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+    margin-right: 0.35rem;
+    font-size: 0.75em;
+}
+
+.sheet.party [data-tab=pfs] .content .advanced-section .collapsible-header .chevron::before {
+    content: '▼';
+}
+
+.sheet.party [data-tab=pfs] .content .advanced-section.collapsed .chevron::before {
+    content: '▶';
+}
+
+.sheet.party [data-tab=pfs] .content .advanced-section .collapsible-header .section-title {
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.sheet.party [data-tab=pfs] .content .advanced-section .collapsible-content {
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+
+.sheet.party [data-tab=pfs] .content .advanced-section.collapsed .collapsible-content {
+    max-height: 0;
+    opacity: 0;
+    display: none;
+}
+
 /* Task Level help icon styling - uses Foundry's built-in tooltip system */
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group label .fa-question-circle {
   margin-left: 4px;
@@ -647,4 +703,10 @@
 .sheet.party [data-tab=pfs] .activities .member-activity .gm-clear-button:hover {
     color: #d32f2f;
     border-color: #d32f2f;
+}
+
+/* Override Strikethrough Styling */
+/* Requirements: gm-override-values 3.5, 3.6, 4.7, 4.8 */
+.sheet.party [data-tab=pfs] .strikethrough-override {
+    text-decoration: line-through;
 }

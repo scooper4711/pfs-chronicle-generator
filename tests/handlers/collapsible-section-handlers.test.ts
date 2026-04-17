@@ -12,7 +12,8 @@ import {
   toggleSectionCollapse,
   updateSectionSummary,
   updateAllSectionSummaries,
-  initializeCollapseSections
+  initializeCollapseSections,
+  isValidSectionId
 } from '../../scripts/handlers/collapsible-section-handlers';
 
 // Mock the storage module
@@ -426,6 +427,104 @@ describe('collapsible-section-handlers', () => {
 
       // adventure-summary defaults to NOT collapsed, so collapsed class should be removed
       expect(section.classList.contains('collapsed')).toBe(false);
+      expect(header.getAttribute('aria-expanded')).toBe('true');
+    });
+  });
+
+  describe('isValidSectionId', () => {
+    it('should accept static section IDs', () => {
+      expect(isValidSectionId('event-details')).toBe(true);
+      expect(isValidSectionId('reputation')).toBe(true);
+      expect(isValidSectionId('shared-rewards')).toBe(true);
+      expect(isValidSectionId('adventure-summary')).toBe(true);
+      expect(isValidSectionId('items-to-strike-out')).toBe(true);
+    });
+
+    it('should accept advanced-{characterId} patterns', () => {
+      expect(isValidSectionId('advanced-actor-123')).toBe(true);
+      expect(isValidSectionId('advanced-abc')).toBe(true);
+      expect(isValidSectionId('advanced-gm-char-456')).toBe(true);
+    });
+
+    it('should reject invalid section IDs', () => {
+      expect(isValidSectionId('invalid-section')).toBe(false);
+      expect(isValidSectionId('')).toBe(false);
+      expect(isValidSectionId('advancedactor-123')).toBe(false);
+    });
+  });
+
+  describe('initializeCollapseSections with Advanced sections', () => {
+    it('should initialize Advanced sections as collapsed by default', () => {
+      const advancedSection = document.createElement('div');
+      advancedSection.className = 'collapsible-section advanced-section';
+      advancedSection.setAttribute('data-section-id', 'advanced-actor-1');
+      const header = document.createElement('header');
+      header.className = 'collapsible-header';
+      header.setAttribute('aria-expanded', 'true');
+      advancedSection.appendChild(header);
+      container.appendChild(advancedSection);
+
+      initializeCollapseSections(container);
+
+      expect(advancedSection.classList.contains('collapsed')).toBe(true);
+      expect(header.getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('should initialize multiple Advanced sections independently', () => {
+      const section1 = document.createElement('div');
+      section1.className = 'collapsible-section advanced-section';
+      section1.setAttribute('data-section-id', 'advanced-actor-1');
+      const header1 = document.createElement('header');
+      header1.className = 'collapsible-header';
+      section1.appendChild(header1);
+      container.appendChild(section1);
+
+      const section2 = document.createElement('div');
+      section2.className = 'collapsible-section advanced-section';
+      section2.setAttribute('data-section-id', 'advanced-actor-2');
+      const header2 = document.createElement('header');
+      header2.className = 'collapsible-header';
+      section2.appendChild(header2);
+      container.appendChild(section2);
+
+      initializeCollapseSections(container);
+
+      expect(section1.classList.contains('collapsed')).toBe(true);
+      expect(header1.getAttribute('aria-expanded')).toBe('false');
+      expect(section2.classList.contains('collapsed')).toBe(true);
+      expect(header2.getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('should warn when Advanced section header is missing', () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      const sectionNoHeader = document.createElement('div');
+      sectionNoHeader.className = 'collapsible-section advanced-section';
+      sectionNoHeader.setAttribute('data-section-id', 'advanced-actor-1');
+      container.appendChild(sectionNoHeader);
+
+      initializeCollapseSections(container);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        'Missing header for section: "advanced-actor-1"'
+      );
+      consoleSpy.mockRestore();
+    });
+
+    it('should allow toggling an Advanced section', () => {
+      const advancedSection = document.createElement('div');
+      advancedSection.className = 'collapsible-section advanced-section collapsed';
+      advancedSection.setAttribute('data-section-id', 'advanced-actor-1');
+      const header = document.createElement('header');
+      header.className = 'collapsible-header';
+      header.setAttribute('aria-expanded', 'false');
+      advancedSection.appendChild(header);
+      container.appendChild(advancedSection);
+
+      toggleSectionCollapse('advanced-actor-1', container);
+
+      expect(advancedSection.classList.contains('collapsed')).toBe(false);
       expect(header.getAttribute('aria-expanded')).toBe('true');
     });
   });

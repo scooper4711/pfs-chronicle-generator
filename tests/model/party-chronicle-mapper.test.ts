@@ -60,6 +60,10 @@ describe('mapToCharacterData', () => {
     currencySpent: 0,
     notes: '',
     consumeReplay: false,
+    overrideXp: false,
+    overrideXpValue: 0,
+    overrideCurrency: false,
+    overrideCurrencyValue: 0,
     ...overrides
   });
 
@@ -372,6 +376,10 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
     currencySpent: 0,
     notes: '',
     consumeReplay: false,
+    overrideXp: false,
+    overrideXpValue: 0,
+    overrideCurrency: false,
+    overrideCurrencyValue: 0,
     ...overrides
   });
 
@@ -759,6 +767,10 @@ describe('Property 6: Data Combination Correctness', () => {
       currencySpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.string({ maxLength: 500 }),
       consumeReplay: fc.boolean(),
+      overrideXp: fc.boolean(),
+      overrideXpValue: fc.integer({ min: 0, max: 100 }),
+      overrideCurrency: fc.boolean(),
+      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
     });
 
     fc.assert(
@@ -771,7 +783,9 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.event).toBe(shared.scenarioName);
         expect(result.eventcode).toBe(shared.eventCode);
         expect(result.date).toBe(shared.eventDate);
-        expect(result.xp_gained).toBe(shared.xpEarned);
+        // xp_gained uses override when active (gm-override-values 5.1, 5.3)
+        const expectedXp = unique.overrideXp ? unique.overrideXpValue : shared.xpEarned;
+        expect(result.xp_gained).toBe(expectedXp);
         expect(result.summary_checkbox).toEqual(shared.adventureSummaryCheckboxes);
         expect(result.strikeout_item_lines).toEqual(shared.strikeoutItems);
         expect(result.treasure_bundles).toBe(shared.treasureBundles.toString());
@@ -789,7 +803,10 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(typeof result.income_earned).toBe('number');
         expect(typeof result.treasure_bundle_value).toBe('number');
         expect(typeof result.currency_gained).toBe('number');
-        expect(result.currency_gained).toBeGreaterThanOrEqual(0);
+        // currency_gained can be the override value (which may be any non-negative double)
+        if (!unique.overrideCurrency) {
+          expect(result.currency_gained).toBeGreaterThanOrEqual(0);
+        }
       }),
       { numRuns: 100 }
     );
@@ -837,6 +854,10 @@ describe('Property 6: Data Combination Correctness', () => {
       currencySpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.string({ maxLength: 500 }),
       consumeReplay: fc.boolean(),
+      overrideXp: fc.boolean(),
+      overrideXpValue: fc.integer({ min: 0, max: 100 }),
+      overrideCurrency: fc.boolean(),
+      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
     });
 
     fc.assert(
@@ -858,7 +879,9 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.treasure_bundles).toStrictEqual(shared.treasureBundles.toString());
 
         // Numeric fields should be identical
-        expect(result.xp_gained).toStrictEqual(shared.xpEarned);
+        // xp_gained uses override when active (gm-override-values 5.1, 5.3)
+        const expectedXp = unique.overrideXp ? unique.overrideXpValue : shared.xpEarned;
+        expect(result.xp_gained).toStrictEqual(expectedXp);
         expect(result.level).toStrictEqual(unique.level);
         expect(result.currency_spent).toStrictEqual(unique.currencySpent);
         
@@ -916,7 +939,11 @@ describe('Property 6: Data Combination Correctness', () => {
       earnedIncome: fc.integer({ min: 0, max: 1000 }),
       currencySpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.constant(''),
-      consumeReplay: fc.boolean()
+      consumeReplay: fc.boolean(),
+      overrideXp: fc.boolean(),
+      overrideXpValue: fc.integer({ min: 0, max: 100 }),
+      overrideCurrency: fc.boolean(),
+      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true })
     });
 
     fc.assert(
@@ -937,8 +964,13 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.treasure_bundle_value).toBe(0);
         // With task level "-", income_earned should be 0
         expect(result.income_earned).toBe(0);
-        // gp_gained should be 0 when both are 0
-        expect(result.currency_gained).toBe(0);
+        // currency_gained depends on override state (gm-override-values 5.2, 5.4)
+        if (unique.overrideCurrency) {
+          expect(result.currency_gained).toBe(unique.overrideCurrencyValue);
+        } else {
+          // gp_gained should be 0 when both treasure bundles and income are 0
+          expect(result.currency_gained).toBe(0);
+        }
       }),
       { numRuns: 100 }
     );
@@ -986,6 +1018,10 @@ describe('Property 6: Data Combination Correctness', () => {
       currencySpent: fc.constant(0),
       notes: fc.string({ maxLength: 500 }),
       consumeReplay: fc.boolean(),
+      overrideXp: fc.boolean(),
+      overrideXpValue: fc.integer({ min: 0, max: 100 }),
+      overrideCurrency: fc.boolean(),
+      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
     });
 
     fc.assert(
@@ -994,7 +1030,9 @@ describe('Property 6: Data Combination Correctness', () => {
         const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify zero values are preserved (not treated as falsy)
-        expect(result.xp_gained).toBe(0);
+        // xp_gained uses override when active (gm-override-values 5.1, 5.3)
+        const expectedXp = unique.overrideXp ? unique.overrideXpValue : 0;
+        expect(result.xp_gained).toBe(expectedXp);
         expect(result.income_earned).toBe(0);
         expect(result.currency_spent).toBe(0);
         
@@ -1050,6 +1088,10 @@ describe('Property 6: Data Combination Correctness', () => {
       currencySpent: fc.integer({ min: 0, max: 10000 }),
       notes: stringArb,
       consumeReplay: fc.boolean(),
+      overrideXp: fc.boolean(),
+      overrideXpValue: fc.integer({ min: 0, max: 100 }),
+      overrideCurrency: fc.boolean(),
+      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
     });
 
     fc.assert(
@@ -1075,5 +1117,206 @@ describe('Property 6: Data Combination Correctness', () => {
       }),
       { numRuns: 100 }
     );
+  });
+});
+
+/**
+ * Override-aware mapToCharacterData tests.
+ *
+ * Validates that XP and currency overrides replace calculated values
+ * when active, and that calculated values are used when overrides are inactive.
+ *
+ * Requirements: gm-override-values 5.1, 5.2, 5.3, 5.4
+ */
+describe('mapToCharacterData - Override-aware values', () => {
+  beforeAll(() => {
+    (globalThis as any).game = { system: { id: 'pf2e' }, modules: new Map() };
+  });
+
+  afterAll(() => {
+    delete (globalThis as any).game;
+  });
+
+  const createMockActor = (actorId: string, currentFaction: string | null = null) => ({
+    id: actorId,
+    system: { pfs: { currentFaction } }
+  }) as unknown as PartyActor;
+
+  const createSharedFields = (overrides: Partial<SharedFields> = {}): SharedFields => ({
+    gmPfsNumber: '12345',
+    scenarioName: 'Test Scenario',
+    eventCode: 'TEST-001',
+    eventDate: '2024-01-15',
+    xpEarned: 4,
+    adventureSummaryCheckboxes: [],
+    strikeoutItems: [],
+    treasureBundles: 2,
+    layoutId: 'layout-1',
+    seasonId: 'season-5',
+    blankChroniclePath: '/path/to/chronicle.pdf',
+    chosenFactionReputation: 0,
+    reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 },
+    downtimeDays: 4,
+    reportingA: false,
+    reportingB: false,
+    reportingC: false,
+    reportingD: false,
+    ...overrides
+  });
+
+  const createUniqueFields = (overrides: Partial<UniqueFields> = {}): UniqueFields => ({
+    characterName: 'Test Character',
+    playerNumber: '12345',
+    characterNumber: '01',
+    level: 5,
+    taskLevel: 3,
+    successLevel: 'success',
+    proficiencyRank: 'trained',
+    earnedIncome: 0,
+    currencySpent: 0,
+    notes: '',
+    consumeReplay: false,
+    overrideXp: false,
+    overrideXpValue: 0,
+    overrideCurrency: false,
+    overrideCurrencyValue: 0,
+    ...overrides
+  });
+
+  /**
+   * Requirements: gm-override-values 5.1
+   */
+  it('should use overrideXpValue when overrideXp is true', () => {
+    const shared = createSharedFields({ xpEarned: 4 });
+    const unique = createUniqueFields({
+      overrideXp: true,
+      overrideXpValue: 2,
+      taskLevel: '-'
+    });
+    const actor = createMockActor('actor-1', null);
+
+    const result = mapToCharacterData(shared, unique, actor);
+
+    expect(result.xp_gained).toBe(2);
+  });
+
+  /**
+   * Requirements: gm-override-values 5.1 — zero is a valid override value
+   */
+  it('should use overrideXpValue of zero when overrideXp is true', () => {
+    const shared = createSharedFields({ xpEarned: 4 });
+    const unique = createUniqueFields({
+      overrideXp: true,
+      overrideXpValue: 0,
+      taskLevel: '-'
+    });
+    const actor = createMockActor('actor-1', null);
+
+    const result = mapToCharacterData(shared, unique, actor);
+
+    expect(result.xp_gained).toBe(0);
+  });
+
+  /**
+   * Requirements: gm-override-values 5.3
+   */
+  it('should use shared.xpEarned when overrideXp is false', () => {
+    const shared = createSharedFields({ xpEarned: 4 });
+    const unique = createUniqueFields({
+      overrideXp: false,
+      overrideXpValue: 99,
+      taskLevel: '-'
+    });
+    const actor = createMockActor('actor-1', null);
+
+    const result = mapToCharacterData(shared, unique, actor);
+
+    expect(result.xp_gained).toBe(4);
+  });
+
+  /**
+   * Requirements: gm-override-values 5.2
+   */
+  it('should use overrideCurrencyValue when overrideCurrency is true', () => {
+    const shared = createSharedFields({ treasureBundles: 2, downtimeDays: 4 });
+    const unique = createUniqueFields({
+      overrideCurrency: true,
+      overrideCurrencyValue: 150.5,
+      level: 5,
+      taskLevel: 3,
+      successLevel: 'success',
+      proficiencyRank: 'trained'
+    });
+    const actor = createMockActor('actor-1', null);
+
+    const result = mapToCharacterData(shared, unique, actor);
+
+    expect(result.currency_gained).toBe(150.5);
+  });
+
+  /**
+   * Requirements: gm-override-values 5.2 — zero is a valid override value
+   */
+  it('should use overrideCurrencyValue of zero when overrideCurrency is true', () => {
+    const shared = createSharedFields({ treasureBundles: 2, downtimeDays: 4 });
+    const unique = createUniqueFields({
+      overrideCurrency: true,
+      overrideCurrencyValue: 0,
+      level: 5,
+      taskLevel: 3,
+      successLevel: 'success',
+      proficiencyRank: 'trained'
+    });
+    const actor = createMockActor('actor-1', null);
+
+    const result = mapToCharacterData(shared, unique, actor);
+
+    expect(result.currency_gained).toBe(0);
+  });
+
+  /**
+   * Requirements: gm-override-values 5.4
+   */
+  it('should use calculated currency_gained when overrideCurrency is false', () => {
+    const shared = createSharedFields({ treasureBundles: 2, downtimeDays: 4 });
+    const unique = createUniqueFields({
+      overrideCurrency: false,
+      overrideCurrencyValue: 999,
+      level: 5,
+      taskLevel: 3,
+      successLevel: 'success',
+      proficiencyRank: 'trained'
+    });
+    const actor = createMockActor('actor-1', null);
+
+    const result = mapToCharacterData(shared, unique, actor);
+
+    // Level 5: 2 × 10 = 20 (treasure bundles)
+    // Level 3 trained success: 0.5 gp/day × 4 days = 2 gp (earned income)
+    // Total: 20 + 2 = 22
+    expect(result.currency_gained).toBe(22);
+  });
+
+  /**
+   * Requirements: gm-override-values 5.1, 5.2
+   */
+  it('should apply both XP and currency overrides simultaneously', () => {
+    const shared = createSharedFields({ xpEarned: 4, treasureBundles: 2, downtimeDays: 4 });
+    const unique = createUniqueFields({
+      overrideXp: true,
+      overrideXpValue: 8,
+      overrideCurrency: true,
+      overrideCurrencyValue: 250,
+      level: 5,
+      taskLevel: 3,
+      successLevel: 'success',
+      proficiencyRank: 'trained'
+    });
+    const actor = createMockActor('actor-1', null);
+
+    const result = mapToCharacterData(shared, unique, actor);
+
+    expect(result.xp_gained).toBe(8);
+    expect(result.currency_gained).toBe(250);
   });
 });

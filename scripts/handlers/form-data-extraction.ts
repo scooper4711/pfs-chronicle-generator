@@ -113,6 +113,11 @@ export function extractFormData(container: HTMLElement, partyActors: PartyActor[
             notes: (container.querySelector(`#notes-${actorId}`) as HTMLTextAreaElement)?.value || '',
             // Read session reporting fields
             consumeReplay: (container.querySelector(`input[name="characters.${actorId}.consumeReplay"]`) as HTMLInputElement)?.checked || false,
+            // Read override fields (gm-override-values 6.1, 6.2)
+            overrideXp: (container.querySelector(`input[name="characters.${actorId}.overrideXp"]`) as HTMLInputElement)?.checked || false,
+            overrideXpValue: Number.parseFloat((container.querySelector(`input[name="characters.${actorId}.overrideXpValue"]`) as HTMLInputElement)?.value) || 0,
+            overrideCurrency: (container.querySelector(`input[name="characters.${actorId}.overrideCurrency"]`) as HTMLInputElement)?.checked || false,
+            overrideCurrencyValue: Number.parseFloat((container.querySelector(`input[name="characters.${actorId}.overrideCurrencyValue"]`) as HTMLInputElement)?.value) || 0,
         };
     });
     

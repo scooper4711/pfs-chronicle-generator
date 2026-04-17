@@ -365,22 +365,28 @@
                         </div>
 
                         <div class="form-group">
-                            <label><i class="fas fa-coins"></i> Earned Income</label>
+                            <label class="earned-income-label"><i class="fas fa-coins"></i> Earned Income</label>
                             <div class="earned-income-value" data-tooltip="Calculated from Task Level, Success Level, Proficiency Rank, and Downtime Days.">{{getZeroCurrencyDisplay gameSystem}}</div>
                             <input type="hidden" name="characters.{{gmCharacter.id}}.earnedIncome" value="0" class="earned-income-hidden">
                         </div>
+                    </div>
+
+                    {{!-- XP Earned display --}}
+                    <div class="form-group">
+                        <label><i class="fas fa-star"></i> XP Earned</label>
+                        <div class="calculated-xp-label">{{shared.xpEarned}} XP</div>
                     </div>
 
                     {{!-- Treasure Bundle Value / Credits Awarded display --}}
                     {{#if (eq gameSystem "sf2e")}}
                     <div class="form-group">
                         <label><i class="fas fa-coins"></i> Credits Awarded</label>
-                        <div class="credits-awarded-value">{{getCreditsAwarded gmCharacter.level}} Credits</div>
+                        <div class="credits-awarded-value calculated-currency-label">{{getCreditsAwarded gmCharacter.level}} Credits</div>
                     </div>
                     {{else}}
                     <div class="form-group">
                         <label><i class="fas fa-treasure-chest"></i> Treasure Bundles</label>
-                        <div class="treasure-bundle-value" data-tooltip="Calculated from shared Treasure Bundles field. Each TB is worth {{getTreasureBundleValue gmCharacter.level}} gp at level {{gmCharacter.level}}.">0.00 gp</div>
+                        <div class="treasure-bundle-value calculated-currency-label" data-tooltip="Calculated from shared Treasure Bundles field. Each TB is worth {{getTreasureBundleValue gmCharacter.level}} gp at level {{gmCharacter.level}}.">0.00 gp</div>
                     </div>
                     {{/if}}
 
@@ -394,12 +400,44 @@
                         <textarea id="notes-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.notes" rows="3">{{#if gmCharacterFields}}{{lookup gmCharacterFields 'notes'}}{{/if}}</textarea>
                     </div>
 
-                    <div class="form-group">
-                        <label class="checkbox-label" data-tooltip="Check this if the player has already played this scenario and is using a replay credit. This is included in the session report for paizo.com.">
-                            <input type="checkbox" name="characters.{{gmCharacter.id}}.consumeReplay"
-                                {{#if (lookup gmCharacterFields 'consumeReplay')}}checked{{/if}}>
-                            Consume Replay
-                        </label>
+                    {{!-- Advanced Section (collapsible) --}}
+                    <div class="collapsible-section advanced-section" data-section-id="advanced-{{gmCharacter.id}}">
+                        <header class="collapsible-header" role="button" tabindex="0"
+                                aria-expanded="false" aria-controls="advanced-content-{{gmCharacter.id}}">
+                            <span class="chevron"></span>
+                            <span class="section-title">Advanced</span>
+                        </header>
+                        <div class="collapsible-content" id="advanced-content-{{gmCharacter.id}}">
+                            <div class="form-group">
+                                <label class="checkbox-label" data-tooltip="Check this if the player has already played this scenario and is using a replay credit. This is included in the session report for paizo.com.">
+                                    <input type="checkbox" name="characters.{{gmCharacter.id}}.consumeReplay"
+                                        {{#if (lookup gmCharacterFields 'consumeReplay')}}checked{{/if}}>
+                                    Consume Replay
+                                </label>
+                            </div>
+
+                            <div class="form-group override-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="characters.{{gmCharacter.id}}.overrideXp"
+                                        {{#if (lookup gmCharacterFields 'overrideXp')}}checked{{/if}}>
+                                    Override XP
+                                </label>
+                                <input type="number" name="characters.{{gmCharacter.id}}.overrideXpValue"
+                                       value="{{#if gmCharacterFields}}{{lookup gmCharacterFields 'overrideXpValue'}}{{else}}0{{/if}}"
+                                       min="0" step="1" disabled>
+                            </div>
+
+                            <div class="form-group override-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="characters.{{gmCharacter.id}}.overrideCurrency"
+                                        {{#if (lookup gmCharacterFields 'overrideCurrency')}}checked{{/if}}>
+                                    {{#if (eq gameSystem "sf2e")}}Override Credits{{else}}Override GP Gained{{/if}}
+                                </label>
+                                <input type="number" name="characters.{{gmCharacter.id}}.overrideCurrencyValue"
+                                       value="{{#if gmCharacterFields}}{{lookup gmCharacterFields 'overrideCurrencyValue'}}{{else}}0{{/if}}"
+                                       min="0" {{#if (eq gameSystem "sf2e")}}step="1"{{else}}step="0.01"{{/if}} disabled>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -470,22 +508,28 @@
                         </div>
                         
                         <div class="form-group">
-                            <label><i class="fas fa-coins"></i> Earned Income</label>
+                            <label class="earned-income-label"><i class="fas fa-coins"></i> Earned Income</label>
                             <div class="earned-income-value" data-tooltip="Calculated from Task Level, Success Level, Proficiency Rank, and Downtime Days.">{{getZeroCurrencyDisplay ../gameSystem}}</div>
                             <input type="hidden" name="characters.{{this.id}}.earnedIncome" value="0" class="earned-income-hidden">
                         </div>
                     </div>
                     
+                    {{!-- XP Earned display --}}
+                    <div class="form-group">
+                        <label><i class="fas fa-star"></i> XP Earned</label>
+                        <div class="calculated-xp-label">{{../shared.xpEarned}} XP</div>
+                    </div>
+
                     {{!-- Treasure Bundle Value / Credits Awarded display --}}
                     {{#if (eq ../gameSystem "sf2e")}}
                     <div class="form-group">
                         <label><i class="fas fa-coins"></i> Credits Awarded</label>
-                        <div class="credits-awarded-value">{{getCreditsAwarded this.level}} Credits</div>
+                        <div class="credits-awarded-value calculated-currency-label">{{getCreditsAwarded this.level}} Credits</div>
                     </div>
                     {{else}}
                     <div class="form-group">
                         <label><i class="fas fa-treasure-chest"></i> Treasure Bundles</label>
-                        <div class="treasure-bundle-value" data-tooltip="Calculated from shared Treasure Bundles field. Each TB is worth {{getTreasureBundleValue this.level}} gp at level {{this.level}}.">0.00 gp</div>
+                        <div class="treasure-bundle-value calculated-currency-label" data-tooltip="Calculated from shared Treasure Bundles field. Each TB is worth {{getTreasureBundleValue this.level}} gp at level {{this.level}}.">0.00 gp</div>
                     </div>
                     {{/if}}
                     
@@ -499,12 +543,44 @@
                         <textarea id="notes-{{this.id}}" name="characters.{{this.id}}.notes" rows="3">{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'notes'}}{{/if}}</textarea>
                     </div>
                     
-                    <div class="form-group">
-                        <label class="checkbox-label" data-tooltip="Check this if the player has already played this scenario and is using a replay credit. This is included in the session report for paizo.com.">
-                            <input type="checkbox" name="characters.{{this.id}}.consumeReplay"
-                                {{#if (lookup (lookup ../savedData.characters this.id) 'consumeReplay')}}checked{{/if}}>
-                            Consume Replay
-                        </label>
+                    {{!-- Advanced Section (collapsible) --}}
+                    <div class="collapsible-section advanced-section" data-section-id="advanced-{{this.id}}">
+                        <header class="collapsible-header" role="button" tabindex="0"
+                                aria-expanded="false" aria-controls="advanced-content-{{this.id}}">
+                            <span class="chevron"></span>
+                            <span class="section-title">Advanced</span>
+                        </header>
+                        <div class="collapsible-content" id="advanced-content-{{this.id}}">
+                            <div class="form-group">
+                                <label class="checkbox-label" data-tooltip="Check this if the player has already played this scenario and is using a replay credit. This is included in the session report for paizo.com.">
+                                    <input type="checkbox" name="characters.{{this.id}}.consumeReplay"
+                                        {{#if (lookup (lookup ../savedData.characters this.id) 'consumeReplay')}}checked{{/if}}>
+                                    Consume Replay
+                                </label>
+                            </div>
+
+                            <div class="form-group override-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="characters.{{this.id}}.overrideXp"
+                                        {{#if (lookup (lookup ../savedData.characters this.id) 'overrideXp')}}checked{{/if}}>
+                                    Override XP
+                                </label>
+                                <input type="number" name="characters.{{this.id}}.overrideXpValue"
+                                       value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'overrideXpValue'}}{{else}}0{{/if}}"
+                                       min="0" step="1" disabled>
+                            </div>
+
+                            <div class="form-group override-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="characters.{{this.id}}.overrideCurrency"
+                                        {{#if (lookup (lookup ../savedData.characters this.id) 'overrideCurrency')}}checked{{/if}}>
+                                    {{#if (eq ../gameSystem "sf2e")}}Override Credits{{else}}Override GP Gained{{/if}}
+                                </label>
+                                <input type="number" name="characters.{{this.id}}.overrideCurrencyValue"
+                                       value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'overrideCurrencyValue'}}{{else}}0{{/if}}"
+                                       min="0" {{#if (eq ../gameSystem "sf2e")}}step="1"{{else}}step="0.01"{{/if}} disabled>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

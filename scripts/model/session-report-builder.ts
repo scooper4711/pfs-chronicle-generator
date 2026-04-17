@@ -13,6 +13,8 @@ import type { SharedFields, UniqueFields } from './party-chronicle-types.js';
 import { buildScenarioIdentifier } from './scenario-identifier.js';
 import type { BonusRep, SessionReport, SignUp } from './session-report-types.js';
 import { getGameSystem } from '../utils/game-system-detector.js';
+import { calculateTreasureBundleValue, calculateCurrencyGained, getCreditsAwarded } from '../utils/treasure-bundle-calculator.js';
+import { calculateEarnedIncome } from '../utils/earned-income-calculator.js';
 
 /**
  * Minimal actor shape required by the session report builder.
@@ -53,22 +55,62 @@ export interface SessionReportBuildParams {
 }
 
 /**
+ * Calculates XP and currency values for a character, applying overrides when active.
+ *
+ * @param shared - Shared fields for calculated defaults
+ * @param characterFields - Per-character unique fields with override flags
+ * @returns Object with xpEarned and currencyGained values
+ *
+ * Requirements: gm-override-values 7.1, 7.2, 7.3
+ */
+function calculateCharacterRewards(
+  shared: SharedFields,
+  characterFields: UniqueFields
+): { xpEarned: number; currencyGained: number } {
+  const gameSystem = getGameSystem();
+
+  const xpEarned = characterFields.overrideXp === true
+    ? characterFields.overrideXpValue
+    : shared.xpEarned;
+
+  let currencyGained: number;
+  if (characterFields.overrideCurrency === true) {
+    currencyGained = characterFields.overrideCurrencyValue;
+  } else {
+    const incomeEarned = calculateEarnedIncome(
+      characterFields.taskLevel,
+      characterFields.successLevel,
+      characterFields.proficiencyRank,
+      shared.downtimeDays,
+      gameSystem
+    );
+    const treasureBundleValue = gameSystem === 'sf2e'
+      ? getCreditsAwarded(characterFields.level)
+      : calculateTreasureBundleValue(shared.treasureBundles, characterFields.level);
+    currencyGained = calculateCurrencyGained(treasureBundleValue, incomeEarned, gameSystem);
+  }
+
+  return { xpEarned, currencyGained };
+}
+
+/**
  * Builds a SignUp entry for a single party member.
  *
  * @param actor - Party actor with PFS data
- * @param characterFields - Per-character unique fields (name, consumeReplay)
- * @param chosenFactionReputation - Shared reputation value for the chosen faction
+ * @param characterFields - Per-character unique fields (name, consumeReplay, overrides)
+ * @param shared - Shared fields for calculated defaults and override logic
  * @returns A SignUp entry for the session report
  *
- * Requirements: paizo-session-reporting 4.9, 4.10
+ * Requirements: paizo-session-reporting 4.9, 4.10, gm-override-values 7.1, 7.2, 7.3
  */
 function buildSignUp(
   actor: SessionReportActor,
   characterFields: UniqueFields,
-  chosenFactionReputation: number
+  shared: SharedFields
 ): SignUp {
   const currentFaction = actor.system?.pfs?.currentFaction ?? '';
   const factionFullName = FACTION_NAMES[currentFaction] ?? currentFaction;
+  const rewards = calculateCharacterRewards(shared, characterFields);
 
   return {
     isGM: false,
@@ -76,8 +118,10 @@ function buildSignUp(
     characterNumber: actor.system?.pfs?.characterNumber ?? 0,
     characterName: characterFields.characterName,
     consumeReplay: characterFields.consumeReplay,
-    repEarned: chosenFactionReputation,
+    repEarned: shared.chosenFactionReputation,
     faction: factionFullName,
+    xpEarned: rewards.xpEarned,
+    currencyGained: rewards.currencyGained,
   };
 }
 
@@ -85,19 +129,20 @@ function buildSignUp(
  * Builds a SignUp entry for the GM character with `isGM: true`.
  *
  * @param actor - GM character actor with PFS data
- * @param characterFields - GM character's unique fields (name, consumeReplay)
- * @param chosenFactionReputation - Shared reputation value for the chosen faction
+ * @param characterFields - GM character's unique fields (name, consumeReplay, overrides)
+ * @param shared - Shared fields for calculated defaults and override logic
  * @returns A SignUp entry with isGM set to true
  *
- * Requirements: gm-character-party-sheet 6.1, 6.2, 6.3
+ * Requirements: gm-character-party-sheet 6.1, 6.2, 6.3, gm-override-values 7.1, 7.2, 7.3
  */
 function buildGmSignUp(
   actor: SessionReportActor,
   characterFields: UniqueFields,
-  chosenFactionReputation: number
+  shared: SharedFields
 ): SignUp {
   const currentFaction = actor.system?.pfs?.currentFaction ?? '';
   const factionFullName = FACTION_NAMES[currentFaction] ?? currentFaction;
+  const rewards = calculateCharacterRewards(shared, characterFields);
 
   return {
     isGM: true,
@@ -105,8 +150,10 @@ function buildGmSignUp(
     characterNumber: actor.system?.pfs?.characterNumber ?? 0,
     characterName: characterFields.characterName,
     consumeReplay: characterFields.consumeReplay,
-    repEarned: chosenFactionReputation,
+    repEarned: shared.chosenFactionReputation,
     faction: factionFullName,
+    xpEarned: rewards.xpEarned,
+    currencyGained: rewards.currencyGained,
   };
 }
 
@@ -191,10 +238,10 @@ export function buildSessionReport(params: SessionReportBuildParams): SessionRep
 
   const signUps = partyActors
     .filter((actor) => characters[actor.id] !== undefined)
-    .map((actor) => buildSignUp(actor, characters[actor.id], shared.chosenFactionReputation));
+    .map((actor) => buildSignUp(actor, characters[actor.id], shared));
 
   if (gmCharacterActor && gmCharacterFields) {
-    signUps.push(buildGmSignUp(gmCharacterActor, gmCharacterFields, shared.chosenFactionReputation));
+    signUps.push(buildGmSignUp(gmCharacterActor, gmCharacterFields, shared));
   }
 
   return {

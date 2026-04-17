@@ -140,6 +140,11 @@ jest.mock('../scripts/handlers/event-listener-helpers', () => ({
   attachFilePickerListener: jest.fn(),
   attachCollapsibleSectionListeners: jest.fn(),
   attachGmCharacterListeners: jest.fn(),
+  attachOverrideListeners: jest.fn(),
+}));
+
+jest.mock('../scripts/handlers/override-handlers', () => ({
+  initializeOverrideStates: jest.fn(),
 }));
 
 // Suppress console noise
@@ -155,7 +160,9 @@ import {
   attachFormFieldListeners,
   attachSaveButtonListener,
   attachGenerateButtonListener,
+  attachOverrideListeners,
 } from '../scripts/handlers/event-listener-helpers';
+import { initializeOverrideStates } from '../scripts/handlers/override-handlers';
 import { updateValidationDisplay } from '../scripts/handlers/validation-display';
 import {
   updateAllTreasureBundleDisplays,
@@ -333,6 +340,7 @@ describe('main.ts', () => {
       expect(attachFormFieldListeners).toHaveBeenCalledWith(container, partyActors);
       expect(attachSaveButtonListener).toHaveBeenCalledWith(container, partyActors);
       expect(attachGenerateButtonListener).toHaveBeenCalledWith(container, partyActors, undefined);
+      expect(attachOverrideListeners).toHaveBeenCalledWith(container);
     });
 
     it('initializes form state after rendering', async () => {
@@ -343,6 +351,7 @@ describe('main.ts', () => {
       expect(updateAllEarnedIncomeDisplays).toHaveBeenCalled();
       expect(initializeCollapseSections).toHaveBeenCalledWith(container);
       expect(updateAllSectionSummaries).toHaveBeenCalledWith(container);
+      expect(initializeOverrideStates).toHaveBeenCalledWith(container);
       expect(updateValidationDisplay).toHaveBeenCalled();
     });
 

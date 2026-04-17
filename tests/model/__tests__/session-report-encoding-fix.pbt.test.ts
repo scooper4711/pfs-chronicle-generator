@@ -90,6 +90,10 @@ const buildParamsArbitrary = sharedFieldsArbitrary.chain((shared) =>
           currencySpent: 0,
           notes: '',
           consumeReplay: char.consumeReplay,
+          overrideXp: false,
+          overrideXpValue: 0,
+          overrideCurrency: false,
+          overrideCurrencyValue: 0,
         },
       },
       partyActors: [
