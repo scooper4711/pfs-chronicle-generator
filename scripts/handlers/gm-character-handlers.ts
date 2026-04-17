@@ -135,7 +135,11 @@ function buildDefaultUniqueFields(
     earnedIncome: 0,
     currencySpent: 0,
     notes: 'GM Credit',
-    consumeReplay: false
+    consumeReplay: false,
+    overrideXp: false,
+    overrideXpValue: 0,
+    overrideCurrency: false,
+    overrideCurrencyValue: 0
   };
 }
 

@@ -32,7 +32,11 @@ const uniqueFieldsArbitrary = fc.record({
   earnedIncome: fc.integer({ min: 0, max: 1000 }),
   currencySpent: fc.integer({ min: 0, max: 1000 }),
   notes: fc.string({ maxLength: 200 }),
-  consumeReplay: fc.boolean()
+  consumeReplay: fc.boolean(),
+  overrideXp: fc.boolean(),
+  overrideXpValue: fc.integer({ min: 0, max: 100 }),
+  overrideCurrency: fc.boolean(),
+  overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true })
 });
 
 /**
@@ -356,7 +360,11 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 earnedIncome: Math.floor(Math.random() * 100),
                 currencySpent: Math.floor(Math.random() * 1000),
                 notes: `Notes for ${actorId.substring(0, 8)}`,
-                consumeReplay: false
+                consumeReplay: false,
+                overrideXp: false,
+                overrideXpValue: 0,
+                overrideCurrency: false,
+                overrideCurrencyValue: 0
               };
             });
 
@@ -428,7 +436,11 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 earnedIncome: index * 10,
                 currencySpent: index * 50,
                 notes: `Notes ${index + 1}`,
-                consumeReplay: false
+                consumeReplay: false,
+                overrideXp: false,
+                overrideXpValue: 0,
+                overrideCurrency: false,
+                overrideCurrencyValue: 0
               };
             });
 
@@ -469,7 +481,11 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 earnedIncome: 10,
                 currencySpent: 20,
                 notes: 'Test notes',
-                consumeReplay: false
+                consumeReplay: false,
+                overrideXp: false,
+                overrideXpValue: 0,
+                overrideCurrency: false,
+                overrideCurrencyValue: 0
               };
             });
 

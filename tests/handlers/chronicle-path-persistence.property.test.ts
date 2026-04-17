@@ -197,7 +197,11 @@ describe('Chronicle Path Persistence Property Tests', () => {
           earnedIncome: 10.5,
           currencySpent: 5.0,
           notes: 'Test notes 1',
-          consumeReplay: false
+          consumeReplay: false,
+          overrideXp: false,
+          overrideXpValue: 0,
+          overrideCurrency: false,
+          overrideCurrencyValue: 0
         },
         actor2: {
           characterName: 'Character 2',
@@ -209,7 +213,11 @@ describe('Chronicle Path Persistence Property Tests', () => {
           earnedIncome: 8.0,
           currencySpent: 3.5,
           notes: 'Test notes 2',
-          consumeReplay: false
+          consumeReplay: false,
+          overrideXp: false,
+          overrideXpValue: 0,
+          overrideCurrency: false,
+          overrideCurrencyValue: 0
         }
       }
     };

@@ -113,7 +113,11 @@ describe('Party Chronicle Form Preservation Tests', () => {
                   earnedIncome: 50,
                   currencySpent: formData.currencySpent,
                   notes: formData.notes,
-                  consumeReplay: false
+                  consumeReplay: false,
+                  overrideXp: false,
+                  overrideXpValue: 0,
+                  overrideCurrency: false,
+                  overrideCurrencyValue: 0
                 }
               }
             };
@@ -202,7 +206,11 @@ describe('Party Chronicle Form Preservation Tests', () => {
                   earnedIncome: 50,
                   currencySpent: testData.currencySpent,
                   notes: testData.notes,
-                  consumeReplay: false
+                  consumeReplay: false,
+                  overrideXp: false,
+                  overrideXpValue: 0,
+                  overrideCurrency: false,
+                  overrideCurrencyValue: 0
                 }
               }
             };
@@ -245,7 +253,11 @@ describe('Party Chronicle Form Preservation Tests', () => {
                   earnedIncome: 0,
                   currencySpent: 0,
                   notes: '',
-                  consumeReplay: false
+                  consumeReplay: false,
+                  overrideXp: false,
+                  overrideXpValue: 0,
+                  overrideCurrency: false,
+                  overrideCurrencyValue: 0
                 }
               }
             };

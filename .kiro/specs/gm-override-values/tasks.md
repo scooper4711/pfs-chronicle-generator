@@ -6,32 +6,32 @@ Add override controls for XP and currency values to each character card in the S
 
 ## Tasks
 
-- [ ] 1. Initial spec commit
+- [x] 1. Initial spec commit
   - [x] 1.1 Create feature branch `feat/gm-override-values` from current branch
-  - [-] 1.2 Commit spec files with message `docs: Add gm-override-values spec`
+  - [x] 1.2 Commit spec files with message `docs: Add gm-override-values spec`
     - Stage `.kiro/specs/gm-override-values/requirements.md`, `.kiro/specs/gm-override-values/design.md`, `.kiro/specs/gm-override-values/tasks.md`, `.kiro/specs/gm-override-values/.config.kiro`
 
-- [ ] 2. Extend data model and DOM selectors for override fields
-  - [~] 2.1 Add override fields to `UniqueFields` interface in `model/party-chronicle-types.ts`
+- [x] 2. Extend data model and DOM selectors for override fields
+  - [x] 2.1 Add override fields to `UniqueFields` interface in `model/party-chronicle-types.ts`
     - Add `overrideXp: boolean`, `overrideXpValue: number`, `overrideCurrency: boolean`, `overrideCurrencyValue: number` to the `UniqueFields` interface
     - _Requirements: 3.1, 3.2, 4.1, 4.4, 8.1, 8.2_
 
-  - [~] 2.2 Add override DOM selectors to `constants/dom-selectors.ts`
+  - [x] 2.2 Add override DOM selectors to `constants/dom-selectors.ts`
     - Add character field selectors: `OVERRIDE_XP`, `OVERRIDE_XP_VALUE`, `OVERRIDE_CURRENCY`, `OVERRIDE_CURRENCY_VALUE`, `CALCULATED_XP_LABEL`, `CALCULATED_CURRENCY_LABEL`, `EARNED_INCOME_LABEL` as functions of `characterId`
     - Add character field patterns: `OVERRIDE_XP_ALL`, `OVERRIDE_CURRENCY_ALL` for `querySelectorAll`
     - Add `STRIKETHROUGH_OVERRIDE` to `CSS_CLASSES`
     - _Requirements: 3.1, 3.2, 4.1, 4.4_
 
-  - [~] 2.3 Add `.strikethrough-override` CSS class to `css/style.css`
+  - [x] 2.3 Add `.strikethrough-override` CSS class to `css/style.css`
     - Add a `.strikethrough-override` class with `text-decoration: line-through` styling
     - _Requirements: 3.5, 3.6, 4.7, 4.8_
 
-  - [~] 2.4 Extend `buildDefaultCharacterFields()` in `handlers/event-listener-helpers.ts`
+  - [x] 2.4 Extend `buildDefaultCharacterFields()` in `handlers/event-listener-helpers.ts`
     - Add `overrideXp: false`, `overrideXpValue: 0`, `overrideCurrency: false`, `overrideCurrencyValue: 0` to the default character fields object
     - _Requirements: 6.3_
 
-- [ ] 3. Create override handler module and tests
-  - [~] 3.1 Create `handlers/override-handlers.ts` with checkbox toggle and initialization logic
+- [x] 3. Create override handler module and tests
+  - [x] 3.1 Create `handlers/override-handlers.ts` with checkbox toggle and initialization logic
     - Implement `handleOverrideXpChange(characterId, container)`: toggle Override_XP_Input disabled state, toggle `.strikethrough-override` on Calculated_XP_Label, trigger auto-save via `handleFieldChange`
     - Implement `handleOverrideCurrencyChange(characterId, container)`: toggle Override_Currency_Input disabled state, toggle `.strikethrough-override` on Calculated_Currency_Label and Earned_Income_Label, trigger auto-save
     - Implement `initializeOverrideStates(container)`: read all override checkboxes, apply correct disabled/enabled and strikethrough states from saved data on form load
@@ -45,7 +45,7 @@ Add override controls for XP and currency values to each character card in the S
     - **Property 2: Currency override checkbox controls input state and strikethrough**
     - **Validates: Requirements 4.5, 4.6, 4.7, 4.8**
 
-  - [~] 3.4 Write unit tests for `handlers/override-handlers.ts`
+  - [x] 3.4 Write unit tests for `handlers/override-handlers.ts`
     - Test `handleOverrideXpChange` enables input and adds strikethrough when checked
     - Test `handleOverrideXpChange` disables input and removes strikethrough when unchecked
     - Test `handleOverrideCurrencyChange` enables input and adds strikethrough to currency label and earned income label when checked
@@ -54,10 +54,10 @@ Add override controls for XP and currency values to each character card in the S
     - Test override controls are independent per character
     - _Requirements: 3.3, 3.4, 3.5, 3.6, 4.5, 4.6, 4.7, 4.8, 6.2, 8.1, 8.2_
 
-- [~] 4. Checkpoint - Ensure all tests pass
+- [x] 4. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [~] 5. Commit override handler module
+- [-] 5. Commit override handler module
   - Commit with message `feat: Add override handler module with data model and selectors`
   - Stage all files changed in tasks 2 and 3 plus updated spec task file
 

@@ -409,7 +409,11 @@ function buildDefaultCharacterFields(partyActors: PartyActor[]): { [actorId: str
                 earnedIncome: 0,
                 currencySpent: 0,
                 notes: '',
-                consumeReplay: false
+                consumeReplay: false,
+                overrideXp: false,
+                overrideXpValue: 0,
+                overrideCurrency: false,
+                overrideCurrencyValue: 0
             };
         }
     });

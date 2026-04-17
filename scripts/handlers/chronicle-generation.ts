@@ -189,7 +189,11 @@ function extractUniqueFields(rawCharacters: Record<string, Partial<UniqueFields>
     earnedIncome: Number(uniqueFields.earnedIncome) || 0,
     currencySpent: Number(uniqueFields.currencySpent) || 0,
     notes: uniqueFields.notes || '',
-    consumeReplay: Boolean(uniqueFields.consumeReplay)
+    consumeReplay: Boolean(uniqueFields.consumeReplay),
+    overrideXp: Boolean(uniqueFields.overrideXp),
+    overrideXpValue: Number(uniqueFields.overrideXpValue) || 0,
+    overrideCurrency: Boolean(uniqueFields.overrideCurrency),
+    overrideCurrencyValue: Number(uniqueFields.overrideCurrencyValue) || 0
   };
 }
 

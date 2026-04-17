@@ -648,3 +648,9 @@
     color: #d32f2f;
     border-color: #d32f2f;
 }
+
+/* Override Strikethrough Styling */
+/* Requirements: gm-override-values 3.5, 3.6, 4.7, 4.8 */
+.sheet.party [data-tab=pfs] .strikethrough-override {
+    text-decoration: line-through;
+}

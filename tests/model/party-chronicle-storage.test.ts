@@ -696,7 +696,11 @@ describe('Party Chronicle Storage', () => {
         earnedIncome: fc.float({ min: 0, max: 1000, noNaN: true }),
         currencySpent: fc.integer({ min: 0, max: 10000 }),
         notes: fc.string({ maxLength: 500 }),
-        consumeReplay: fc.boolean()
+        consumeReplay: fc.boolean(),
+        overrideXp: fc.boolean(),
+        overrideXpValue: fc.integer({ min: 0, max: 100 }),
+        overrideCurrency: fc.boolean(),
+        overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true })
       });
 
       const sharedDataArb = fc.record({

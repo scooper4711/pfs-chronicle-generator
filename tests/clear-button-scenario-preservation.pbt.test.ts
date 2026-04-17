@@ -197,7 +197,11 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
                   earnedIncome: 50,
                   currencySpent: 10,
                   notes: 'Test notes',
-                  consumeReplay: false
+                  consumeReplay: false,
+                  overrideXp: false,
+                  overrideXpValue: 0,
+                  overrideCurrency: false,
+                  overrideCurrencyValue: 0
                 }
               }
             };
@@ -259,7 +263,11 @@ describe('Clear Button Scenario Preservation Bug Condition Exploration', () => {
                   earnedIncome: 0,
                   currencySpent: 0,
                   notes: '',
-                  consumeReplay: false
+                  consumeReplay: false,
+                  overrideXp: false,
+                  overrideXpValue: 0,
+                  overrideCurrency: false,
+                  overrideCurrencyValue: 0
                 }
               }
             };

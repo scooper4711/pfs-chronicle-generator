@@ -238,6 +238,10 @@ describe('handleGmCharacterDrop', () => {
           currencySpent: 0,
           notes: '',
           consumeReplay: false,
+          overrideXp: false,
+          overrideXpValue: 0,
+          overrideCurrency: false,
+          overrideCurrencyValue: 0,
         },
       },
     });
@@ -299,6 +303,10 @@ describe('handleGmCharacterClear', () => {
           currencySpent: 10,
           notes: 'GM credit',
           consumeReplay: false,
+          overrideXp: false,
+          overrideXpValue: 0,
+          overrideCurrency: false,
+          overrideCurrencyValue: 0,
         },
         'party-member-1': {
           characterName: 'Valeros',
@@ -312,6 +320,10 @@ describe('handleGmCharacterClear', () => {
           currencySpent: 0,
           notes: '',
           consumeReplay: false,
+          overrideXp: false,
+          overrideXpValue: 0,
+          overrideCurrency: false,
+          overrideCurrencyValue: 0,
         },
       },
     });

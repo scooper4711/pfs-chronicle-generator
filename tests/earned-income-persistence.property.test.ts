@@ -103,6 +103,10 @@ describe('Earned Income Data Persistence - Property Tests', () => {
       currencySpent: fc.double({ min: 0, max: 1000, noNaN: true }),
       notes: fc.string({ maxLength: 200 }),
       consumeReplay: fc.boolean(),
+      overrideXp: fc.boolean(),
+      overrideXpValue: fc.integer({ min: 0, max: 100 }),
+      overrideCurrency: fc.boolean(),
+      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
     });
 
     /**
@@ -182,6 +186,10 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                   currencySpent: 0,
                   notes: '',
                   consumeReplay: false,
+                  overrideXp: false,
+                  overrideXpValue: 0,
+                  overrideCurrency: false,
+                  overrideCurrencyValue: 0,
                 },
               },
             };
@@ -476,6 +484,10 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                   currencySpent: 0,
                   notes: '',
                   consumeReplay: false,
+                  overrideXp: false,
+                  overrideXpValue: 0,
+                  overrideCurrency: false,
+                  overrideCurrencyValue: 0,
                 },
               },
             };
@@ -577,6 +589,10 @@ describe('Earned Income Data Persistence - Property Tests', () => {
                   currencySpent: 0,
                   notes: '',
                   consumeReplay: false,
+                  overrideXp: false,
+                  overrideXpValue: 0,
+                  overrideCurrency: false,
+                  overrideCurrencyValue: 0,
                 },
               },
             };

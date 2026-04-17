@@ -60,6 +60,10 @@ describe('mapToCharacterData', () => {
     currencySpent: 0,
     notes: '',
     consumeReplay: false,
+    overrideXp: false,
+    overrideXpValue: 0,
+    overrideCurrency: false,
+    overrideCurrencyValue: 0,
     ...overrides
   });
 
@@ -372,6 +376,10 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
     currencySpent: 0,
     notes: '',
     consumeReplay: false,
+    overrideXp: false,
+    overrideXpValue: 0,
+    overrideCurrency: false,
+    overrideCurrencyValue: 0,
     ...overrides
   });
 
@@ -759,6 +767,10 @@ describe('Property 6: Data Combination Correctness', () => {
       currencySpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.string({ maxLength: 500 }),
       consumeReplay: fc.boolean(),
+      overrideXp: fc.boolean(),
+      overrideXpValue: fc.integer({ min: 0, max: 100 }),
+      overrideCurrency: fc.boolean(),
+      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
     });
 
     fc.assert(
@@ -837,6 +849,10 @@ describe('Property 6: Data Combination Correctness', () => {
       currencySpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.string({ maxLength: 500 }),
       consumeReplay: fc.boolean(),
+      overrideXp: fc.boolean(),
+      overrideXpValue: fc.integer({ min: 0, max: 100 }),
+      overrideCurrency: fc.boolean(),
+      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
     });
 
     fc.assert(
@@ -916,7 +932,11 @@ describe('Property 6: Data Combination Correctness', () => {
       earnedIncome: fc.integer({ min: 0, max: 1000 }),
       currencySpent: fc.integer({ min: 0, max: 10000 }),
       notes: fc.constant(''),
-      consumeReplay: fc.boolean()
+      consumeReplay: fc.boolean(),
+      overrideXp: fc.boolean(),
+      overrideXpValue: fc.integer({ min: 0, max: 100 }),
+      overrideCurrency: fc.boolean(),
+      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true })
     });
 
     fc.assert(
@@ -986,6 +1006,10 @@ describe('Property 6: Data Combination Correctness', () => {
       currencySpent: fc.constant(0),
       notes: fc.string({ maxLength: 500 }),
       consumeReplay: fc.boolean(),
+      overrideXp: fc.boolean(),
+      overrideXpValue: fc.integer({ min: 0, max: 100 }),
+      overrideCurrency: fc.boolean(),
+      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
     });
 
     fc.assert(
@@ -1050,6 +1074,10 @@ describe('Property 6: Data Combination Correctness', () => {
       currencySpent: fc.integer({ min: 0, max: 10000 }),
       notes: stringArb,
       consumeReplay: fc.boolean(),
+      overrideXp: fc.boolean(),
+      overrideXpValue: fc.integer({ min: 0, max: 100 }),
+      overrideCurrency: fc.boolean(),
+      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
     });
 
     fc.assert(

@@ -121,6 +121,18 @@ export interface UniqueFields {
 
   /** Whether the player is consuming a replay for this session (paizo-session-reporting 10.2, 3.2) */
   consumeReplay: boolean;
+
+  /** Whether the XP override is active for this character (gm-override-values 3.1, 3.2, 4.1, 4.4, 8.1, 8.2) */
+  overrideXp: boolean;
+
+  /** Override XP value (used when overrideXp is true) (gm-override-values 3.1, 3.2, 4.1, 4.4, 8.1, 8.2) */
+  overrideXpValue: number;
+
+  /** Whether the currency override is active for this character (gm-override-values 3.1, 3.2, 4.1, 4.4, 8.1, 8.2) */
+  overrideCurrency: boolean;
+
+  /** Override currency value (used when overrideCurrency is true) (gm-override-values 3.1, 3.2, 4.1, 4.4, 8.1, 8.2) */
+  overrideCurrencyValue: number;
 }
 
 /**
