@@ -1,10 +1,10 @@
 <div align="center">
 
-# Pathfinder Society Chronicle Generator
+# Pathfinder & Starfinder Society Chronicle Generator
 
 ### Generate chronicles for your entire party with one click
 
-*A Foundry VTT module that streamlines chronicle generation for Pathfinder Society GMs*
+*A Foundry VTT module that streamlines chronicle generation for Pathfinder Society and Starfinder Society GMs*
 
 *Written with AI assistance. See below for a statement about the use of AI in this project*
 
@@ -46,7 +46,7 @@
 ### Requirements
 
 - **Foundry VTT**: Version 13 or 14
-- **Game System**: Pathfinder 2e (PF2e)
+- **Game System**: Pathfinder 2e (PF2e) or Starfinder 2e (SF2e or PF2e with [SF2e Anachronism](https://foundryvtt.com/packages/sf2e-anachronism))
 
 ---
 
@@ -81,7 +81,7 @@ Detects Bounties, Quests, and Scenarios and sets appropriate defaults
 
 **📋 Pre-configured Layouts**
 
-Includes layouts for many PFS scenarios - just select and go
+Includes layouts for many PFS and SFS scenarios - just select and go
 
 </td>
 </tr>
@@ -102,6 +102,28 @@ Players download chronicles directly from their character sheets
 </td>
 </tr>
 </table>
+
+---
+
+## 🚀 Starfinder Society Support
+
+> **The module automatically detects whether you're running Pathfinder or Starfinder and adapts accordingly**
+
+The module works with both the native SF2e system and the sf2e-anachronism compatibility module. When running Starfinder, the following differences apply:
+
+| Feature | Pathfinder | Starfinder |
+|---------|-----------|------------|
+| **Currency** | Gold pieces (gp) | Credits |
+| **Treasure** | Treasure bundles → gp by level | Flat Credits Awarded by level |
+| **XP** | 1 (Bounty), 2 (Quest), or 4 (Scenario) | Always 4 (scenarios only) |
+| **Downtime** | Varies by scenario type | Always 8 days |
+| **Earned Income** | Standard PF2e table | Standard SF2e table |
+| **Reputation** | Per-faction tracking | Hidden (not used in SFS) |
+| **Season Filtering** | Shows only PFS seasons | Shows only SFS seasons |
+
+No configuration is needed — the module reads `game.system.id` at runtime and adjusts all labels, calculations, and UI elements automatically.
+
+![Starfinder Society Support](docs/screenshots/stafinder-screenshot.png)
 
 ---
 
@@ -259,9 +281,11 @@ Players can now open their character sheets, go to the **PFS** tab, and click **
 
 > **Save time with built-in calculators**
 
-### 💎 Treasure Bundles → Gold
+### 💎 Treasure Bundles → Gold (Pathfinder) / Credits Awarded (Starfinder)
 
-Treasure bundles are automatically converted to gold based on each character's level. The conversion follows the official PFS guidelines.
+In Pathfinder, treasure bundles are automatically converted to gold based on each character's level, following the official PFS guidelines.
+
+In Starfinder, each character receives a flat Credits Awarded amount based on their level — no treasure bundle input needed.
 
 ### 💰 Earned Income
 
@@ -270,17 +294,19 @@ When players use downtime days to Earn Income:
 2. Select the success level (Critical Success, Success, Failure, Critical Failure)
 3. Select proficiency rank (Trained, Expert, Master, Legendary)
 
-The module automatically calculates the gold earned based on these selections and the number of downtime days.
+The module automatically calculates the gold (Pathfinder) or Credits (Starfinder) earned based on these selections and the number of downtime days. Starfinder values are 10× the Pathfinder table, rounded up to whole Credits.
 
-### ⭐ Reputation
+### ⭐ Reputation (Pathfinder only)
 
-Enter the reputation values for each faction, and the module will format them correctly on the chronicle. You can also select which faction gets the bonus reputation from the scenario.
+Enter the reputation values for each faction, and the module will format them correctly on the chronicle. You can also select which faction gets the bonus reputation from the scenario. The reputation section is hidden when running Starfinder.
 
 ---
 
 ## 🎲 Scenario Types
 
 > **Smart defaults based on scenario type**
+
+### Pathfinder Society
 
 | Type | XP | Treasure Bundles | Downtime Days | Reputation |
 |------|:--:|:----------------:|:-------------:|:----------:|
@@ -289,6 +315,14 @@ Enter the reputation values for each faction, and the module will format them co
 | **Scenario** | 4 | 8 | 8 | 4 |
 
 > The module detects the type from the scenario name: names starting with "B" followed by a number are Bounties, "Q" followed by a number are Quests, and everything else defaults to Scenario.
+
+### Starfinder Society
+
+| Type | XP | Credits Awarded | Downtime Days |
+|------|:--:|:---------------:|:-------------:|
+| **Scenario** | 4 | By character level | 8 |
+
+> Starfinder Society has only scenarios — no bounties or quests. Credits Awarded is a flat amount determined by each character's level (see the [Starfinder Society Guide](https://paizo.com) for the full table).
 
 ---
 
