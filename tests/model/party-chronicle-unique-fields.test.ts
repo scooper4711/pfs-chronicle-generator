@@ -150,7 +150,9 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               
               // Calculate expected gold values
               const expectedTreasureBundlesGp = calculateTreasureBundleValue(shared.treasureBundles, unique.level);
-              const expectedGpGained = calculateCurrencyGained(expectedTreasureBundlesGp, expectedEarnedIncome);
+              const expectedGpGained = unique.overrideCurrency
+                ? unique.overrideCurrencyValue
+                : calculateCurrencyGained(expectedTreasureBundlesGp, expectedEarnedIncome);
               
               // Verify character-specific fields match this character's unique data
               expect(chronicleData.char).toBe(unique.characterName);
@@ -270,7 +272,9 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             
             // Calculate expected gold values
             const expectedTreasureBundlesGp = calculateTreasureBundleValue(shared.treasureBundles, unique.level);
-            const expectedGpGained = calculateCurrencyGained(expectedTreasureBundlesGp, expectedEarnedIncome);
+            const expectedGpGained = unique.overrideCurrency
+              ? unique.overrideCurrencyValue
+              : calculateCurrencyGained(expectedTreasureBundlesGp, expectedEarnedIncome);
 
             // Property: Single character's unique fields are correctly applied
             expect(chronicleData.char).toBe(unique.characterName);

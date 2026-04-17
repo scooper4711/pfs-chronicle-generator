@@ -118,19 +118,22 @@ describe('Party Chronicle Shared Field Property Tests', () => {
             }));
 
             // Property: All characters should have the same shared field values
-            chronicleDataList.forEach(({ chronicleData }) => {
+            chronicleDataList.forEach(({ unique, chronicleData }) => {
               // Verify shared fields are applied to this character
               expect(chronicleData.gmid).toBe(shared.gmPfsNumber);
               expect(chronicleData.event).toBe(shared.scenarioName);
               expect(chronicleData.eventcode).toBe(shared.eventCode);
               expect(chronicleData.date).toBe(shared.eventDate);
-              expect(chronicleData.xp_gained).toBe(shared.xpEarned);
+              // xp_gained uses override when active (gm-override-values 5.1, 5.3)
+              const expectedXp = unique.overrideXp ? unique.overrideXpValue : shared.xpEarned;
+              expect(chronicleData.xp_gained).toBe(expectedXp);
               expect(chronicleData.summary_checkbox).toEqual(shared.adventureSummaryCheckboxes);
               expect(chronicleData.strikeout_item_lines).toEqual(shared.strikeoutItems);
               expect(chronicleData.treasure_bundles).toBe(shared.treasureBundles.toString());
             });
 
             // Property: All characters should have identical shared field values
+            // (xp_gained excluded — it can differ per character when overrides are active)
             if (chronicleDataList.length > 1) {
               const firstChronicle = chronicleDataList[0].chronicleData;
               
@@ -139,7 +142,6 @@ describe('Party Chronicle Shared Field Property Tests', () => {
                 expect(chronicleData.event).toBe(firstChronicle.event);
                 expect(chronicleData.eventcode).toBe(firstChronicle.eventcode);
                 expect(chronicleData.date).toBe(firstChronicle.date);
-                expect(chronicleData.xp_gained).toBe(firstChronicle.xp_gained);
                 expect(chronicleData.summary_checkbox).toEqual(firstChronicle.summary_checkbox);
                 expect(chronicleData.strikeout_item_lines).toEqual(firstChronicle.strikeout_item_lines);
                 expect(chronicleData.treasure_bundles).toBe(firstChronicle.treasure_bundles);
@@ -196,7 +198,6 @@ describe('Party Chronicle Shared Field Property Tests', () => {
               expect(chronicleData.event).toBe(partyShared.scenarioName);
               expect(chronicleData.eventcode).toBe(partyShared.eventCode);
               expect(chronicleData.date).toBe(partyShared.eventDate);
-              expect(chronicleData.xp_gained).toBe(partyShared.xpEarned);
             });
 
             // Property: Outside characters should have outside shared fields (not party fields)
@@ -205,7 +206,6 @@ describe('Party Chronicle Shared Field Property Tests', () => {
               expect(chronicleData.event).toBe(outsideShared.scenarioName);
               expect(chronicleData.eventcode).toBe(outsideShared.eventCode);
               expect(chronicleData.date).toBe(outsideShared.eventDate);
-              expect(chronicleData.xp_gained).toBe(outsideShared.xpEarned);
             });
           }
         ),
@@ -234,7 +234,9 @@ describe('Party Chronicle Shared Field Property Tests', () => {
             expect(chronicleData.event).toBe(shared.scenarioName);
             expect(chronicleData.eventcode).toBe(shared.eventCode);
             expect(chronicleData.date).toBe(shared.eventDate);
-            expect(chronicleData.xp_gained).toBe(shared.xpEarned);
+            // xp_gained uses override when active (gm-override-values 5.1, 5.3)
+            const expectedXp = unique.overrideXp ? unique.overrideXpValue : shared.xpEarned;
+            expect(chronicleData.xp_gained).toBe(expectedXp);
             expect(chronicleData.summary_checkbox).toEqual(shared.adventureSummaryCheckboxes);
             expect(chronicleData.strikeout_item_lines).toEqual(shared.strikeoutItems);
             expect(chronicleData.treasure_bundles).toBe(shared.treasureBundles.toString());
@@ -261,17 +263,20 @@ describe('Party Chronicle Shared Field Property Tests', () => {
             };
 
             // Map all 10 characters
-            const chronicleDataList = characterPairs.map(([_actorId, unique]) =>
-              mapToCharacterData(shared, unique, mockActor)
-            );
+            const chronicleDataList = characterPairs.map(([_actorId, unique]) => ({
+              unique,
+              chronicleData: mapToCharacterData(shared, unique, mockActor)
+            }));
 
             // Property: All 10 characters should have identical shared field values
-            chronicleDataList.forEach(chronicleData => {
+            chronicleDataList.forEach(({ unique, chronicleData }) => {
               expect(chronicleData.gmid).toBe(shared.gmPfsNumber);
               expect(chronicleData.event).toBe(shared.scenarioName);
               expect(chronicleData.eventcode).toBe(shared.eventCode);
               expect(chronicleData.date).toBe(shared.eventDate);
-              expect(chronicleData.xp_gained).toBe(shared.xpEarned);
+              // xp_gained uses override when active (gm-override-values 5.1, 5.3)
+              const expectedXp = unique.overrideXp ? unique.overrideXpValue : shared.xpEarned;
+              expect(chronicleData.xp_gained).toBe(expectedXp);
               expect(chronicleData.summary_checkbox).toEqual(shared.adventureSummaryCheckboxes);
               expect(chronicleData.strikeout_item_lines).toEqual(shared.strikeoutItems);
               expect(chronicleData.treasure_bundles).toBe(shared.treasureBundles.toString());
@@ -308,11 +313,11 @@ describe('Party Chronicle Shared Field Property Tests', () => {
               }
               
               // But shared fields should always be the same
+              // (xp_gained excluded — it can differ per character when overrides are active)
               expect(chronicleData.gmid).toBe(firstChronicle.chronicleData.gmid);
               expect(chronicleData.event).toBe(firstChronicle.chronicleData.event);
               expect(chronicleData.eventcode).toBe(firstChronicle.chronicleData.eventcode);
               expect(chronicleData.date).toBe(firstChronicle.chronicleData.date);
-              expect(chronicleData.xp_gained).toBe(firstChronicle.chronicleData.xp_gained);
               expect(chronicleData.summary_checkbox).toEqual(firstChronicle.chronicleData.summary_checkbox);
               expect(chronicleData.strikeout_item_lines).toEqual(firstChronicle.chronicleData.strikeout_item_lines);
               expect(chronicleData.treasure_bundles).toBe(firstChronicle.chronicleData.treasure_bundles);
@@ -379,12 +384,13 @@ describe('Party Chronicle Shared Field Property Tests', () => {
           ),
           async (shared, characterPairs) => {
             // Map all characters
-            const chronicleDataList = characterPairs.map(([_actorId, unique]) =>
-              mapToCharacterData(shared, unique, mockActor)
-            );
+            const chronicleDataList = characterPairs.map(([_actorId, unique]) => ({
+              unique,
+              chronicleData: mapToCharacterData(shared, unique, mockActor)
+            }));
 
             // Property: All shared field types are correctly propagated
-            chronicleDataList.forEach(chronicleData => {
+            chronicleDataList.forEach(({ unique, chronicleData }) => {
               // String fields
               expect(typeof chronicleData.gmid).toBe('string');
               expect(chronicleData.gmid).toBe(shared.gmPfsNumber);
@@ -403,7 +409,9 @@ describe('Party Chronicle Shared Field Property Tests', () => {
               
               // Number fields
               expect(typeof chronicleData.xp_gained).toBe('number');
-              expect(chronicleData.xp_gained).toBe(shared.xpEarned);
+              // xp_gained uses override when active (gm-override-values 5.1, 5.3)
+              const expectedXp = unique.overrideXp ? unique.overrideXpValue : shared.xpEarned;
+              expect(chronicleData.xp_gained).toBe(expectedXp);
               
               // Array fields
               expect(Array.isArray(chronicleData.summary_checkbox)).toBe(true);

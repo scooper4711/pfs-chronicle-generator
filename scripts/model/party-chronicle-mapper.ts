@@ -128,6 +128,10 @@ export function mapToCharacterData(
   // Calculate reputation using the reputation calculator
   const reputationLines = calculateReputation(shared, actor);
   
+  // Apply override values when active (gm-override-values 5.1, 5.2, 5.3, 5.4)
+  const xpGained = unique.overrideXp === true ? unique.overrideXpValue : shared.xpEarned;
+  const finalCurrencyGained = unique.overrideCurrency === true ? unique.overrideCurrencyValue : currencyGained;
+
   const chronicleData: ChronicleData = {
     // Character identification from unique fields
     char: unique.characterName,
@@ -142,13 +146,13 @@ export function mapToCharacterData(
     eventcode: shared.eventCode,
     date: shared.eventDate,
     
-    // XP from shared fields
-    xp_gained: shared.xpEarned,
+    // XP - uses override value when active, otherwise shared xpEarned
+    xp_gained: xpGained,
     
-    // Character-specific rewards - calculated values
+    // Character-specific rewards - calculated values (currency uses override when active)
     income_earned: incomeEarned,
     treasure_bundle_value: treasureBundleValue,
-    currency_gained: currencyGained,
+    currency_gained: finalCurrencyGained,
     currency_spent: unique.currencySpent,
     
     // Character-specific notes from unique fields

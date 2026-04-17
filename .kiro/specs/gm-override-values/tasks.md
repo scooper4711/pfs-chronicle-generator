@@ -61,7 +61,7 @@ Add override controls for XP and currency values to each character card in the S
   - Commit with message `feat: Add override handler module with data model and selectors`
   - Stage all files changed in tasks 2 and 3 plus updated spec task file
 
-- [ ] 6. Add Advanced section to template and extend collapsible handler
+- [x] 6. Add Advanced section to template and extend collapsible handler
   - [x] 6.1 Add Advanced collapsible section to each character card in `templates/party-chronicle-filling.hbs`
     - Add an Advanced collapsible section (`data-section-id="advanced-{{this.id}}"`) within each party member's `character-fields` div, containing:
       - Relocated Consume Replay checkbox (remove from current position, place inside Advanced section) retaining existing `name` attribute format and tooltip
@@ -93,12 +93,12 @@ Add override controls for XP and currency values to each character card in the S
 - [x] 7. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 8. Commit Advanced section and collapsible handler
+- [x] 8. Commit Advanced section and collapsible handler
   - Commit with message `feat: Add Advanced collapsible section with override UI controls`
   - Stage all files changed in task 6 plus updated spec task file
 
-- [ ] 9. Extend form data extraction and persistence
-  - [~] 9.1 Extend `extractFormData()` in `handlers/form-data-extraction.ts` to read override fields
+- [x] 9. Extend form data extraction and persistence
+  - [x] 9.1 Extend `extractFormData()` in `handlers/form-data-extraction.ts` to read override fields
     - Read `overrideXp` checkbox checked state from `input[name="characters.{id}.overrideXp"]`
     - Read `overrideXpValue` numeric value from `input[name="characters.{id}.overrideXpValue"]`
     - Read `overrideCurrency` checkbox checked state from `input[name="characters.{id}.overrideCurrency"]`
@@ -118,8 +118,8 @@ Add override controls for XP and currency values to each character card in the S
     - **Property 8: Per-character override independence**
     - **Validates: Requirements 8.1, 8.2, 8.3**
 
-- [ ] 10. Extend chronicle generation mapper for override-aware values
-  - [~] 10.1 Extend `mapToCharacterData()` in `model/party-chronicle-mapper.ts`
+- [x] 10. Extend chronicle generation mapper for override-aware values
+  - [x] 10.1 Extend `mapToCharacterData()` in `model/party-chronicle-mapper.ts`
     - When `unique.overrideXp === true`: set `xp_gained = unique.overrideXpValue` instead of `shared.xpEarned`
     - When `unique.overrideCurrency === true`: set `currency_gained = unique.overrideCurrencyValue` instead of the calculated `treasureBundleValue + earnedIncome`
     - When overrides are not active, use the existing calculated values unchanged
@@ -133,7 +133,7 @@ Add override controls for XP and currency values to each character card in the S
     - **Property 4: Currency override in chronicle generation**
     - **Validates: Requirements 5.2, 5.4**
 
-  - [~] 10.4 Write unit tests for override-aware `mapToCharacterData()`
+  - [x] 10.4 Write unit tests for override-aware `mapToCharacterData()`
     - Test XP override active: `xp_gained` equals `overrideXpValue` (including zero)
     - Test XP override inactive: `xp_gained` equals `shared.xpEarned`
     - Test currency override active: `currency_gained` equals `overrideCurrencyValue` (including zero)
@@ -141,8 +141,8 @@ Add override controls for XP and currency values to each character card in the S
     - Test both overrides active simultaneously
     - _Requirements: 5.1, 5.2, 5.3, 5.4_
 
-- [ ] 11. Extend session report builder for override-aware values
-  - [~] 11.1 Extend `buildSessionReport()` in `model/session-report-builder.ts`
+- [x] 11. Extend session report builder for override-aware values
+  - [x] 11.1 Extend `buildSessionReport()` in `model/session-report-builder.ts`
     - Extend `buildSignUp` and `buildGmSignUp` to accept override fields from `UniqueFields`
     - When `overrideXp` is true, use `overrideXpValue` as the XP for that character in the session report
     - When `overrideCurrency` is true, use `overrideCurrencyValue` as the currency for that character in the session report
@@ -153,17 +153,17 @@ Add override controls for XP and currency values to each character card in the S
     - **Property 7: Override values in session report**
     - **Validates: Requirements 7.1, 7.2, 7.3**
 
-  - [~] 11.3 Write unit tests for override-aware session report
+  - [x] 11.3 Write unit tests for override-aware session report
     - Test session report uses override XP when active
     - Test session report uses override currency when active
     - Test session report uses calculated values when overrides are inactive
     - Test GM character override values in session report
     - _Requirements: 7.1, 7.2, 7.3_
 
-- [~] 12. Checkpoint - Ensure all tests pass
+- [x] 12. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [~] 13. Commit extraction, generation, and session report changes
+- [-] 13. Commit extraction, generation, and session report changes
   - Commit with message `feat: Add override-aware chronicle generation and session reporting`
   - Stage all files changed in tasks 9, 10, and 11 plus updated spec task file
 

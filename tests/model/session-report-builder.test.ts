@@ -310,3 +310,142 @@ describe('buildGameDateTime', () => {
     expect(buildGameDateTime('2026-12-31', new Date('2025-03-15T08:20:00Z'))).toBe('2026-12-31T08:30:00+00:00');
   });
 });
+
+/**
+ * Override-aware session report tests.
+ *
+ * Validates that XP and currency overrides replace calculated values
+ * in the session report when active, and that calculated values are
+ * used when overrides are inactive.
+ *
+ * Requirements: gm-override-values 7.1, 7.2, 7.3
+ */
+describe('Override-aware session report', () => {
+  const partyActor: SessionReportActor = {
+    id: 'p1',
+    name: 'Valeros',
+    system: { pfs: { playerNumber: 11111, characterNumber: 1, currentFaction: 'EA' } },
+  };
+
+  /**
+   * Requirements: gm-override-values 7.1
+   */
+  it('uses override XP when overrideXp is active', () => {
+    const params: SessionReportBuildParams = {
+      shared: createSharedFields({ xpEarned: 4 }),
+      characters: {
+        p1: createUniqueFields({
+          characterName: 'Valeros',
+          overrideXp: true,
+          overrideXpValue: 2,
+          taskLevel: '-',
+        }),
+      },
+      partyActors: [partyActor],
+      layoutId: 'pfs2.s5-18',
+      now: FIXED_NOW,
+    };
+
+    const report = buildSessionReport(params);
+
+    expect(report.signUps[0].xpEarned).toBe(2);
+  });
+
+  /**
+   * Requirements: gm-override-values 7.2
+   */
+  it('uses override currency when overrideCurrency is active', () => {
+    const params: SessionReportBuildParams = {
+      shared: createSharedFields({ treasureBundles: 2, downtimeDays: 4 }),
+      characters: {
+        p1: createUniqueFields({
+          characterName: 'Valeros',
+          overrideCurrency: true,
+          overrideCurrencyValue: 150.5,
+          level: 5,
+          taskLevel: 3,
+          successLevel: 'success',
+          proficiencyRank: 'trained',
+        }),
+      },
+      partyActors: [partyActor],
+      layoutId: 'pfs2.s5-18',
+      now: FIXED_NOW,
+    };
+
+    const report = buildSessionReport(params);
+
+    expect(report.signUps[0].currencyGained).toBe(150.5);
+  });
+
+  /**
+   * Requirements: gm-override-values 7.3
+   */
+  it('uses calculated values when overrides are inactive', () => {
+    const params: SessionReportBuildParams = {
+      shared: createSharedFields({ xpEarned: 4, treasureBundles: 2, downtimeDays: 4 }),
+      characters: {
+        p1: createUniqueFields({
+          characterName: 'Valeros',
+          overrideXp: false,
+          overrideXpValue: 99,
+          overrideCurrency: false,
+          overrideCurrencyValue: 999,
+          level: 5,
+          taskLevel: 3,
+          successLevel: 'success',
+          proficiencyRank: 'trained',
+        }),
+      },
+      partyActors: [partyActor],
+      layoutId: 'pfs2.s5-18',
+      now: FIXED_NOW,
+    };
+
+    const report = buildSessionReport(params);
+
+    expect(report.signUps[0].xpEarned).toBe(4);
+    // Level 5: 2 × 10 = 20 (treasure bundles)
+    // Level 3 trained success: 0.5 gp/day × 4 days = 2 gp (earned income)
+    // Total: 20 + 2 = 22
+    expect(report.signUps[0].currencyGained).toBe(22);
+  });
+
+  /**
+   * Requirements: gm-override-values 7.1, 7.2 — GM character overrides
+   */
+  it('uses override values for GM character in session report', () => {
+    const gmActor: SessionReportActor = {
+      id: 'gm-char-1',
+      name: 'GM Character',
+      system: { pfs: { playerNumber: 54321, characterNumber: 2003, currentFaction: 'GA' } },
+    };
+
+    const params: SessionReportBuildParams = {
+      shared: createSharedFields({ xpEarned: 4, treasureBundles: 2, downtimeDays: 4 }),
+      characters: {
+        p1: createUniqueFields({ characterName: 'Valeros' }),
+      },
+      partyActors: [partyActor],
+      layoutId: 'pfs2.s5-18',
+      now: FIXED_NOW,
+      gmCharacterActor: gmActor,
+      gmCharacterFields: createUniqueFields({
+        characterName: 'GM Character',
+        overrideXp: true,
+        overrideXpValue: 6,
+        overrideCurrency: true,
+        overrideCurrencyValue: 300,
+        level: 10,
+        taskLevel: '-',
+      }),
+    };
+
+    const report = buildSessionReport(params);
+
+    const gmSignUp = report.signUps.find((s) => s.isGM);
+    expect(gmSignUp).toBeDefined();
+    expect(gmSignUp!.xpEarned).toBe(6);
+    expect(gmSignUp!.currencyGained).toBe(300);
+  });
+});
