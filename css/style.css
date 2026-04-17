@@ -614,6 +614,11 @@
     display: none;
 }
 
+/* Override group input fields — right-align numeric values */
+.sheet.party [data-tab=pfs] .content .advanced-section .override-group input[type="number"] {
+    text-align: right;
+}
+
 /* Task Level help icon styling - uses Foundry's built-in tooltip system */
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group label .fa-question-circle {
   margin-left: 4px;

@@ -431,7 +431,7 @@
                                 <label class="checkbox-label">
                                     <input type="checkbox" name="characters.{{gmCharacter.id}}.overrideCurrency"
                                         {{#if (lookup gmCharacterFields 'overrideCurrency')}}checked{{/if}}>
-                                    {{#if (eq gameSystem "sf2e")}}Override Credits{{else}}Override GP Gained{{/if}}
+                                    {{#if (eq gameSystem "sf2e")}}Override Credits{{else}}Override GP{{/if}}
                                 </label>
                                 <input type="number" name="characters.{{gmCharacter.id}}.overrideCurrencyValue"
                                        value="{{#if gmCharacterFields}}{{lookup gmCharacterFields 'overrideCurrencyValue'}}{{else}}0{{/if}}"
@@ -574,7 +574,7 @@
                                 <label class="checkbox-label">
                                     <input type="checkbox" name="characters.{{this.id}}.overrideCurrency"
                                         {{#if (lookup (lookup ../savedData.characters this.id) 'overrideCurrency')}}checked{{/if}}>
-                                    {{#if (eq ../gameSystem "sf2e")}}Override Credits{{else}}Override GP Gained{{/if}}
+                                    {{#if (eq ../gameSystem "sf2e")}}Override Credits{{else}}Override GP{{/if}}
                                 </label>
                                 <input type="number" name="characters.{{this.id}}.overrideCurrencyValue"
                                        value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'overrideCurrencyValue'}}{{else}}0{{/if}}"
