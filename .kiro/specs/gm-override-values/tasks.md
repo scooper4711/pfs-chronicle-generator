@@ -57,12 +57,12 @@ Add override controls for XP and currency values to each character card in the S
 - [x] 4. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 5. Commit override handler module
+- [x] 5. Commit override handler module
   - Commit with message `feat: Add override handler module with data model and selectors`
   - Stage all files changed in tasks 2 and 3 plus updated spec task file
 
 - [ ] 6. Add Advanced section to template and extend collapsible handler
-  - [~] 6.1 Add Advanced collapsible section to each character card in `templates/party-chronicle-filling.hbs`
+  - [x] 6.1 Add Advanced collapsible section to each character card in `templates/party-chronicle-filling.hbs`
     - Add an Advanced collapsible section (`data-section-id="advanced-{{this.id}}"`) within each party member's `character-fields` div, containing:
       - Relocated Consume Replay checkbox (remove from current position, place inside Advanced section) retaining existing `name` attribute format and tooltip
       - Override XP checkbox (`name="characters.{{this.id}}.overrideXp"`) and numeric input (`name="characters.{{this.id}}.overrideXpValue"`, `min="0"`, `step="1"`, `disabled`)
@@ -74,12 +74,12 @@ Add override controls for XP and currency values to each character card in the S
     - Restore saved override checkbox states and input values from `savedData.characters` / `gmCharacterFields`
     - _Requirements: 1.1, 1.2, 1.3, 1.6, 2.1, 2.2, 2.3, 2.4, 3.1, 3.2, 3.7, 4.1, 4.2, 4.3, 4.4, 4.9, 8.4_
 
-  - [~] 6.2 Extend collapsible section handler to support dynamic Advanced section IDs
+  - [x] 6.2 Extend collapsible section handler to support dynamic Advanced section IDs
     - Update `isValidSectionId()` in `handlers/collapsible-section-handlers.ts` to accept section IDs matching the `advanced-` prefix pattern in addition to existing static IDs
     - Update `initializeCollapseSections()` to discover and initialize `advanced-*` sections from the DOM (default state: collapsed)
     - _Requirements: 1.3, 1.4, 1.5, 1.6_
 
-  - [~] 6.3 Write unit tests for Advanced section template rendering and collapsible handler
+  - [x] 6.3 Write unit tests for Advanced section template rendering and collapsible handler
     - Test Advanced section renders within each character card (party member and GM character)
     - Test Advanced section has title "Advanced" and is collapsed by default
     - Test Consume Replay checkbox is inside Advanced section with correct `name` attribute
@@ -90,10 +90,10 @@ Add override controls for XP and currency values to each character card in the S
     - Test `initializeCollapseSections` initializes Advanced sections as collapsed
     - _Requirements: 1.1, 1.2, 1.3, 1.5, 1.6, 2.1, 2.2, 3.1, 3.2, 3.7, 4.2, 4.3, 4.9, 8.4_
 
-- [~] 7. Checkpoint - Ensure all tests pass
+- [x] 7. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [~] 8. Commit Advanced section and collapsible handler
+- [-] 8. Commit Advanced section and collapsible handler
   - Commit with message `feat: Add Advanced collapsible section with override UI controls`
   - Stage all files changed in task 6 plus updated spec task file
 

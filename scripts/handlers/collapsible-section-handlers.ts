@@ -50,12 +50,15 @@ const SECTIONS_WITH_SUMMARY = [
 
 /**
  * Type guard that checks if a string is a valid collapsible section ID.
+ * 
+ * Accepts both static section IDs from VALID_SECTION_IDS and dynamic
+ * per-character Advanced section IDs matching the `advanced-{characterId}` pattern.
  *
  * @param id - The string to check
- * @returns True if the string is a member of VALID_SECTION_IDS
+ * @returns True if the string is a valid section ID
  */
-export function isValidSectionId(id: string): id is typeof VALID_SECTION_IDS[number] {
-  return (VALID_SECTION_IDS as readonly string[]).includes(id);
+export function isValidSectionId(id: string): boolean {
+  return (VALID_SECTION_IDS as readonly string[]).includes(id) || id.startsWith('advanced-');
 }
 
 /**
@@ -278,6 +281,27 @@ export function updateAllSectionSummaries(container: HTMLElement): void {
 }
 
 /**
+ * Applies a collapse state to a section element and its header.
+ * 
+ * @param section - The section element to apply the state to
+ * @param header - The header element within the section
+ * @param isCollapsed - Whether the section should be collapsed
+ */
+function applyCollapseState(
+  section: HTMLElement,
+  header: HTMLElement,
+  isCollapsed: boolean
+): void {
+  if (isCollapsed) {
+    section.classList.add('collapsed');
+    header.setAttribute('aria-expanded', 'false');
+  } else {
+    section.classList.remove('collapsed');
+    header.setAttribute('aria-expanded', 'true');
+  }
+}
+
+/**
  * Initializes collapse states from storage when form is rendered.
  * 
  * Loads saved collapse states from localStorage and applies them to all sections.
@@ -289,9 +313,8 @@ export function updateAllSectionSummaries(container: HTMLElement): void {
  * Requirements: collapsible-shared-sections 1.9, 2.11, 3.9, 4.6, 5.6
  */
 export function initializeCollapseSections(container: HTMLElement): void {
-  // Initialize collapse state for each section
+  // Initialize collapse state for each static section
   for (const sectionId of VALID_SECTION_IDS) {
-    // Find section element
     const section = container.querySelector(
       `.collapsible-section[data-section-id="${sectionId}"]`
     ) as HTMLElement;
@@ -300,26 +323,36 @@ export function initializeCollapseSections(container: HTMLElement): void {
       continue;
     }
     
-    // Find header element
     const header = section.querySelector('.collapsible-header') as HTMLElement;
-    
     if (!header) {
       warn(`Missing header for section: "${sectionId}"`);
       continue;
     }
     
-    // Load collapse state from storage or use default
     const savedState = loadCollapseState(sectionId);
     const isCollapsed = savedState ?? getDefaultCollapseState(sectionId);
-    
-    // Apply collapse state to DOM
-    if (isCollapsed) {
-      section.classList.add('collapsed');
-      header.setAttribute('aria-expanded', 'false');
-    } else {
-      section.classList.remove('collapsed');
-      header.setAttribute('aria-expanded', 'true');
+    applyCollapseState(section, header, isCollapsed);
+  }
+  
+  // Initialize dynamic Advanced sections (default: collapsed)
+  const advancedSections = container.querySelectorAll<HTMLElement>(
+    '.collapsible-section[data-section-id^="advanced-"]'
+  );
+  for (const section of advancedSections) {
+    const sectionId = section.dataset.sectionId;
+    if (!sectionId) {
+      continue;
     }
+
+    const header = section.querySelector('.collapsible-header') as HTMLElement;
+    if (!header) {
+      warn(`Missing header for section: "${sectionId}"`);
+      continue;
+    }
+
+    const savedState = loadCollapseState(sectionId);
+    const isCollapsed = savedState ?? true;
+    applyCollapseState(section, header, isCollapsed);
   }
   
   // Initialize summary text for sections with summaries
