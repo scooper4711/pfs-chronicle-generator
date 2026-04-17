@@ -371,12 +371,6 @@
                         </div>
                     </div>
 
-                    {{!-- XP Earned display --}}
-                    <div class="form-group">
-                        <label><i class="fas fa-star"></i> XP Earned</label>
-                        <div class="calculated-xp-label">{{shared.xpEarned}} XP</div>
-                    </div>
-
                     {{!-- Treasure Bundle Value / Credits Awarded display --}}
                     {{#if (eq gameSystem "sf2e")}}
                     <div class="form-group">
@@ -393,6 +387,12 @@
                     <div class="form-group">
                         <label for="currencySpent-{{gmCharacter.id}}"><i class="fas fa-money-bill-wave"></i> {{#if (eq gameSystem "sf2e")}}Credits Spent{{else}}Currency Spent{{/if}}</label>
                         <input type="number" id="currencySpent-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.currencySpent" value="{{#if gmCharacterFields}}{{lookup gmCharacterFields 'currencySpent'}}{{else}}0{{/if}}" step="0.01" data-tooltip="Optionally record currency spent during the adventure. If left at zero, the field will be left blank for the player to fill in.">
+                    </div>
+
+                    {{!-- XP Earned display --}}
+                    <div class="form-group">
+                        <label><i class="fas fa-star"></i> XP Earned</label>
+                        <div class="calculated-xp-label">{{shared.xpEarned}} XP</div>
                     </div>
 
                     <div class="form-group full-width">
@@ -514,12 +514,6 @@
                         </div>
                     </div>
                     
-                    {{!-- XP Earned display --}}
-                    <div class="form-group">
-                        <label><i class="fas fa-star"></i> XP Earned</label>
-                        <div class="calculated-xp-label">{{../shared.xpEarned}} XP</div>
-                    </div>
-
                     {{!-- Treasure Bundle Value / Credits Awarded display --}}
                     {{#if (eq ../gameSystem "sf2e")}}
                     <div class="form-group">
@@ -536,6 +530,12 @@
                     <div class="form-group">
                         <label for="currencySpent-{{this.id}}"><i class="fas fa-money-bill-wave"></i> {{#if (eq ../gameSystem "sf2e")}}Credits Spent{{else}}Currency Spent{{/if}}</label>
                         <input type="number" id="currencySpent-{{this.id}}" name="characters.{{this.id}}.currencySpent" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'currencySpent'}}{{else}}0{{/if}}" step="0.01" data-tooltip="Optionally record currency spent during the adventure. If left at zero, the field will be left blank for the player to fill in.">
+                    </div>
+
+                    {{!-- XP Earned display --}}
+                    <div class="form-group">
+                        <label><i class="fas fa-star"></i> XP Earned</label>
+                        <div class="calculated-xp-label">{{../shared.xpEarned}} XP</div>
                     </div>
                     
                     <div class="form-group full-width">
