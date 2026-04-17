@@ -163,25 +163,25 @@ Add override controls for XP and currency values to each character card in the S
 - [x] 12. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 13. Commit extraction, generation, and session report changes
+- [x] 13. Commit extraction, generation, and session report changes
   - Commit with message `feat: Add override-aware chronicle generation and session reporting`
   - Stage all files changed in tasks 9, 10, and 11 plus updated spec task file
 
-- [ ] 14. Wire override event listeners into main.ts
-  - [~] 14.1 Extend `attachEventListeners()` in `main.ts`
+- [x] 14. Wire override event listeners into main.ts
+  - [x] 14.1 Extend `attachEventListeners()` in `main.ts`
     - Import `handleOverrideXpChange`, `handleOverrideCurrencyChange`, and `initializeOverrideStates` from `handlers/override-handlers.ts`
     - Create and export `attachOverrideListeners(container)` in `handlers/event-listener-helpers.ts` that attaches change listeners to all override XP and currency checkboxes using `CHARACTER_FIELD_PATTERNS.OVERRIDE_XP_ALL` and `CHARACTER_FIELD_PATTERNS.OVERRIDE_CURRENCY_ALL`
     - Call `attachOverrideListeners(container)` from `attachEventListeners()` in `main.ts`
     - _Requirements: 1.4, 1.5, 3.3, 3.4, 4.5, 4.6_
 
-  - [~] 14.2 Extend `initializeForm()` in `main.ts`
+  - [x] 14.2 Extend `initializeForm()` in `main.ts`
     - Call `initializeOverrideStates(container)` after `initializeCollapseSections(container)` to restore override checkbox states, input values, disabled states, and strikethrough styling from saved data on form load
     - _Requirements: 6.2_
 
-- [~] 15. Final checkpoint - Ensure all tests pass
+- [x] 15. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [~] 16. Commit event listener wiring
+- [-] 16. Commit event listener wiring
   - Commit with message `feat: Wire override event listeners and form initialization`
   - Stage all files changed in task 14 plus updated spec task file
 

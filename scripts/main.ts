@@ -39,8 +39,10 @@ import {
     attachPortraitListeners,
     attachFilePickerListener,
     attachCollapsibleSectionListeners,
-    attachGmCharacterListeners
+    attachGmCharacterListeners,
+    attachOverrideListeners
 } from './handlers/event-listener-helpers.js';
+import { initializeOverrideStates } from './handlers/override-handlers.js';
 
 /** Registers world-scoped Foundry settings shown in the module config. */
 function registerSettings(): void {
@@ -563,6 +565,9 @@ function attachEventListeners(
     // Collapsible section listeners
     attachCollapsibleSectionListeners(container);
     
+    // Override checkbox listeners (XP and currency overrides)
+    attachOverrideListeners(container);
+    
     // GM character drop zone and clear button listeners
     attachGmCharacterListeners(container, partyActors, partySheet);
 }
@@ -619,6 +624,10 @@ async function initializeForm(
     // Initialize collapsible sections
     initializeCollapseSections(container);
     updateAllSectionSummaries(container);
+    
+    // Initialize override states from saved data
+    // Requirements: gm-override-values 6.2
+    initializeOverrideStates(container);
     
     // Initial validation display and button state
     updateValidationDisplay(container, partyActors, extractFormData);

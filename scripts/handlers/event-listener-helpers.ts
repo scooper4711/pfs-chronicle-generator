@@ -38,6 +38,10 @@ import {
     handleGmCharacterDrop,
     handleGmCharacterClear
 } from './gm-character-handlers.js';
+import {
+    handleOverrideXpChange,
+    handleOverrideCurrencyChange
+} from './override-handlers.js';
 import { createEarnedIncomeChangeHandler } from '../utils/earned-income-form-helpers.js';
 import { clearPartyChronicleData, savePartyChronicleData } from '../model/party-chronicle-storage.js';
 import { PartyChronicleData, UniqueFields } from '../model/party-chronicle-types.js';
@@ -609,6 +613,43 @@ export function attachCollapsibleSectionListeners(container: HTMLElement): void 
         });
         header.addEventListener('keydown', (event: Event) => {
             handleSectionHeaderKeydown(event as KeyboardEvent, container);
+        });
+    });
+}
+
+/**
+ * Attaches override checkbox change event listeners for XP and currency overrides.
+ * 
+ * Queries all override XP and currency checkboxes, extracts the character ID
+ * from each checkbox's name attribute, and attaches change listeners that
+ * delegate to the appropriate override handler.
+ * 
+ * @param container - Form container element
+ * 
+ * Requirements: gm-override-values 1.4, 1.5, 3.3, 3.4, 4.5, 4.6
+ */
+export function attachOverrideListeners(container: HTMLElement): void {
+    const xpCheckboxes = container.querySelectorAll<HTMLInputElement>(
+        CHARACTER_FIELD_PATTERNS.OVERRIDE_XP_ALL
+    );
+    xpCheckboxes.forEach((checkbox) => {
+        checkbox.addEventListener('change', () => {
+            const match = checkbox.name.match(/characters\.([^.]+)\.overrideXp/);
+            if (match) {
+                handleOverrideXpChange(match[1], container);
+            }
+        });
+    });
+
+    const currencyCheckboxes = container.querySelectorAll<HTMLInputElement>(
+        CHARACTER_FIELD_PATTERNS.OVERRIDE_CURRENCY_ALL
+    );
+    currencyCheckboxes.forEach((checkbox) => {
+        checkbox.addEventListener('change', () => {
+            const match = checkbox.name.match(/characters\.([^.]+)\.overrideCurrency/);
+            if (match) {
+                handleOverrideCurrencyChange(match[1], container);
+            }
         });
     });
 }
