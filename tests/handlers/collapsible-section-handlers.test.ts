@@ -440,10 +440,10 @@ describe('collapsible-section-handlers', () => {
       expect(isValidSectionId('items-to-strike-out')).toBe(true);
     });
 
-    it('should accept advanced-{characterId} patterns', () => {
-      expect(isValidSectionId('advanced-actor-123')).toBe(true);
-      expect(isValidSectionId('advanced-abc')).toBe(true);
-      expect(isValidSectionId('advanced-gm-char-456')).toBe(true);
+    it('should reject advanced-{characterId} patterns', () => {
+      expect(isValidSectionId('advanced-actor-123')).toBe(false);
+      expect(isValidSectionId('advanced-abc')).toBe(false);
+      expect(isValidSectionId('advanced-gm-char-456')).toBe(false);
     });
 
     it('should reject invalid section IDs', () => {
@@ -453,8 +453,8 @@ describe('collapsible-section-handlers', () => {
     });
   });
 
-  describe('initializeCollapseSections with Advanced sections', () => {
-    it('should initialize Advanced sections as collapsed by default', () => {
+  describe('initializeCollapseSections ignores Advanced sections', () => {
+    it('should not initialize advanced-* sections present in the DOM', () => {
       const advancedSection = document.createElement('div');
       advancedSection.className = 'collapsible-section advanced-section';
       advancedSection.setAttribute('data-section-id', 'advanced-actor-1');
@@ -466,53 +466,14 @@ describe('collapsible-section-handlers', () => {
 
       initializeCollapseSections(container);
 
-      expect(advancedSection.classList.contains('collapsed')).toBe(true);
-      expect(header.getAttribute('aria-expanded')).toBe('false');
+      // Advanced section should remain untouched — not collapsed by the handler
+      expect(advancedSection.classList.contains('collapsed')).toBe(false);
+      expect(header.getAttribute('aria-expanded')).toBe('true');
     });
 
-    it('should initialize multiple Advanced sections independently', () => {
-      const section1 = document.createElement('div');
-      section1.className = 'collapsible-section advanced-section';
-      section1.setAttribute('data-section-id', 'advanced-actor-1');
-      const header1 = document.createElement('header');
-      header1.className = 'collapsible-header';
-      section1.appendChild(header1);
-      container.appendChild(section1);
-
-      const section2 = document.createElement('div');
-      section2.className = 'collapsible-section advanced-section';
-      section2.setAttribute('data-section-id', 'advanced-actor-2');
-      const header2 = document.createElement('header');
-      header2.className = 'collapsible-header';
-      section2.appendChild(header2);
-      container.appendChild(section2);
-
-      initializeCollapseSections(container);
-
-      expect(section1.classList.contains('collapsed')).toBe(true);
-      expect(header1.getAttribute('aria-expanded')).toBe('false');
-      expect(section2.classList.contains('collapsed')).toBe(true);
-      expect(header2.getAttribute('aria-expanded')).toBe('false');
-    });
-
-    it('should warn when Advanced section header is missing', () => {
+    it('should reject toggling an advanced-* section ID', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-      const sectionNoHeader = document.createElement('div');
-      sectionNoHeader.className = 'collapsible-section advanced-section';
-      sectionNoHeader.setAttribute('data-section-id', 'advanced-actor-1');
-      container.appendChild(sectionNoHeader);
-
-      initializeCollapseSections(container);
-
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '[PFS Chronicle]',
-        'Missing header for section: "advanced-actor-1"'
-      );
-      consoleSpy.mockRestore();
-    });
-
-    it('should allow toggling an Advanced section', () => {
       const advancedSection = document.createElement('div');
       advancedSection.className = 'collapsible-section advanced-section collapsed';
       advancedSection.setAttribute('data-section-id', 'advanced-actor-1');
@@ -524,8 +485,14 @@ describe('collapsible-section-handlers', () => {
 
       toggleSectionCollapse('advanced-actor-1', container);
 
-      expect(advancedSection.classList.contains('collapsed')).toBe(false);
-      expect(header.getAttribute('aria-expanded')).toBe('true');
+      // Should warn about invalid section ID and leave the section unchanged
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '[PFS Chronicle]',
+        'Invalid section ID: "advanced-actor-1"'
+      );
+      expect(advancedSection.classList.contains('collapsed')).toBe(true);
+      expect(header.getAttribute('aria-expanded')).toBe('false');
+      consoleSpy.mockRestore();
     });
   });
 });

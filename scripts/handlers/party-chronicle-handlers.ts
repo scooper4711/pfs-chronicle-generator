@@ -304,6 +304,15 @@ export async function handleFieldChange(
         updateSectionSummary('shared-rewards', container);
     }
     
+    // If XP earned changed, update all per-character XP displays
+    if (fieldId === 'xpEarned') {
+        const xpValue = Number.parseInt(input.value, 10) || 0;
+        const xpLabels = container.querySelectorAll('.calculated-xp-label');
+        for (const label of xpLabels) {
+            label.textContent = `${xpValue} XP`;
+        }
+    }
+    
     await saveFormData(container, partyActors);
     updateValidationDisplay(container, partyActors, extractFormData);
 }

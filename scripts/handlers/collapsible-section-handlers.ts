@@ -50,15 +50,12 @@ const SECTIONS_WITH_SUMMARY = [
 
 /**
  * Type guard that checks if a string is a valid collapsible section ID.
- * 
- * Accepts both static section IDs from VALID_SECTION_IDS and dynamic
- * per-character Advanced section IDs matching the `advanced-{characterId}` pattern.
  *
  * @param id - The string to check
  * @returns True if the string is a valid section ID
  */
 export function isValidSectionId(id: string): boolean {
-  return (VALID_SECTION_IDS as readonly string[]).includes(id) || id.startsWith('advanced-');
+  return (VALID_SECTION_IDS as readonly string[]).includes(id);
 }
 
 /**
@@ -331,27 +328,6 @@ export function initializeCollapseSections(container: HTMLElement): void {
     
     const savedState = loadCollapseState(sectionId);
     const isCollapsed = savedState ?? getDefaultCollapseState(sectionId);
-    applyCollapseState(section, header, isCollapsed);
-  }
-  
-  // Initialize dynamic Advanced sections (default: collapsed)
-  const advancedSections = container.querySelectorAll<HTMLElement>(
-    '.collapsible-section[data-section-id^="advanced-"]'
-  );
-  for (const section of advancedSections) {
-    const sectionId = section.dataset.sectionId;
-    if (!sectionId) {
-      continue;
-    }
-
-    const header = section.querySelector('.collapsible-header') as HTMLElement;
-    if (!header) {
-      warn(`Missing header for section: "${sectionId}"`);
-      continue;
-    }
-
-    const savedState = loadCollapseState(sectionId);
-    const isCollapsed = savedState ?? true;
     applyCollapseState(section, header, isCollapsed);
   }
   

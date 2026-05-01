@@ -50,6 +50,14 @@ export const CHARACTER_FIELD_SELECTORS = {
   CALCULATED_XP_LABEL: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .calculated-xp-label`,
   CALCULATED_CURRENCY_LABEL: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .calculated-currency-label`,
   EARNED_INCOME_VALUE: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .earned-income-value`,
+  EARNED_INCOME_SECTION: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .earned-income-section`,
+  TREASURE_BUNDLES_ROW: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .treasure-bundle-row`,
+  CREDITS_AWARDED_ROW: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .credits-awarded-row`,
+  OVERRIDE_CURRENCY_INPUT: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .override-currency-input-row`,
+  OVERRIDE_XP_INPUT: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .override-xp-input`,
+  CURRENCY_OVERRIDE_COMPOSITE: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .currency-override-composite`,
+  EARNED_INCOME_HIDDEN: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .earned-income-hidden`,
+  CREDITS_AWARDED_DISPLAY: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .credits-awarded-value`,
 } as const;
 
 /**
@@ -112,5 +120,5 @@ export const CSS_CLASSES = {
   CHRONICLE_PATH_VISIBLE: 'chronicle-path-visible',
   COLLAPSIBLE_SECTION: 'collapsible-section',
   COLLAPSED: 'collapsed',
-  STRIKETHROUGH_OVERRIDE: 'strikethrough-override',
+  OVERRIDE_HIDDEN: 'override-hidden',
 } as const;
