@@ -101,6 +101,22 @@ Players download chronicles directly from their character sheets
 
 </td>
 </tr>
+<tr>
+<td width="50%">
+
+**🌐 Session Reporting**
+
+Copy session data to your clipboard and use the [PFS Session Reporter](https://chromewebstore.google.com/detail/pfs-session-reporter/mhfkjabbfmolcpaimeanfajgfjinopmn) browser extension to auto-fill the Paizo reporting form
+
+</td>
+<td width="50%">
+
+**📋 Pre-configured Layouts**
+
+Includes layouts for many PFS and SFS scenarios - just select and go
+
+</td>
+</tr>
 </table>
 
 ---
@@ -348,7 +364,7 @@ If you're running a session for GM credit, you can include your own character in
 
 ### Session reporting
 
-When you click **Copy Session Report**, the GM character is included in the `signUps` array with `isGM: true`. The [PFS Session Reporter](https://github.com/scooper4711/pfs-session-reporter) browser extension uses this flag to populate the GM credit fields on the Paizo reporting form automatically.
+When you click **Copy Session Report**, the GM character is included in the `signUps` array with `isGM: true`. The [PFS Session Reporter](https://chromewebstore.google.com/detail/pfs-session-reporter/mhfkjabbfmolcpaimeanfajgfjinopmn) browser extension uses this flag to populate the GM credit fields on the Paizo reporting form automatically.
 
 ### PFS ID validation
 

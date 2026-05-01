@@ -1,7 +1,7 @@
 {
   "id": "pfs-chronicle-generator",
   "title": "Pathfinder & Starfinder Society Chronicle Generator",
-  "description": "A module to fill-in Pathfinder and Starfinder Society Chronicles.",
+  "description": "Generate Pathfinder and Starfinder Society chronicles for your entire party. Pairs with the PFS Session Reporter browser extension to auto-fill the Paizo reporting form.",
   "version": "#{VERSION}#",
   "compatibility": {
     "minimum": "13",
