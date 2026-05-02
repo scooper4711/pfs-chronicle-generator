@@ -651,7 +651,7 @@
 
 /* "GM Credit" label badge */
 .sheet.party [data-tab=pfs] .activities .member-activity .gm-credit-label {
-    display: inline-block;
+    display: block;
     background-color: #8b6914;
     color: #fff;
     font-size: 0.65rem;
