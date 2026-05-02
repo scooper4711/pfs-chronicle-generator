@@ -286,38 +286,6 @@ describe('Feature: slow-track, Property 6: Session report reward halving respect
 });
 
 // ===========================================================================
-// Task 7.4 — Property 7: Session report includes slowTrack flag
-// ===========================================================================
-
-describe('Feature: slow-track, Property 7: Session report includes slowTrack flag', () => {
-  /**
-   * Validates: Requirements 7.1
-   *
-   * For any character with slowTrack set to true or false, the SignUp entry
-   * should include a slowTrack field matching the input value.
-   */
-  it('should include slowTrack flag matching the input UniqueFields.slowTrack value', () => {
-    fc.assert(
-      fc.property(sharedFieldsArb, uniqueFieldsArb, factionArb, (shared, unique, faction) => {
-        const actor = createActor('a1', faction);
-        const params: SessionReportBuildParams = {
-          shared,
-          characters: { a1: unique },
-          partyActors: [actor],
-          layoutId: 'pfs2.s5-18',
-          now: FIXED_NOW,
-        };
-
-        const report = buildSessionReport(params);
-        expect(report.signUps).toHaveLength(1);
-        expect(report.signUps[0].slowTrack).toBe(unique.slowTrack);
-      }),
-      { numRuns: 100 },
-    );
-  });
-});
-
-// ===========================================================================
 // Task 7.5 — Unit tests for slow track in session report builder
 // ===========================================================================
 
@@ -413,32 +381,6 @@ describe('Session report builder - slow track unit tests', () => {
     expect(report.signUps[0].currencyGained).toBe(42.5);
   });
 
-  it('should include slowTrack: true in SignUp when slow track is active', () => {
-    const params: SessionReportBuildParams = {
-      shared: createSharedFields(),
-      characters: { p1: createUniqueFields({ slowTrack: true }) },
-      partyActors: [actor],
-      layoutId: 'pfs2.s5-18',
-      now: FIXED_NOW,
-    };
-
-    const report = buildSessionReport(params);
-    expect(report.signUps[0].slowTrack).toBe(true);
-  });
-
-  it('should include slowTrack: false in SignUp when slow track is inactive', () => {
-    const params: SessionReportBuildParams = {
-      shared: createSharedFields(),
-      characters: { p1: createUniqueFields({ slowTrack: false }) },
-      partyActors: [actor],
-      layoutId: 'pfs2.s5-18',
-      now: FIXED_NOW,
-    };
-
-    const report = buildSessionReport(params);
-    expect(report.signUps[0].slowTrack).toBe(false);
-  });
-
   it('should apply slow track halving to GM character SignUp', () => {
     const gmActor = createActor('gm1', 'GA', 54321, 2003);
     const params: SessionReportBuildParams = {
@@ -468,7 +410,6 @@ describe('Session report builder - slow track unit tests', () => {
     expect(gmSignUp!.repEarned).toBe(2);
     // Level 5: 2 × 10 = 20 (treasure), 0.5 × 8 = 4 (income), total = 24, halved = 12
     expect(gmSignUp!.currencyGained).toBe(12);
-    expect(gmSignUp!.slowTrack).toBe(true);
   });
 });
 
@@ -530,21 +471,18 @@ describe('buildSessionReport() integration - slow track mixed party', () => {
 
     // Slow track character: halved XP, rep, currency
     const slowSignUp = report.signUps.find((s) => s.characterName === 'Slow Char')!;
-    expect(slowSignUp.slowTrack).toBe(true);
     expect(slowSignUp.xpEarned).toBe(2);       // 4 / 2
     expect(slowSignUp.repEarned).toBe(2);       // 4 / 2
     expect(slowSignUp.currencyGained).toBe(12); // 24 / 2
 
     // Standard character: unmodified values
     const stdSignUp = report.signUps.find((s) => s.characterName === 'Standard Char')!;
-    expect(stdSignUp.slowTrack).toBe(false);
     expect(stdSignUp.xpEarned).toBe(4);
     expect(stdSignUp.repEarned).toBe(4);
     expect(stdSignUp.currencyGained).toBe(24);
 
     // GM character on slow track: halved with isGM: true
     const gmSignUp = report.signUps.find((s) => s.isGM)!;
-    expect(gmSignUp.slowTrack).toBe(true);
     expect(gmSignUp.isGM).toBe(true);
     expect(gmSignUp.xpEarned).toBe(2);
     expect(gmSignUp.repEarned).toBe(2);
