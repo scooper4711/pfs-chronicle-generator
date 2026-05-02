@@ -74,6 +74,9 @@ export interface PartyActor extends FlagActor {
                 value: number;
             };
         };
+        traits?: {
+            value?: string[];
+        };
         pfs?: {
             playerNumber?: number;
             characterNumber?: number;

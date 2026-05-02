@@ -147,7 +147,7 @@ function jqWrap(el: HTMLElement): any {
   return input;
 };
 
-function createApp(members: Array<{ id: string; name: string; type: string }> = []) {
+function createApp(members: Array<{ id: string; name: string; type: string; system?: { traits?: { value?: string[] } } }> = []) {
   return {
     actor: { members },
     _tabs: [{
@@ -236,6 +236,38 @@ describe('handlePartySheetRender', () => {
     const actors = [
       { id: 'a1', name: 'Hero', type: 'character' },
       { id: 'a2', name: 'Familiar', type: 'familiar' },
+    ];
+    const { html } = buildSheet();
+    handlePartySheetRender(createApp(actors) as any, html);
+    await flushRender();
+
+    expect(mockRenderPartyChronicleForm).toHaveBeenCalledWith(
+      expect.any(HTMLElement),
+      [actors[0]],
+      expect.any(Object)
+    );
+  });
+
+  it('filters out characters with the minion trait', async () => {
+    const actors = [
+      { id: 'a1', name: 'Hero', type: 'character' },
+      { id: 'a2', name: 'Construct', type: 'character', system: { traits: { value: ['minion'] } } },
+    ];
+    const { html } = buildSheet();
+    handlePartySheetRender(createApp(actors) as any, html);
+    await flushRender();
+
+    expect(mockRenderPartyChronicleForm).toHaveBeenCalledWith(
+      expect.any(HTMLElement),
+      [actors[0]],
+      expect.any(Object)
+    );
+  });
+
+  it('filters out characters with the eidolon trait', async () => {
+    const actors = [
+      { id: 'a1', name: 'Hero', type: 'character' },
+      { id: 'a2', name: 'Eidolon', type: 'character', system: { traits: { value: ['eidolon'] } } },
     ];
     const { html } = buildSheet();
     handlePartySheetRender(createApp(actors) as any, html);

@@ -198,7 +198,11 @@ export function handlePartySheetRender(app: PartySheetApp, html: JQuery): void {
     trackTabClicks(html);
 
     const partyActors = app.actor?.members || [];
-    const characterActors = partyActors.filter((actor: PartyActor) => actor?.type === 'character');
+    const characterActors = partyActors.filter((actor: PartyActor) => {
+        if (actor?.type !== 'character') return false;
+        const traits = actor.system?.traits?.value || [];
+        return !traits.some(t => t === 'minion' || t === 'eidolon');
+    });
     
     if (characterActors.length === 0) {
         pfsTab.html(`
