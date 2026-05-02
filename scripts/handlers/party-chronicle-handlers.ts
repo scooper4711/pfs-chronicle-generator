@@ -49,7 +49,8 @@ import {
     updateAllTreasureBundleDisplays,
     updateTreasureBundleDisplay,
     updateAllEarnedIncomeDisplays,
-    updateSlowTrackDisplays
+    updateSlowTrackDisplays,
+    extractEarnedIncomeSelects
 } from './shared-rewards-handlers.js';
 
 /**
@@ -241,19 +242,13 @@ async function updateCharacterEarnedIncome(characterId: string, container: HTMLE
     const downtimeDaysInput = container.querySelector<HTMLInputElement>('#downtimeDays');
     const downtimeDays = Number.parseInt(downtimeDaysInput?.value || '0', 10);
 
-    const memberActivity = container.querySelector(`.member-activity[data-character-id="${characterId}"]`);
-    if (!memberActivity) return;
-
-    const taskLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".taskLevel"]');
-    const successLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".successLevel"]');
-    const proficiencyRankSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".proficiencyRank"]');
-
-    if (!taskLevelSelect || !successLevelSelect || !proficiencyRankSelect) return;
+    const selects = extractEarnedIncomeSelects(characterId, container);
+    if (!selects) return;
 
     const { updateEarnedIncomeDisplay } = await import('./shared-rewards-handlers.js');
     updateEarnedIncomeDisplay(
-        characterId, taskLevelSelect.value, successLevelSelect.value,
-        proficiencyRankSelect.value, downtimeDays, container
+        characterId, selects.taskLevel, selects.successLevel,
+        selects.proficiencyRank, downtimeDays, container
     );
 }
 

@@ -19,6 +19,40 @@ import { formatCurrency } from '../utils/currency-formatter.js';
 import { updateSectionSummary } from './collapsible-section-handlers.js';
 import { CHARACTER_FIELD_SELECTORS } from '../constants/dom-selectors.js';
 
+/** Earned income select values extracted from a character card. */
+interface EarnedIncomeSelects {
+  taskLevel: string;
+  successLevel: string;
+  proficiencyRank: string;
+}
+
+/**
+ * Extracts earned income select values from a character's member-activity card.
+ *
+ * @returns The select values, or null if the card or any select is missing.
+ */
+export function extractEarnedIncomeSelects(
+  characterId: string,
+  container: HTMLElement
+): EarnedIncomeSelects | null {
+  const memberActivity = container.querySelector(
+    `.member-activity[data-character-id="${characterId}"]`
+  );
+  if (!memberActivity) return null;
+
+  const taskLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".taskLevel"]');
+  const successLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".successLevel"]');
+  const proficiencyRankSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".proficiencyRank"]');
+
+  if (!taskLevelSelect || !successLevelSelect || !proficiencyRankSelect) return null;
+
+  return {
+    taskLevel: taskLevelSelect.value,
+    successLevel: successLevelSelect.value,
+    proficiencyRank: proficiencyRankSelect.value,
+  };
+}
+
 /**
  * Updates the displayed treasure bundle value for a specific character.
  *
@@ -395,25 +429,17 @@ function updateSlowTrackEarnedIncome(
   const downtimeDays = Number.parseInt(downtimeDaysInput?.value || '0', 10);
   const effectiveDays = isSlowTrack ? downtimeDays / 2 : downtimeDays;
 
-  const memberActivity = container.querySelector(
-    `.member-activity[data-character-id="${characterId}"]`
+  const selects = extractEarnedIncomeSelects(characterId, container);
+  if (!selects) return;
+
+  updateEarnedIncomeDisplay(
+    characterId,
+    selects.taskLevel,
+    selects.successLevel,
+    selects.proficiencyRank,
+    effectiveDays,
+    container
   );
-  if (!memberActivity) return;
-
-  const taskLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".taskLevel"]');
-  const successLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".successLevel"]');
-  const proficiencyRankSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".proficiencyRank"]');
-
-  if (taskLevelSelect && successLevelSelect && proficiencyRankSelect) {
-    updateEarnedIncomeDisplay(
-      characterId,
-      taskLevelSelect.value,
-      successLevelSelect.value,
-      proficiencyRankSelect.value,
-      effectiveDays,
-      container
-    );
-  }
 }
 
 /**

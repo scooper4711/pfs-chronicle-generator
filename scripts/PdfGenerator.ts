@@ -21,6 +21,21 @@ export class PdfGenerator {
         this.page = this.pdfDoc.getPages()[0];
     }
 
+    /**
+     * Resolves a canvas name to absolute page coordinates.
+     *
+     * If a canvas name is provided, resolves it through the layout's canvas
+     * configuration. Otherwise returns a rect covering the full page.
+     */
+    private resolveCanvasRect(canvasName: string | undefined): { x: number; y: number; width: number; height: number } {
+        if (canvasName) {
+            const { width: pageWidth, height: pageHeight } = this.page.getSize();
+            return getCanvasRect(canvasName, this.layout.canvas!, pageWidth, pageHeight);
+        }
+        const { width, height } = this.page.getSize();
+        return { x: 0, y: 0, width, height };
+    }
+
     public async generate() {
         if (this.layout.aspectratio) {
             const [ratioWidth, ratioHeight] = this.layout.aspectratio.split(':').map(Number);
@@ -122,15 +137,7 @@ export class PdfGenerator {
 
     private async drawLineElement(props: ResolvedElement) {
         const { canvas, x = 0, y = 0, x2 = 0, linewidth = 1, color } = props;
-
-        let canvasRect;
-        if (canvas) {
-            const { width: pageWidth, height: pageHeight } = this.page.getSize();
-            canvasRect = getCanvasRect(canvas, this.layout.canvas!, pageWidth, pageHeight);
-        } else {
-            const { width, height } = this.page.getSize();
-            canvasRect = { x: 0, y: 0, width, height };
-        }
+        const canvasRect = this.resolveCanvasRect(canvas);
 
         const startX = canvasRect.x + (x / 100) * canvasRect.width;
         const endX = canvasRect.x + (x2 / 100) * canvasRect.width;
@@ -148,15 +155,7 @@ export class PdfGenerator {
 
     private async drawRedaction(props: ResolvedElement) {
         const { canvas, x = 0, y = 0, x2 = 0, y2 = 0, color } = props;
-
-        let canvasRect;
-        if (canvas) {
-            const { width: pageWidth, height: pageHeight } = this.page.getSize();
-            canvasRect = getCanvasRect(canvas, this.layout.canvas!, pageWidth, pageHeight);
-        } else {
-            const { width, height } = this.page.getSize();
-            canvasRect = { x: 0, y: 0, width, height };
-        }
+        const canvasRect = this.resolveCanvasRect(canvas);
 
         const rectX = canvasRect.x + (x / 100) * canvasRect.width;
         const rectY = this.page.getHeight() - (canvasRect.y + (y2 / 100) * canvasRect.height);
@@ -175,15 +174,7 @@ export class PdfGenerator {
 
     private async drawCheckbox(props: ResolvedElement) {
         const { canvas, x = 0, y = 0, x2, y2, size = 1, linewidth = 1, color } = props;
-
-        let canvasRect;
-        if (canvas) {
-            const { width: pageWidth, height: pageHeight } = this.page.getSize();
-            canvasRect = getCanvasRect(canvas, this.layout.canvas!, pageWidth, pageHeight);
-        } else {
-            const { width, height } = this.page.getSize();
-            canvasRect = { x: 0, y: 0, width, height };
-        }
+        const canvasRect = this.resolveCanvasRect(canvas);
 
         // Calculate position
         const checkX = canvasRect.x + (x / 100) * canvasRect.width;
@@ -240,15 +231,7 @@ export class PdfGenerator {
         }
 
         const { canvas, x = 0, y = 0, x2 = 0, y2, align, font, fontweight, fontstyle, fontsize, color } = props;
-        
-        let canvasRect;
-        if (canvas) {
-            const { width: pageWidth, height: pageHeight } = this.page.getSize();
-            canvasRect = getCanvasRect(canvas, this.layout.canvas!, pageWidth, pageHeight);
-        } else {
-            const { width, height } = this.page.getSize();
-            canvasRect = { x: 0, y: 0, width, height };
-        }
+        const canvasRect = this.resolveCanvasRect(canvas);
 
         const boxX = canvasRect.x + (x / 100) * canvasRect.width;
         const boxWidth = ((x2 - x) / 100) * canvasRect.width;
@@ -297,15 +280,7 @@ export class PdfGenerator {
         }
 
         const { canvas, x = 0, y = 0, x2 = 0, y2 = 0, align, font, fontweight, fontstyle, fontsize, color, lines } = props;
-        
-        let canvasRect;
-        if (canvas) {
-            const { width: pageWidth, height: pageHeight } = this.page.getSize();
-            canvasRect = getCanvasRect(canvas, this.layout.canvas!, pageWidth, pageHeight);
-        } else {
-            const { width, height } = this.page.getSize();
-            canvasRect = { x: 0, y: 0, width, height };
-        }
+        const canvasRect = this.resolveCanvasRect(canvas);
 
         const boxX = canvasRect.x + (x / 100) * canvasRect.width;
         const boxYFromTop = (y / 100) * canvasRect.height;

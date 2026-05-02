@@ -53,56 +53,29 @@ export interface SessionReportBuildParams {
 }
 
 /**
- * Builds a SignUp entry for a single party member.
+ * Builds a SignUp entry for a party member or GM character.
  *
- * @param actor - Party actor with PFS data
- * @param characterFields - Per-character unique fields (name, consumeReplay, overrides, slowTrack)
- * @param shared - Shared fields for calculated defaults and override logic
+ * @param actor - Actor with PFS data
+ * @param characterFields - Per-character unique fields
+ * @param shared - Shared fields for calculated defaults
+ * @param isGM - Whether this is a GM character sign-up
  * @returns A SignUp entry for the session report
  *
- * Requirements: paizo-session-reporting 4.9, 4.10, gm-override-values 7.1, 7.2, 7.3, slow-track 7.1, 7.4
+ * Requirements: paizo-session-reporting 4.9, 4.10, gm-character-party-sheet 6.1, 6.2, 6.3,
+ *   gm-override-values 7.1, 7.2, 7.3, slow-track 7.1, 7.4
  */
 function buildSignUp(
   actor: SessionReportActor,
   characterFields: UniqueFields,
-  shared: SharedFields
+  shared: SharedFields,
+  isGM: boolean = false
 ): SignUp {
   const currentFaction = actor.system?.pfs?.currentFaction ?? '';
   const factionFullName = FACTION_NAMES[currentFaction] ?? currentFaction;
   const isSlowTrack = characterFields.slowTrack === true;
 
   return {
-    isGM: false,
-    orgPlayNumber: actor.system?.pfs?.playerNumber ?? 0,
-    characterNumber: actor.system?.pfs?.characterNumber ?? 0,
-    characterName: characterFields.characterName,
-    consumeReplay: characterFields.consumeReplay,
-    repEarned: isSlowTrack ? shared.chosenFactionReputation / 2 : shared.chosenFactionReputation,
-    faction: factionFullName,
-  };
-}
-
-/**
- * Builds a SignUp entry for the GM character with `isGM: true`.
- *
- * @param actor - GM character actor with PFS data
- * @param characterFields - GM character's unique fields (name, consumeReplay, overrides, slowTrack)
- * @param shared - Shared fields for calculated defaults and override logic
- * @returns A SignUp entry with isGM set to true
- *
- * Requirements: gm-character-party-sheet 6.1, 6.2, 6.3, gm-override-values 7.1, 7.2, 7.3, slow-track 7.1, 7.4
- */
-function buildGmSignUp(
-  actor: SessionReportActor,
-  characterFields: UniqueFields,
-  shared: SharedFields
-): SignUp {
-  const currentFaction = actor.system?.pfs?.currentFaction ?? '';
-  const factionFullName = FACTION_NAMES[currentFaction] ?? currentFaction;
-  const isSlowTrack = characterFields.slowTrack === true;
-
-  return {
-    isGM: true,
+    isGM,
     orgPlayNumber: actor.system?.pfs?.playerNumber ?? 0,
     characterNumber: actor.system?.pfs?.characterNumber ?? 0,
     characterName: characterFields.characterName,
@@ -196,7 +169,7 @@ export function buildSessionReport(params: SessionReportBuildParams): SessionRep
     .map((actor) => buildSignUp(actor, characters[actor.id], shared));
 
   if (gmCharacterActor && gmCharacterFields) {
-    signUps.push(buildGmSignUp(gmCharacterActor, gmCharacterFields, shared));
+    signUps.push(buildSignUp(gmCharacterActor, gmCharacterFields, shared, true));
   }
 
   return {
