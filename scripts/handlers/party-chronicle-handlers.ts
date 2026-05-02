@@ -40,14 +40,16 @@ export {
     updateDowntimeDaysDisplay,
     getDefaultTreasureBundles,
     updateTreasureBundlesForXp,
-    updateXpForSeason
+    updateXpForSeason,
+    updateSlowTrackDisplays
 } from './shared-rewards-handlers.js';
 
 // Local import for use within this file
 import {
     updateAllTreasureBundleDisplays,
     updateTreasureBundleDisplay,
-    updateAllEarnedIncomeDisplays
+    updateAllEarnedIncomeDisplays,
+    updateSlowTrackDisplays
 } from './shared-rewards-handlers.js';
 
 /**
@@ -291,6 +293,15 @@ export async function handleFieldChange(
         }
     }
     
+    // If a character's slow track checkbox changed, update that character's displays
+    // (XP label, earned income, and treasure bundle gold)
+    if (fieldName?.includes('.slowTrack')) {
+        const match = fieldName.match(/characters\.([^.]+)\.slowTrack/);
+        if (match) {
+            updateSlowTrackDisplays(match[1], container);
+        }
+    }
+    
     // Update section summaries for relevant fields
     if (fieldId === 'layout' || fieldId === 'eventName' || fieldId === 'eventCode' || fieldId === 'eventDate') {
         updateSectionSummary('event-details', container);
@@ -302,6 +313,15 @@ export async function handleFieldChange(
     
     if (fieldId === 'xpEarned' || fieldId === 'treasureBundles') {
         updateSectionSummary('shared-rewards', container);
+    }
+    
+    // If XP earned changed, update all per-character XP displays
+    if (fieldId === 'xpEarned') {
+        const xpValue = Number.parseInt(input.value, 10) || 0;
+        const xpLabels = container.querySelectorAll('.calculated-xp-label');
+        for (const label of xpLabels) {
+            label.textContent = `${xpValue} XP`;
+        }
     }
     
     await saveFormData(container, partyActors);

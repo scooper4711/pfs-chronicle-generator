@@ -67,6 +67,7 @@ export function createUniqueFields(overrides: Partial<UniqueFields> = {}): Uniqu
     overrideXpValue: 0,
     overrideCurrency: false,
     overrideCurrencyValue: 0,
+    slowTrack: false,
     ...overrides
   };
 }

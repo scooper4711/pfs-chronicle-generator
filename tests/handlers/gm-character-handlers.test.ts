@@ -242,6 +242,7 @@ describe('handleGmCharacterDrop', () => {
           overrideXpValue: 0,
           overrideCurrency: false,
           overrideCurrencyValue: 0,
+          slowTrack: false,
         },
       },
     });
@@ -307,6 +308,7 @@ describe('handleGmCharacterClear', () => {
           overrideXpValue: 0,
           overrideCurrency: false,
           overrideCurrencyValue: 0,
+          slowTrack: false,
         },
         'party-member-1': {
           characterName: 'Valeros',
@@ -324,6 +326,7 @@ describe('handleGmCharacterClear', () => {
           overrideXpValue: 0,
           overrideCurrency: false,
           overrideCurrencyValue: 0,
+          slowTrack: false,
         },
       },
     });

@@ -133,6 +133,9 @@ export interface UniqueFields {
 
   /** Override currency value (used when overrideCurrency is true) (gm-override-values 3.1, 3.2, 4.1, 4.4, 8.1, 8.2) */
   overrideCurrencyValue: number;
+
+  /** Whether this character is using slow track advancement (slow-track 1.1, 6.1) */
+  slowTrack: boolean;
 }
 
 /**

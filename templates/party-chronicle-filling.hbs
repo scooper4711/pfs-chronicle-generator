@@ -325,119 +325,118 @@
                 </div>
 
                 <div class="character-fields">
-                    {{!-- Earned Income Section --}}
-                    <div class="earned-income-section">
-                        <div class="form-group">
-                            <label for="taskLevel-{{gmCharacter.id}}">
-                                Task Level
-                                <span class="fas fa-question-circle" data-tooltip="The default task level in PFS is PC Level - 2 (minimum of 0).<br/>Select '-' if the character chose not to earn income, e.g. the chronicle won't be immediately applied or the PC will be doing a different downtime activity. <br/>PC Level - 1 or PC Level may be used if the character has a feat or boon that allows it. <br/><em style='font-size: 0.9em;'>Note: PCs with infamy are treated as one level lower (PC Level - 3).</em>"></span>
-                            </label>
-                            <select id="taskLevel-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.taskLevel" data-character-level="{{gmCharacter.level}}">
-                                {{#each (calculateTaskLevelOptions gmCharacter.level (lookup gmCharacterFields 'taskLevel'))}}
-                                    <option value="{{value}}" {{#if selected}}selected{{/if}}>
-                                        {{label}}
-                                    </option>
-                                {{/each}}
-                            </select>
+                    {{!-- Currency fieldset — earned income, treasure bundles, and override --}}
+                    <fieldset class="currency-fieldset">
+                        <legend>
+                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{gmCharacter.id}}.overrideCurrency" {{#if (lookup gmCharacterFields 'overrideCurrency')}}checked{{/if}} data-tooltip="{{#if (eq gameSystem "sf2e")}}Override Credits{{else}}Override GP{{/if}}">
+                            <i class="fas fa-coins"></i> {{#if (eq gameSystem "sf2e")}}Credits Earned{{else}}Gold Earned{{/if}}
+                        </legend>
+
+                        {{!-- Calculated fields (hidden when override active) --}}
+                        <div class="earned-income-section">
+                            <div class="form-group">
+                                <label for="taskLevel-{{gmCharacter.id}}">
+                                    <i class="fas fa-layer-group"></i> Task Level
+                                    <span class="fas fa-question-circle" data-tooltip="The default task level in PFS is PC Level - 2 (minimum of 0).<br/>Select '-' if the character chose not to earn income, e.g. the chronicle won't be immediately applied or the PC will be doing a different downtime activity. <br/>PC Level - 1 or PC Level may be used if the character has a feat or boon that allows it. <br/><em style='font-size: 0.9em;'>Note: PCs with infamy are treated as one level lower (PC Level - 3).</em>"></span>
+                                </label>
+                                <select id="taskLevel-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.taskLevel" data-character-level="{{gmCharacter.level}}">
+                                    {{#each (calculateTaskLevelOptions gmCharacter.level (lookup gmCharacterFields 'taskLevel'))}}
+                                        <option value="{{value}}" {{#if selected}}selected{{/if}}>
+                                            {{label}}
+                                        </option>
+                                    {{/each}}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="successLevel-{{gmCharacter.id}}"><i class="fas fa-dice-d20"></i> Success Level</label>
+                                <select id="successLevel-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.successLevel" data-tooltip="The result of the character's Earn Income check for downtime. Defaults to Success. This affects how much currency the character earns during downtime.">
+                                    <option value="critical_failure" {{#if (eq (lookup gmCharacterFields 'successLevel') 'critical_failure')}}selected{{/if}}>Critical Failure</option>
+                                    <option value="failure" {{#if (eq (lookup gmCharacterFields 'successLevel') 'failure')}}selected{{/if}}>Failure</option>
+                                    <option value="success" {{#if (or (eq (lookup gmCharacterFields 'successLevel') 'success') (not (lookup gmCharacterFields 'successLevel')))}}selected{{/if}}>Success</option>
+                                    <option value="critical_success" {{#if (eq (lookup gmCharacterFields 'successLevel') 'critical_success')}}selected{{/if}}>Critical Success</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="proficiencyRank-{{gmCharacter.id}}">
+                                    <i class="fas fa-medal"></i> Skill Rank
+                                    <span class="fas fa-question-circle" data-tooltip="For most PCs, Downtime will be spent Earning Income by rolling a <b>Crafting</b>, <b>Performance</b>, or <b>Lore</b> check."></span>
+                                </label>
+                                <select id="proficiencyRank-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.proficiencyRank">
+                                    <option value="trained" {{#if (eq (lookup gmCharacterFields 'proficiencyRank') 'trained')}}selected{{/if}}>Trained</option>
+                                    <option value="expert" {{#if (eq (lookup gmCharacterFields 'proficiencyRank') 'expert')}}selected{{/if}}>Expert</option>
+                                    <option value="master" {{#if (eq (lookup gmCharacterFields 'proficiencyRank') 'master')}}selected{{/if}}>Master</option>
+                                    <option value="legendary" {{#if (eq (lookup gmCharacterFields 'proficiencyRank') 'legendary')}}selected{{/if}}>Legendary</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="earned-income-label"><i class="fas fa-coins"></i> Earned Income</label>
+                                <div class="earned-income-value" data-tooltip="Calculated from Task Level, Success Level, Proficiency Rank, and Downtime Days.">{{getZeroCurrencyDisplay gameSystem}}</div>
+                                <input type="hidden" name="characters.{{gmCharacter.id}}.earnedIncome" value="0" class="earned-income-hidden">
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="successLevel-{{gmCharacter.id}}"><i class="fas fa-dice-d20"></i> Success Level</label>
-                            <select id="successLevel-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.successLevel" data-tooltip="The result of the character's Earn Income check for downtime. Defaults to Success. This affects how much currency the character earns during downtime.">
-                                <option value="critical_failure" {{#if (eq (lookup gmCharacterFields 'successLevel') 'critical_failure')}}selected{{/if}}>Critical Failure</option>
-                                <option value="failure" {{#if (eq (lookup gmCharacterFields 'successLevel') 'failure')}}selected{{/if}}>Failure</option>
-                                <option value="success" {{#if (or (eq (lookup gmCharacterFields 'successLevel') 'success') (not (lookup gmCharacterFields 'successLevel')))}}selected{{/if}}>Success</option>
-                                <option value="critical_success" {{#if (eq (lookup gmCharacterFields 'successLevel') 'critical_success')}}selected{{/if}}>Critical Success</option>
-                            </select>
+                        {{!-- Treasure Bundle / Credits Awarded (hidden when override active) --}}
+                        {{#if (eq gameSystem "sf2e")}}
+                        <div class="form-group credits-awarded-row">
+                            <label><i class="fas fa-coins"></i> Credits Awarded</label>
+                            <div class="credits-awarded-value calculated-currency-label">{{getCreditsAwarded gmCharacter.level}} Credits</div>
                         </div>
-
-                        <div class="form-group">
-                            <label for="proficiencyRank-{{gmCharacter.id}}">
-                                <i class="fas fa-medal"></i> Skill Rank
-                                <span class="fas fa-question-circle" data-tooltip="For most PCs, Downtime will be spent Earning Income by rolling a <b>Crafting</b>, <b>Performance</b>, or <b>Lore</b> check."></span>
-                            </label>
-                            <select id="proficiencyRank-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.proficiencyRank">
-                                <option value="trained" {{#if (eq (lookup gmCharacterFields 'proficiencyRank') 'trained')}}selected{{/if}}>Trained</option>
-                                <option value="expert" {{#if (eq (lookup gmCharacterFields 'proficiencyRank') 'expert')}}selected{{/if}}>Expert</option>
-                                <option value="master" {{#if (eq (lookup gmCharacterFields 'proficiencyRank') 'master')}}selected{{/if}}>Master</option>
-                                <option value="legendary" {{#if (eq (lookup gmCharacterFields 'proficiencyRank') 'legendary')}}selected{{/if}}>Legendary</option>
-                            </select>
+                        {{else}}
+                        <div class="form-group treasure-bundle-row">
+                            <label><i class="fas fa-treasure-chest"></i> Treasure Bundles</label>
+                            <div class="treasure-bundle-value calculated-currency-label" data-tooltip="Calculated from shared Treasure Bundles field. Each TB is worth {{getTreasureBundleValue gmCharacter.level}} gp at level {{gmCharacter.level}}.">0.00 gp</div>
                         </div>
+                        {{/if}}
 
-                        <div class="form-group">
-                            <label class="earned-income-label"><i class="fas fa-coins"></i> Earned Income</label>
-                            <div class="earned-income-value" data-tooltip="Calculated from Task Level, Success Level, Proficiency Rank, and Downtime Days.">{{getZeroCurrencyDisplay gameSystem}}</div>
-                            <input type="hidden" name="characters.{{gmCharacter.id}}.earnedIncome" value="0" class="earned-income-hidden">
+                        {{!-- Override input (hidden by default, shown when override active) --}}
+                        <div class="form-group override-currency-input-row override-hidden">
+                            <label><i class="fas fa-coins"></i> {{#if (eq gameSystem "sf2e")}}Credits Gained{{else}}GP Gained{{/if}}</label>
+                            <input type="number" class="override-currency-input" name="characters.{{gmCharacter.id}}.overrideCurrencyValue"
+                                   value="{{#if gmCharacterFields}}{{lookup gmCharacterFields 'overrideCurrencyValue'}}{{else}}0{{/if}}"
+                                   min="0" {{#if (eq gameSystem "sf2e")}}step="1"{{else}}step="0.01"{{/if}}
+                                   data-tooltip="Manual override value for total currency gained.">
                         </div>
-                    </div>
-
-                    {{!-- Treasure Bundle Value / Credits Awarded display --}}
-                    {{#if (eq gameSystem "sf2e")}}
-                    <div class="form-group">
-                        <label><i class="fas fa-coins"></i> Credits Awarded</label>
-                        <div class="credits-awarded-value calculated-currency-label">{{getCreditsAwarded gmCharacter.level}} Credits</div>
-                    </div>
-                    {{else}}
-                    <div class="form-group">
-                        <label><i class="fas fa-treasure-chest"></i> Treasure Bundles</label>
-                        <div class="treasure-bundle-value calculated-currency-label" data-tooltip="Calculated from shared Treasure Bundles field. Each TB is worth {{getTreasureBundleValue gmCharacter.level}} gp at level {{gmCharacter.level}}.">0.00 gp</div>
-                    </div>
-                    {{/if}}
+                    </fieldset>
 
                     <div class="form-group">
                         <label for="currencySpent-{{gmCharacter.id}}"><i class="fas fa-money-bill-wave"></i> {{#if (eq gameSystem "sf2e")}}Credits Spent{{else}}Currency Spent{{/if}}</label>
                         <input type="number" id="currencySpent-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.currencySpent" value="{{#if gmCharacterFields}}{{lookup gmCharacterFields 'currencySpent'}}{{else}}0{{/if}}" step="0.01" data-tooltip="Optionally record currency spent during the adventure. If left at zero, the field will be left blank for the player to fill in.">
                     </div>
 
-                    {{!-- XP Earned display --}}
-                    <div class="form-group">
-                        <label><i class="fas fa-star"></i> XP Earned</label>
+                    {{!-- XP Earned composite row — checkbox, label, calculated display, and override input in ONE row --}}
+                    <div class="form-group calculated-xp-row">
+                        <label>
+                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{gmCharacter.id}}.overrideXp" {{#if (lookup gmCharacterFields 'overrideXp')}}checked{{/if}} data-tooltip="Override XP">
+                            XP Earned
+                        </label>
                         <div class="calculated-xp-label">{{shared.xpEarned}} XP</div>
+                        <input type="number" class="override-xp-input override-hidden" name="characters.{{gmCharacter.id}}.overrideXpValue"
+                               value="{{#if gmCharacterFields}}{{lookup gmCharacterFields 'overrideXpValue'}}{{else}}0{{/if}}"
+                               min="0" step="1"
+                               data-tooltip="Manual override value for XP earned. This replaces the shared XP value for this character.">
                     </div>
+
+                    {{#unless (eq gameSystem "sf2e")}}
+                    <div class="form-group">
+                        <label data-tooltip="Check this if the player has already played this scenario and is using a replay credit. This is included in the session report for paizo.com.">
+                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{gmCharacter.id}}.consumeReplay"
+                                {{#if (lookup gmCharacterFields 'consumeReplay')}}checked{{/if}}>
+                            Consume Replay
+                        </label>
+                        <label data-tooltip="Slow track halves XP, reputation, gold, and downtime days for this character.">
+                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{gmCharacter.id}}.slowTrack"
+                                {{#if (lookup gmCharacterFields 'slowTrack')}}checked{{/if}}>
+                            Slow Track
+                        </label>
+                    </div>
+                    {{/unless}}
 
                     <div class="form-group full-width">
                         <label for="notes-{{gmCharacter.id}}" data-tooltip="GMs are encouraged to add notes to Chronicles about interesting events that occur during the adventure."><i class="fas fa-note-sticky"></i> Notes:</label>
                         <textarea id="notes-{{gmCharacter.id}}" name="characters.{{gmCharacter.id}}.notes" rows="3">{{#if gmCharacterFields}}{{lookup gmCharacterFields 'notes'}}{{/if}}</textarea>
-                    </div>
-
-                    {{!-- Advanced Section (collapsible) --}}
-                    <div class="collapsible-section advanced-section" data-section-id="advanced-{{gmCharacter.id}}">
-                        <header class="collapsible-header" role="button" tabindex="0"
-                                aria-expanded="false" aria-controls="advanced-content-{{gmCharacter.id}}">
-                            <span class="chevron"></span>
-                            <span class="section-title">Advanced</span>
-                        </header>
-                        <div class="collapsible-content" id="advanced-content-{{gmCharacter.id}}">
-                            <div class="form-group">
-                                <label class="checkbox-label" data-tooltip="Check this if the player has already played this scenario and is using a replay credit. This is included in the session report for paizo.com.">
-                                    <input type="checkbox" name="characters.{{gmCharacter.id}}.consumeReplay"
-                                        {{#if (lookup gmCharacterFields 'consumeReplay')}}checked{{/if}}>
-                                    Consume Replay
-                                </label>
-                            </div>
-
-                            <div class="form-group override-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="characters.{{gmCharacter.id}}.overrideCurrency"
-                                        {{#if (lookup gmCharacterFields 'overrideCurrency')}}checked{{/if}}>
-                                    {{#if (eq gameSystem "sf2e")}}Override Credits{{else}}Override GP{{/if}}
-                                </label>
-                                <input type="number" name="characters.{{gmCharacter.id}}.overrideCurrencyValue"
-                                       value="{{#if gmCharacterFields}}{{lookup gmCharacterFields 'overrideCurrencyValue'}}{{else}}0{{/if}}"
-                                       min="0" {{#if (eq gameSystem "sf2e")}}step="1"{{else}}step="0.01"{{/if}} disabled>
-                            </div>
-
-                            <div class="form-group override-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="characters.{{gmCharacter.id}}.overrideXp"
-                                        {{#if (lookup gmCharacterFields 'overrideXp')}}checked{{/if}}>
-                                    Override XP
-                                </label>
-                                <input type="number" name="characters.{{gmCharacter.id}}.overrideXpValue"
-                                       value="{{#if gmCharacterFields}}{{lookup gmCharacterFields 'overrideXpValue'}}{{else}}0{{/if}}"
-                                       min="0" step="1" disabled>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -466,121 +465,120 @@
                     <input type="hidden" name="characters.{{this.id}}.characterNumber" value="{{this.characterNumber}}">
                     <input type="hidden" name="characters.{{this.id}}.level" value="{{this.level}}">
                 </div>
-                
+
                 <div class="character-fields">
-                    {{!-- Earned Income Section --}}
-                    <div class="earned-income-section">
-                        <div class="form-group">
-                            <label for="taskLevel-{{this.id}}">
-                                Task Level
-                                <span class="fas fa-question-circle" data-tooltip="The default task level in PFS is PC Level - 2 (minimum of 0).<br/>Select '-' if the character chose not to earn income, e.g. the chronicle won't be immediately applied or the PC will be doing a different downtime activity. <br/>PC Level - 1 or PC Level may be used if the character has a feat or boon that allows it. <br/><em style='font-size: 0.9em;'>Note: PCs with infamy are treated as one level lower (PC Level - 3).</em>"></span>
-                            </label>
-                            <select id="taskLevel-{{this.id}}" name="characters.{{this.id}}.taskLevel" data-character-level="{{this.level}}">
-                                {{#each (calculateTaskLevelOptions this.level (lookup (lookup ../savedData.characters this.id) 'taskLevel'))}}
-                                    <option value="{{value}}" {{#if selected}}selected{{/if}}>
-                                        {{label}}
-                                    </option>
-                                {{/each}}
-                            </select>
+                    {{!-- Currency fieldset — earned income, treasure bundles, and override --}}
+                    <fieldset class="currency-fieldset">
+                        <legend>
+                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{this.id}}.overrideCurrency" {{#if (lookup (lookup ../savedData.characters this.id) 'overrideCurrency')}}checked{{/if}} data-tooltip="{{#if (eq ../gameSystem "sf2e")}}Override Credits{{else}}Override GP{{/if}}">
+                            <i class="fas fa-coins"></i> {{#if (eq ../gameSystem "sf2e")}}Credits Earned{{else}}Gold Earned{{/if}}
+                        </legend>
+
+                        {{!-- Calculated fields (hidden when override active) --}}
+                        <div class="earned-income-section">
+                            <div class="form-group">
+                                <label for="taskLevel-{{this.id}}">
+                                    <i class="fas fa-layer-group"></i> Task Level
+                                    <span class="fas fa-question-circle" data-tooltip="The default task level in PFS is PC Level - 2 (minimum of 0).<br/>Select '-' if the character chose not to earn income, e.g. the chronicle won't be immediately applied or the PC will be doing a different downtime activity. <br/>PC Level - 1 or PC Level may be used if the character has a feat or boon that allows it. <br/><em style='font-size: 0.9em;'>Note: PCs with infamy are treated as one level lower (PC Level - 3).</em>"></span>
+                                </label>
+                                <select id="taskLevel-{{this.id}}" name="characters.{{this.id}}.taskLevel" data-character-level="{{this.level}}">
+                                    {{#each (calculateTaskLevelOptions this.level (lookup (lookup ../savedData.characters this.id) 'taskLevel'))}}
+                                        <option value="{{value}}" {{#if selected}}selected{{/if}}>
+                                            {{label}}
+                                        </option>
+                                    {{/each}}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="successLevel-{{this.id}}"><i class="fas fa-dice-d20"></i> Success Level</label>
+                                <select id="successLevel-{{this.id}}" name="characters.{{this.id}}.successLevel" data-tooltip="The result of the character's Earn Income check for downtime. Defaults to Success. This affects how much currency the character earns during downtime.">
+                                    <option value="critical_failure" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'critical_failure')}}selected{{/if}}>Critical Failure</option>
+                                    <option value="failure" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'failure')}}selected{{/if}}>Failure</option>
+                                    <option value="success" {{#if (or (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'success') (not (lookup (lookup ../savedData.characters this.id) 'successLevel')))}}selected{{/if}}>Success</option>
+                                    <option value="critical_success" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'critical_success')}}selected{{/if}}>Critical Success</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="proficiencyRank-{{this.id}}">
+                                    <i class="fas fa-medal"></i> Skill Rank
+                                    <span class="fas fa-question-circle" data-tooltip="For most PCs, Downtime will be spent Earning Income by rolling a <b>Crafting</b>, <b>Performance</b>, or <b>Lore</b> check."></span>
+                                </label>
+                                <select id="proficiencyRank-{{this.id}}" name="characters.{{this.id}}.proficiencyRank">
+                                    <option value="trained" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'trained')}}selected{{/if}}>Trained</option>
+                                    <option value="expert" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'expert')}}selected{{/if}}>Expert</option>
+                                    <option value="master" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'master')}}selected{{/if}}>Master</option>
+                                    <option value="legendary" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'legendary')}}selected{{/if}}>Legendary</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="earned-income-label"><i class="fas fa-coins"></i> Earned Income</label>
+                                <div class="earned-income-value" data-tooltip="Calculated from Task Level, Success Level, Proficiency Rank, and Downtime Days.">{{getZeroCurrencyDisplay ../gameSystem}}</div>
+                                <input type="hidden" name="characters.{{this.id}}.earnedIncome" value="0" class="earned-income-hidden">
+                            </div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="successLevel-{{this.id}}"><i class="fas fa-dice-d20"></i> Success Level</label>
-                            <select id="successLevel-{{this.id}}" name="characters.{{this.id}}.successLevel" data-tooltip="The result of the character's Earn Income check for downtime. Defaults to Success. This affects how much currency the character earns during downtime.">
-                                <option value="critical_failure" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'critical_failure')}}selected{{/if}}>Critical Failure</option>
-                                <option value="failure" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'failure')}}selected{{/if}}>Failure</option>
-                                <option value="success" {{#if (or (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'success') (not (lookup (lookup ../savedData.characters this.id) 'successLevel')))}}selected{{/if}}>Success</option>
-                                <option value="critical_success" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'successLevel') 'critical_success')}}selected{{/if}}>Critical Success</option>
-                            </select>
+
+                        {{!-- Treasure Bundle / Credits Awarded (hidden when override active) --}}
+                        {{#if (eq ../gameSystem "sf2e")}}
+                        <div class="form-group credits-awarded-row">
+                            <label><i class="fas fa-coins"></i> Credits Awarded</label>
+                            <div class="credits-awarded-value calculated-currency-label">{{getCreditsAwarded this.level}} Credits</div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="proficiencyRank-{{this.id}}">
-                                <i class="fas fa-medal"></i> Skill Rank
-                                <span class="fas fa-question-circle" data-tooltip="For most PCs, Downtime will be spent Earning Income by rolling a <b>Crafting</b>, <b>Performance</b>, or <b>Lore</b> check."></span>
-                            </label>
-                            <select id="proficiencyRank-{{this.id}}" name="characters.{{this.id}}.proficiencyRank">
-                                <option value="trained" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'trained')}}selected{{/if}}>Trained</option>
-                                <option value="expert" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'expert')}}selected{{/if}}>Expert</option>
-                                <option value="master" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'master')}}selected{{/if}}>Master</option>
-                                <option value="legendary" {{#if (eq (lookup (lookup ../savedData.characters this.id) 'proficiencyRank') 'legendary')}}selected{{/if}}>Legendary</option>
-                            </select>
+                        {{else}}
+                        <div class="form-group treasure-bundle-row">
+                            <label><i class="fas fa-treasure-chest"></i> Treasure Bundles</label>
+                            <div class="treasure-bundle-value calculated-currency-label" data-tooltip="Calculated from shared Treasure Bundles field. Each TB is worth {{getTreasureBundleValue this.level}} gp at level {{this.level}}.">0.00 gp</div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label class="earned-income-label"><i class="fas fa-coins"></i> Earned Income</label>
-                            <div class="earned-income-value" data-tooltip="Calculated from Task Level, Success Level, Proficiency Rank, and Downtime Days.">{{getZeroCurrencyDisplay ../gameSystem}}</div>
-                            <input type="hidden" name="characters.{{this.id}}.earnedIncome" value="0" class="earned-income-hidden">
+                        {{/if}}
+
+                        {{!-- Override input (hidden by default, shown when override active) --}}
+                        <div class="form-group override-currency-input-row override-hidden">
+                            <label><i class="fas fa-coins"></i> {{#if (eq ../gameSystem "sf2e")}}Credits Gained{{else}}GP Gained{{/if}}</label>
+                            <input type="number" class="override-currency-input" name="characters.{{this.id}}.overrideCurrencyValue"
+                                   value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'overrideCurrencyValue'}}{{else}}0{{/if}}"
+                                   min="0" {{#if (eq ../gameSystem "sf2e")}}step="1"{{else}}step="0.01"{{/if}}
+                                   data-tooltip="Manual override value for total currency gained.">
                         </div>
-                    </div>
-                    
-                    {{!-- Treasure Bundle Value / Credits Awarded display --}}
-                    {{#if (eq ../gameSystem "sf2e")}}
-                    <div class="form-group">
-                        <label><i class="fas fa-coins"></i> Credits Awarded</label>
-                        <div class="credits-awarded-value calculated-currency-label">{{getCreditsAwarded this.level}} Credits</div>
-                    </div>
-                    {{else}}
-                    <div class="form-group">
-                        <label><i class="fas fa-treasure-chest"></i> Treasure Bundles</label>
-                        <div class="treasure-bundle-value calculated-currency-label" data-tooltip="Calculated from shared Treasure Bundles field. Each TB is worth {{getTreasureBundleValue this.level}} gp at level {{this.level}}.">0.00 gp</div>
-                    </div>
-                    {{/if}}
-                    
+                    </fieldset>
+
                     <div class="form-group">
                         <label for="currencySpent-{{this.id}}"><i class="fas fa-money-bill-wave"></i> {{#if (eq ../gameSystem "sf2e")}}Credits Spent{{else}}Currency Spent{{/if}}</label>
                         <input type="number" id="currencySpent-{{this.id}}" name="characters.{{this.id}}.currencySpent" value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'currencySpent'}}{{else}}0{{/if}}" step="0.01" data-tooltip="Optionally record currency spent during the adventure. If left at zero, the field will be left blank for the player to fill in.">
                     </div>
 
-                    {{!-- XP Earned display --}}
-                    <div class="form-group">
-                        <label><i class="fas fa-star"></i> XP Earned</label>
+                    {{!-- XP Earned composite row — checkbox, label, calculated display, and override input in ONE row --}}
+                    <div class="form-group calculated-xp-row">
+                        <label>
+                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{this.id}}.overrideXp" {{#if (lookup (lookup ../savedData.characters this.id) 'overrideXp')}}checked{{/if}} data-tooltip="Override XP">
+                            XP Earned
+                        </label>
                         <div class="calculated-xp-label">{{../shared.xpEarned}} XP</div>
+                        <input type="number" class="override-xp-input override-hidden" name="characters.{{this.id}}.overrideXpValue"
+                               value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'overrideXpValue'}}{{else}}0{{/if}}"
+                               min="0" step="1"
+                               data-tooltip="Manual override value for XP earned. This replaces the shared XP value for this character.">
                     </div>
+
+                    {{#unless (eq ../gameSystem "sf2e")}}
+                    <div class="form-group">
+                        <label data-tooltip="Check this if the player has already played this scenario and is using a replay credit. This is included in the session report for paizo.com.">
+                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{this.id}}.consumeReplay"
+                                {{#if (lookup (lookup ../savedData.characters this.id) 'consumeReplay')}}checked{{/if}}>
+                            Consume Replay
+                        </label>
+                        <label data-tooltip="Slow track halves XP, reputation, gold, and downtime days for this character.">
+                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{this.id}}.slowTrack"
+                                {{#if (lookup (lookup ../savedData.characters this.id) 'slowTrack')}}checked{{/if}}>
+                            Slow Track
+                        </label>
+                    </div>
+                    {{/unless}}
                     
                     <div class="form-group full-width">
                         <label for="notes-{{this.id}}" data-tooltip="GMs are encouraged to add notes to Chronicles about interesting events that occur during the adventure."><i class="fas fa-note-sticky"></i> Notes:</label>
                         <textarea id="notes-{{this.id}}" name="characters.{{this.id}}.notes" rows="3">{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'notes'}}{{/if}}</textarea>
-                    </div>
-                    
-                    {{!-- Advanced Section (collapsible) --}}
-                    <div class="collapsible-section advanced-section" data-section-id="advanced-{{this.id}}">
-                        <header class="collapsible-header" role="button" tabindex="0"
-                                aria-expanded="false" aria-controls="advanced-content-{{this.id}}">
-                            <span class="chevron"></span>
-                            <span class="section-title">Advanced</span>
-                        </header>
-                        <div class="collapsible-content" id="advanced-content-{{this.id}}">
-                            <div class="form-group">
-                                <label class="checkbox-label" data-tooltip="Check this if the player has already played this scenario and is using a replay credit. This is included in the session report for paizo.com.">
-                                    <input type="checkbox" name="characters.{{this.id}}.consumeReplay"
-                                        {{#if (lookup (lookup ../savedData.characters this.id) 'consumeReplay')}}checked{{/if}}>
-                                    Consume Replay
-                                </label>
-                            </div>
-
-                            <div class="form-group override-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="characters.{{this.id}}.overrideCurrency"
-                                        {{#if (lookup (lookup ../savedData.characters this.id) 'overrideCurrency')}}checked{{/if}}>
-                                    {{#if (eq ../gameSystem "sf2e")}}Override Credits{{else}}Override GP{{/if}}
-                                </label>
-                                <input type="number" name="characters.{{this.id}}.overrideCurrencyValue"
-                                       value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'overrideCurrencyValue'}}{{else}}0{{/if}}"
-                                       min="0" {{#if (eq ../gameSystem "sf2e")}}step="1"{{else}}step="0.01"{{/if}} disabled>
-                            </div>
-
-                            <div class="form-group override-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="characters.{{this.id}}.overrideXp"
-                                        {{#if (lookup (lookup ../savedData.characters this.id) 'overrideXp')}}checked{{/if}}>
-                                    Override XP
-                                </label>
-                                <input type="number" name="characters.{{this.id}}.overrideXpValue"
-                                       value="{{#if (lookup ../savedData.characters this.id)}}{{lookup (lookup ../savedData.characters this.id) 'overrideXpValue'}}{{else}}0{{/if}}"
-                                       min="0" step="1" disabled>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </section>

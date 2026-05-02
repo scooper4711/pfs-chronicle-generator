@@ -101,19 +101,25 @@ export interface ChronicleData {
  * ```
  * 
  * Validates: Requirements party-chronicle-filling 5.1, 5.2, 5.3, 5.5, treasure-bundle-calculation 8.1, 8.2, 8.3, 8.4, 8.5, multi-line-reputation-tracking 5.1, 5.2, earned-income-calculation 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 12.1, 12.2, 12.3
+ * Validates: Requirements slow-track 2.1, 2.2, 2.3, 3.1, 3.2, 3.3, 4.1, 4.2, 4.3, 5.1, 5.2, 5.3, 5.4
  */
 export function mapToCharacterData(
   shared: SharedFields,
   unique: UniqueFields,
   actor: PartyActor
 ): ChronicleData {
-  // Calculate earned income based on inputs
   const gameSystem = getGameSystem();
+  const isSlowTrack = unique.slowTrack === true;
+
+  // Slow track: halve downtime days before earned income calculation (slow-track 4.1, 4.3)
+  const effectiveDowntimeDays = isSlowTrack ? shared.downtimeDays / 2 : shared.downtimeDays;
+
+  // Calculate earned income using effective downtime days
   const incomeEarned = calculateEarnedIncome(
     unique.taskLevel,
     unique.successLevel,
     unique.proficiencyRank,
-    shared.downtimeDays,
+    effectiveDowntimeDays,
     gameSystem
   );
   
@@ -125,12 +131,19 @@ export function mapToCharacterData(
   // Calculate total currency gained
   const currencyGained = calculateCurrencyGained(treasureBundleValue, incomeEarned, gameSystem);
   
-  // Calculate reputation using the reputation calculator
-  const reputationLines = calculateReputation(shared, actor);
+  // Slow track: halve reputation values before passing to calculator (slow-track 3.1, 3.2, 3.3)
+  const reputationShared = isSlowTrack ? halveReputationValues(shared) : shared;
+  const reputationLines = calculateReputation(reputationShared, actor);
   
-  // Apply override values when active (gm-override-values 5.1, 5.2, 5.3, 5.4)
-  const xpGained = unique.overrideXp === true ? unique.overrideXpValue : shared.xpEarned;
-  const finalCurrencyGained = unique.overrideCurrency === true ? unique.overrideCurrencyValue : currencyGained;
+  // Apply XP: override > slow track halving > standard (slow-track 2.1, 2.2, 2.3)
+  const xpGained = unique.overrideXp === true
+    ? unique.overrideXpValue
+    : isSlowTrack ? shared.xpEarned / 2 : shared.xpEarned;
+
+  // Apply currency: override > slow track halving > standard (slow-track 5.1, 5.2, 5.3, 5.4)
+  const finalCurrencyGained = unique.overrideCurrency === true
+    ? unique.overrideCurrencyValue
+    : isSlowTrack ? (treasureBundleValue + incomeEarned) / 2 : currencyGained;
 
   const chronicleData: ChronicleData = {
     // Character identification from unique fields
@@ -168,4 +181,30 @@ export function mapToCharacterData(
   };
   
   return chronicleData;
+}
+
+/**
+ * Creates a modified copy of SharedFields with halved reputation values for slow track.
+ *
+ * Halves both `chosenFactionReputation` and each value in `reputationValues`.
+ * Fractional values are preserved — no rounding is applied.
+ *
+ * @param shared - Original shared fields
+ * @returns A shallow copy of shared with halved reputation values
+ *
+ * Requirements: slow-track 3.1, 3.2
+ */
+function halveReputationValues(shared: SharedFields): SharedFields {
+  return {
+    ...shared,
+    chosenFactionReputation: shared.chosenFactionReputation / 2,
+    reputationValues: {
+      EA: shared.reputationValues.EA / 2,
+      GA: shared.reputationValues.GA / 2,
+      HH: shared.reputationValues.HH / 2,
+      VS: shared.reputationValues.VS / 2,
+      RO: shared.reputationValues.RO / 2,
+      VW: shared.reputationValues.VW / 2,
+    },
+  };
 }

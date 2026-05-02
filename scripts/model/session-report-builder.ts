@@ -55,24 +55,31 @@ export interface SessionReportBuildParams {
 }
 
 /**
- * Calculates XP and currency values for a character, applying overrides when active.
+ * Calculates XP and currency values for a character, applying slow track
+ * halving and overrides when active.
+ *
+ * Override values bypass slow track halving — when an override is active,
+ * the override value is used as-is. Only non-overridden values are halved.
  *
  * @param shared - Shared fields for calculated defaults
- * @param characterFields - Per-character unique fields with override flags
+ * @param characterFields - Per-character unique fields with override and slow track flags
  * @returns Object with xpEarned and currencyGained values
  *
- * Requirements: gm-override-values 7.1, 7.2, 7.3
+ * Requirements: gm-override-values 7.1, 7.2, 7.3, slow-track 7.2, 7.3, 7.5, 7.6
  */
 function calculateCharacterRewards(
   shared: SharedFields,
   characterFields: UniqueFields
 ): { xpEarned: number; currencyGained: number } {
   const gameSystem = getGameSystem();
+  const isSlowTrack = characterFields.slowTrack === true;
 
+  // XP: override > slow track halving > standard (slow-track 7.2, 7.3)
   const xpEarned = characterFields.overrideXp === true
     ? characterFields.overrideXpValue
-    : shared.xpEarned;
+    : isSlowTrack ? shared.xpEarned / 2 : shared.xpEarned;
 
+  // Currency: override > slow track halving > standard (slow-track 7.5, 7.6)
   let currencyGained: number;
   if (characterFields.overrideCurrency === true) {
     currencyGained = characterFields.overrideCurrencyValue;
@@ -87,7 +94,8 @@ function calculateCharacterRewards(
     const treasureBundleValue = gameSystem === 'sf2e'
       ? getCreditsAwarded(characterFields.level)
       : calculateTreasureBundleValue(shared.treasureBundles, characterFields.level);
-    currencyGained = calculateCurrencyGained(treasureBundleValue, incomeEarned, gameSystem);
+    const standardCurrency = calculateCurrencyGained(treasureBundleValue, incomeEarned, gameSystem);
+    currencyGained = isSlowTrack ? standardCurrency / 2 : standardCurrency;
   }
 
   return { xpEarned, currencyGained };
@@ -97,11 +105,11 @@ function calculateCharacterRewards(
  * Builds a SignUp entry for a single party member.
  *
  * @param actor - Party actor with PFS data
- * @param characterFields - Per-character unique fields (name, consumeReplay, overrides)
+ * @param characterFields - Per-character unique fields (name, consumeReplay, overrides, slowTrack)
  * @param shared - Shared fields for calculated defaults and override logic
  * @returns A SignUp entry for the session report
  *
- * Requirements: paizo-session-reporting 4.9, 4.10, gm-override-values 7.1, 7.2, 7.3
+ * Requirements: paizo-session-reporting 4.9, 4.10, gm-override-values 7.1, 7.2, 7.3, slow-track 7.1, 7.4
  */
 function buildSignUp(
   actor: SessionReportActor,
@@ -111,6 +119,7 @@ function buildSignUp(
   const currentFaction = actor.system?.pfs?.currentFaction ?? '';
   const factionFullName = FACTION_NAMES[currentFaction] ?? currentFaction;
   const rewards = calculateCharacterRewards(shared, characterFields);
+  const isSlowTrack = characterFields.slowTrack === true;
 
   return {
     isGM: false,
@@ -118,7 +127,8 @@ function buildSignUp(
     characterNumber: actor.system?.pfs?.characterNumber ?? 0,
     characterName: characterFields.characterName,
     consumeReplay: characterFields.consumeReplay,
-    repEarned: shared.chosenFactionReputation,
+    slowTrack: characterFields.slowTrack,
+    repEarned: isSlowTrack ? shared.chosenFactionReputation / 2 : shared.chosenFactionReputation,
     faction: factionFullName,
     xpEarned: rewards.xpEarned,
     currencyGained: rewards.currencyGained,
@@ -129,11 +139,11 @@ function buildSignUp(
  * Builds a SignUp entry for the GM character with `isGM: true`.
  *
  * @param actor - GM character actor with PFS data
- * @param characterFields - GM character's unique fields (name, consumeReplay, overrides)
+ * @param characterFields - GM character's unique fields (name, consumeReplay, overrides, slowTrack)
  * @param shared - Shared fields for calculated defaults and override logic
  * @returns A SignUp entry with isGM set to true
  *
- * Requirements: gm-character-party-sheet 6.1, 6.2, 6.3, gm-override-values 7.1, 7.2, 7.3
+ * Requirements: gm-character-party-sheet 6.1, 6.2, 6.3, gm-override-values 7.1, 7.2, 7.3, slow-track 7.1, 7.4
  */
 function buildGmSignUp(
   actor: SessionReportActor,
@@ -143,6 +153,7 @@ function buildGmSignUp(
   const currentFaction = actor.system?.pfs?.currentFaction ?? '';
   const factionFullName = FACTION_NAMES[currentFaction] ?? currentFaction;
   const rewards = calculateCharacterRewards(shared, characterFields);
+  const isSlowTrack = characterFields.slowTrack === true;
 
   return {
     isGM: true,
@@ -150,7 +161,8 @@ function buildGmSignUp(
     characterNumber: actor.system?.pfs?.characterNumber ?? 0,
     characterName: characterFields.characterName,
     consumeReplay: characterFields.consumeReplay,
-    repEarned: shared.chosenFactionReputation,
+    slowTrack: characterFields.slowTrack,
+    repEarned: isSlowTrack ? shared.chosenFactionReputation / 2 : shared.chosenFactionReputation,
     faction: factionFullName,
     xpEarned: rewards.xpEarned,
     currencyGained: rewards.currencyGained,

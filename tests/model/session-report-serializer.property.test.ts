@@ -59,6 +59,7 @@ const signUpArbitrary: fc.Arbitrary<SignUp> = fc.record({
   faction: factionNameArbitrary,
   xpEarned: fc.integer({ min: 0, max: 20 }),
   currencyGained: fc.double({ min: 0, max: 50000, noNaN: true }),
+  slowTrack: fc.boolean(),
 });
 
 /** Arbitrary for a single BonusRep entry. */

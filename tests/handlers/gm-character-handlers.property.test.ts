@@ -118,6 +118,7 @@ const uniqueFieldsArbitrary: fc.Arbitrary<UniqueFields> = fc.record({
   overrideXpValue: fc.integer({ min: 0, max: 100 }),
   overrideCurrency: fc.boolean(),
   overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
+  slowTrack: fc.boolean(),
 });
 
 /**

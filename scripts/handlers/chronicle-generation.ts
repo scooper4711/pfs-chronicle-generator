@@ -198,7 +198,8 @@ function extractUniqueFields(rawCharacters: Record<string, Partial<UniqueFields>
     overrideXp: Boolean(uniqueFields.overrideXp),
     overrideXpValue: Number(uniqueFields.overrideXpValue) || 0,
     overrideCurrency: Boolean(uniqueFields.overrideCurrency),
-    overrideCurrencyValue: Number(uniqueFields.overrideCurrencyValue) || 0
+    overrideCurrencyValue: Number(uniqueFields.overrideCurrencyValue) || 0,
+    slowTrack: Boolean(uniqueFields.slowTrack)
   };
 }
 
