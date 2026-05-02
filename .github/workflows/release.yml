@@ -75,7 +75,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
 
       # Extract version embedded in the tag.
@@ -112,7 +112,7 @@ jobs:
           DOWNLOAD: ${{ env.release_module_url }}
 
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '24.x'
 
