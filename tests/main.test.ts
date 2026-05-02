@@ -116,8 +116,10 @@ jest.mock('../scripts/handlers/party-chronicle-handlers', () => ({
   extractFormData: jest.fn().mockReturnValue({ shared: {}, characters: {} }),
   saveFormData: jest.fn().mockResolvedValue(undefined),
   updateAllTreasureBundleDisplays: jest.fn(),
+  updateAllCreditsAwardedDisplays: jest.fn(),
   updateDowntimeDaysDisplay: jest.fn(),
   updateAllEarnedIncomeDisplays: jest.fn(),
+  updateSlowTrackDisplays: jest.fn(),
 }));
 
 jest.mock('../scripts/handlers/collapsible-section-handlers', () => ({
@@ -149,6 +151,29 @@ jest.mock('../scripts/handlers/override-handlers', () => ({
   initializeOverrideStates: jest.fn(),
 }));
 
+jest.mock('../scripts/handlers/character-sheet-handlers', () => ({
+  handleCharacterSheetRender: jest.fn(),
+}));
+
+jest.mock('../scripts/handlers/party-sheet-tab-handlers', () => ({
+  handlePartySheetRender: jest.fn(),
+}));
+
+jest.mock('../scripts/utils/treasure-bundle-calculator', () => ({
+  getCreditsAwarded: jest.fn().mockReturnValue(100),
+  getTreasureBundleValue: jest.fn().mockReturnValue(10),
+}));
+
+jest.mock('../scripts/utils/currency-formatter', () => ({
+  getZeroCurrencyDisplay: jest.fn().mockReturnValue('0 gp'),
+  getCurrencyLabel: jest.fn().mockReturnValue('Gold Pieces'),
+}));
+
+jest.mock('../scripts/utils/game-system-detector', () => ({
+  getGameSystemRoot: jest.fn().mockReturnValue('pfs2'),
+  isStarfinder: jest.fn().mockReturnValue(false),
+}));
+
 // Suppress console noise
 jest.spyOn(console, 'log').mockImplementation();
 jest.spyOn(console, 'error').mockImplementation();
@@ -175,6 +200,8 @@ import {
   initializeCollapseSections,
   updateAllSectionSummaries,
 } from '../scripts/handlers/collapsible-section-handlers';
+import { handleCharacterSheetRender } from '../scripts/handlers/character-sheet-handlers';
+import { handlePartySheetRender } from '../scripts/handlers/party-sheet-tab-handlers';
 
 // --- Helper to fire a captured hook ---
 
@@ -244,6 +271,39 @@ describe('main.ts', () => {
         (call: unknown[]) => call[0] === 'getTreasureBundleValue'
       );
       expect(tbCall).toBeDefined();
+    });
+
+    it('registers and invokes the getCreditsAwarded Handlebars helper', async () => {
+      await fireHook('init');
+
+      const helperCalls = (Handlebars.registerHelper as jest.Mock).mock.calls;
+      const call = helperCalls.find((c: unknown[]) => c[0] === 'getCreditsAwarded');
+      expect(call).toBeDefined();
+
+      const helperFn = call[1];
+      helperFn(5);
+    });
+
+    it('registers and invokes the getZeroCurrencyDisplay Handlebars helper', async () => {
+      await fireHook('init');
+
+      const helperCalls = (Handlebars.registerHelper as jest.Mock).mock.calls;
+      const call = helperCalls.find((c: unknown[]) => c[0] === 'getZeroCurrencyDisplay');
+      expect(call).toBeDefined();
+
+      const helperFn = call[1];
+      helperFn('pf2e');
+    });
+
+    it('registers and invokes the getCurrencyLabel Handlebars helper', async () => {
+      await fireHook('init');
+
+      const helperCalls = (Handlebars.registerHelper as jest.Mock).mock.calls;
+      const call = helperCalls.find((c: unknown[]) => c[0] === 'getCurrencyLabel');
+      expect(call).toBeDefined();
+
+      const helperFn = call[1];
+      helperFn('pf2e');
     });
   });
 
@@ -385,6 +445,40 @@ describe('main.ts', () => {
       expect(registeredHooks).toContain('renderPartySheetPF2e');
       expect(registeredHooks).toContain('renderPartySheetSF2e');
       expect(registeredHooks).toHaveLength(6);
+    });
+  });
+
+  describe('render hook callbacks', () => {
+    it('delegates renderCharacterSheetPF2e to handleCharacterSheetRender', async () => {
+      const mockSheet = { actor: { name: 'Test' } };
+      const mockHtml = { find: jest.fn() };
+      await fireHook('renderCharacterSheetPF2e', mockSheet, mockHtml, {});
+
+      expect(handleCharacterSheetRender).toHaveBeenCalledWith(mockSheet, mockHtml);
+    });
+
+    it('delegates renderCharacterSheetSF2e to handleCharacterSheetRender', async () => {
+      const mockSheet = { actor: { name: 'Test' } };
+      const mockHtml = { find: jest.fn() };
+      await fireHook('renderCharacterSheetSF2e', mockSheet, mockHtml, {});
+
+      expect(handleCharacterSheetRender).toHaveBeenCalledWith(mockSheet, mockHtml);
+    });
+
+    it('delegates renderPartySheetPF2e to handlePartySheetRender', async () => {
+      const mockApp = { actor: { members: [] } };
+      const mockHtml = { find: jest.fn() };
+      await fireHook('renderPartySheetPF2e', mockApp, mockHtml, {});
+
+      expect(handlePartySheetRender).toHaveBeenCalledWith(mockApp, mockHtml);
+    });
+
+    it('delegates renderPartySheetSF2e to handlePartySheetRender', async () => {
+      const mockApp = { actor: { members: [] } };
+      const mockHtml = { find: jest.fn() };
+      await fireHook('renderPartySheetSF2e', mockApp, mockHtml, {});
+
+      expect(handlePartySheetRender).toHaveBeenCalledWith(mockApp, mockHtml);
     });
   });
 });
