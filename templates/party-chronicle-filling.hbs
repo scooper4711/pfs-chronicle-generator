@@ -312,9 +312,9 @@
                             {{gmCharacter.name}}
                             <span class="gm-credit-label">GM Credit</span>
                         </div>
-                        <div class="character-society-id">{{#if gmCharacter.playerNumber}}{{gmCharacter.playerNumber}}-{{gmCharacter.characterNumber}}{{else}}<em>No Society ID</em>{{/if}}</div>
+                        <div class="character-society-id">{{#if gmCharacter.playerNumber}}{{gmCharacter.playerNumber}}-{{gmCharacter.characterNumber}}{{else}}<em class="missing-data">No Society ID</em>{{/if}}</div>
                         <div class="character-level">Level {{gmCharacter.level}}</div>
-                        <div class="character-faction" id="factionDisplay-{{gmCharacter.id}}">{{#if gmCharacter.faction}}{{gmCharacter.faction}}{{else}}<em>No Faction</em>{{/if}}</div>
+                        <div class="character-faction" id="factionDisplay-{{gmCharacter.id}}">{{#if gmCharacter.faction}}{{gmCharacter.faction}}{{else}}<em class="missing-data">No Faction</em>{{/if}}</div>
                     </div>
                     <button type="button" id="clearGmCharacter" class="gm-clear-button" data-tooltip="Remove GM character assignment">
                         <i class="fas fa-trash-can"></i>
@@ -458,9 +458,9 @@
                     </div>
                     <div class="character-identity">
                         <div class="character-name">{{this.name}}</div>
-                        <div class="character-society-id">{{#if this.playerNumber}}{{this.playerNumber}}-{{this.characterNumber}}{{else}}<em>No Society ID</em>{{/if}}</div>
+                        <div class="character-society-id">{{#if this.playerNumber}}{{this.playerNumber}}-{{this.characterNumber}}{{else}}<em class="missing-data">No Society ID</em>{{/if}}</div>
                         <div class="character-level">Level {{this.level}}</div>
-                        <div class="character-faction" id="factionDisplay-{{this.id}}">{{#if this.faction}}{{this.faction}}{{else}}<em>No Faction</em>{{/if}}</div>
+                        <div class="character-faction" id="factionDisplay-{{this.id}}">{{#if this.faction}}{{this.faction}}{{else}}<em class="missing-data">No Faction</em>{{/if}}</div>
                     </div>
                     {{!-- Hidden fields to preserve data --}}
                     <input type="hidden" name="characters.{{this.id}}.characterName" value="{{this.name}}">

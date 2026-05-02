@@ -49,6 +49,10 @@
     font-size: 0.8rem;
 }
 
+.sheet.party [data-tab=pfs] .activities .member-activity .missing-data {
+    color: #d32f2f;
+}
+
 .sheet.party [data-tab=pfs] .activities .member-activity .character-level {
     font-size: 0.8rem;
 }
