@@ -230,7 +230,69 @@ export async function handleLayoutChange(
  * 
  * Requirements: party-chronicle-filling 5.4, treasure-bundle-calculation 5.3, earned-income-calculation 2.5, 7.3, collapsible-shared-sections 7.1, 7.2, 7.3, 7.4
  */
-// eslint-disable-next-line complexity -- Flat field ID checks are clearer than extraction
+/**
+ * Updates a single character's earned income display when their task level,
+ * success level, or proficiency rank changes.
+ *
+ * @param characterId - The character whose display needs updating
+ * @param container - Form container element
+ */
+async function updateCharacterEarnedIncome(characterId: string, container: HTMLElement): Promise<void> {
+    const downtimeDaysInput = container.querySelector<HTMLInputElement>('#downtimeDays');
+    const downtimeDays = Number.parseInt(downtimeDaysInput?.value || '0', 10);
+
+    const memberActivity = container.querySelector(`.member-activity[data-character-id="${characterId}"]`);
+    if (!memberActivity) return;
+
+    const taskLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".taskLevel"]');
+    const successLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".successLevel"]');
+    const proficiencyRankSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".proficiencyRank"]');
+
+    if (!taskLevelSelect || !successLevelSelect || !proficiencyRankSelect) return;
+
+    const { updateEarnedIncomeDisplay } = await import('./shared-rewards-handlers.js');
+    updateEarnedIncomeDisplay(
+        characterId, taskLevelSelect.value, successLevelSelect.value,
+        proficiencyRankSelect.value, downtimeDays, container
+    );
+}
+
+/**
+ * Updates collapsible section summaries based on which field changed.
+ *
+ * @param fieldId - The id attribute of the changed field
+ */
+function updateSectionSummaries(fieldId: string, container: HTMLElement): void {
+    if (fieldId === 'layout' || fieldId === 'eventName' || fieldId === 'eventCode' || fieldId === 'eventDate') {
+        updateSectionSummary('event-details', container);
+    }
+    if (fieldId === 'chosenFactionReputation' || fieldId?.startsWith('reputation-')) {
+        updateSectionSummary('reputation', container);
+    }
+    if (fieldId === 'xpEarned' || fieldId === 'treasureBundles') {
+        updateSectionSummary('shared-rewards', container);
+    }
+}
+
+/**
+ * Updates a character's treasure bundle display when their level changes.
+ *
+ * @param fieldName - The form field name that changed
+ * @param inputValue - The new value of the input
+ * @param container - Form container element
+ */
+function handleCharacterLevelChange(fieldName: string, inputValue: string, container: HTMLElement): void {
+    const match = fieldName.match(/characters\.([^.]+)\.level/);
+    if (!match) return;
+
+    const characterId = match[1];
+    const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+    const treasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
+    const characterLevel = Number.parseInt(inputValue, 10);
+    updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
+}
+
+// eslint-disable-next-line complexity -- Flat field-name checks are clearer than further extraction
 export async function handleFieldChange(
     event: Event,
     container: HTMLElement,
@@ -251,14 +313,7 @@ export async function handleFieldChange(
     
     // If a character's level changed, update that character's treasure bundle display
     if (fieldName?.includes('.level')) {
-        const match = fieldName.match(/characters\.([^.]+)\.level/);
-        if (match) {
-            const characterId = match[1];
-            const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
-            const treasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
-            const characterLevel = Number.parseInt(input.value, 10);
-            updateTreasureBundleDisplay(characterId, treasureBundles, characterLevel, container);
-        }
+        handleCharacterLevelChange(fieldName, input.value, container);
     }
     
     // If downtime days changed, update all earned income displays
@@ -267,34 +322,15 @@ export async function handleFieldChange(
         updateAllEarnedIncomeDisplays(downtimeDays, container);
     }
     
-    // If a character's task level, success level, or proficiency rank changed, update that character's earned income display
+    // If a character's earned income fields changed, update that character's display
     if (fieldName && (fieldName.includes('.taskLevel') || fieldName.includes('.successLevel') || fieldName.includes('.proficiencyRank'))) {
         const match = fieldName.match(/characters\.([^.]+)\./);
         if (match) {
-            const characterId = match[1];
-            const downtimeDaysInput = container.querySelector<HTMLInputElement>('#downtimeDays');
-            const downtimeDays = Number.parseInt(downtimeDaysInput?.value || '0', 10);
-            
-            const memberActivity = container.querySelector(`.member-activity[data-character-id="${characterId}"]`);
-            if (memberActivity) {
-                const taskLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".taskLevel"]');
-                const successLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".successLevel"]');
-                const proficiencyRankSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".proficiencyRank"]');
-                
-                if (taskLevelSelect && successLevelSelect && proficiencyRankSelect) {
-                    const taskLevel = taskLevelSelect.value;
-                    const successLevel = successLevelSelect.value;
-                    const proficiencyRank = proficiencyRankSelect.value;
-                    
-                    const { updateEarnedIncomeDisplay } = await import('./shared-rewards-handlers.js');
-                    updateEarnedIncomeDisplay(characterId, taskLevel, successLevel, proficiencyRank, downtimeDays, container);
-                }
-            }
+            await updateCharacterEarnedIncome(match[1], container);
         }
     }
     
     // If a character's slow track checkbox changed, update that character's displays
-    // (XP label, earned income, and treasure bundle gold)
     if (fieldName?.includes('.slowTrack')) {
         const match = fieldName.match(/characters\.([^.]+)\.slowTrack/);
         if (match) {
@@ -303,17 +339,7 @@ export async function handleFieldChange(
     }
     
     // Update section summaries for relevant fields
-    if (fieldId === 'layout' || fieldId === 'eventName' || fieldId === 'eventCode' || fieldId === 'eventDate') {
-        updateSectionSummary('event-details', container);
-    }
-    
-    if (fieldId === 'chosenFactionReputation' || fieldId?.startsWith('reputation-')) {
-        updateSectionSummary('reputation', container);
-    }
-    
-    if (fieldId === 'xpEarned' || fieldId === 'treasureBundles') {
-        updateSectionSummary('shared-rewards', container);
-    }
+    updateSectionSummaries(fieldId, container);
     
     // If XP earned changed, update all per-character XP displays
     if (fieldId === 'xpEarned') {
