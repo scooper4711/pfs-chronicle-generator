@@ -499,6 +499,11 @@
     border-radius: 3px;
     transition: background-color 0.15s ease;
     user-select: none;
+    position: sticky;
+    top: -0.5rem;
+    z-index: 1;
+    background-color: var(--sub, #5c4033);
+    color: var(--color-text-light-0, #fff);
 }
 
 /* Hover state for collapsible header - subtle text highlight */
