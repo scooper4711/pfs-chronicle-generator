@@ -10,13 +10,16 @@
 
 ![GitHub Release](https://img.shields.io/github/v/release/scooper4711/pfs-chronicle-generator)
 ![GitHub Downloads](https://img.shields.io/github/downloads/scooper4711/pfs-chronicle-generator/total)
-![License](https://img.shields.io/github/license/scooper4711/pfs-chronicle-generator)
 ![Foundry v13+](https://img.shields.io/badge/Foundry-v13%20%7C%20v14-informational)
-![CI](https://img.shields.io/github/actions/workflow/status/scooper4711/pfs-chronicle-generator/ci.yml?label=CI)
+![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fpfs-chronicle-generator&colorB=4aa94a)
 
+
+![CI](https://img.shields.io/github/actions/workflow/status/scooper4711/pfs-chronicle-generator/ci.yml?label=CI)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=scooper4711_pfs-chronicle-generator&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=scooper4711_pfs-chronicle-generator)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=scooper4711_pfs-chronicle-generator&metric=coverage)](https://sonarcloud.io/summary/new_code?id=scooper4711_pfs-chronicle-generator)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=scooper4711_pfs-chronicle-generator&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=scooper4711_pfs-chronicle-generator)
+![License](https://img.shields.io/github/license/scooper4711/pfs-chronicle-generator)
+
 
 ---
 
