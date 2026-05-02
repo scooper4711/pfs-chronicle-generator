@@ -79,7 +79,6 @@ describe('sidebar-resize-handlers', () => {
         it('applies saved width after a drag has occurred', () => {
             const container = buildContainer(300);
             const handle = container.querySelector('.sidebar-resize-handle')!;
-            const sidebar = container.querySelector<HTMLElement>('.sidebar')!;
 
             attachSidebarResizeListener(container);
 
