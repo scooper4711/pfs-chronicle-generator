@@ -13,8 +13,6 @@ import type { SharedFields, UniqueFields } from './party-chronicle-types.js';
 import { buildScenarioIdentifier } from './scenario-identifier.js';
 import type { BonusRep, SessionReport, SignUp } from './session-report-types.js';
 import { getGameSystem } from '../utils/game-system-detector.js';
-import { calculateTreasureBundleValue, calculateCurrencyGained, getCreditsAwarded } from '../utils/treasure-bundle-calculator.js';
-import { calculateEarnedIncome } from '../utils/earned-income-calculator.js';
 
 /**
  * Minimal actor shape required by the session report builder.
@@ -55,53 +53,6 @@ export interface SessionReportBuildParams {
 }
 
 /**
- * Calculates XP and currency values for a character, applying slow track
- * halving and overrides when active.
- *
- * Override values bypass slow track halving — when an override is active,
- * the override value is used as-is. Only non-overridden values are halved.
- *
- * @param shared - Shared fields for calculated defaults
- * @param characterFields - Per-character unique fields with override and slow track flags
- * @returns Object with xpEarned and currencyGained values
- *
- * Requirements: gm-override-values 7.1, 7.2, 7.3, slow-track 7.2, 7.3, 7.5, 7.6
- */
-function calculateCharacterRewards(
-  shared: SharedFields,
-  characterFields: UniqueFields
-): { xpEarned: number; currencyGained: number } {
-  const gameSystem = getGameSystem();
-  const isSlowTrack = characterFields.slowTrack === true;
-
-  // XP: override > slow track halving > standard (slow-track 7.2, 7.3)
-  const xpEarned = characterFields.overrideXp === true
-    ? characterFields.overrideXpValue
-    : isSlowTrack ? shared.xpEarned / 2 : shared.xpEarned;
-
-  // Currency: override > slow track halving > standard (slow-track 7.5, 7.6)
-  let currencyGained: number;
-  if (characterFields.overrideCurrency === true) {
-    currencyGained = characterFields.overrideCurrencyValue;
-  } else {
-    const incomeEarned = calculateEarnedIncome(
-      characterFields.taskLevel,
-      characterFields.successLevel,
-      characterFields.proficiencyRank,
-      shared.downtimeDays,
-      gameSystem
-    );
-    const treasureBundleValue = gameSystem === 'sf2e'
-      ? getCreditsAwarded(characterFields.level)
-      : calculateTreasureBundleValue(shared.treasureBundles, characterFields.level);
-    const standardCurrency = calculateCurrencyGained(treasureBundleValue, incomeEarned, gameSystem);
-    currencyGained = isSlowTrack ? standardCurrency / 2 : standardCurrency;
-  }
-
-  return { xpEarned, currencyGained };
-}
-
-/**
  * Builds a SignUp entry for a single party member.
  *
  * @param actor - Party actor with PFS data
@@ -118,7 +69,6 @@ function buildSignUp(
 ): SignUp {
   const currentFaction = actor.system?.pfs?.currentFaction ?? '';
   const factionFullName = FACTION_NAMES[currentFaction] ?? currentFaction;
-  const rewards = calculateCharacterRewards(shared, characterFields);
   const isSlowTrack = characterFields.slowTrack === true;
 
   return {
@@ -129,8 +79,6 @@ function buildSignUp(
     consumeReplay: characterFields.consumeReplay,
     repEarned: isSlowTrack ? shared.chosenFactionReputation / 2 : shared.chosenFactionReputation,
     faction: factionFullName,
-    xpEarned: rewards.xpEarned,
-    currencyGained: rewards.currencyGained,
   };
 }
 
@@ -151,7 +99,6 @@ function buildGmSignUp(
 ): SignUp {
   const currentFaction = actor.system?.pfs?.currentFaction ?? '';
   const factionFullName = FACTION_NAMES[currentFaction] ?? currentFaction;
-  const rewards = calculateCharacterRewards(shared, characterFields);
   const isSlowTrack = characterFields.slowTrack === true;
 
   return {
@@ -162,8 +109,6 @@ function buildGmSignUp(
     consumeReplay: characterFields.consumeReplay,
     repEarned: isSlowTrack ? shared.chosenFactionReputation / 2 : shared.chosenFactionReputation,
     faction: factionFullName,
-    xpEarned: rewards.xpEarned,
-    currencyGained: rewards.currencyGained,
   };
 }
 

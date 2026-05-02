@@ -18,11 +18,6 @@ import {
   SessionReportBuildParams,
 } from '../../scripts/model/session-report-builder';
 import type { SharedFields, UniqueFields } from '../../scripts/model/party-chronicle-types';
-import { calculateEarnedIncome } from '../../scripts/utils/earned-income-calculator';
-import {
-  calculateTreasureBundleValue,
-  calculateCurrencyGained,
-} from '../../scripts/utils/treasure-bundle-calculator';
 
 // ---------------------------------------------------------------------------
 // Shared helpers
@@ -91,32 +86,6 @@ function createUniqueFields(overrides: Partial<UniqueFields> = {}): UniqueFields
     slowTrack: false,
     ...overrides,
   };
-}
-
-/**
- * Computes the expected currency for a character using the same logic
- * as calculateCharacterRewards in session-report-builder.ts.
- */
-function computeExpectedCurrency(
-  shared: SharedFields,
-  unique: UniqueFields,
-): number {
-  if (unique.overrideCurrency) {
-    return unique.overrideCurrencyValue;
-  }
-  const incomeEarned = calculateEarnedIncome(
-    unique.taskLevel,
-    unique.successLevel,
-    unique.proficiencyRank,
-    shared.downtimeDays,
-    'pf2e',
-  );
-  const treasureBundleValue = calculateTreasureBundleValue(
-    shared.treasureBundles,
-    unique.level,
-  );
-  const standardCurrency = calculateCurrencyGained(treasureBundleValue, incomeEarned, 'pf2e');
-  return unique.slowTrack ? standardCurrency / 2 : standardCurrency;
 }
 
 // ---------------------------------------------------------------------------
@@ -194,17 +163,15 @@ afterAll(() => {
 //            and override states
 // ===========================================================================
 
-describe('Feature: slow-track, Property 6: Session report reward halving respects slow track and override states', () => {
+describe('Feature: slow-track, Property 6: Session report reputation halving respects slow track', () => {
   /**
-   * Validates: Requirements 7.2, 7.3, 7.4, 7.5, 7.6
+   * Validates: Requirements 7.4
    *
-   * For any valid SharedFields and UniqueFields with slowTrack, overrideXp,
-   * overrideCurrency states, the SignUp produced via buildSessionReport should have:
-   *   - xpEarned = overrideXpValue when overrideXp, xpEarned/2 when slowTrack && !overrideXp, else xpEarned
+   * For any valid SharedFields and UniqueFields with slowTrack,
+   * the SignUp produced via buildSessionReport should have:
    *   - repEarned = chosenFactionReputation/2 when slowTrack, else chosenFactionReputation
-   *   - currencyGained = overrideCurrencyValue when overrideCurrency, halved when slowTrack && !overrideCurrency, else standard
    */
-  it('should produce correct rewards for party member SignUp across all slow track / override combinations', () => {
+  it('should produce correct repEarned for party member SignUp across slow track states', () => {
     fc.assert(
       fc.property(sharedFieldsArb, uniqueFieldsArb, factionArb, (shared, unique, faction) => {
         const actor = createActor('a1', faction);
@@ -220,29 +187,16 @@ describe('Feature: slow-track, Property 6: Session report reward halving respect
         expect(report.signUps).toHaveLength(1);
         const signUp = report.signUps[0];
 
-        // XP assertion
-        const expectedXp = unique.overrideXp
-          ? unique.overrideXpValue
-          : unique.slowTrack
-            ? shared.xpEarned / 2
-            : shared.xpEarned;
-        expect(signUp.xpEarned).toBe(expectedXp);
-
-        // Reputation assertion
         const expectedRep = unique.slowTrack
           ? shared.chosenFactionReputation / 2
           : shared.chosenFactionReputation;
         expect(signUp.repEarned).toBe(expectedRep);
-
-        // Currency assertion
-        const expectedCurrency = computeExpectedCurrency(shared, unique);
-        expect(signUp.currencyGained).toBeCloseTo(expectedCurrency, 10);
       }),
       { numRuns: 100 },
     );
   });
 
-  it('should produce correct rewards for GM character SignUp across all slow track / override combinations', () => {
+  it('should produce correct repEarned for GM character SignUp across slow track states', () => {
     fc.assert(
       fc.property(sharedFieldsArb, uniqueFieldsArb, factionArb, (shared, unique, faction) => {
         const gmActor = createActor('gm1', faction, 54321, 2003);
@@ -262,23 +216,10 @@ describe('Feature: slow-track, Property 6: Session report reward halving respect
 
         expect(signUp.isGM).toBe(true);
 
-        // XP assertion
-        const expectedXp = unique.overrideXp
-          ? unique.overrideXpValue
-          : unique.slowTrack
-            ? shared.xpEarned / 2
-            : shared.xpEarned;
-        expect(signUp.xpEarned).toBe(expectedXp);
-
-        // Reputation assertion
         const expectedRep = unique.slowTrack
           ? shared.chosenFactionReputation / 2
           : shared.chosenFactionReputation;
         expect(signUp.repEarned).toBe(expectedRep);
-
-        // Currency assertion
-        const expectedCurrency = computeExpectedCurrency(shared, unique);
-        expect(signUp.currencyGained).toBeCloseTo(expectedCurrency, 10);
       }),
       { numRuns: 100 },
     );
@@ -291,38 +232,6 @@ describe('Feature: slow-track, Property 6: Session report reward halving respect
 
 describe('Session report builder - slow track unit tests', () => {
   const actor = createActor('p1', 'EA', 11111, 1);
-
-  it('should halve XP when slowTrack is true and overrideXp is false', () => {
-    const params: SessionReportBuildParams = {
-      shared: createSharedFields({ xpEarned: 4 }),
-      characters: { p1: createUniqueFields({ slowTrack: true, overrideXp: false }) },
-      partyActors: [actor],
-      layoutId: 'pfs2.s5-18',
-      now: FIXED_NOW,
-    };
-
-    const report = buildSessionReport(params);
-    expect(report.signUps[0].xpEarned).toBe(2);
-  });
-
-  it('should use override XP as-is when overrideXp is true regardless of slowTrack', () => {
-    const params: SessionReportBuildParams = {
-      shared: createSharedFields({ xpEarned: 4 }),
-      characters: {
-        p1: createUniqueFields({
-          slowTrack: true,
-          overrideXp: true,
-          overrideXpValue: 10,
-        }),
-      },
-      partyActors: [actor],
-      layoutId: 'pfs2.s5-18',
-      now: FIXED_NOW,
-    };
-
-    const report = buildSessionReport(params);
-    expect(report.signUps[0].xpEarned).toBe(10);
-  });
 
   it('should halve repEarned when slowTrack is true', () => {
     const params: SessionReportBuildParams = {
@@ -337,54 +246,10 @@ describe('Session report builder - slow track unit tests', () => {
     expect(report.signUps[0].repEarned).toBe(2);
   });
 
-  it('should halve currency when slowTrack is true and overrideCurrency is false', () => {
-    // Level 5: treasure bundle value = 2 × 10 = 20
-    // Level 3 trained success, 8 downtime days: 0.5 × 8 = 4 gp
-    // standardCurrency = 20 + 4 = 24, halved = 12
-    const params: SessionReportBuildParams = {
-      shared: createSharedFields({ treasureBundles: 2, downtimeDays: 8 }),
-      characters: {
-        p1: createUniqueFields({
-          slowTrack: true,
-          overrideCurrency: false,
-          level: 5,
-          taskLevel: 3,
-          successLevel: 'success',
-          proficiencyRank: 'trained',
-        }),
-      },
-      partyActors: [actor],
-      layoutId: 'pfs2.s5-18',
-      now: FIXED_NOW,
-    };
-
-    const report = buildSessionReport(params);
-    expect(report.signUps[0].currencyGained).toBe(12);
-  });
-
-  it('should use override currency as-is when overrideCurrency is true regardless of slowTrack', () => {
-    const params: SessionReportBuildParams = {
-      shared: createSharedFields({ treasureBundles: 2, downtimeDays: 8 }),
-      characters: {
-        p1: createUniqueFields({
-          slowTrack: true,
-          overrideCurrency: true,
-          overrideCurrencyValue: 42.5,
-        }),
-      },
-      partyActors: [actor],
-      layoutId: 'pfs2.s5-18',
-      now: FIXED_NOW,
-    };
-
-    const report = buildSessionReport(params);
-    expect(report.signUps[0].currencyGained).toBe(42.5);
-  });
-
-  it('should apply slow track halving to GM character SignUp', () => {
+  it('should apply slow track reputation halving to GM character SignUp', () => {
     const gmActor = createActor('gm1', 'GA', 54321, 2003);
     const params: SessionReportBuildParams = {
-      shared: createSharedFields({ xpEarned: 4, chosenFactionReputation: 4, treasureBundles: 2, downtimeDays: 8 }),
+      shared: createSharedFields({ chosenFactionReputation: 4 }),
       characters: {},
       partyActors: [],
       layoutId: 'pfs2.s5-18',
@@ -393,12 +258,6 @@ describe('Session report builder - slow track unit tests', () => {
       gmCharacterFields: createUniqueFields({
         characterName: 'GM Character',
         slowTrack: true,
-        overrideXp: false,
-        overrideCurrency: false,
-        level: 5,
-        taskLevel: 3,
-        successLevel: 'success',
-        proficiencyRank: 'trained',
       }),
     };
 
@@ -406,10 +265,7 @@ describe('Session report builder - slow track unit tests', () => {
     const gmSignUp = report.signUps.find((s) => s.isGM);
     expect(gmSignUp).toBeDefined();
     expect(gmSignUp!.isGM).toBe(true);
-    expect(gmSignUp!.xpEarned).toBe(2);
     expect(gmSignUp!.repEarned).toBe(2);
-    // Level 5: 2 × 10 = 20 (treasure), 0.5 × 8 = 4 (income), total = 24, halved = 12
-    expect(gmSignUp!.currencyGained).toBe(12);
   });
 });
 
@@ -469,24 +325,18 @@ describe('buildSessionReport() integration - slow track mixed party', () => {
     const report = buildSessionReport(params);
     expect(report.signUps).toHaveLength(3);
 
-    // Slow track character: halved XP, rep, currency
+    // Slow track character: halved rep
     const slowSignUp = report.signUps.find((s) => s.characterName === 'Slow Char')!;
-    expect(slowSignUp.xpEarned).toBe(2);       // 4 / 2
     expect(slowSignUp.repEarned).toBe(2);       // 4 / 2
-    expect(slowSignUp.currencyGained).toBe(12); // 24 / 2
 
-    // Standard character: unmodified values
+    // Standard character: unmodified rep
     const stdSignUp = report.signUps.find((s) => s.characterName === 'Standard Char')!;
-    expect(stdSignUp.xpEarned).toBe(4);
     expect(stdSignUp.repEarned).toBe(4);
-    expect(stdSignUp.currencyGained).toBe(24);
 
-    // GM character on slow track: halved with isGM: true
+    // GM character on slow track: halved rep with isGM: true
     const gmSignUp = report.signUps.find((s) => s.isGM)!;
     expect(gmSignUp.isGM).toBe(true);
-    expect(gmSignUp.xpEarned).toBe(2);
     expect(gmSignUp.repEarned).toBe(2);
-    expect(gmSignUp.currencyGained).toBe(12);
   });
 
   it('should leave bonusRepEarned unaffected by per-character slow track', () => {
@@ -516,51 +366,4 @@ describe('buildSessionReport() integration - slow track mixed party', () => {
     expect(report.bonusRepEarned).toHaveLength(2);
   });
 
-  it('should use override XP as-is on a slow track character', () => {
-    const params: SessionReportBuildParams = {
-      shared,
-      characters: {
-        slow1: createUniqueFields({
-          ...baseCharacterFields,
-          characterName: 'Override XP Char',
-          slowTrack: true,
-          overrideXp: true,
-          overrideXpValue: 6,
-        }),
-      },
-      partyActors: [slowTrackActor],
-      layoutId: 'pfs2.s5-18',
-      now: FIXED_NOW,
-    };
-
-    const report = buildSessionReport(params);
-    expect(report.signUps[0].xpEarned).toBe(6);
-    // Rep should still be halved
-    expect(report.signUps[0].repEarned).toBe(2);
-  });
-
-  it('should use override currency as-is on a slow track character', () => {
-    const params: SessionReportBuildParams = {
-      shared,
-      characters: {
-        slow1: createUniqueFields({
-          ...baseCharacterFields,
-          characterName: 'Override Currency Char',
-          slowTrack: true,
-          overrideCurrency: true,
-          overrideCurrencyValue: 150.5,
-        }),
-      },
-      partyActors: [slowTrackActor],
-      layoutId: 'pfs2.s5-18',
-      now: FIXED_NOW,
-    };
-
-    const report = buildSessionReport(params);
-    expect(report.signUps[0].currencyGained).toBe(150.5);
-    // XP should still be halved
-    expect(report.signUps[0].xpEarned).toBe(2);
-    // Rep should still be halved
-    expect(report.signUps[0].repEarned).toBe(2);
-  });
 });

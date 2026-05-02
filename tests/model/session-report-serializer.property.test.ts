@@ -57,8 +57,6 @@ const signUpArbitrary: fc.Arbitrary<SignUp> = fc.record({
   consumeReplay: fc.boolean(),
   repEarned: fc.integer({ min: 0, max: 9 }),
   faction: factionNameArbitrary,
-  xpEarned: fc.integer({ min: 0, max: 20 }),
-  currencyGained: fc.double({ min: 0, max: 50000, noNaN: true }),
 });
 
 /** Arbitrary for a single BonusRep entry. */

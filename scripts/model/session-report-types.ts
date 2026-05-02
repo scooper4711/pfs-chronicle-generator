@@ -36,12 +36,6 @@ export interface SignUp {
 
   /** Full faction name from actor.system.pfs.currentFaction */
   faction: string;
-
-  /** XP earned for this character (override value when active, shared xpEarned otherwise) */
-  xpEarned: number;
-
-  /** Currency gained for this character (override value when active, calculated otherwise) */
-  currencyGained: number;
 }
 
 /**
