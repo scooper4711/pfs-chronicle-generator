@@ -16,7 +16,8 @@ import {
     updateAllTreasureBundleDisplays,
     updateAllCreditsAwardedDisplays,
     updateDowntimeDaysDisplay,
-    updateAllEarnedIncomeDisplays
+    updateAllEarnedIncomeDisplays,
+    updateSlowTrackDisplays
 } from './handlers/party-chronicle-handlers.js';
 import {
     initializeCollapseSections,
@@ -589,6 +590,25 @@ function attachEventListeners(
  * 
  * Requirements: code-standards-refactoring 4.1, 4.2, 4.3, 4.4, 4.5
  */
+/**
+ * Initializes slow track display adjustments for all characters that have
+ * the slow track checkbox checked on load. Without this, XP and gold labels
+ * show full values even when slow track was previously saved.
+ *
+ * @param container - Form container element
+ */
+function initializeSlowTrackDisplays(container: HTMLElement): void {
+    const slowTrackCheckboxes = container.querySelectorAll<HTMLInputElement>(
+        'input[name$=".slowTrack"]:checked'
+    );
+    for (const checkbox of slowTrackCheckboxes) {
+        const match = checkbox.name.match(/characters\.([^.]+)\.slowTrack/);
+        if (match) {
+            updateSlowTrackDisplays(match[1], container);
+        }
+    }
+}
+
 async function initializeForm(
     container: HTMLElement,
     partyActors: PartyActor[]
@@ -636,6 +656,9 @@ async function initializeForm(
     // Initialize override states from saved data
     // Requirements: gm-override-values 6.2
     initializeOverrideStates(container);
+    
+    // Initialize slow track display adjustments for characters with slow track checked
+    initializeSlowTrackDisplays(container);
     
     // Initial validation display and button state
     updateValidationDisplay(container, partyActors, extractFormData);
