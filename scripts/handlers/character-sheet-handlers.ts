@@ -40,8 +40,7 @@ export function handleCharacterSheetRender(sheet: CharacterSheetApp, html: JQuer
             const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], {type: 'application/pdf'});
             const chronicleData = sheet.actor.getFlag('pfs-chronicle-generator', 'chronicleData') as Record<string, string> | undefined;
-            const blankChroniclePath = chronicleData?.blankChroniclePath 
-                || game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string;
+            const blankChroniclePath = chronicleData?.blankChroniclePath || '';
             const filename = generateChronicleFilename(sheet.actor.name, blankChroniclePath);
             // eslint-disable-next-line @typescript-eslint/no-require-imports -- Synchronous require needed inside click handler (dynamic import not viable here)
             const FileSaver = require('file-saver');

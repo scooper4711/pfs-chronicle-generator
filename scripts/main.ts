@@ -10,7 +10,6 @@ import { layoutStore } from './LayoutStore.js';
 import { calculateTaskLevelOptions } from './utils/earned-income-calculator.js';
 import { getCreditsAwarded } from './utils/treasure-bundle-calculator.js';
 import { getZeroCurrencyDisplay, getCurrencyLabel } from './utils/currency-formatter.js';
-import { getGameSystemRoot } from './utils/game-system-detector.js';
 import type { GameSystem } from './utils/game-system-detector.js';
 import { handleCharacterSheetRender } from './handlers/character-sheet-handlers.js';
 import { handlePartySheetRender } from './handlers/party-sheet-tab-handlers.js';
@@ -79,49 +78,6 @@ Hooks.on('init', async () => {
 // Hidden settings registered and initialized on ready
 Hooks.on('ready', async () => {
     await layoutStore.initialize();
-    const seasons = layoutStore.getSeasons(getGameSystemRoot());
-    const seasonChoices: Record<string, string> = Object.fromEntries(
-        seasons.map(season => [season.id, season.name])
-    );
-
-    // Hidden settings managed via Select Layout menu
-    if (!game.settings.settings.has('pfs-chronicle-generator.blankChroniclePath')) {
-      game.settings.register('pfs-chronicle-generator', 'blankChroniclePath', {
-        name: 'Blank Adventure Chronicle Path',
-        hint: 'The path to the blank adventure chronicle PDF.',
-        scope: 'world',
-        config: false,
-        restricted: true,
-        type: String,
-        filePicker: 'any',
-        default: '',
-      });
-    }
-
-    if (!game.settings.settings.has('pfs-chronicle-generator.season')) {
-      game.settings.register('pfs-chronicle-generator', 'season', {
-          name: 'Season',
-          hint: 'The season to filter chronicle layouts.',
-          scope: 'world',
-          config: false,
-          restricted: true,
-          type: String,
-          choices: seasonChoices,
-          default: seasons[0]?.id || ''
-      });
-    }
-
-    if (!game.settings.settings.has('pfs-chronicle-generator.layout')) {
-      game.settings.register('pfs-chronicle-generator', 'layout', {
-          name: 'Chronicle Layout',
-          hint: 'The layout to use when generating the chronicle.',
-          scope: 'world',
-          config: false,
-          restricted: true,
-          type: String,
-          default: '',
-      });
-    }
 });
 
 Hooks.on('renderCharacterSheetPF2e' as any, (sheet: CharacterSheetApp, html: JQuery, _data: any) => {

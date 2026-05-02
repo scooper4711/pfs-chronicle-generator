@@ -210,12 +210,10 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
     effectiveLayoutId: string;
   } {
     const seasons = layoutStore.getSeasons(getGameSystemRoot());
-    const settingSeasonId = game.settings.get('pfs-chronicle-generator', 'season') as string;
-    const currentLayoutId = game.settings.get('pfs-chronicle-generator', 'layout') as string;
 
-    const rawSeasonId = savedData?.shared?.seasonId || settingSeasonId || '';
+    const rawSeasonId = savedData?.shared?.seasonId || '';
     let selectedSeasonId = this.resolveSeasonId(rawSeasonId, seasons);
-    const selectedLayoutId = savedData?.shared?.layoutId || currentLayoutId || '';
+    const selectedLayoutId = savedData?.shared?.layoutId || '';
 
     // If a layout is set but doesn't belong to the selected season, adjust season accordingly
     if (selectedLayoutId) {
@@ -258,8 +256,6 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
     effectiveLayoutId: string,
     selectedSeasonId: string
   ): Partial<SharedFields> {
-    const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string || '';
-
     return {
       gmPfsNumber: savedData?.shared?.gmPfsNumber || '',
       scenarioName: savedData?.shared?.scenarioName || '',
@@ -272,7 +268,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       downtimeDays: savedData?.shared?.downtimeDays ?? 0,
       layoutId: effectiveLayoutId,
       seasonId: selectedSeasonId,
-      blankChroniclePath: savedData?.shared?.blankChroniclePath || blankChroniclePath,
+      blankChroniclePath: savedData?.shared?.blankChroniclePath || '',
       chosenFactionReputation: savedData?.shared?.chosenFactionReputation ?? 2,
       reputationValues: savedData?.shared?.reputationValues ?? {
         EA: 0,

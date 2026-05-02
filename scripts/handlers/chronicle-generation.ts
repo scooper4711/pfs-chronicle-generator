@@ -91,7 +91,7 @@ async function loadLayoutConfiguration(
   data: ChronicleFormData
 ): Promise<{ layout: Layout; layoutId: string; blankChroniclePath: string } | null> {
   // Get the selected layout ID
-  const layoutId = data.shared?.layoutId || game.settings.get('pfs-chronicle-generator', 'layout');
+  const layoutId = data.shared?.layoutId;
   
   // Load the layout
   let layout: Layout;
@@ -107,8 +107,7 @@ async function loadLayoutConfiguration(
   // blank PDF to use — it ensures the correct game system's chronicle is loaded
   // (e.g., Starfinder layout uses Starfinder chronicle, not a stale Pathfinder path).
   const blankChroniclePath = layout.defaultChronicleLocation
-    || data.shared?.blankChroniclePath
-    || game.settings.get('pfs-chronicle-generator', 'blankChroniclePath');
+    || data.shared?.blankChroniclePath;
   
   if (!blankChroniclePath || typeof blankChroniclePath !== 'string') {
     ui.notifications?.error("Blank chronicle PDF path is not set.");

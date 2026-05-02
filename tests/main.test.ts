@@ -314,65 +314,10 @@ describe('main.ts', () => {
       expect(mockInitialize).toHaveBeenCalled();
     });
 
-    it('registers hidden settings when they do not already exist', async () => {
-      mockSettingsHas.mockReturnValue(false);
-
+    it('does not register any settings', async () => {
       await fireHook('ready');
 
-      const hiddenKeys = mockRegister.mock.calls
-        .filter((call: unknown[]) => (call[2] as Record<string, unknown>).config === false)
-        .map((call: unknown[]) => call[1]);
-
-      expect(hiddenKeys).toContain('blankChroniclePath');
-      expect(hiddenKeys).toContain('season');
-      expect(hiddenKeys).toContain('layout');
-    });
-
-    it('skips hidden settings that already exist', async () => {
-      mockSettingsHas.mockReturnValue(true);
-
-      await fireHook('ready');
-
-      // No settings should be registered since they all already exist
       expect(mockRegister).not.toHaveBeenCalled();
-    });
-
-    it('uses season choices from layoutStore for the season setting', async () => {
-      mockSettingsHas.mockReturnValue(false);
-
-      await fireHook('ready');
-
-      const seasonCall = mockRegister.mock.calls.find(
-        (call: unknown[]) => call[1] === 'season'
-      );
-      expect(seasonCall).toBeDefined();
-      expect((seasonCall[2] as Record<string, unknown>).choices).toEqual({
-        'pfs2-season6': 'Season 6',
-        'pfs2-season7': 'Season 7',
-      });
-    });
-
-    it('defaults season to first available season', async () => {
-      mockSettingsHas.mockReturnValue(false);
-
-      await fireHook('ready');
-
-      const seasonCall = mockRegister.mock.calls.find(
-        (call: unknown[]) => call[1] === 'season'
-      );
-      expect((seasonCall[2] as Record<string, unknown>).default).toBe('pfs2-season6');
-    });
-
-    it('defaults season to empty string when no seasons exist', async () => {
-      mockGetSeasons.mockReturnValue([]);
-      mockSettingsHas.mockReturnValue(false);
-
-      await fireHook('ready');
-
-      const seasonCall = mockRegister.mock.calls.find(
-        (call: unknown[]) => call[1] === 'season'
-      );
-      expect((seasonCall[2] as Record<string, unknown>).default).toBe('');
     });
   });
 

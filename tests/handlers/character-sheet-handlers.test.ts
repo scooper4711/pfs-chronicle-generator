@@ -210,8 +210,7 @@ describe('handleCharacterSheetRender', () => {
     expect(generateChronicleFilename).toHaveBeenCalledWith('Valeros', '/custom/path.pdf');
   });
 
-  it('falls back to game setting for blank chronicle path', () => {
-    mockSettingsGet.mockReturnValue('/settings/path.pdf');
+  it('falls back to empty string when no chronicle data flag exists', () => {
     const sheet = createMockSheet({ chroniclePdf: btoa('pdf') });
     const { jqueryLike, container } = createMockHtml(true);
 
@@ -222,6 +221,6 @@ describe('handleCharacterSheetRender', () => {
     downloadBtn.click();
 
     const { generateChronicleFilename } = require('../../scripts/utils/filename-utils');
-    expect(generateChronicleFilename).toHaveBeenCalledWith('Valeros', '/settings/path.pdf');
+    expect(generateChronicleFilename).toHaveBeenCalledWith('Valeros', '');
   });
 });
