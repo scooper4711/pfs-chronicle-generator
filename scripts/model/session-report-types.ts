@@ -31,6 +31,9 @@ export interface SignUp {
   /** Whether the player is consuming a replay for this session */
   consumeReplay: boolean;
 
+  /** Whether this character is using slow track advancement (slow-track 7.1) */
+  slowTrack: boolean;
+
   /** Reputation earned, read from the shared "Chosen Faction" reputation field */
   repEarned: number;
 

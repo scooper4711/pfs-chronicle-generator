@@ -94,6 +94,7 @@ const buildParamsArbitrary = sharedFieldsArbitrary.chain((shared) =>
           overrideXpValue: 0,
           overrideCurrency: false,
           overrideCurrencyValue: 0,
+          slowTrack: false,
         },
       },
       partyActors: [

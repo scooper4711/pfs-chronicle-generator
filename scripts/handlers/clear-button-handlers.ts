@@ -146,7 +146,7 @@ export function determineAdventureDefaults(scenarioName: string): {
  * @param partyActors - Array of party member actors
  * @returns Map of actor IDs to default UniqueFields
  */
-function buildDefaultCharacterFields(partyActors: PartyActor[]): { [actorId: string]: UniqueFields } {
+export function buildDefaultCharacterFields(partyActors: PartyActor[]): { [actorId: string]: UniqueFields } {
     const characters: { [actorId: string]: UniqueFields } = {};
 
     partyActors.forEach((actor) => {
@@ -174,7 +174,8 @@ function buildDefaultCharacterFields(partyActors: PartyActor[]): { [actorId: str
                 overrideXp: false,
                 overrideXpValue: 0,
                 overrideCurrency: false,
-                overrideCurrencyValue: 0
+                overrideCurrencyValue: 0,
+                slowTrack: false
             };
         }
     });

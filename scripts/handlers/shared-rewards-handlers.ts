@@ -8,7 +8,7 @@
  * Extracted from party-chronicle-handlers.ts to keep files under 500 lines.
  *
  * Requirements: treasure-bundle-calculation 5.1–5.4, earned-income-calculation 2.4–2.5, 7.3,
- *               starfinder-support 5.2, 7.5
+ *               starfinder-support 5.2, 7.5, slow-track 8.1–8.6
  */
 
 import { debug, warn } from '../utils/logger.js';
@@ -17,6 +17,7 @@ import { calculateDowntimeDays, calculateEarnedIncome, formatIncomeValue } from 
 import { getGameSystem } from '../utils/game-system-detector.js';
 import { formatCurrency } from '../utils/currency-formatter.js';
 import { updateSectionSummary } from './collapsible-section-handlers.js';
+import { CHARACTER_FIELD_SELECTORS } from '../constants/dom-selectors.js';
 
 /**
  * Updates the displayed treasure bundle value for a specific character.
@@ -311,4 +312,191 @@ export function updateXpForSeason(seasonId: string, container: HTMLElement): voi
   updateTreasureBundlesForXp(defaultXp, container);
   updateDowntimeDaysDisplay(defaultXp, container);
   updateSectionSummary('shared-rewards', container);
+}
+
+/**
+ * Updates XP label, earned income, and treasure bundle/gold displays for a
+ * single character based on the current slow track state.
+ *
+ * Reads the shared XP, downtime days, treasure bundles, and the character's
+ * slow track checkbox from the DOM, then recalculates and updates:
+ * - XP label: halved when slow track is active (and XP override is not)
+ * - Earned income: calculated with halved downtime days when slow track is active
+ * - Treasure bundle gold: halved total when slow track is active (and currency override is not)
+ *
+ * @param characterId - Actor ID of the character
+ * @param container - Container element for the form
+ *
+ * Requirements: slow-track 8.1, 8.2, 8.3, 8.4, 8.5, 8.6
+ */
+export function updateSlowTrackDisplays(
+  characterId: string,
+  container: HTMLElement
+): void {
+  const slowTrackCheckbox = container.querySelector<HTMLInputElement>(
+    `input[name="characters.${characterId}.slowTrack"]`
+  );
+  const isSlowTrack = slowTrackCheckbox?.checked ?? false;
+
+  updateSlowTrackXpLabel(characterId, isSlowTrack, container);
+  updateSlowTrackEarnedIncome(characterId, isSlowTrack, container);
+  updateSlowTrackTreasureBundleGold(characterId, isSlowTrack, container);
+  updateSlowTrackNotesAnnotation(characterId, isSlowTrack, container);
+}
+
+/**
+ * Updates the XP label for a character based on slow track state.
+ *
+ * When slow track is active and XP override is not checked, the label shows
+ * the halved XP value. Otherwise it shows the standard shared XP value.
+ *
+ * Requirements: slow-track 8.1, 8.2
+ */
+function updateSlowTrackXpLabel(
+  characterId: string,
+  isSlowTrack: boolean,
+  container: HTMLElement
+): void {
+  const overrideXpCheckbox = container.querySelector<HTMLInputElement>(
+    CHARACTER_FIELD_SELECTORS.OVERRIDE_XP(characterId)
+  );
+  const isOverrideXp = overrideXpCheckbox?.checked ?? false;
+
+  // When XP override is active, the override input controls the display — skip
+  if (isOverrideXp) return;
+
+  const xpSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
+  const xpEarned = Number.parseInt(xpSelect?.value || '0', 10);
+
+  const displayXp = isSlowTrack ? xpEarned / 2 : xpEarned;
+
+  const xpLabel = container.querySelector<HTMLElement>(
+    CHARACTER_FIELD_SELECTORS.CALCULATED_XP_LABEL(characterId)
+  );
+  if (xpLabel) {
+    xpLabel.textContent = `${displayXp} XP`;
+  }
+}
+
+/**
+ * Updates the earned income display for a character based on slow track state.
+ *
+ * When slow track is active, downtime days are halved before calculating
+ * earned income. This naturally produces reduced earned income.
+ *
+ * Requirements: slow-track 8.3, 8.4
+ */
+function updateSlowTrackEarnedIncome(
+  characterId: string,
+  isSlowTrack: boolean,
+  container: HTMLElement
+): void {
+  const downtimeDaysInput = container.querySelector<HTMLInputElement>('#downtimeDays');
+  const downtimeDays = Number.parseInt(downtimeDaysInput?.value || '0', 10);
+  const effectiveDays = isSlowTrack ? downtimeDays / 2 : downtimeDays;
+
+  const memberActivity = container.querySelector(
+    `.member-activity[data-character-id="${characterId}"]`
+  );
+  if (!memberActivity) return;
+
+  const taskLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".taskLevel"]');
+  const successLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".successLevel"]');
+  const proficiencyRankSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".proficiencyRank"]');
+
+  if (taskLevelSelect && successLevelSelect && proficiencyRankSelect) {
+    updateEarnedIncomeDisplay(
+      characterId,
+      taskLevelSelect.value,
+      successLevelSelect.value,
+      proficiencyRankSelect.value,
+      effectiveDays,
+      container
+    );
+  }
+}
+
+/**
+ * Updates the treasure bundle gold display for a character based on slow track state.
+ *
+ * When slow track is active and currency override is not checked, the displayed
+ * gold value is halved. When currency override is active, the override value
+ * controls the display — this function does nothing.
+ *
+ * Requirements: slow-track 8.5, 8.6
+ */
+function updateSlowTrackTreasureBundleGold(
+  characterId: string,
+  isSlowTrack: boolean,
+  container: HTMLElement
+): void {
+  const overrideCurrencyCheckbox = container.querySelector<HTMLInputElement>(
+    CHARACTER_FIELD_SELECTORS.OVERRIDE_CURRENCY(characterId)
+  );
+  const isOverrideCurrency = overrideCurrencyCheckbox?.checked ?? false;
+
+  // When currency override is active, the override input controls the display — skip
+  if (isOverrideCurrency) return;
+
+  const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
+  const treasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
+
+  const memberActivity = container.querySelector(
+    `.member-activity[data-character-id="${characterId}"]`
+  );
+  if (!memberActivity) return;
+
+  const levelInput = memberActivity.querySelector<HTMLInputElement>('input[name$=".level"]');
+  if (!levelInput) return;
+
+  const characterLevel = Number.parseInt(levelInput.value, 10);
+  const treasureBundleValue = calculateTreasureBundleValue(treasureBundles, characterLevel);
+  const displayValue = isSlowTrack ? treasureBundleValue / 2 : treasureBundleValue;
+
+  const displayElement = memberActivity.querySelector('.treasure-bundle-value');
+  if (displayElement) {
+    displayElement.textContent = formatCurrencyValue(displayValue, getGameSystem());
+  }
+}
+
+const SLOW_ADVANCEMENT_NOTE = 'Slow Advancement';
+
+/**
+ * Toggles the "Slow Advancement" annotation in a character's notes textarea.
+ *
+ * When slow track is enabled, appends "Slow Advancement" as the last line
+ * (if not already present). When disabled, removes any line that contains
+ * only the words "Slow Advancement".
+ *
+ * @param characterId - Actor ID of the character
+ * @param isSlowTrack - Whether slow track is currently active
+ * @param container - Container element for the form
+ */
+function updateSlowTrackNotesAnnotation(
+  characterId: string,
+  isSlowTrack: boolean,
+  container: HTMLElement
+): void {
+  const notesTextarea = container.querySelector<HTMLTextAreaElement>(
+    `textarea[name="characters.${characterId}.notes"]`
+  );
+  if (!notesTextarea) return;
+
+  const currentNotes = notesTextarea.value;
+
+  if (isSlowTrack) {
+    const alreadyPresent = currentNotes
+      .split('\n')
+      .some((line) => line.trim() === SLOW_ADVANCEMENT_NOTE);
+
+    if (!alreadyPresent) {
+      const separator = currentNotes.length > 0 && !currentNotes.endsWith('\n') ? '\n' : '';
+      notesTextarea.value = currentNotes + separator + SLOW_ADVANCEMENT_NOTE;
+    }
+  } else {
+    notesTextarea.value = currentNotes
+      .split('\n')
+      .filter((line) => line.trim() !== SLOW_ADVANCEMENT_NOTE)
+      .join('\n');
+  }
 }

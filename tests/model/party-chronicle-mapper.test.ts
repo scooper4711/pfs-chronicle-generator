@@ -64,6 +64,7 @@ describe('mapToCharacterData', () => {
     overrideXpValue: 0,
     overrideCurrency: false,
     overrideCurrencyValue: 0,
+    slowTrack: false,
     ...overrides
   });
 
@@ -380,6 +381,7 @@ describe('mapToCharacterData - Earned Income Calculation', () => {
     overrideXpValue: 0,
     overrideCurrency: false,
     overrideCurrencyValue: 0,
+    slowTrack: false,
     ...overrides
   });
 
@@ -771,6 +773,7 @@ describe('Property 6: Data Combination Correctness', () => {
       overrideXpValue: fc.integer({ min: 0, max: 100 }),
       overrideCurrency: fc.boolean(),
       overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
+      slowTrack: fc.boolean(),
     });
 
     fc.assert(
@@ -783,8 +786,10 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.event).toBe(shared.scenarioName);
         expect(result.eventcode).toBe(shared.eventCode);
         expect(result.date).toBe(shared.eventDate);
-        // xp_gained uses override when active (gm-override-values 5.1, 5.3)
-        const expectedXp = unique.overrideXp ? unique.overrideXpValue : shared.xpEarned;
+        // xp_gained uses override when active, then slow track halving (gm-override-values 5.1, 5.3; slow-track 2.1, 2.2, 2.3)
+        const expectedXp = unique.overrideXp
+          ? unique.overrideXpValue
+          : unique.slowTrack ? shared.xpEarned / 2 : shared.xpEarned;
         expect(result.xp_gained).toBe(expectedXp);
         expect(result.summary_checkbox).toEqual(shared.adventureSummaryCheckboxes);
         expect(result.strikeout_item_lines).toEqual(shared.strikeoutItems);
@@ -858,6 +863,7 @@ describe('Property 6: Data Combination Correctness', () => {
       overrideXpValue: fc.integer({ min: 0, max: 100 }),
       overrideCurrency: fc.boolean(),
       overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
+      slowTrack: fc.boolean(),
     });
 
     fc.assert(
@@ -879,8 +885,10 @@ describe('Property 6: Data Combination Correctness', () => {
         expect(result.treasure_bundles).toStrictEqual(shared.treasureBundles.toString());
 
         // Numeric fields should be identical
-        // xp_gained uses override when active (gm-override-values 5.1, 5.3)
-        const expectedXp = unique.overrideXp ? unique.overrideXpValue : shared.xpEarned;
+        // xp_gained uses override when active, then slow track halving (gm-override-values 5.1, 5.3; slow-track 2.1, 2.2, 2.3)
+        const expectedXp = unique.overrideXp
+          ? unique.overrideXpValue
+          : unique.slowTrack ? shared.xpEarned / 2 : shared.xpEarned;
         expect(result.xp_gained).toStrictEqual(expectedXp);
         expect(result.level).toStrictEqual(unique.level);
         expect(result.currency_spent).toStrictEqual(unique.currencySpent);
@@ -943,7 +951,8 @@ describe('Property 6: Data Combination Correctness', () => {
       overrideXp: fc.boolean(),
       overrideXpValue: fc.integer({ min: 0, max: 100 }),
       overrideCurrency: fc.boolean(),
-      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true })
+      overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
+      slowTrack: fc.boolean()
     });
 
     fc.assert(
@@ -1022,6 +1031,7 @@ describe('Property 6: Data Combination Correctness', () => {
       overrideXpValue: fc.integer({ min: 0, max: 100 }),
       overrideCurrency: fc.boolean(),
       overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
+      slowTrack: fc.boolean(),
     });
 
     fc.assert(
@@ -1030,7 +1040,7 @@ describe('Property 6: Data Combination Correctness', () => {
         const result = mapToCharacterData(shared, unique, mockActor);
 
         // Verify zero values are preserved (not treated as falsy)
-        // xp_gained uses override when active (gm-override-values 5.1, 5.3)
+        // xp_gained uses override when active, then slow track halving (gm-override-values 5.1, 5.3; slow-track 2.1, 2.2, 2.3)
         const expectedXp = unique.overrideXp ? unique.overrideXpValue : 0;
         expect(result.xp_gained).toBe(expectedXp);
         expect(result.income_earned).toBe(0);
@@ -1092,6 +1102,7 @@ describe('Property 6: Data Combination Correctness', () => {
       overrideXpValue: fc.integer({ min: 0, max: 100 }),
       overrideCurrency: fc.boolean(),
       overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
+      slowTrack: fc.boolean(),
     });
 
     fc.assert(
@@ -1180,6 +1191,7 @@ describe('mapToCharacterData - Override-aware values', () => {
     overrideXpValue: 0,
     overrideCurrency: false,
     overrideCurrencyValue: 0,
+    slowTrack: false,
     ...overrides
   });
 

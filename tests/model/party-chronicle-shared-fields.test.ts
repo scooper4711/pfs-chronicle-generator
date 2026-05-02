@@ -74,6 +74,7 @@ const uniqueFieldsArbitrary = fc.record({
   overrideXpValue: fc.integer({ min: 0, max: 100 }),
   overrideCurrency: fc.boolean(),
   overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
+  slowTrack: fc.boolean(),
 });
 
 /**
@@ -124,8 +125,10 @@ describe('Party Chronicle Shared Field Property Tests', () => {
               expect(chronicleData.event).toBe(shared.scenarioName);
               expect(chronicleData.eventcode).toBe(shared.eventCode);
               expect(chronicleData.date).toBe(shared.eventDate);
-              // xp_gained uses override when active (gm-override-values 5.1, 5.3)
-              const expectedXp = unique.overrideXp ? unique.overrideXpValue : shared.xpEarned;
+              // xp_gained uses override when active, then slow track halving (gm-override-values 5.1, 5.3; slow-track 2.1, 2.2, 2.3)
+              const expectedXp = unique.overrideXp
+                ? unique.overrideXpValue
+                : unique.slowTrack ? shared.xpEarned / 2 : shared.xpEarned;
               expect(chronicleData.xp_gained).toBe(expectedXp);
               expect(chronicleData.summary_checkbox).toEqual(shared.adventureSummaryCheckboxes);
               expect(chronicleData.strikeout_item_lines).toEqual(shared.strikeoutItems);
@@ -234,8 +237,10 @@ describe('Party Chronicle Shared Field Property Tests', () => {
             expect(chronicleData.event).toBe(shared.scenarioName);
             expect(chronicleData.eventcode).toBe(shared.eventCode);
             expect(chronicleData.date).toBe(shared.eventDate);
-            // xp_gained uses override when active (gm-override-values 5.1, 5.3)
-            const expectedXp = unique.overrideXp ? unique.overrideXpValue : shared.xpEarned;
+            // xp_gained uses override when active, then slow track halving (gm-override-values 5.1, 5.3; slow-track 2.1, 2.2, 2.3)
+            const expectedXp = unique.overrideXp
+              ? unique.overrideXpValue
+              : unique.slowTrack ? shared.xpEarned / 2 : shared.xpEarned;
             expect(chronicleData.xp_gained).toBe(expectedXp);
             expect(chronicleData.summary_checkbox).toEqual(shared.adventureSummaryCheckboxes);
             expect(chronicleData.strikeout_item_lines).toEqual(shared.strikeoutItems);
@@ -274,8 +279,10 @@ describe('Party Chronicle Shared Field Property Tests', () => {
               expect(chronicleData.event).toBe(shared.scenarioName);
               expect(chronicleData.eventcode).toBe(shared.eventCode);
               expect(chronicleData.date).toBe(shared.eventDate);
-              // xp_gained uses override when active (gm-override-values 5.1, 5.3)
-              const expectedXp = unique.overrideXp ? unique.overrideXpValue : shared.xpEarned;
+              // xp_gained uses override when active, then slow track halving (gm-override-values 5.1, 5.3; slow-track 2.1, 2.2, 2.3)
+              const expectedXp = unique.overrideXp
+                ? unique.overrideXpValue
+                : unique.slowTrack ? shared.xpEarned / 2 : shared.xpEarned;
               expect(chronicleData.xp_gained).toBe(expectedXp);
               expect(chronicleData.summary_checkbox).toEqual(shared.adventureSummaryCheckboxes);
               expect(chronicleData.strikeout_item_lines).toEqual(shared.strikeoutItems);
@@ -409,8 +416,10 @@ describe('Party Chronicle Shared Field Property Tests', () => {
               
               // Number fields
               expect(typeof chronicleData.xp_gained).toBe('number');
-              // xp_gained uses override when active (gm-override-values 5.1, 5.3)
-              const expectedXp = unique.overrideXp ? unique.overrideXpValue : shared.xpEarned;
+              // xp_gained uses override when active, then slow track halving (gm-override-values 5.1, 5.3; slow-track 2.1, 2.2, 2.3)
+              const expectedXp = unique.overrideXp
+                ? unique.overrideXpValue
+                : unique.slowTrack ? shared.xpEarned / 2 : shared.xpEarned;
               expect(chronicleData.xp_gained).toBe(expectedXp);
               
               // Array fields

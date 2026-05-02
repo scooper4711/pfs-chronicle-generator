@@ -40,14 +40,16 @@ export {
     updateDowntimeDaysDisplay,
     getDefaultTreasureBundles,
     updateTreasureBundlesForXp,
-    updateXpForSeason
+    updateXpForSeason,
+    updateSlowTrackDisplays
 } from './shared-rewards-handlers.js';
 
 // Local import for use within this file
 import {
     updateAllTreasureBundleDisplays,
     updateTreasureBundleDisplay,
-    updateAllEarnedIncomeDisplays
+    updateAllEarnedIncomeDisplays,
+    updateSlowTrackDisplays
 } from './shared-rewards-handlers.js';
 
 /**
@@ -288,6 +290,15 @@ export async function handleFieldChange(
                     updateEarnedIncomeDisplay(characterId, taskLevel, successLevel, proficiencyRank, downtimeDays, container);
                 }
             }
+        }
+    }
+    
+    // If a character's slow track checkbox changed, update that character's displays
+    // (XP label, earned income, and treasure bundle gold)
+    if (fieldName?.includes('.slowTrack')) {
+        const match = fieldName.match(/characters\.([^.]+)\.slowTrack/);
+        if (match) {
+            updateSlowTrackDisplays(match[1], container);
         }
     }
     

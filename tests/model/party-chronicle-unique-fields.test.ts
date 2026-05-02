@@ -36,7 +36,8 @@ const uniqueFieldsArbitrary = fc.record({
   overrideXp: fc.boolean(),
   overrideXpValue: fc.integer({ min: 0, max: 100 }),
   overrideCurrency: fc.boolean(),
-  overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true })
+  overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
+  slowTrack: fc.boolean()
 });
 
 /**
@@ -141,18 +142,23 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             // Property: Each character's chronicle data should contain only their unique fields
             chronicleDataList.forEach(({ actorId, unique, chronicleData }) => {
               // Calculate expected earned income based on task level, success level, proficiency rank, and downtime days
+              // Slow track halves downtime days before earned income calculation (slow-track 4.1, 4.3)
+              const effectiveDowntimeDays = unique.slowTrack ? shared.downtimeDays / 2 : shared.downtimeDays;
               const expectedEarnedIncome = calculateEarnedIncome(
                 unique.taskLevel,
                 unique.successLevel,
                 unique.proficiencyRank,
-                shared.downtimeDays
+                effectiveDowntimeDays
               );
               
               // Calculate expected gold values
+              // Slow track halves the total currency_gained (slow-track 5.1, 5.4)
               const expectedTreasureBundlesGp = calculateTreasureBundleValue(shared.treasureBundles, unique.level);
               const expectedGpGained = unique.overrideCurrency
                 ? unique.overrideCurrencyValue
-                : calculateCurrencyGained(expectedTreasureBundlesGp, expectedEarnedIncome);
+                : unique.slowTrack
+                  ? (expectedTreasureBundlesGp + expectedEarnedIncome) / 2
+                  : calculateCurrencyGained(expectedTreasureBundlesGp, expectedEarnedIncome);
               
               // Verify character-specific fields match this character's unique data
               expect(chronicleData.char).toBe(unique.characterName);
@@ -167,16 +173,20 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               const otherCharacters = characterPairs.filter(([id]) => id !== actorId);
               otherCharacters.forEach(([_, otherUnique]) => {
                 // Calculate expected earned income for other character
+                // Slow track halves downtime days before earned income calculation (slow-track 4.1, 4.3)
+                const otherEffectiveDowntimeDays = otherUnique.slowTrack ? shared.downtimeDays / 2 : shared.downtimeDays;
                 const otherExpectedEarnedIncome = calculateEarnedIncome(
                   otherUnique.taskLevel,
                   otherUnique.successLevel,
                   otherUnique.proficiencyRank,
-                  shared.downtimeDays
+                  otherEffectiveDowntimeDays
                 );
                 
                 // Calculate expected values for other character
                 const otherExpectedTreasureBundlesGp = calculateTreasureBundleValue(shared.treasureBundles, otherUnique.level);
-                const otherExpectedGpGained = calculateCurrencyGained(otherExpectedTreasureBundlesGp, otherExpectedEarnedIncome);
+                const otherExpectedGpGained = otherUnique.slowTrack
+                  ? (otherExpectedTreasureBundlesGp + otherExpectedEarnedIncome) / 2
+                  : calculateCurrencyGained(otherExpectedTreasureBundlesGp, otherExpectedEarnedIncome);
                 
                 // If the values are different, ensure they don't leak
                 if (otherUnique.characterName !== unique.characterName) {
@@ -263,18 +273,23 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             const chronicleData = mapToCharacterData(shared, unique, createMockActor(actorId, 'EA'));
 
             // Calculate expected earned income based on task level, success level, proficiency rank, and downtime days
+            // Slow track halves downtime days before earned income calculation (slow-track 4.1, 4.3)
+            const effectiveDowntimeDays = unique.slowTrack ? shared.downtimeDays / 2 : shared.downtimeDays;
             const expectedEarnedIncome = calculateEarnedIncome(
               unique.taskLevel,
               unique.successLevel,
               unique.proficiencyRank,
-              shared.downtimeDays
+              effectiveDowntimeDays
             );
             
             // Calculate expected gold values
+            // Slow track halves the total currency_gained (slow-track 5.1, 5.4)
             const expectedTreasureBundlesGp = calculateTreasureBundleValue(shared.treasureBundles, unique.level);
             const expectedGpGained = unique.overrideCurrency
               ? unique.overrideCurrencyValue
-              : calculateCurrencyGained(expectedTreasureBundlesGp, expectedEarnedIncome);
+              : unique.slowTrack
+                ? (expectedTreasureBundlesGp + expectedEarnedIncome) / 2
+                : calculateCurrencyGained(expectedTreasureBundlesGp, expectedEarnedIncome);
 
             // Property: Single character's unique fields are correctly applied
             expect(chronicleData.char).toBe(unique.characterName);
@@ -368,7 +383,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 overrideXp: false,
                 overrideXpValue: 0,
                 overrideCurrency: false,
-                overrideCurrencyValue: 0
+                overrideCurrencyValue: 0,
+                slowTrack: false
               };
             });
 
@@ -444,7 +460,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 overrideXp: false,
                 overrideXpValue: 0,
                 overrideCurrency: false,
-                overrideCurrencyValue: 0
+                overrideCurrencyValue: 0,
+                slowTrack: false
               };
             });
 
@@ -489,7 +506,8 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 overrideXp: false,
                 overrideXpValue: 0,
                 overrideCurrency: false,
-                overrideCurrencyValue: 0
+                overrideCurrencyValue: 0,
+                slowTrack: false
               };
             });
 

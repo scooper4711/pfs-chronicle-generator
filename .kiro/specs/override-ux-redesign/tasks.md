@@ -151,7 +151,7 @@ Redesign the override UX by moving override checkboxes into a dedicated column b
     - Verify form data extraction tests still pass (same name attributes)
     - _Requirements: 7.1, 7.2, 7.3_
 
-- [-] 9. Commit implementation
+- [x] 9. Commit implementation
   - Commit with message `feat: Redesign override UX with inline checkboxes and visibility toggle`
   - Stage all changed files: `templates/party-chronicle-filling.hbs`, `css/style.css`, `scripts/handlers/override-handlers.ts`, `scripts/constants/dom-selectors.ts`, `scripts/handlers/collapsible-section-handlers.ts`, test files, and updated spec task file
 

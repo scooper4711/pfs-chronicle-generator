@@ -700,7 +700,8 @@ describe('Party Chronicle Storage', () => {
         overrideXp: fc.boolean(),
         overrideXpValue: fc.integer({ min: 0, max: 100 }),
         overrideCurrency: fc.boolean(),
-        overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true })
+        overrideCurrencyValue: fc.double({ min: 0, max: 10000, noNaN: true }),
+        slowTrack: fc.boolean()
       });
 
       const sharedDataArb = fc.record({

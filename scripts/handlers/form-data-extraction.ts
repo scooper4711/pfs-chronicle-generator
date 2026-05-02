@@ -118,6 +118,8 @@ export function extractFormData(container: HTMLElement, partyActors: PartyActor[
             overrideXpValue: Number.parseFloat((container.querySelector(`input[name="characters.${actorId}.overrideXpValue"]`) as HTMLInputElement)?.value) || 0,
             overrideCurrency: (container.querySelector(`input[name="characters.${actorId}.overrideCurrency"]`) as HTMLInputElement)?.checked || false,
             overrideCurrencyValue: Number.parseFloat((container.querySelector(`input[name="characters.${actorId}.overrideCurrencyValue"]`) as HTMLInputElement)?.value) || 0,
+            // Read slow track field (slow-track 6.1, 6.2)
+            slowTrack: (container.querySelector(`input[name="characters.${actorId}.slowTrack"]`) as HTMLInputElement)?.checked || false,
         };
     });
     

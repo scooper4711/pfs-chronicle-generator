@@ -139,7 +139,8 @@ function buildDefaultUniqueFields(
     overrideXp: false,
     overrideXpValue: 0,
     overrideCurrency: false,
-    overrideCurrencyValue: 0
+    overrideCurrencyValue: 0,
+    slowTrack: false
   };
 }
 
