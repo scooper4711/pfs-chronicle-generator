@@ -139,7 +139,7 @@ The module works with both the native SF2e system and the sf2e-anachronism compa
 
 No configuration is needed — the module reads `game.system.id` at runtime and adjusts all labels, calculations, and UI elements automatically.
 
-![Starfinder Society Support](docs/screenshots/stafinder-screenshot.png)
+![Starfinder Society Support](docs/screenshots/starfinder-screenshot.png)
 
 ---
 
@@ -470,7 +470,7 @@ Thank you to GreyWolf and TMK - for your beta testing and excellent input on fea
 
 Thank you to [SonarCloud](https://sonarcloud.io) for helping the open source community by making their product free for open source projects like mine.
 
-Special thanks to [razanur37's PFS Chronicle Filler](https://razanur37.github.io/pfscf/) for inspiration and the foundation this module was built upon. The layout file format, the concept of automated chronicle generation, and many of the layout files for earlier seasons and adventure paths came from that project.
+Special thanks to [razanur37's PFS Chronicle Filler](https://razanur37.github.io/pfscf/) for inspiration and the foundation this module was built upon. The layout file format and the concept of how to do automated chronicle generation came from that project.
 
 ---
 
