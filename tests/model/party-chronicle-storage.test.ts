@@ -191,6 +191,19 @@ describe('Party Chronicle Storage', () => {
         'Failed to save party chronicle data'
       );
     });
+
+    it('should handle non-Error thrown values in save', async () => {
+      const testData: PartyChronicleData = {
+        shared: createSharedFields(),
+        characters: {}
+      };
+
+      mockGameSettings.set.mockRejectedValueOnce('string error');
+
+      await expect(savePartyChronicleData(testData)).rejects.toThrow(
+        'Failed to save party chronicle data: string error'
+      );
+    });
   });
 
   describe('loadPartyChronicleData', () => {
@@ -321,6 +334,16 @@ describe('Party Chronicle Storage', () => {
         'Failed to load party chronicle data'
       );
     });
+
+    it('should handle non-Error thrown values in load', async () => {
+      mockGameSettings.get.mockImplementationOnce(() => {
+        throw 42;
+      });
+
+      await expect(loadPartyChronicleData()).rejects.toThrow(
+        'Failed to load party chronicle data: 42'
+      );
+    });
   });
 
   describe('clearPartyChronicleData', () => {
@@ -383,6 +406,14 @@ describe('Party Chronicle Storage', () => {
 
     it('should throw error when storage is locked', async () => {
       mockGameSettings.set.mockRejectedValueOnce(new Error('Storage locked'));
+
+      await expect(clearPartyChronicleData()).rejects.toThrow(
+        'Failed to clear party chronicle data'
+      );
+    });
+
+    it('should handle non-Error thrown values in clear', async () => {
+      mockGameSettings.set.mockRejectedValueOnce({ code: 'LOCKED' });
 
       await expect(clearPartyChronicleData()).rejects.toThrow(
         'Failed to clear party chronicle data'
