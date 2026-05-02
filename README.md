@@ -79,9 +79,10 @@ Detects Bounties, Quests, and Scenarios and sets appropriate defaults
 </td>
 <td width="50%">
 
-**📋 Pre-configured Layouts**
+**📋 Starfinder Society Support**
 
-Includes layouts for many PFS and SFS scenarios - just select and go
+Automatically detects if you're running Starfinder and updates the
+display and rules to Starfinder Society.
 
 </td>
 </tr>
@@ -118,28 +119,6 @@ Includes layouts for many PFS and SFS scenarios - just select and go
 </td>
 </tr>
 </table>
-
----
-
-## 🚀 Starfinder Society Support
-
-> **The module automatically detects whether you're running Pathfinder or Starfinder and adapts accordingly**
-
-The module works with both the native SF2e system and the sf2e-anachronism compatibility module. When running Starfinder, the following differences apply:
-
-| Feature | Pathfinder | Starfinder |
-|---------|-----------|------------|
-| **Currency** | Gold pieces (gp) | Credits |
-| **Treasure** | Treasure bundles → gp by level | Flat Credits Awarded by level |
-| **XP** | 1 (Bounty), 2 (Quest), or 4 (Scenario) | Always 4 (scenarios only) |
-| **Downtime** | Varies by scenario type | Always 8 days |
-| **Earned Income** | Standard PF2e table | Standard SF2e table |
-| **Reputation** | Per-faction tracking | Hidden (not used in SFS) |
-| **Season Filtering** | Shows only PFS seasons | Shows only SFS seasons |
-
-No configuration is needed — the module reads `game.system.id` at runtime and adjusts all labels, calculations, and UI elements automatically.
-
-![Starfinder Society Support](docs/screenshots/starfinder-screenshot.png)
 
 ---
 
@@ -293,6 +272,28 @@ Players can now open their character sheets, go to the **PFS** tab, and click **
 
 ---
 
+## 🚀 Starfinder Society Support
+
+> **The module automatically detects whether you're running Pathfinder or Starfinder and adapts accordingly**
+
+The module works with both the native SF2e system and the sf2e-anachronism compatibility module. When running Starfinder, the following differences apply:
+
+| Feature | Pathfinder | Starfinder |
+|---------|-----------|------------|
+| **Currency** | Gold pieces (gp) | Credits |
+| **Treasure** | Treasure bundles → gp by level | Flat Credits Awarded by level |
+| **XP** | 1 (Bounty), 2 (Quest), or 4 (Scenario) | Always 4 (scenarios only) |
+| **Downtime** | Varies by scenario type | Always 8 days |
+| **Earned Income** | Standard PF2e table | Standard SF2e table |
+| **Reputation** | Per-faction tracking | Hidden (not used in SFS) |
+| **Season Filtering** | Shows only PFS seasons | Shows only SFS seasons |
+
+No configuration is needed — the module reads `game.system.id` at runtime and adjusts all labels, calculations, and UI elements automatically.
+
+![Starfinder Society Support](docs/screenshots/starfinder-screenshot.png)
+
+---
+
 ## 🧮 Automatic Calculations
 
 > **Save time with built-in calculators**
@@ -426,6 +427,12 @@ If the GM needs to regenerate your chronicle (for example, if there was an error
 ---
 
 ## 🔧 Troubleshooting
+
+### Displaying Starfinder version but you want Pathfinder
+
+PFS/SFS Chronicle generator will display the Starfinder version if you are running with the Starfinder System
+or if you have the module Starfinder Anachronisims active in your Pathfinder system. If you want to display
+Pathfinder Society version of this module, deactivate the Starfinder Anachronisms module.
 
 ### ⚠️ "Blank chronicle PDF path is not set"
 
