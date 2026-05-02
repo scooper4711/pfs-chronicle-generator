@@ -331,7 +331,7 @@
                     {{!-- Currency fieldset — earned income, treasure bundles, and override --}}
                     <fieldset class="currency-fieldset">
                         <legend>
-                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{gmCharacter.id}}.overrideCurrency" {{#if (lookup gmCharacterFields 'overrideCurrency')}}checked{{/if}} data-tooltip="{{#if (eq gameSystem "sf2e")}}Override Credits{{else}}Override GP{{/if}}">
+                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{gmCharacter.id}}.overrideCurrency" {{#if (lookup gmCharacterFields 'overrideCurrency')}}checked{{/if}} data-tooltip="{{#if (eq gameSystem "sf2e")}}Check to manually set this character's credits instead of using the calculated value.{{else}}Check to manually set this character's gold instead of using the calculated income and treasure bundle values.{{/if}}">
                             <i class="fas fa-coins"></i> {{#if (eq gameSystem "sf2e")}}Credits Earned{{else}}Gold Earned{{/if}}
                         </legend>
 
@@ -412,7 +412,7 @@
                     {{!-- XP Earned composite row — checkbox, label, calculated display, and override input in ONE row --}}
                     <div class="form-group calculated-xp-row">
                         <label>
-                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{gmCharacter.id}}.overrideXp" {{#if (lookup gmCharacterFields 'overrideXp')}}checked{{/if}} data-tooltip="Override XP">
+                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{gmCharacter.id}}.overrideXp" {{#if (lookup gmCharacterFields 'overrideXp')}}checked{{/if}} data-tooltip="Check to manually set this character's XP instead of using the shared value.">
                             XP Earned
                         </label>
                         <div class="calculated-xp-label">{{shared.xpEarned}} XP</div>
@@ -473,7 +473,7 @@
                     {{!-- Currency fieldset — earned income, treasure bundles, and override --}}
                     <fieldset class="currency-fieldset">
                         <legend>
-                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{this.id}}.overrideCurrency" {{#if (lookup (lookup ../savedData.characters this.id) 'overrideCurrency')}}checked{{/if}} data-tooltip="{{#if (eq ../gameSystem "sf2e")}}Override Credits{{else}}Override GP{{/if}}">
+                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{this.id}}.overrideCurrency" {{#if (lookup (lookup ../savedData.characters this.id) 'overrideCurrency')}}checked{{/if}} data-tooltip="{{#if (eq ../gameSystem "sf2e")}}Check to manually set this character's credits instead of using the calculated value.{{else}}Check to manually set this character's gold instead of using the calculated income and treasure bundle values.{{/if}}">
                             <i class="fas fa-coins"></i> {{#if (eq ../gameSystem "sf2e")}}Credits Earned{{else}}Gold Earned{{/if}}
                         </legend>
 
@@ -554,7 +554,7 @@
                     {{!-- XP Earned composite row — checkbox, label, calculated display, and override input in ONE row --}}
                     <div class="form-group calculated-xp-row">
                         <label>
-                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{this.id}}.overrideXp" {{#if (lookup (lookup ../savedData.characters this.id) 'overrideXp')}}checked{{/if}} data-tooltip="Override XP">
+                            <input type="checkbox" class="override-icon-checkbox" name="characters.{{this.id}}.overrideXp" {{#if (lookup (lookup ../savedData.characters this.id) 'overrideXp')}}checked{{/if}} data-tooltip="Check to manually set this character's XP instead of using the shared value.">
                             XP Earned
                         </label>
                         <div class="calculated-xp-label">{{../shared.xpEarned}} XP</div>
