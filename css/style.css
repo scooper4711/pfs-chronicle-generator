@@ -782,3 +782,9 @@
 .sheet.party [data-tab=pfs] .sidebar .reporting-flags .checkbox-label input[type="checkbox"] {
     margin: 0;
 }
+
+/* Strikethrough text when item-to-strike-out checkbox is checked */
+.sheet.party [data-tab=pfs] .sidebar .item-choice:has(input[type="checkbox"]:checked) label {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
