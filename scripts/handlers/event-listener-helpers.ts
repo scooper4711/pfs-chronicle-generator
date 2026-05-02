@@ -49,6 +49,9 @@ import { FlagActor, downloadArchive, hasArchive } from './chronicle-exporter.js'
 // Re-export clear button listener so existing imports keep working
 export { attachClearButtonListener } from './clear-button-handlers.js';
 
+// Re-export sidebar resize helpers so main.ts can wire them up
+export { attachSidebarResizeListener, restoreSidebarWidth } from './sidebar-resize-handlers.js';
+
 /**
  * Actor type definition for party members.
  * 

@@ -724,3 +724,31 @@
 .sheet.party [data-tab=pfs] .activities .member-activity .form-group.full-width label {
     padding-left: calc(0.4rem + 1px);
 }
+
+/* Sidebar Resize Handle — draggable divider between sidebar and content */
+.sheet.party [data-tab=pfs] .sidebar-resize-handle {
+    width: 6px;
+    cursor: col-resize;
+    flex-shrink: 0;
+    background: transparent;
+    position: relative;
+    transition: background-color 0.15s ease;
+}
+
+.sheet.party [data-tab=pfs] .sidebar-resize-handle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 2px;
+    height: 32px;
+    border-radius: 1px;
+    background-color: var(--color-border-light-tertiary, #ccc);
+    transition: height 0.15s ease, background-color 0.15s ease;
+}
+
+.sheet.party [data-tab=pfs] .sidebar-resize-handle:hover::after {
+    height: 48px;
+    background-color: var(--color-border-light-primary, #999);
+}

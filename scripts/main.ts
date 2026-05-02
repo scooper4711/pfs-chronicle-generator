@@ -40,7 +40,9 @@ import {
     attachFilePickerListener,
     attachCollapsibleSectionListeners,
     attachGmCharacterListeners,
-    attachOverrideListeners
+    attachOverrideListeners,
+    attachSidebarResizeListener,
+    restoreSidebarWidth
 } from './handlers/event-listener-helpers.js';
 import { initializeOverrideStates } from './handlers/override-handlers.js';
 
@@ -570,6 +572,9 @@ function attachEventListeners(
     
     // GM character drop zone and clear button listeners
     attachGmCharacterListeners(container, partyActors, partySheet);
+    
+    // Sidebar resize handle listener
+    attachSidebarResizeListener(container);
 }
 
 /**
@@ -624,6 +629,9 @@ async function initializeForm(
     // Initialize collapsible sections
     initializeCollapseSections(container);
     updateAllSectionSummaries(container);
+    
+    // Restore sidebar width from previous resize (survives re-renders)
+    restoreSidebarWidth(container);
     
     // Initialize override states from saved data
     // Requirements: gm-override-values 6.2

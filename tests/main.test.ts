@@ -141,6 +141,8 @@ jest.mock('../scripts/handlers/event-listener-helpers', () => ({
   attachCollapsibleSectionListeners: jest.fn(),
   attachGmCharacterListeners: jest.fn(),
   attachOverrideListeners: jest.fn(),
+  attachSidebarResizeListener: jest.fn(),
+  restoreSidebarWidth: jest.fn(),
 }));
 
 jest.mock('../scripts/handlers/override-handlers', () => ({
