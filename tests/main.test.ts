@@ -194,16 +194,16 @@ describe('main.ts', () => {
   });
 
   describe('Hooks.on("init")', () => {
-    it('registers five visible world settings', async () => {
+    it('registers one visible world setting', async () => {
       await fireHook('init');
 
       const visibleCalls = mockRegister.mock.calls.filter(
         (call: unknown[]) => (call[2] as Record<string, unknown>).config === true
       );
-      expect(visibleCalls).toHaveLength(5);
+      expect(visibleCalls).toHaveLength(1);
 
       const keys = visibleCalls.map((call: unknown[]) => call[1]);
-      expect(keys).toEqual(['gmName', 'gmPfsNumber', 'eventName', 'eventcode', 'debugMode']);
+      expect(keys).toEqual(['debugMode']);
     });
 
     it('registers the hidden partyChronicleData setting', async () => {

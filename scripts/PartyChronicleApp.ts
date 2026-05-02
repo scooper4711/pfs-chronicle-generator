@@ -258,15 +258,12 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
     effectiveLayoutId: string,
     selectedSeasonId: string
   ): Partial<SharedFields> {
-    const gmPfsNumber = game.settings.get('pfs-chronicle-generator', 'gmPfsNumber') as string || '';
-    const eventName = game.settings.get('pfs-chronicle-generator', 'eventName') as string || '';
-    const eventCode = game.settings.get('pfs-chronicle-generator', 'eventcode') as string || '';
     const blankChroniclePath = game.settings.get('pfs-chronicle-generator', 'blankChroniclePath') as string || '';
 
     return {
-      gmPfsNumber: savedData?.shared?.gmPfsNumber || gmPfsNumber,
-      scenarioName: savedData?.shared?.scenarioName || eventName,
-      eventCode: savedData?.shared?.eventCode || eventCode,
+      gmPfsNumber: savedData?.shared?.gmPfsNumber || '',
+      scenarioName: savedData?.shared?.scenarioName || '',
+      eventCode: savedData?.shared?.eventCode || '',
       eventDate: savedData?.shared?.eventDate || new Date().toISOString().slice(0, 10),
       xpEarned: savedData?.shared?.xpEarned ?? 4,
       adventureSummaryCheckboxes: savedData?.shared?.adventureSummaryCheckboxes || [],

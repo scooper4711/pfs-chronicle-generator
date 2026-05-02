@@ -51,20 +51,6 @@ import { initializeOverrideStates } from './handlers/override-handlers.js';
 function registerSettings(): void {
   const MODULE_ID = 'pfs-chronicle-generator';
 
-  const visibleSettings: Array<{ key: string; name: string; hint: string }> = [
-    { key: 'gmName', name: 'Default GM Name', hint: 'The default name of the Game Master (can be overridden when generating chronicles).' },
-    { key: 'gmPfsNumber', name: 'Default GM PFS Number', hint: 'The default Pathfinder Society number of the Game Master (can be overridden when generating chronicles).' },
-    { key: 'eventName', name: 'Default Event Name', hint: 'The default name of the event (can be overridden when generating chronicles).' },
-    { key: 'eventcode', name: 'Default Event Code', hint: 'The default event code (can be overridden when generating chronicles).' },
-  ];
-
-  for (const setting of visibleSettings) {
-    game.settings.register(MODULE_ID, setting.key, {
-      name: setting.name, hint: setting.hint,
-      scope: 'world', config: true, type: String, default: '',
-    });
-  }
-
   game.settings.register(MODULE_ID, 'debugMode', {
     name: 'Enable Debug Logging',
     hint: 'When enabled, verbose debug messages are printed to the browser console. Useful for troubleshooting.',
