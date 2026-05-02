@@ -1,0 +1,46 @@
+// Design tokens and shared variables
+// Centralizes colors, sizes, and breakpoints used across partials.
+
+// Colors
+$color-error: #d32f2f;
+$color-error-bg: rgba(255, 0, 0, 0.05);
+$color-error-border: rgba(255, 0, 0, 0.3);
+$color-error-panel-bg: rgba(255, 0, 0, 0.1);
+$color-text-muted: #666;
+$color-text-dark: #333;
+$color-calculated-bg: #f0f0f0;
+$color-calculated-border: #ccc;
+
+// GM character accent colors
+$color-gm-accent: #b8860b;
+$color-gm-accent-light: rgba(184, 134, 11, 0.06);
+$color-gm-accent-lighter: rgba(184, 134, 11, 0.04);
+$color-gm-accent-hover: rgba(184, 134, 11, 0.12);
+$color-gm-accent-gold: #daa520;
+$color-gm-badge-bg: #8b6914;
+$color-gm-text: #5a4210;
+
+// Foundry CSS variable fallbacks
+$color-sub-bg: var(--sub, #5c4033);
+$color-text-light: var(--color-text-light-0, #fff);
+$color-border-tertiary: var(--color-border-light-tertiary, #ccc);
+$color-border-primary: var(--color-border-light-primary, #999);
+
+// Sizing
+$sidebar-min-width: 300px;
+$sidebar-max-width: 350px;
+$sidebar-input-width: 55%;
+$sidebar-input-max-width: 280px;
+$label-width: 120px;
+$portrait-width: 64px;
+$character-info-min-width: 120px;
+
+// Spacing
+$gap-sm: 0.25rem;
+$gap-md: 0.5rem;
+$gap-lg: 0.75rem;
+$padding-card: 0.6rem;
+$padding-section: 0.5rem;
+
+// The root selector for all module styles
+$root: '.sheet.party [data-tab=pfs]';

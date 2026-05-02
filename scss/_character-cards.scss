@@ -1,0 +1,224 @@
+// Character Cards
+// Styles for the per-character member-activity cards: portrait, identity,
+// fields grid, form groups, checkboxes, and full-width elements.
+
+@use 'variables' as *;
+
+#{$root} .activities .member-activity {
+  border-image-repeat: repeat;
+  border-image-slice: 11;
+  border-image-source: url(../../../systems/pf2e/assets/sheet/frame-elegant.svg);
+  border-image-width: 14px;
+  border-style: double;
+  display: flex;
+  align-items: center;
+  gap: $padding-card;
+  padding: $padding-card;
+  margin-bottom: $padding-card;
+
+  // --- Character info (left column: portrait + identity) ---
+
+  .character-info {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $gap-sm;
+    min-width: $character-info-min-width;
+  }
+
+  .actor-image {
+    flex-shrink: 0;
+
+    img {
+      width: $portrait-width;
+      border: 0;
+      object-fit: cover;
+    }
+  }
+
+  .character-identity {
+    text-align: center;
+    font-size: var(--font-size-12);
+  }
+
+  .character-name {
+    font-weight: bold;
+    margin-bottom: $gap-sm;
+  }
+
+  .character-society-id {
+    color: var(--color-text-dark-secondary, $color-text-muted);
+    margin-bottom: $gap-sm;
+    font-size: 0.8rem;
+  }
+
+  .missing-data {
+    color: $color-error;
+  }
+
+  .character-level {
+    font-size: 0.8rem;
+  }
+
+  // --- Character fields (right column: editable grid) ---
+
+  .character-fields {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: $gap-sm;
+    align-items: start;
+    min-width: 0;
+
+    // Prevent grid children from overflowing their cells
+    > *,
+    .form-group {
+      min-width: 0;
+    }
+  }
+
+  // --- Form groups inside character cards ---
+
+  .form-group {
+    margin-bottom: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: $gap-sm;
+
+    // Checkbox form groups: center-align checkbox with label text
+    &:has(.checkbox-label) {
+      align-items: center;
+    }
+
+    &.full-width {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+
+      label {
+        margin-bottom: 0.1rem;
+        padding-left: calc(0.4rem + 1px);
+      }
+
+      textarea {
+        width: 100%;
+      }
+    }
+
+    label {
+      font-size: var(--font-size-12);
+      font-weight: 600;
+      padding-right: $gap-sm;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      width: $label-width;
+
+      .fa-question-circle {
+        margin-left: 4px;
+        font-size: 1em;
+        color: var(--color-text-dark-secondary);
+        cursor: help;
+        vertical-align: middle;
+
+        &:hover {
+          color: var(--color-text-dark-primary);
+        }
+      }
+    }
+
+    input,
+    select,
+    textarea {
+      flex: 1 1 0%;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    // Checkboxes should not stretch
+    input[type="checkbox"] {
+      flex: none;
+      width: auto;
+      min-width: auto;
+    }
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: $gap-sm;
+  }
+
+  // --- Calculated value displays ---
+
+  .treasure-bundle-value,
+  .earned-income-value {
+    padding: $gap-sm $gap-md;
+    background-color: $color-calculated-bg;
+    border: 1px solid $color-calculated-border;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: var(--font-size-12);
+    color: $color-text-dark;
+    text-align: right;
+    flex: 1;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .earned-income-section {
+    display: block;
+  }
+
+  .help-text {
+    display: block;
+    margin-top: $gap-sm;
+    font-size: 0.85rem;
+    color: $color-text-muted;
+    font-style: italic;
+  }
+
+  // --- Currency fieldset ---
+
+  .currency-fieldset {
+    grid-column: 1 / -1;
+    border: 1px solid $color-calculated-border;
+    border-radius: 4px;
+    padding: 0.4rem;
+    margin: 0 0 $gap-sm 0;
+
+    legend {
+      font-size: var(--font-size-12);
+      font-weight: 600;
+      padding: 0 $gap-sm;
+      display: flex;
+      align-items: center;
+      gap: $gap-sm;
+    }
+
+    .form-group {
+      margin-bottom: 0.15rem;
+    }
+  }
+
+  // Align rows below the currency fieldset with the fieldset's inner content
+  .character-fields > .form-group:not(.full-width):not(.currency-fieldset .form-group) {
+    padding-left: calc(0.4rem + 1px);
+    padding-right: calc(0.4rem + 1px);
+  }
+}
+
+// Currency spent input — right-align numeric value
+#{$root} .content .activities input[id^="currencySpent-"] {
+  text-align: right;
+}
+
+// XP earned value — right-align
+#{$root} .content .activities .calculated-xp-label {
+  text-align: right;
+}

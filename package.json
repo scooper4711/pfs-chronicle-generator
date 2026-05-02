@@ -4,8 +4,10 @@
   "description": "A module to generate Pathfinder & Starfinder Society Chronicles.",
   "main": "scripts/main.js",
   "scripts": {
-    "build": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap",
-    "watch": "esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap --watch",
+    "build": "npm run build:css && esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap",
+    "build:css": "sass scss/style.scss css/style.css --no-source-map --style=expanded",
+    "watch": "npm run build:css && npx concurrently \"esbuild scripts/main.ts --bundle --outfile=dist/main.js --format=esm --sourcemap --watch\" \"sass scss/style.scss css/style.css --no-source-map --style=expanded --watch\"",
+    "watch:css": "sass scss/style.scss css/style.css --no-source-map --style=expanded --watch",
     "test": "jest",
     "lint": "eslint scripts/**/*.ts tests/**/*.ts --max-warnings 5",
     "check:duplication": "node scripts-build/check-duplication.js",
@@ -20,6 +22,7 @@
     "@types/js-yaml": "^4.0.9",
     "@typescript-eslint/eslint-plugin": "^8.56.1",
     "@typescript-eslint/parser": "^8.56.1",
+    "concurrently": "^9.2.1",
     "esbuild": "^0.25.9",
     "eslint": "^10.0.2",
     "fast-check": "^4.5.3",
@@ -27,6 +30,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^30.2.0",
     "jscpd": "^4.0.8",
+    "sass": "^1.99.0",
     "ts-jest": "^29.4.1",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.57.1"

@@ -1,0 +1,116 @@
+// Collapsible Sections
+// Styles for the expand/collapse sections in the sidebar: header, chevron,
+// title, summary text, and content wrapper with transitions.
+
+@use 'variables' as *;
+
+#{$root} .sidebar .collapsible-section {
+  margin-bottom: $gap-lg;
+}
+
+// --- Header (clickable toggle) ---
+
+#{$root} .sidebar .collapsible-header {
+  display: flex;
+  align-items: center;
+  gap: $gap-md;
+  cursor: pointer;
+  padding: $padding-section;
+  margin: (-$padding-section) (-$padding-section) $gap-md (-$padding-section);
+  border-radius: 3px;
+  transition: background-color 0.15s ease;
+  user-select: none;
+  position: sticky;
+  top: -$padding-section;
+  z-index: 1;
+  background-color: $color-sub-bg;
+  color: $color-text-light;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: 2px solid #4a90e2;
+    outline-offset: 2px;
+    text-decoration: underline;
+  }
+
+  // Chevron indicator
+  .chevron {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+    display: inline-block;
+    font-size: 0.8em;
+    line-height: 1;
+
+    &::before {
+      content: '▼'; // Points down when expanded
+    }
+  }
+
+  // Section title — hidden when collapsed (summary replaces it)
+  .section-title {
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  // Summary text — visible only when collapsed
+  .section-summary {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: inherit;
+    font-size: inherit;
+    font-weight: bold;
+  }
+}
+
+// --- Collapsed state ---
+
+#{$root} .sidebar .collapsible-section.collapsed {
+  .chevron::before {
+    content: '▶'; // Points right when collapsed
+  }
+
+  .section-title {
+    display: none;
+  }
+
+  .collapsible-content {
+    max-height: 0;
+    opacity: 0;
+    display: none;
+  }
+}
+
+// Keep title visible for sections without summary text
+#{$root} .sidebar .collapsible-section[data-section-id="adventure-summary"].collapsed .section-title,
+#{$root} .sidebar .collapsible-section[data-section-id="items-to-strike-out"].collapsed .section-title {
+  display: block;
+}
+
+// Hide summary text when section is expanded
+#{$root} .sidebar .collapsible-section:not(.collapsed) .section-summary {
+  display: none;
+}
+
+// --- Content wrapper ---
+
+#{$root} .sidebar .collapsible-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+  max-height: 5000px;
+  opacity: 1;
+}
+
+// --- Auto-hide empty sections ---
+
+#{$root} .sidebar .collapsible-section[data-section-id="adventure-summary"]:has(.checkbox-choices:empty) {
+  display: none;
+}
+
+#{$root} .sidebar .collapsible-section[data-section-id="items-to-strike-out"]:has(.strikeout-choices:empty) {
+  display: none;
+}

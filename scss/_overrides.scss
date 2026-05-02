@@ -1,0 +1,30 @@
+// Override Controls
+// Styles for the XP/currency override checkboxes and visibility toggling.
+
+@use 'variables' as *;
+
+// --- Override visibility toggle ---
+
+#{$root} .override-hidden {
+  display: none !important;
+}
+
+// --- Override icon checkboxes ---
+
+#{$root} .activities .member-activity .override-icon-checkbox {
+  flex: none;
+  width: 1em;
+  height: 1em;
+  margin: 0 4px 0 0;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+// --- Override input fields — right-align numeric values ---
+
+#{$root} .activities .member-activity .override-xp-input,
+#{$root} .activities .member-activity .override-currency-input {
+  text-align: right;
+  flex: 1 1 0%;
+  min-width: 0;
+}

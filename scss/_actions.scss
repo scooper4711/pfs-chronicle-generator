@@ -1,0 +1,58 @@
+// Actions Bar & Content Header
+// Styles for the sticky action bar (Generate, Save, Clear, etc.) and
+// the "Character-Specific Information" content header.
+
+@use 'variables' as *;
+
+// --- Sticky action bar ---
+
+#{$root} .actions-section {
+  display: flex;
+  align-items: center;
+  background-color: $color-sub-bg;
+  color: $color-text-light;
+  padding: $gap-sm $gap-md;
+  margin-bottom: $gap-md;
+  border-radius: 3px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  h3 {
+    margin: 0;
+    font-size: var(--font-size-16);
+    color: inherit;
+  }
+
+  .buttons {
+    display: flex;
+    gap: $gap-sm;
+    margin-left: auto;
+
+    button {
+      color: $color-text-light;
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+
+    #clearData {
+      margin-left: $gap-lg;
+    }
+  }
+}
+
+// --- Content header ---
+
+#{$root} .content-header {
+  padding: 0.15rem $gap-md;
+  line-height: 1.5rem;
+  margin-bottom: $gap-sm;
+
+  h3 {
+    margin: 0;
+    font-size: var(--font-size-13);
+  }
+}

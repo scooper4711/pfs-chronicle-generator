@@ -1,0 +1,246 @@
+// Sidebar
+// Styles for the shared rewards sidebar: form fields, downtime display,
+// checkbox/strikeout choices, reputation section, chronicle path, help icons,
+// reporting flags, and the resize handle.
+
+@use 'variables' as *;
+
+// --- Base sidebar layout ---
+
+#{$root} .sidebar {
+  min-width: $sidebar-min-width;
+  max-width: $sidebar-max-width;
+  flex-shrink: 0;
+
+  .form-group {
+    margin-bottom: $gap-sm;
+
+    label {
+      display: block;
+      font-size: var(--font-size-12);
+      margin-bottom: $gap-sm;
+      white-space: nowrap;
+
+      .fa-question-circle {
+        margin-left: 4px;
+        font-size: 1em;
+        color: var(--color-text-dark-secondary);
+        cursor: help;
+        vertical-align: middle;
+
+        &:hover {
+          color: var(--color-text-dark-primary);
+        }
+      }
+    }
+
+    input,
+    select {
+      width: $sidebar-input-width;
+      max-width: $sidebar-input-max-width;
+      box-sizing: border-box;
+      font-size: var(--font-size-12);
+      padding: $gap-sm;
+      flex: none; // Override Foundry's flex: 3 on form-group children
+    }
+  }
+
+  // --- Downtime days calculated display ---
+
+  .downtime-days-value {
+    padding: 2px 3px;
+    background-color: $color-calculated-bg;
+    border: 1px solid $color-calculated-border;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: var(--font-size-12);
+    line-height: normal;
+    color: $color-text-dark;
+    text-align: right;
+    width: $sidebar-input-width;
+    max-width: $sidebar-input-max-width;
+    box-sizing: border-box;
+    flex: none;
+  }
+
+  .summary-data {
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  // --- Checkbox and strikeout choice lists ---
+
+  .checkbox-choices,
+  .strikeout-choices {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-md;
+    align-items: flex-start !important; // Override center alignment
+  }
+
+  .checkbox-choice,
+  .item-choice {
+    display: flex;
+    align-items: flex-start;
+    gap: $gap-sm;
+    margin-bottom: 0;
+
+    input[type="checkbox"] {
+      margin: 0;
+      margin-top: 0.15em;
+      flex-shrink: 0;
+      width: 1em;
+      height: 1em;
+      cursor: pointer;
+    }
+
+    label {
+      margin: 0;
+      cursor: pointer;
+      font-size: var(--font-size-12);
+      line-height: 1.25;
+      flex: 1;
+    }
+  }
+
+  // Strikethrough text when item-to-strike-out checkbox is checked
+  .item-choice:has(input[type="checkbox"]:checked) label {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  // Hide checkbox sections when empty
+  #adventureSummaryCheckboxes:empty,
+  #strikeoutItems:empty {
+    display: none;
+  }
+
+  #adventureSummaryCheckboxes .checkbox-choices:empty,
+  #strikeoutItems .strikeout-choices:empty {
+    display: none;
+  }
+
+  // Hide the parent box.summary when checkbox container is empty
+  li.box.summary:has(#adventureSummaryCheckboxes .checkbox-choices:empty),
+  li.box.summary:has(#strikeoutItems .strikeout-choices:empty) {
+    display: none;
+  }
+
+  // --- Reputation section ---
+
+  .reputation-section {
+    display: flex;
+    flex-direction: column;
+    gap: $gap-md;
+
+    .form-group {
+      margin-bottom: $gap-md;
+
+      label {
+        display: block;
+        font-size: var(--font-size-12);
+        font-weight: 600;
+        margin-bottom: $gap-sm;
+      }
+
+      input[type="number"] {
+        width: $sidebar-input-width;
+        max-width: $sidebar-input-max-width;
+        box-sizing: border-box;
+        font-size: var(--font-size-12);
+        padding: $gap-sm;
+        flex: none;
+      }
+
+      // Reputation validation error styling
+      &.has-error input {
+        border-color: $color-error;
+        background-color: $color-error-bg;
+      }
+
+      .field-error {
+        color: $color-error;
+        font-size: var(--font-size-10);
+        margin-top: 0.15rem;
+        display: block;
+      }
+    }
+  }
+
+  // --- Chronicle path field ---
+
+  #chroniclePathGroup {
+    .form-fields {
+      width: $sidebar-input-width;
+      max-width: $sidebar-input-max-width;
+      display: flex;
+      gap: $gap-sm;
+      flex: none;
+
+      input {
+        flex: 1;
+        width: auto;
+        min-width: 0;
+      }
+
+      button {
+        flex-shrink: 0;
+      }
+    }
+
+    &:not(.chronicle-path-visible) {
+      display: none;
+    }
+  }
+
+  // --- Reporting flags ---
+
+  .reporting-flags {
+    .form-fields {
+      display: flex;
+      align-items: center;
+      gap: $gap-lg;
+      flex: none;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      white-space: nowrap;
+
+      input[type="checkbox"] {
+        margin: 0;
+      }
+    }
+  }
+}
+
+// --- Sidebar resize handle ---
+
+#{$root} .sidebar-resize-handle {
+  width: 6px;
+  cursor: col-resize;
+  flex-shrink: 0;
+  background: transparent;
+  position: relative;
+  transition: background-color 0.15s ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 2px;
+    height: 32px;
+    border-radius: 1px;
+    background-color: $color-border-tertiary;
+    transition: height 0.15s ease, background-color 0.15s ease;
+  }
+
+  &:hover::after {
+    height: 48px;
+    background-color: $color-border-primary;
+  }
+}

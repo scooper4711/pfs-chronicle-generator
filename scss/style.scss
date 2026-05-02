@@ -1,0 +1,13 @@
+// PFS Chronicle Generator — Main Stylesheet
+//
+// Compiles all partials into a single css/style.css output.
+// Each partial covers one concern; see _variables.scss for shared tokens.
+
+@use 'variables';
+@use 'character-cards';
+@use 'sidebar';
+@use 'collapsible';
+@use 'actions';
+@use 'validation';
+@use 'gm-character';
+@use 'overrides';

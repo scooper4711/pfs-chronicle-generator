@@ -1,0 +1,57 @@
+// Validation
+// Styles for inline field errors, the validation error panel, and
+// the has-error state on form groups.
+
+@use 'variables' as *;
+
+// --- Validation error panel ---
+
+#{$root} .validation-errors {
+  background-color: $color-error-panel-bg;
+  border: 1px solid $color-error-border;
+  border-radius: 4px;
+  padding: $gap-lg;
+  margin-bottom: 1rem;
+
+  h4 {
+    margin: 0 0 $gap-md 0;
+    color: $color-error;
+    font-size: var(--font-size-14);
+    font-weight: bold;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    list-style-type: disc;
+  }
+
+  li {
+    color: $color-error;
+    font-size: var(--font-size-12);
+    margin-bottom: $gap-sm;
+  }
+}
+
+// --- Invalid field styling ---
+
+#{$root} .form-group {
+  &.has-error {
+    flex-wrap: wrap;
+
+    input,
+    select,
+    textarea {
+      border-color: $color-error;
+      background-color: $color-error-bg;
+    }
+  }
+
+  .field-error {
+    color: $color-error;
+    font-size: var(--font-size-10);
+    margin-top: 0.15rem;
+    display: block;
+    flex-basis: 100%;
+  }
+}
