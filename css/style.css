@@ -752,3 +752,22 @@
     height: 48px;
     background-color: var(--color-border-light-primary, #999);
 }
+
+/* Reporting Flags — tighten letter labels to checkboxes and center-align */
+.sheet.party [data-tab=pfs] .sidebar .reporting-flags .form-fields {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: none;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .reporting-flags .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    white-space: nowrap;
+}
+
+.sheet.party [data-tab=pfs] .sidebar .reporting-flags .checkbox-label input[type="checkbox"] {
+    margin: 0;
+}
