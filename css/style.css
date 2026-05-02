@@ -204,6 +204,9 @@
 .sheet.party [data-tab=pfs] .sidebar .item-choice input[type="checkbox"] {
     margin: 0;
     flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    cursor: pointer;
 }
 
 .sheet.party [data-tab=pfs] .sidebar .checkbox-choice label,
