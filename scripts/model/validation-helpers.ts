@@ -52,47 +52,45 @@ export function validateDateFormat(date: string | undefined | null, fieldName: s
 }
 
 /**
- * Validates that a player number is a non-empty numeric string.
+ * Validates that a numeric ID string (player number or character number) is non-empty and numeric.
  * 
- * @param value - The player number to validate
+ * @param value - The ID string to validate
  * @param fieldName - The name of the field for error messages
  * @param prefix - Optional prefix for error messages (e.g., character name)
+ * @param example - Example value shown in the error message (e.g., "12345" or "2001")
  * @returns Array of error messages (empty if valid)
  */
+export function validateNumericId(
+  value: string | undefined | null,
+  fieldName: string,
+  prefix: string = '',
+  example: string = '12345'
+): string[] {
+  if (!value || value.trim() === '') {
+    return [`${prefix}${fieldName} is required`];
+  }
+  if (!/^\d+$/.test(value)) {
+    return [`${prefix}${fieldName} must be a numeric string (e.g., "${example}")`];
+  }
+  return [];
+}
+
+/** @deprecated Use validateNumericId instead */
 export function validatePlayerNumber(
   value: string | undefined | null,
   fieldName: string,
   prefix: string = ''
 ): string[] {
-  if (!value || value.trim() === '') {
-    return [`${prefix}${fieldName} is required`];
-  }
-  if (!/^\d+$/.test(value)) {
-    return [`${prefix}${fieldName} must be a numeric string (e.g., "12345")`];
-  }
-  return [];
+  return validateNumericId(value, fieldName, prefix, '12345');
 }
 
-/**
- * Validates that a character number is a non-empty numeric string.
- * 
- * @param value - The character number to validate
- * @param fieldName - The name of the field for error messages
- * @param prefix - Optional prefix for error messages (e.g., character name)
- * @returns Array of error messages (empty if valid)
- */
+/** @deprecated Use validateNumericId instead */
 export function validateCharacterNumber(
   value: string | undefined | null,
   fieldName: string,
   prefix: string = ''
 ): string[] {
-  if (!value || value.trim() === '') {
-    return [`${prefix}${fieldName} is required`];
-  }
-  if (!/^\d+$/.test(value)) {
-    return [`${prefix}${fieldName} must be a numeric string (e.g., "2001")`];
-  }
-  return [];
+  return validateNumericId(value, fieldName, prefix, '2001');
 }
 
 /**
