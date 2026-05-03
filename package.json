@@ -23,7 +23,7 @@
     "@typescript-eslint/eslint-plugin": "^8.56.1",
     "@typescript-eslint/parser": "^8.56.1",
     "concurrently": "^9.2.1",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.28.0",
     "eslint": "^10.0.2",
     "fast-check": "^4.5.3",
     "fvtt-types": "npm:@league-of-foundry-developers/foundry-vtt-types@^13.346.0-beta.20251209192131",
