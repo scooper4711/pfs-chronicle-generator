@@ -1,11 +1,11 @@
 {
-  "id": "pfs2.bounty-layout-b13",
+  "id": "pfs2.quest-layout-q10",
   "parent": "pfs2",
-  "description": "Layout for Bounty Chronicles starting with B13",
+  "description": "Layout for Quest Chronicles Q10\u2013Q11, Q13",
   "flags": [
     "hidden"
   ],
-  "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles/pfs2/bounties/B13-TheBlackwoodAbundanceChronicle.pdf",
+  "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles/pfs2/quests/Q10-TheBrokenScalesChronicle.pdf",
   "parameters": {
     "Event Info": {
       "event": {
@@ -27,42 +27,6 @@
         "type": "text",
         "description": "Gamemasters PFS ID",
         "example": 654321
-      }
-    },
-    "Checkboxes, Reputation and Items": {
-      "summary_checkbox": {
-        "type": "choice",
-        "description": "Checkboxes in the adventure summary that should be selected",
-        "choices": [
-          1,
-          2,
-          3,
-          4,
-          5
-        ],
-        "example": "1,2,3,4,5"
-      },
-      "reputation": {
-        "type": "multiline",
-        "description": "Reputation Gained",
-        "example": "Grand Archive: +4",
-        "lines": 4
-      },
-      "strikeout_item_lines": {
-        "type": "choice",
-        "description": "Item line numbers that should be struk out",
-        "choices": [
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9
-        ],
-        "example": "1,2,3,4,5,6,7,8,9"
       }
     },
     "Player Info": {
@@ -134,12 +98,48 @@
         "example": "3.71 gp or 37 credits"
       }
     },
+    "Checkboxes, Reputation and Items": {
+      "summary_checkbox": {
+        "type": "choice",
+        "description": "Checkboxes in the adventure summary that should be selected",
+        "choices": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "example": "1,2,3,4,5"
+      },
+      "reputation": {
+        "type": "multiline",
+        "description": "Reputation Gained",
+        "example": "Grand Archive: +4\nHorizon Hunters +2\nVerdant Wheel +2",
+        "lines": 3
+      },
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line numbers that should be struk out",
+        "choices": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "example": "1,2,3,4,5,6,7,8,9"
+      }
+    },
     "Notes": {
       "notes": {
         "type": "multiline",
         "description": "Notes on the chronicle sheet",
-        "example": "This is a player note",
-        "lines": 6
+        "example": "This is a player note line 1\nThis is a player note line 2\nThis is a player note line 3",
+        "lines": 12
       }
     }
   },
@@ -154,49 +154,42 @@
     "character_info": {
       "x": 0.0,
       "y": 0.0,
+      "x2": 68.6,
+      "y2": 10.2,
+      "parent": "main"
+    },
+    "reputation": {
+      "x": 68.6,
+      "y": 0.0,
       "x2": 100.0,
-      "y2": 6.7,
+      "y2": 10.2,
       "parent": "main"
     },
     "summary": {
       "x": 0.0,
-      "y": 8.5,
+      "y": 12.0,
       "x2": 100.0,
-      "y2": 21.2,
+      "y2": 24.9,
       "parent": "main"
     },
-    "boons": {
-      "x": 0.0,
-      "y": 23.0,
-      "x2": 80.0,
-      "y2": 38.1,
-      "parent": "main"
-    },
-    "reputation": {
-      "x": 0.0,
-      "y": 40.0,
-      "x2": 80.0,
-      "y2": 46.8,
+    "items": {
+      "x": 2.4,
+      "y": 44.3,
+      "x2": 32.1,
+      "y2": 83.0,
       "parent": "main"
     },
     "rewards": {
       "x": 82.2,
-      "y": 23.0,
+      "y": 26.7,
       "x2": 100.0,
-      "y2": 46.8,
-      "parent": "main"
-    },
-    "items": {
-      "x": 0.0,
-      "y": 48.6,
-      "x2": 51.8,
-      "y2": 82.9,
+      "y2": 94.5,
       "parent": "main"
     },
     "notes": {
       "x": 0.0,
       "y": 84.8,
-      "x2": 100.0,
+      "x2": 39.9,
       "y2": 94.5,
       "parent": "main"
     },
@@ -210,13 +203,61 @@
   },
   "content": [
     {
+      "value": "param:event",
+      "type": "text",
+      "canvas": "session_info",
+      "x": 1.1,
+      "y": 32.5,
+      "x2": 19.9,
+      "y2": 63.0,
+      "font": "Helvetica",
+      "fontsize": 11,
+      "align": "LB"
+    },
+    {
+      "value": "param:eventcode",
+      "type": "text",
+      "canvas": "session_info",
+      "x": 22.9,
+      "y": 34.7,
+      "x2": 33.1,
+      "y2": 65.2,
+      "font": "Helvetica",
+      "fontsize": 11,
+      "align": "LB"
+    },
+    {
+      "value": "param:date",
+      "type": "text",
+      "canvas": "session_info",
+      "x": 35.9,
+      "y": 34.7,
+      "x2": 50.3,
+      "y2": 65.2,
+      "font": "Helvetica",
+      "fontsize": 11,
+      "align": "CB"
+    },
+    {
+      "value": "param:gmid",
+      "type": "text",
+      "canvas": "session_info",
+      "x": 80.0,
+      "y": 32.5,
+      "x2": 99.2,
+      "y2": 63.0,
+      "font": "Helvetica",
+      "fontsize": 11,
+      "align": "CB"
+    },
+    {
       "value": "param:char",
       "type": "text",
       "canvas": "character_info",
-      "x": 1.6,
-      "y": 24.9,
-      "x2": 63.6,
-      "y2": 50.0,
+      "x": 35.9,
+      "y": 36.0,
+      "x2": 64.0,
+      "y2": 52.3,
       "font": "Helvetica",
       "fontsize": 11,
       "fontweight": "bold",
@@ -226,10 +267,10 @@
       "value": "param:societyid",
       "type": "text",
       "canvas": "character_info",
-      "x": 67.3,
-      "y": 23.3,
-      "x2": 87.4,
-      "y2": 43.8,
+      "x": 65.8,
+      "y": 35.0,
+      "x2": 83.9,
+      "y2": 48.3,
       "font": "Helvetica",
       "fontsize": 9,
       "fontweight": "bold",
@@ -239,10 +280,10 @@
       "value": "param:char_number_short",
       "type": "text",
       "canvas": "character_info",
-      "x": 90.3,
-      "y": 23.3,
-      "x2": 97.5,
-      "y2": 43.8,
+      "x": 88.1,
+      "y": 35.0,
+      "x2": 98.8,
+      "y2": 48.3,
       "font": "Helvetica",
       "fontsize": 9,
       "fontweight": "bold",
@@ -253,9 +294,9 @@
       "type": "text",
       "canvas": "rewards",
       "x": 3.2,
-      "y": 24.5,
+      "y": 9.3,
       "x2": 98.7,
-      "y2": 33.5,
+      "y2": 15.1,
       "font": "Helvetica",
       "fontsize": 11,
       "align": "CM"
@@ -265,25 +306,12 @@
       "type": "text",
       "canvas": "rewards",
       "x": 3.2,
-      "y": 73.5,
+      "y": 34.0,
       "x2": 98.7,
-      "y2": 82.5,
+      "y2": 39.8,
       "font": "Helvetica",
       "fontsize": 11,
       "align": "CM"
-    },
-    {
-      "value": "param:reputation",
-      "type": "multiline",
-      "canvas": "reputation",
-      "x": 2.6,
-      "y": 126.3,
-      "x2": 100.0,
-      "y2": 100.0,
-      "font": "Helvetica",
-      "fontsize": 11,
-      "align": "LB",
-      "lines": 4
     },
     {
       "value": "param:notes",
@@ -299,52 +327,26 @@
       "lines": 6
     },
     {
-      "value": "param:event",
-      "type": "text",
-      "canvas": "session_info",
-      "x": 2.4,
-      "y": 32.5,
-      "x2": 50.1,
-      "y2": 63.0,
-      "font": "Helvetica",
-      "fontsize": 11,
-      "align": "LB"
+      "type": "rectangle",
+      "canvas": "reputation",
+      "x": 3.0,
+      "y": 4.5,
+      "x2": 100.0,
+      "y2": 100.0,
+      "color": "white"
     },
     {
-      "value": "param:eventcode",
-      "type": "text",
-      "canvas": "session_info",
-      "x": 52.3,
-      "y": 32.5,
-      "x2": 62.4,
-      "y2": 63.0,
+      "value": "param:reputation",
+      "type": "multiline",
+      "canvas": "reputation",
+      "x": 6.6,
+      "y": 0.0,
+      "x2": 93.4,
+      "y2": 100.0,
       "font": "Helvetica",
       "fontsize": 11,
-      "align": "LB"
-    },
-    {
-      "value": "param:date",
-      "type": "text",
-      "canvas": "session_info",
-      "x": 64.1,
-      "y": 32.5,
-      "x2": 78.5,
-      "y2": 63.0,
-      "font": "Helvetica",
-      "fontsize": 11,
-      "align": "CB"
-    },
-    {
-      "value": "param:gmid",
-      "type": "text",
-      "canvas": "session_info",
-      "x": 80.2,
-      "y": 32.5,
-      "x2": 99.4,
-      "y2": 63.0,
-      "font": "Helvetica",
-      "fontsize": 11,
-      "align": "CB"
+      "align": "LB",
+      "lines": 5
     }
   ]
 }
