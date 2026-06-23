@@ -105,11 +105,42 @@ export async function handleCopySessionReport(
 
   // Step 4: Clipboard copy and notify
   try {
-    await navigator.clipboard.writeText(serialized);
+    await copyToClipboard(serialized);
     const format = skipBase64 ? 'raw JSON' : 'base64';
     ui.notifications?.info(`Session report copied to clipboard (${format}).`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     ui.notifications?.error(`Failed to copy session report to clipboard: ${message}`);
+  }
+}
+
+/**
+ * Copies text to the clipboard using the modern Clipboard API with a
+ * fallback for insecure contexts (e.g. self-hosted HTTP on Linux).
+ *
+ * The Clipboard API requires a secure context (HTTPS or localhost).
+ * When unavailable, falls back to a temporary textarea + execCommand('copy').
+ */
+async function copyToClipboard(text: string): Promise<void> {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  // Fallback for insecure contexts (HTTP)
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  try {
+    const success = document.execCommand('copy');
+    if (!success) {
+      throw new Error('execCommand copy returned false');
+    }
+  } finally {
+    document.body.removeChild(textarea);
   }
 }

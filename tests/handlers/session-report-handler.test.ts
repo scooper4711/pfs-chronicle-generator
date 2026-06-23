@@ -197,6 +197,43 @@ describe('handleCopySessionReport', () => {
     });
   });
 
+  describe('clipboard fallback for insecure contexts', () => {
+    it('falls back to execCommand when navigator.clipboard is undefined', async () => {
+      // Simulate insecure context (HTTP on Linux) where clipboard API is absent
+      Object.assign(navigator, { clipboard: undefined });
+
+      mockExtractFormData.mockReturnValue(validFormData);
+      mockValidate.mockReturnValue({ valid: true, errors: [] });
+      mockBuild.mockReturnValue(mockReport);
+      mockSerialize.mockReturnValue('fallback-text');
+
+      const mockExecCommand = jest.fn().mockReturnValue(true);
+      document.execCommand = mockExecCommand;
+
+      const container = createContainer();
+      await handleCopySessionReport(container, mockPartyActors, 'pfs2.s5-18', createMouseEvent());
+
+      expect(mockExecCommand).toHaveBeenCalledWith('copy');
+      expect(mockInfo).toHaveBeenCalledWith(expect.stringContaining('base64'));
+    });
+
+    it('displays error when execCommand fallback fails', async () => {
+      Object.assign(navigator, { clipboard: undefined });
+
+      mockExtractFormData.mockReturnValue(validFormData);
+      mockValidate.mockReturnValue({ valid: true, errors: [] });
+      mockBuild.mockReturnValue(mockReport);
+      mockSerialize.mockReturnValue('fallback-text');
+
+      document.execCommand = jest.fn().mockReturnValue(false);
+
+      const container = createContainer();
+      await handleCopySessionReport(container, mockPartyActors, 'pfs2.s5-18', createMouseEvent());
+
+      expect(mockError).toHaveBeenCalledWith(expect.stringContaining('execCommand copy returned false'));
+    });
+  });
+
   describe('orchestration flow', () => {
     it('passes correct params through the pipeline', async () => {
       mockExtractFormData.mockReturnValue(validFormData);

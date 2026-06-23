@@ -160,6 +160,16 @@ if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
   exit 0
 fi
 
+# Verify local HEAD matches origin before tagging.
+# This prevents orphaned tags when local commits haven't been pushed yet.
+LOCAL_SHA=$(git rev-parse HEAD)
+REMOTE_SHA=$(git ls-remote origin "$(git symbolic-ref --short HEAD)" | cut -f1)
+if [[ "$LOCAL_SHA" != "$REMOTE_SHA" ]]; then
+  echo "Error: Local HEAD ($LOCAL_SHA) does not match origin ($REMOTE_SHA)."
+  echo "Push your commits before releasing."
+  exit 1
+fi
+
 git tag "$NEXT_TAG"
 git push origin "$NEXT_TAG"
 
