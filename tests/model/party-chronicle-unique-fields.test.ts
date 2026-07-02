@@ -157,7 +157,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
               const expectedGpGained = unique.overrideCurrency
                 ? unique.overrideCurrencyValue
                 : unique.slowTrack
-                  ? (expectedTreasureBundlesGp + expectedEarnedIncome) / 2
+                  ? Math.round((expectedTreasureBundlesGp + expectedEarnedIncome) / 2 * 100) / 100
                   : calculateCurrencyGained(expectedTreasureBundlesGp, expectedEarnedIncome);
               
               // Verify character-specific fields match this character's unique data
@@ -185,7 +185,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
                 // Calculate expected values for other character
                 const otherExpectedTreasureBundlesGp = calculateTreasureBundleValue(shared.treasureBundles, otherUnique.level);
                 const otherExpectedGpGained = otherUnique.slowTrack
-                  ? (otherExpectedTreasureBundlesGp + otherExpectedEarnedIncome) / 2
+                  ? Math.round((otherExpectedTreasureBundlesGp + otherExpectedEarnedIncome) / 2 * 100) / 100
                   : calculateCurrencyGained(otherExpectedTreasureBundlesGp, otherExpectedEarnedIncome);
                 
                 // If the values are different, ensure they don't leak
@@ -288,7 +288,7 @@ describe('Party Chronicle Unique Field Property Tests', () => {
             const expectedGpGained = unique.overrideCurrency
               ? unique.overrideCurrencyValue
               : unique.slowTrack
-                ? (expectedTreasureBundlesGp + expectedEarnedIncome) / 2
+                ? Math.round((expectedTreasureBundlesGp + expectedEarnedIncome) / 2 * 100) / 100
                 : calculateCurrencyGained(expectedTreasureBundlesGp, expectedEarnedIncome);
 
             // Property: Single character's unique fields are correctly applied

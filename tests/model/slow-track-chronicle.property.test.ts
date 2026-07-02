@@ -302,7 +302,7 @@ describe('Feature: slow-track, Property 3: Currency halving in chronicle generat
           );
 
           const expectedCurrency = unique.slowTrack
-            ? (treasureBundleValue + earnedIncome) / 2
+            ? Math.round((treasureBundleValue + earnedIncome) / 2 * 100) / 100
             : calculateCurrencyGained(treasureBundleValue, earnedIncome, 'pf2e');
 
           expect(result.currency_gained).toBeCloseTo(expectedCurrency, 10);
@@ -462,7 +462,7 @@ describe('mapToCharacterData - slow track halving unit tests', () => {
 
     const expectedIncome = calculateEarnedIncome(3, 'success', 'trained', 3.5, 'pf2e');
     expect(result.income_earned).toBe(expectedIncome);
-    // 0.5 × 3.5 = 1.75 → halved total = (0 + 1.75) / 2 = 0.875
-    expect(result.currency_gained).toBe(0.875);
+    // 0.5 × 3.5 = 1.75 → halved total = (0 + 1.75) / 2 = 0.875 → rounded to 0.88
+    expect(result.currency_gained).toBe(0.88);
   });
 });

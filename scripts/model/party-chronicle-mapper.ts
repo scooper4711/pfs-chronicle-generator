@@ -141,9 +141,14 @@ export function mapToCharacterData(
     : isSlowTrack ? shared.xpEarned / 2 : shared.xpEarned;
 
   // Apply currency: override > slow track halving > standard (slow-track 5.1, 5.2, 5.3, 5.4)
+  // Slow track division can produce floating-point artifacts (e.g. 5.69999... instead of 5.7),
+  // so round the computed result to 2 decimal places. Override values are user-entered and
+  // passed through as-is.
   const finalCurrencyGained = unique.overrideCurrency === true
     ? unique.overrideCurrencyValue
-    : isSlowTrack ? (treasureBundleValue + incomeEarned) / 2 : currencyGained;
+    : isSlowTrack
+      ? Math.round((treasureBundleValue + incomeEarned) / 2 * 100) / 100
+      : currencyGained;
 
   const chronicleData: ChronicleData = {
     // Character identification from unique fields
