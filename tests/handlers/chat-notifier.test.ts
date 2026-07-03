@@ -78,6 +78,7 @@ describe('postChatNotification', () => {
 
     expect(mockCreate).toHaveBeenCalledTimes(2);
     expect(mockCreate).toHaveBeenCalledWith(
+      // @ts-expect-error TS2554 Odd error when upgrading the version of Jest to 30.4.2
       expect.objectContaining({
         speaker: { alias: 'PFS Chronicle Generator' },
       })
