@@ -209,7 +209,8 @@ describe('Chronicle Path File Picker Handler Tests', () => {
 
       expect(updateValidationDisplay).toHaveBeenCalledTimes(1);
       expect(updateValidationDisplay).toHaveBeenCalledWith(
-        container,
+        // @ts-expect-error TS2345 This is a limitation of Jest 30.4.2
+        container as unknown,
         partyActors,
         expect.any(Function)
       );

@@ -272,7 +272,8 @@ describe('Main Event Listener Attachment Tests', () => {
       expect(mockHandleChroniclePathFilePicker).toHaveBeenCalledTimes(1);
       expect(mockHandleChroniclePathFilePicker).toHaveBeenCalledWith(
         expect.any(MouseEvent),
-        container,
+        // @ts-expect-error TS2345 This is a limitation of Jest 30.4.2
+        container as unknown,
         partyActors
       );
     });
