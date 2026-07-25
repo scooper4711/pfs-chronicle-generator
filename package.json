@@ -22,7 +22,7 @@
     "@types/js-yaml": "^4.0.9",
     "@typescript-eslint/eslint-plugin": "^8.64.0",
     "@typescript-eslint/parser": "^8.64.0",
-    "concurrently": "^10.0.3",
+    "concurrently": "^10.0.4",
     "esbuild": "^0.28.1",
     "eslint": "^10.7.0",
     "fast-check": "^4.9.0",
