@@ -1,0 +1,157 @@
+{
+  "id": "pfs2.s8-02",
+  "parent": "pfs2.season8-layout-s8-00",
+  "description": "8-02 The Fey Reclamation",
+  "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles/pfs2/season8/8-02-TheFeyReclamationChronicle.pdf",
+  "parameters": {
+    "Items": {
+      "strikeout_item_lines": {
+        "type": "choice",
+        "description": "Item line text to be struck out",
+        "choices": [
+          "arboreal boots (level 5, 160 gp; Path!nder GM Core 285)",
+          "lesser elixir of life (level 5, 30 gp; GM Core 247)",
+          "lesser mistform elixir (level 4, 18 gp; GM Core 247)",
+          "shrinking potion (level 4, 15 gp; GM Core 261)"
+        ],
+        "example": "arboreal boots (level 5, 160 gp; Path!nder GM Core 285)"
+      }
+    },
+    "Checkboxes": {
+      "summary_checkbox": {
+        "type": "choice",
+        "description": "Checkboxes in the adventure summary that should be selected",
+        "choices": [
+          "nothing",
+          "a small favor",
+          "a large favor"
+        ],
+        "example": "nothing"
+      }
+    }
+  },
+  "presets": {
+    "strikeout_item": {
+      "canvas": "items",
+      "color": "black",
+      "x": 0.5,
+      "x2": 95
+    },
+    "checkbox": {
+      "canvas": "summary",
+      "color": "black",
+      "size": 1
+    },
+    "checkbox.nothing": {
+      "x": 48.019,
+      "y": 35.521,
+      "x2": 50.146,
+      "y2": 43.295
+    },
+    "checkbox.a_small_favor": {
+      "x": 58.424,
+      "y": 35.521,
+      "x2": 60.551,
+      "y2": 43.295
+    },
+    "checkbox.a_large_favor": {
+      "x": 73.67,
+      "y": 35.521,
+      "x2": 75.798,
+      "y2": 43.295
+    },
+    "item.line.arboreal_boots_level_5_160_gp;_Path!nder_GM_Core_2": {
+      "y": 7.8,
+      "y2": 18.0
+    },
+    "item.line.lesser_elixir_of_life_level_5_30_gp;_GM_Core_247": {
+      "y": 19.0,
+      "y2": 23.6
+    },
+    "item.line.lesser_mistform_elixir_level_4_18_gp;_GM_Core_247": {
+      "y": 24.6,
+      "y2": 29.2
+    },
+    "item.line.shrinking_potion_level_4_15_gp;_GM_Core_261": {
+      "y": 30.2,
+      "y2": 34.8
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:strikeout_item_lines",
+      "content": {
+        "arboreal boots (level 5, 160 gp; Path!nder GM Core 285)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.arboreal_boots_level_5_160_gp;_Path!nder_GM_Core_2"
+            ]
+          }
+        ],
+        "lesser elixir of life (level 5, 30 gp; GM Core 247)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.lesser_elixir_of_life_level_5_30_gp;_GM_Core_247"
+            ]
+          }
+        ],
+        "lesser mistform elixir (level 4, 18 gp; GM Core 247)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.lesser_mistform_elixir_level_4_18_gp;_GM_Core_247"
+            ]
+          }
+        ],
+        "shrinking potion (level 4, 15 gp; GM Core 261)": [
+          {
+            "type": "strikeout",
+            "presets": [
+              "strikeout_item",
+              "item.line.shrinking_potion_level_4_15_gp;_GM_Core_261"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "choice",
+      "choices": "param:summary_checkbox",
+      "content": {
+        "nothing": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.nothing"
+            ]
+          }
+        ],
+        "a small favor": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.a_small_favor"
+            ]
+          }
+        ],
+        "a large favor": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.a_large_favor"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
