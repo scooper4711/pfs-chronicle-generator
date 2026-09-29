@@ -34,7 +34,7 @@ export function handleCharacterSheetRender(sheet: CharacterSheetApp, html: JQuer
     downloadButton.innerHTML = '<i class="fas fa-download"></i> Download Chronicle';
     downloadButton.disabled = !chroniclePdf;
     if (attachedFilename) {
-        downloadButton.title = attachedFilename;
+        downloadButton.title = `Download ${attachedFilename}`;
         downloadButton.setAttribute('aria-label', `Download ${attachedFilename}`);
     }
     downloadButton.addEventListener('click', (event) => {
@@ -61,7 +61,7 @@ export function handleCharacterSheetRender(sheet: CharacterSheetApp, html: JQuer
         deleteButton.innerHTML = '<i class="fas fa-trash"></i> Delete Chronicle';
         deleteButton.disabled = !chroniclePdf;
         if (attachedFilename) {
-            deleteButton.title = attachedFilename;
+            deleteButton.title = `Delete ${attachedFilename}`;
             deleteButton.setAttribute('aria-label', `Delete ${attachedFilename}`);
         }
         deleteButton.addEventListener('click', async (event) => {
