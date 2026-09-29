@@ -20,7 +20,7 @@
  *   FOUNDRY_SYSTEM_IDS=pf2e,sf2e FOUNDRY_WORLD_SYSTEM=sf2e ./scripts/foundry.sh test start --world sfs-test --world-title "SFS Test"
  */
 import { test, expect } from "@playwright/test";
-import { dismissOverlays, dismissTours, joinAsGamemaster } from "../tests/integration/helpers.js";
+import { dismissOverlays, dismissTours, ensureAdminAccess, joinAsGamemaster } from "../tests/integration/helpers.js";
 
 const PORT = process.env.FOUNDRY_PORT ?? "30000";
 const BASE_URL = `http://localhost:${PORT}`;
@@ -80,7 +80,7 @@ test("complete Foundry VTT setup with game systems, world, and users", async ({ 
         console.log("-> Entering license key...");
         await keyInput.fill(LICENSE_KEY);
         await page.getByRole("button", { name: "Submit Key" }).click();
-        await page.waitForTimeout(3000);
+        await keyInput.waitFor({ state: "hidden", timeout: 30_000 }).catch(() => {});
         licensed = true;
         continue;
       }
@@ -93,7 +93,7 @@ test("complete Foundry VTT setup with game systems, world, and users", async ({ 
         console.log("-> Accepting EULA...");
         await eulaCheckbox.click();
         await page.getByRole("button", { name: "Agree" }).click();
-        await page.waitForTimeout(3000);
+        await eulaCheckbox.waitFor({ state: "hidden", timeout: 30_000 }).catch(() => {});
         licensed = true;
         continue;
       }
@@ -108,9 +108,10 @@ test("complete Foundry VTT setup with game systems, world, and users", async ({ 
 
     if (url.includes("/auth")) {
       console.log("-> Logging in as admin...");
-      await page.getByRole("textbox", { name: "Administrator Password" }).fill(ADMIN_PASSWORD);
+      const passwordField = page.getByRole("textbox", { name: "Administrator Password" });
+      await passwordField.fill(ADMIN_PASSWORD);
       await page.getByRole("button", { name: "Log In" }).click();
-      await page.waitForTimeout(3000);
+      await passwordField.waitFor({ state: "hidden", timeout: 30_000 }).catch(() => {});
       continue;
     }
 
@@ -122,15 +123,27 @@ test("complete Foundry VTT setup with game systems, world, and users", async ({ 
   console.log("-> Reached: " + page.url());
   console.log(licensed ? ">>> License installed" : ">>> License already installed");
 
+  // Administrator access can arrive as the /auth page (handled above)
+  // or as a dialog over setup itself — poll for either explicitly.
+  await ensureAdminAccess(page, ADMIN_PASSWORD);
+
   // First-run tours (e.g. Backups Overview) render a beat after setup
   // loads — after an initial dismiss that finds nothing. Let them appear,
-  // then clear before touching the setup UI.
+  // then clear before touching the setup UI. Each pass can take up to
+  // ~25s on a loaded machine; the logging below marks progress.
+  console.log("-> Clearing first-run dialogs (pass 1)...");
   await dismissOverlays(page);
-  await page.waitForTimeout(5000);
+  console.log("-> Waiting for late popups...");
+  await page.waitForTimeout(500);
+  console.log("-> Clearing first-run dialogs (pass 2)...");
   await dismissOverlays(page);
+  console.log("-> Dialogs clear.");
 
   // If we ended up at /setup, proceed. If /game or /join, world already launched.
   if (page.url().includes("/setup")) {
+    // The admin prompt can pop late, after the passes above — check again
+    // before touching setup UI it could be covering.
+    await ensureAdminAccess(page, ADMIN_PASSWORD);
     await dismissOverlays(page);
 
     // ========== PHASE 2: Install Game Systems ==========
