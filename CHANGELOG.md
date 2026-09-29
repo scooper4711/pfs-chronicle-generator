@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2026-09-29
+
+### Added
+- filename hover text on character sheet chronicle buttons
+- fill-in blank fields end to end
+
+### Fixed
+- verb in hover text for chronicle buttons
+
+### Changed
+- bump nanoid from 3.3.16 to 3.3.19
+- bump js-yaml from 3.15.0 to 3.15.2
+- bump browserslist from 4.28.4 to 4.28.9
+- bump @humanfs/node from 0.16.7 to 0.16.8
+- bump sanitize-html from 2.17.0 to 2.17.7
+- bump js-yaml from 5.2.1 to 5.2.2
+- bump socket.io-parser from 4.2.4 to 4.2.7
+- bump postcss from 8.5.13 to 8.5.25
+- bump immutable from 5.1.5 to 5.1.9
+- bump actions/setup-node from 6 to 7
+- bump ws, engine.io, socket.io-adapter and engine.io-client
+
+[1.9.0]: https://github.com/scooper4711/pfs-chronicle-generator/releases/tag/v1.9.0
+
 ## [1.8.0] - 2026-09-23
 
 ### Added
