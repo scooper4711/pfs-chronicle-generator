@@ -49,17 +49,129 @@ export function findStrikeoutChoices(layout: Layout): string[] {
 }
 
 /**
- * Updates layout-specific fields (checkboxes and strikeout items) in the DOM.
- * 
+ * Extracts fill-in blank fields from layout parameters.
+ *
+ * Looks for text parameters in the layout's parameters under the path:
+ * parameters["Fill-ins"]. Each entry maps a field name to its parameter,
+ * whose description becomes the input tooltip.
+ *
+ * @param layout - The layout object to extract fill-ins from
+ * @returns Array of field name/description pairs, or empty array if none found
+ */
+export function findFillInFields(layout: Layout): { name: string; description: string }[] {
+  const group = layout?.parameters?.['Fill-ins'];
+  if (!group || typeof group !== 'object') {
+    return [];
+  }
+  return Object.entries(group).map(([name, param]) => ({
+    name,
+    description: typeof param?.description === 'string' ? param.description : name,
+  }));
+}
+
+/**
+ * Renders fill-in blank text inputs after the adventure checkboxes.
+ *
+ * Each field becomes a label/input row restoring any previously saved
+ * value. Missing containers are skipped silently.
+ *
+ * @param container - HTMLElement containing the form
+ * @param fields - Fill-in field names and descriptions from the layout
+ * @param savedValues - Previously saved values keyed by field name
+ * @param onChangeCallback - Callback function to attach to input change events
+ */
+function renderFillInFields(
+  container: HTMLElement,
+  fields: { name: string; description: string }[],
+  savedValues: Record<string, string>,
+  onChangeCallback: (event?: Event) => void | Promise<void>
+): void {
+  const fillinContainer = container.querySelector('#adventure-summary-content .fillin-fields');
+  if (!fillinContainer) {
+    return;
+  }
+  fillinContainer.innerHTML = '';
+  fields.forEach((field, index) => {
+    const div = document.createElement('div');
+    div.className = 'form-group fillin-field';
+
+    const label = document.createElement('label');
+    label.htmlFor = `fillin-${index}`;
+    label.textContent = field.name;
+    label.setAttribute('data-tooltip', field.description);
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = `fillin-${index}`;
+    input.name = `shared.fillIns.${field.name}`;
+    input.value = savedValues[field.name] || '';
+    input.setAttribute('data-tooltip', field.description);
+
+    div.appendChild(label);
+    div.appendChild(input);
+    fillinContainer.appendChild(div);
+  });
+  fillinContainer.querySelectorAll('input').forEach((input) => {
+    input.addEventListener('change', onChangeCallback as EventListener);
+  });
+}
+
+/**
+ * Renders a checkbox/label choice list into a container.
+ *
+ * Missing containers are skipped silently. Previously saved choices
+ * render checked.
+ */
+function renderChoiceList(
+  listContainer: Element | null,
+  choices: string[],
+  savedChoices: string[],
+  idPrefix: string,
+  inputName: string,
+  rowClass: string,
+  onChangeCallback: (event?: Event) => void | Promise<void>
+): void {
+  if (!listContainer) {
+    return;
+  }
+  listContainer.innerHTML = '';
+  choices.forEach((choice, index) => {
+    const div = document.createElement('div');
+    div.className = rowClass;
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `${idPrefix}-${index}`;
+    checkbox.name = inputName;
+    checkbox.value = choice;
+    checkbox.checked = savedChoices.includes(choice);
+
+    const label = document.createElement('label');
+    label.htmlFor = `${idPrefix}-${index}`;
+    label.textContent = choice;
+
+    div.appendChild(checkbox);
+    div.appendChild(label);
+    listContainer.appendChild(div);
+  });
+  listContainer.querySelectorAll('input').forEach((input) => {
+    input.addEventListener('change', onChangeCallback as EventListener);
+  });
+}
+
+/**
+ * Updates layout-specific fields (checkboxes, strikeout items, and
+ * fill-in blanks) in the DOM.
+ *
  * This function:
  * 1. Loads the layout definition for the given layoutId
- * 2. Extracts checkbox and strikeout choices from the layout
+ * 2. Extracts checkbox, strikeout, and fill-in choices from the layout
  * 3. Loads saved data to determine which items are currently selected
- * 4. Dynamically generates checkbox/label pairs for each choice
+ * 4. Dynamically generates checkbox/label pairs and fill-in rows
  * 5. Attaches change event listeners to the new elements
- * 
+ *
  * This is used when the layout dropdown changes or when the form is initially rendered.
- * 
+ *
  * @param container - HTMLElement containing the form
  * @param layoutId - The ID of the layout to load choices from
  * @param onChangeCallback - Callback function to attach to checkbox change events
@@ -73,68 +185,34 @@ export async function updateLayoutSpecificFields(
 
   const layout = await layoutStore.getLayout(layoutId);
 
-  // Get checkbox and strikeout choices from layout
-  const checkboxChoices = findCheckboxChoices(layout);
-  const strikeoutChoices = findStrikeoutChoices(layout);
-
   // Load saved data to determine which items are selected
   const savedStorage = await loadPartyChronicleData();
   const savedCheckboxes = savedStorage?.data?.shared?.adventureSummaryCheckboxes || [];
   const savedStrikeouts = savedStorage?.data?.shared?.strikeoutItems || [];
+  const savedFillIns = savedStorage?.data?.shared?.fillIns || {};
 
   // Update adventure summary checkboxes
-  const checkboxContainer = container.querySelector('#adventure-summary-content .checkbox-choices');
-  if (checkboxContainer) {
-    checkboxContainer.innerHTML = '';
-    checkboxChoices.forEach((choice, index) => {
-      const div = document.createElement('div');
-      div.className = 'checkbox-choice';
-
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.id = `checkbox-${index}`;
-      checkbox.name = 'shared.adventureSummaryCheckboxes';
-      checkbox.value = choice;
-      checkbox.checked = savedCheckboxes.includes(choice);
-
-      const label = document.createElement('label');
-      label.htmlFor = `checkbox-${index}`;
-      label.textContent = choice;
-
-      div.appendChild(checkbox);
-      div.appendChild(label);
-      checkboxContainer.appendChild(div);
-    });
-  }
+  renderChoiceList(
+    container.querySelector('#adventure-summary-content .checkbox-choices'),
+    findCheckboxChoices(layout),
+    savedCheckboxes,
+    'checkbox',
+    'shared.adventureSummaryCheckboxes',
+    'checkbox-choice',
+    onChangeCallback
+  );
 
   // Update strikeout items
-  const strikeoutContainer = container.querySelector('#items-to-strike-out-content .strikeout-choices');
-  if (strikeoutContainer) {
-    strikeoutContainer.innerHTML = '';
-    strikeoutChoices.forEach((choice, index) => {
-      const div = document.createElement('div');
-      div.className = 'item-choice';
+  renderChoiceList(
+    container.querySelector('#items-to-strike-out-content .strikeout-choices'),
+    findStrikeoutChoices(layout),
+    savedStrikeouts,
+    'strikeout',
+    'shared.strikeoutItems',
+    'item-choice',
+    onChangeCallback
+  );
 
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.id = `strikeout-${index}`;
-      checkbox.name = 'shared.strikeoutItems';
-      checkbox.value = choice;
-      checkbox.checked = savedStrikeouts.includes(choice);
-
-      const label = document.createElement('label');
-      label.htmlFor = `strikeout-${index}`;
-      label.textContent = choice;
-
-      div.appendChild(checkbox);
-      div.appendChild(label);
-      strikeoutContainer.appendChild(div);
-    });
-  }
-
-  // Re-attach change listeners to new checkboxes
-  const checkboxes = container.querySelectorAll('#adventure-summary-content input, #items-to-strike-out-content input');
-  checkboxes.forEach((checkbox) => {
-    checkbox.addEventListener('change', onChangeCallback as EventListener);
-  });
+  // Update fill-in blank fields after the checkboxes
+  renderFillInFields(container, findFillInFields(layout), savedFillIns, onChangeCallback);
 }

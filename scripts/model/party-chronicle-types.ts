@@ -30,6 +30,9 @@ export interface SharedFields {
   
   /** Items to strike out on chronicles (layout-dependent) */
   strikeoutItems: string[];
+
+  /** Fill-in blank values keyed by field name (layout-dependent, optional for older saves) */
+  fillIns?: Record<string, string>;
   
   /** Treasure bundles (integer from 0-10) */
   treasureBundles: number;

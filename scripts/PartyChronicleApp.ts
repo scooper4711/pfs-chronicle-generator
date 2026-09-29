@@ -264,6 +264,7 @@ export class PartyChronicleApp extends HandlebarsApplicationMixin(ApplicationV2)
       xpEarned: savedData?.shared?.xpEarned ?? 4,
       adventureSummaryCheckboxes: savedData?.shared?.adventureSummaryCheckboxes || [],
       strikeoutItems: savedData?.shared?.strikeoutItems || [],
+      fillIns: savedData?.shared?.fillIns || {},
       treasureBundles: savedData?.shared?.treasureBundles ?? 0,
       downtimeDays: savedData?.shared?.downtimeDays ?? 0,
       layoutId: effectiveLayoutId,

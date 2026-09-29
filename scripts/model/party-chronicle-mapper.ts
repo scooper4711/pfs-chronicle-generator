@@ -46,6 +46,9 @@ export interface ChronicleData {
   // Layout-dependent selections
   summary_checkbox: string[];
   strikeout_item_lines: string[];
+
+  // Fill-in blank values keyed by field name (spread into PDF data)
+  fillIns: Record<string, string>;
   
   // Treasure bundles
   treasure_bundles: string;
@@ -180,6 +183,9 @@ export function mapToCharacterData(
     // Layout-dependent selections from shared fields
     summary_checkbox: shared.adventureSummaryCheckboxes,
     strikeout_item_lines: shared.strikeoutItems,
+
+    // Fill-in blanks pass through for param: resolution on the PDF
+    fillIns: { ...shared.fillIns },
     
     // Treasure bundles from shared fields (convert number to string)
     treasure_bundles: shared.treasureBundles.toString(),

@@ -92,7 +92,7 @@ async function saveGmCharacterAssignment(
 ): Promise<void> {
   const storage = await loadPartyChronicleData();
   const savedData = storage?.data ?? {
-    shared: { gmPfsNumber: '', scenarioName: '', eventCode: '', eventDate: '', xpEarned: 0, treasureBundles: 0, downtimeDays: 0, layoutId: '', seasonId: '', blankChroniclePath: '', adventureSummaryCheckboxes: [], strikeoutItems: [], chosenFactionReputation: 2, reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }, reportingA: false, reportingB: false, reportingC: false, reportingD: false },
+    shared: { gmPfsNumber: '', scenarioName: '', eventCode: '', eventDate: '', xpEarned: 0, treasureBundles: 0, downtimeDays: 0, layoutId: '', seasonId: '', blankChroniclePath: '', adventureSummaryCheckboxes: [], strikeoutItems: [], fillIns: {}, chosenFactionReputation: 2, reputationValues: { EA: 0, GA: 0, HH: 0, VS: 0, RO: 0, VW: 0 }, reportingA: false, reportingB: false, reportingC: false, reportingD: false },
     characters: {}
   };
 

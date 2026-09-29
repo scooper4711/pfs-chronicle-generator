@@ -134,7 +134,7 @@ async function loadLayoutConfiguration(
  * @returns Typed SharedFields object with all fields populated
  */
 // eslint-disable-next-line complexity -- Flat null-coalescing pattern, low cognitive complexity
-function extractSharedFields(rawShared: Partial<SharedFields>, layoutId: string, blankChroniclePath: string): SharedFields {
+export function extractSharedFields(rawShared: Partial<SharedFields>, layoutId: string, blankChroniclePath: string): SharedFields {
   return {
     gmPfsNumber: rawShared?.gmPfsNumber || '',
     scenarioName: rawShared?.scenarioName || '',
@@ -161,6 +161,7 @@ function extractSharedFields(rawShared: Partial<SharedFields>, layoutId: string,
       VW: Number(rawShared?.reputationValues?.VW) || 0
     },
     downtimeDays: Number(rawShared?.downtimeDays) || 0,
+    fillIns: rawShared?.fillIns && typeof rawShared.fillIns === 'object' ? { ...rawShared.fillIns } : {},
     reportingA: Boolean(rawShared?.reportingA),
     reportingB: Boolean(rawShared?.reportingB),
     reportingC: Boolean(rawShared?.reportingC),
@@ -261,7 +262,12 @@ async function generateSingleCharacterPdf(
 
     const pdfDoc = await PDFDocument.load(await response.arrayBuffer());
 
-    const generator = new PdfGenerator(pdfDoc, layout, chronicleData);
+    // Spread fill-in values alongside the typed fields so param:
+    // references like "param:Adventure Completed" resolve on the PDF.
+    const generator = new PdfGenerator(pdfDoc, layout, {
+      ...chronicleData,
+      ...chronicleData.fillIns,
+    });
     await generator.generate();
 
     const modifiedPdfBytes = await pdfDoc.save();

@@ -7,7 +7,7 @@
  * @jest-environment jsdom
  */
 
-import { findCheckboxChoices, findStrikeoutChoices, updateLayoutSpecificFields } from '../../scripts/utils/layout-utils';
+import { findCheckboxChoices, findFillInFields, findStrikeoutChoices, updateLayoutSpecificFields } from '../../scripts/utils/layout-utils';
 import { Layout } from '../../scripts/model/layout';
 
 const mockGetLayout = jest.fn();
@@ -142,6 +142,44 @@ describe('findStrikeoutChoices', () => {
 });
 
 
+describe('findFillInFields', () => {
+  it('should extract fill-in names and descriptions from layout parameters', () => {
+    const layout: Layout = {
+      id: 'test',
+      description: 'Test',
+      parameters: {
+        'Fill-ins': {
+          'Adventure Completed': {
+            type: 'text',
+            description: 'Adventure Completed',
+            example: 'Adventure Completed',
+          },
+          '%': { type: 'text', description: '%', example: '%' },
+        },
+      },
+    };
+
+    expect(findFillInFields(layout)).toEqual([
+      { name: 'Adventure Completed', description: 'Adventure Completed' },
+      { name: '%', description: '%' },
+    ]);
+  });
+
+  it('should return empty array when Fill-ins group is missing', () => {
+    const layout: Layout = {
+      id: 'test',
+      description: 'Test',
+      parameters: { Other: {} },
+    };
+
+    expect(findFillInFields(layout)).toEqual([]);
+  });
+
+  it('should return empty array for null layout', () => {
+    expect(findFillInFields(null as unknown as Layout)).toEqual([]);
+  });
+});
+
 describe('updateLayoutSpecificFields', () => {
   let container: HTMLElement;
   let onChangeCallback: jest.Mock;
@@ -152,6 +190,7 @@ describe('updateLayoutSpecificFields', () => {
     container.innerHTML = `
       <div id="adventure-summary-content">
         <div class="checkbox-choices"></div>
+        <div class="fillin-fields"></div>
       </div>
       <div id="items-to-strike-out-content">
         <div class="strikeout-choices"></div>
@@ -349,6 +388,67 @@ describe('updateLayoutSpecificFields', () => {
     await expect(
       updateLayoutSpecificFields(container, 'test-layout', onChangeCallback)
     ).resolves.not.toThrow();
+  });
+
+  it('should render fill-in fields after checkboxes with saved values restored', async () => {
+    mockGetLayout.mockResolvedValue({
+      id: 'test-layout',
+      description: 'Test',
+      parameters: {
+        Checkboxes: {
+          summary_checkbox: {
+            type: 'choice',
+            description: 'Checkboxes',
+            example: 'A',
+            choices: ['Found the treasure'],
+          },
+        },
+        'Fill-ins': {
+          'Adventure Completed': {
+            type: 'text',
+            description: 'Adventure Completed',
+            example: 'Adventure Completed',
+          },
+          '%': { type: 'text', description: '%', example: '%' },
+        },
+      },
+    });
+    mockLoadPartyChronicleData.mockResolvedValue({
+      data: {
+        shared: {
+          adventureSummaryCheckboxes: [],
+          strikeoutItems: [],
+          fillIns: { 'Adventure Completed': 'Paizo Printables' },
+        },
+      },
+    });
+
+    await updateLayoutSpecificFields(container, 'test-layout', onChangeCallback);
+
+    const fillinContainer = container.querySelector('#adventure-summary-content .fillin-fields')!;
+    const rows = fillinContainer.querySelectorAll('.fillin-field');
+    expect(rows).toHaveLength(2);
+
+    const firstInput = container.querySelector<HTMLInputElement>('#fillin-0')!;
+    expect(firstInput.name).toBe('shared.fillIns.Adventure Completed');
+    expect(firstInput.value).toBe('Paizo Printables');
+    const firstLabel = container.querySelector<HTMLLabelElement>('label[for="fillin-0"]')!;
+    expect(firstLabel.textContent).toBe('Adventure Completed');
+
+    const secondInput = container.querySelector<HTMLInputElement>('#fillin-1')!;
+    expect(secondInput.value).toBe('');
+  });
+
+  it('should leave the fill-in container empty when the layout has none', async () => {
+    mockGetLayout.mockResolvedValue({ id: 'empty-layout', description: 'Empty' });
+    mockLoadPartyChronicleData.mockResolvedValue({
+      data: { shared: { adventureSummaryCheckboxes: [], strikeoutItems: [] } },
+    });
+
+    await updateLayoutSpecificFields(container, 'empty-layout', onChangeCallback);
+
+    const fillinContainer = container.querySelector('#adventure-summary-content .fillin-fields')!;
+    expect(fillinContainer.children).toHaveLength(0);
   });
 
   it('should set correct id, name, and label attributes on generated elements', async () => {

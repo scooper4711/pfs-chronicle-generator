@@ -53,6 +53,14 @@ export function extractFormData(container: HTMLElement, partyActors: PartyActor[
         strikeoutItems: Array.from(
             container.querySelectorAll('input[name="shared.strikeoutItems"]:checked')
         ).map((el) => (el as HTMLInputElement).value),
+        fillIns: Object.fromEntries(
+            Array.from(container.querySelectorAll('input[name^="shared.fillIns."]')).map(
+                (el) => {
+                    const input = el as HTMLInputElement;
+                    return [input.name.substring('shared.fillIns.'.length), input.value];
+                }
+            )
+        ),
         chosenFactionReputation: Number.parseInt((container.querySelector('#chosenFactionReputation') as HTMLInputElement)?.value) || 2,
         reputationValues: {
             EA: Number.parseInt((container.querySelector('#reputation-EA') as HTMLInputElement)?.value) || 0,

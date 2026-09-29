@@ -222,6 +222,7 @@ function createDefaultChronicleData(
             blankChroniclePath: defaults.chroniclePath,
             adventureSummaryCheckboxes: [],
             strikeoutItems: [],
+            fillIns: {},
             chosenFactionReputation: defaults.defaultChosenFactionRep,
             reputationValues: {
                 EA: 0,
