@@ -21,6 +21,7 @@ graph TD
         HBS -->|add| OCI["Override Currency Input<br/>(inline, hidden by default)"]
     end
 ```
+
 ```mermaid
 graph TD
     subgraph "CSS Changes"
@@ -31,6 +32,7 @@ graph TD
         CSS -->|remove| ADVCSS["Advanced section styles"]
     end
 ```
+
 ```mermaid
 graph TD
     subgraph "Handler Changes"
@@ -81,10 +83,7 @@ The three existing exported functions are updated. No new exports are added.
  * this now toggles visibility — hiding the Calculated XP Row and showing
  * the Override XP Input row (and vice versa when unchecked).
  */
-export function handleOverrideXpChange(
-  characterId: string,
-  container: HTMLElement
-): void;
+export function handleOverrideXpChange(characterId: string, container: HTMLElement): void;
 
 /**
  * Handles the Override Currency checkbox change for a specific character.
@@ -97,10 +96,7 @@ export function handleOverrideXpChange(
  *    PF2e, or credits awarded display for SF2e) and sets it on the input.
  * 3. When unchecking the checkbox: resets the override input value to zero.
  */
-export function handleOverrideCurrencyChange(
-  characterId: string,
-  container: HTMLElement
-): void;
+export function handleOverrideCurrencyChange(characterId: string, container: HTMLElement): void;
 
 /**
  * Initializes override states from saved data on form load.
@@ -122,6 +118,7 @@ The `isValidSectionId()` function is updated to remove support for `advanced-{ch
 Each character card (both `{{#each partyMembers}}` and GM character section) is restructured:
 
 **Before (current structure):**
+
 ```
 <section class="member-activity">
   <div class="character-info">        ← portrait + identity
@@ -138,6 +135,7 @@ Each character card (both `{{#each partyMembers}}` and GM character section) is 
 ```
 
 **After (redesigned structure):**
+
 ```
 <section class="member-activity">
   <div class="character-info">         ← portrait + identity (unchanged)
@@ -156,6 +154,7 @@ Each character card (both `{{#each partyMembers}}` and GM character section) is 
 ```
 
 The override input rows use the same `name` attributes as before:
+
 - `characters.{{id}}.overrideXp` (checkbox)
 - `characters.{{id}}.overrideXpValue` (input)
 - `characters.{{id}}.overrideCurrency` (checkbox)
@@ -184,10 +183,12 @@ The override input rows use the same `name` attributes as before:
 ```
 
 **Removed CSS:**
+
 - `.strikethrough-override` class (no longer used)
 - All `.advanced-section` styles (section removed)
 
 **Modified CSS:**
+
 - `.member-activity` layout changes from 2-column flex to accommodate the checkbox column
 
 ### Modified Constants: `constants/dom-selectors.ts`
@@ -207,15 +208,16 @@ export const CHARACTER_FIELD_SELECTORS = {
     `.member-activity[data-character-id="${characterId}"] .credits-awarded-row`,
   OVERRIDE_CURRENCY_ROW: (characterId: string) =>
     `.member-activity[data-character-id="${characterId}"] .override-currency-row`,
-  OVERRIDE_XP_ROW: (characterId: string) =>
-    `.member-activity[data-character-id="${characterId}"] .override-xp-row`,
+  OVERRIDE_XP_ROW: (characterId: string) => `.member-activity[data-character-id="${characterId}"] .override-xp-row`,
 } as const;
 ```
 
 **Removed from `CSS_CLASSES`:**
+
 - `STRIKETHROUGH_OVERRIDE` (no longer used)
 
 **Added to `CSS_CLASSES`:**
+
 - `OVERRIDE_HIDDEN: 'override-hidden'`
 
 ### Modified Module: `handlers/event-listener-helpers.ts`
@@ -225,6 +227,7 @@ The `attachOverrideListeners()` function is unchanged — it already attaches ch
 ### Unchanged Modules
 
 These modules require zero changes:
+
 - `model/party-chronicle-types.ts` — `UniqueFields` interface unchanged
 - `handlers/form-data-extraction.ts` — Same `name` attributes, same extraction logic
 - `model/party-chronicle-mapper.ts` — Same override decision logic
@@ -256,21 +259,17 @@ stateDiagram-v2
     Inactive --> Active: Check override checkbox
     Active --> Inactive: Uncheck override checkbox
 
-    state Inactive {
-        note right of Inactive
-            Original rows: visible
-            Override input row: hidden
-            Override input: disabled
-        end note
-    }
+    note right of Inactive
+        Original rows: visible
+        Override input row: hidden
+        Override input: disabled
+    end note
 
-    state Active {
-        note right of Active
-            Original rows: hidden
-            Override input row: visible
-            Override input: enabled
-        end note
-    }
+    note right of Active
+        Original rows: hidden
+        Override input row: visible
+        Override input: enabled
+    end note
 ```
 
 ### Currency Override Default Value Calculation
@@ -290,50 +289,50 @@ flowchart TD
 
 ### Property 1: XP override visibility toggle is consistent with checkbox state
 
-*For any* character card and any Override XP checkbox state (checked or unchecked), the Calculated XP Row should be visible if and only if the checkbox is unchecked, and the Override XP Input row should be visible if and only if the checkbox is checked. The two visibility states are mutually exclusive.
+_For any_ character card and any Override XP checkbox state (checked or unchecked), the Calculated XP Row should be visible if and only if the checkbox is unchecked, and the Override XP Input row should be visible if and only if the checkbox is checked. The two visibility states are mutually exclusive.
 
 **Validates: Requirements 2.1, 2.2, 2.3, 2.4, 2.7**
 
 ### Property 2: Currency override visibility toggle is consistent with checkbox state (Pathfinder)
 
-*For any* Pathfinder character card and any Override Currency checkbox state, the Earned Income Row and Treasure Bundles Row should be visible if and only if the checkbox is unchecked, and the Override Currency Input row should be visible if and only if the checkbox is checked.
+_For any_ Pathfinder character card and any Override Currency checkbox state, the Earned Income Row and Treasure Bundles Row should be visible if and only if the checkbox is unchecked, and the Override Currency Input row should be visible if and only if the checkbox is checked.
 
 **Validates: Requirements 3.1, 3.2, 3.3, 3.4, 3.8**
 
 ### Property 3: Currency override visibility toggle is consistent with checkbox state (Starfinder)
 
-*For any* Starfinder character card and any Override Currency checkbox state, the Credits Awarded Row should be visible if and only if the checkbox is unchecked, and the Override Currency Input row should be visible if and only if the checkbox is checked.
+_For any_ Starfinder character card and any Override Currency checkbox state, the Credits Awarded Row should be visible if and only if the checkbox is unchecked, and the Override Currency Input row should be visible if and only if the checkbox is checked.
 
 **Validates: Requirements 4.1, 4.2, 4.3, 4.4, 4.8**
 
 ### Property 4: Currency override default value equals sum of calculated values
 
-*For any* Pathfinder character with any treasure bundle gold value (≥0) and any earned income value (≥0), when the Override Currency checkbox is checked, the override input value should equal the sum of the treasure bundle gold value and the earned income value. When the checkbox is unchecked, the override input value should be reset to zero.
+_For any_ Pathfinder character with any treasure bundle gold value (≥0) and any earned income value (≥0), when the Override Currency checkbox is checked, the override input value should equal the sum of the treasure bundle gold value and the earned income value. When the checkbox is unchecked, the override input value should be reset to zero.
 
 **Validates: Requirements 3.6, 8.1, 8.3, 8.4**
 
 ### Property 5: Override state restoration on form load
 
-*For any* saved override state (XP checked/unchecked, Currency checked/unchecked, with any override values), loading the form should produce the correct visibility configuration: original rows hidden and override rows visible when the override is active, and vice versa when inactive.
+_For any_ saved override state (XP checked/unchecked, Currency checked/unchecked, with any override values), loading the form should produce the correct visibility configuration: original rows hidden and override rows visible when the override is active, and vice versa when inactive.
 
 **Validates: Requirements 7.4**
 
 ### Property 6: Per-character override independence
 
-*For any* two distinct characters in the same form, changing one character's override checkbox should not modify the other character's override state, field visibility, or override input value.
+_For any_ two distinct characters in the same form, changing one character's override checkbox should not modify the other character's override state, field visibility, or override input value.
 
 **Validates: Requirements 9.1, 9.2**
 
 ## Error Handling
 
-| Scenario | Handling |
-|---|---|
-| Treasure bundle display element not found when calculating default | Default to 0 for the treasure bundle component. Log a debug message. |
-| Earned income hidden input not found when calculating default | Default to 0 for the earned income component. Log a debug message. |
-| Credits awarded display element not found when calculating default (SF2e) | Default to 0. Log a debug message. |
-| Override input value is NaN after parsing display text | Default to 0. The `parseFloat` of display text like "12.50 gp" requires stripping the unit suffix first. |
-| Saved data has override active but override input elements missing from DOM | `initializeOverrideStates` silently skips characters whose override elements are not found, consistent with existing behavior. |
-| Character card missing override checkbox column (template rendering error) | Override functionality degrades gracefully — checkboxes not found means no toggle behavior, but form data extraction still works since it reads by `name` attribute. |
+| Scenario                                                                    | Handling                                                                                                                                                             |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Treasure bundle display element not found when calculating default          | Default to 0 for the treasure bundle component. Log a debug message.                                                                                                 |
+| Earned income hidden input not found when calculating default               | Default to 0 for the earned income component. Log a debug message.                                                                                                   |
+| Credits awarded display element not found when calculating default (SF2e)   | Default to 0. Log a debug message.                                                                                                                                   |
+| Override input value is NaN after parsing display text                      | Default to 0. The `parseFloat` of display text like "12.50 gp" requires stripping the unit suffix first.                                                             |
+| Saved data has override active but override input elements missing from DOM | `initializeOverrideStates` silently skips characters whose override elements are not found, consistent with existing behavior.                                       |
+| Character card missing override checkbox column (template rendering error)  | Override functionality degrades gracefully — checkboxes not found means no toggle behavior, but form data extraction still works since it reads by `name` attribute. |
 
 ## Testing Strategy
 
@@ -356,6 +355,7 @@ Tests target the override handler functions with mock DOM structures:
 - **Per-character independence** (Property 6): Generate two character IDs and random override states. Build a mock DOM with both characters. Toggle one character's override, verify the other character's state is unchanged.
 
 Configuration:
+
 - Library: `fast-check`
 - Minimum iterations: 100 per property
 - Tag format: `Feature: override-ux-redesign, Property {N}: {title}`
