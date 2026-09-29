@@ -25,10 +25,18 @@ export function handleCharacterSheetRender(sheet: CharacterSheetApp, html: JQuer
     }
 
     const chroniclePdf = sheet.actor.getFlag('pfs-chronicle-generator', 'chroniclePdf') as string | undefined;
+    const chronicleData = sheet.actor.getFlag('pfs-chronicle-generator', 'chronicleData') as Record<string, string> | undefined;
+    const attachedFilename = chroniclePdf
+        ? generateChronicleFilename(sheet.actor.name, chronicleData?.blankChroniclePath || '')
+        : null;
 
     const downloadButton = document.createElement('button');
     downloadButton.innerHTML = '<i class="fas fa-download"></i> Download Chronicle';
     downloadButton.disabled = !chroniclePdf;
+    if (attachedFilename) {
+        downloadButton.title = attachedFilename;
+        downloadButton.setAttribute('aria-label', `Download ${attachedFilename}`);
+    }
     downloadButton.addEventListener('click', (event) => {
         event.preventDefault();
         if (chroniclePdf) {
@@ -39,9 +47,7 @@ export function handleCharacterSheetRender(sheet: CharacterSheetApp, html: JQuer
             }
             const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], {type: 'application/pdf'});
-            const chronicleData = sheet.actor.getFlag('pfs-chronicle-generator', 'chronicleData') as Record<string, string> | undefined;
-            const blankChroniclePath = chronicleData?.blankChroniclePath || '';
-            const filename = generateChronicleFilename(sheet.actor.name, blankChroniclePath);
+            const filename = attachedFilename ?? generateChronicleFilename(sheet.actor.name, '');
             // eslint-disable-next-line @typescript-eslint/no-require-imports -- Synchronous require needed inside click handler (dynamic import not viable here)
             const FileSaver = require('file-saver');
             FileSaver.saveAs(blob, filename);
@@ -54,6 +60,10 @@ export function handleCharacterSheetRender(sheet: CharacterSheetApp, html: JQuer
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = '<i class="fas fa-trash"></i> Delete Chronicle';
         deleteButton.disabled = !chroniclePdf;
+        if (attachedFilename) {
+            deleteButton.title = attachedFilename;
+            deleteButton.setAttribute('aria-label', `Delete ${attachedFilename}`);
+        }
         deleteButton.addEventListener('click', async (event) => {
             event.preventDefault();
             const confirmed = await foundry.applications.api.DialogV2.confirm({
