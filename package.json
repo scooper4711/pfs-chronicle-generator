@@ -27,7 +27,7 @@
     "@eslint/js": "^10.0.1",
     "@mermaid-js/mermaid-cli": "^12.0.0",
     "@playwright/test": "^1.62.1",
-    "@scooper4711/foundry-test-kit": "^0.1.1",
+    "@scooper4711/foundry-test-kit": "^0.2.0",
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
     "@typescript-eslint/eslint-plugin": "^8.67.0",
