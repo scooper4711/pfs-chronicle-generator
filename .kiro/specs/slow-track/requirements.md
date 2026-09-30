@@ -71,14 +71,14 @@ Pathfinder Society Organized Play offers a "slow track" advancement option. Per 
 
 ### Requirement 5: Slow Track Gold Halving
 
-**User Story:** As a GM, I want slow track to halve the total gold earned for a character, so that the chronicle accurately reflects the Organized Play slow track rules.
+**User Story:** As a GM, I want slow track to halve the gold earned for a character, so that the chronicle accurately reflects the Organized Play slow track rules.
 
 #### Acceptance Criteria
 
-1. WHEN the Slow_Track_Checkbox is checked and the Override_Currency_Checkbox is unchecked, THE Chronicle_Generator SHALL halve the total `currency_gained` value (treasure bundle value + earned income, then divided by 2, not rounded) for that character
+1. WHEN the Slow_Track_Checkbox is checked and the Override_Currency_Checkbox is unchecked, THE Chronicle_Generator SHALL set `currency_gained` to half the treasure bundle value plus the earned income calculated from the halved downtime days (Requirement 4), not rounded, for that character
 2. WHEN the Slow_Track_Checkbox is checked and the Override_Currency_Checkbox is checked, THE Chronicle_Generator SHALL use the override currency value as-is without any slow track modification
 3. WHEN the Slow_Track_Checkbox is unchecked, THE Chronicle_Generator SHALL calculate currency using the standard formula without halving
-4. THE halving SHALL apply to the final `currency_gained` total, not to the individual components (treasure bundle value and earned income) separately
+4. Earned income SHALL be halved exactly once, through its halved downtime days; it SHALL NOT be halved again as part of `currency_gained`, so the chronicle matches the treasure and earned income shown on the form (Requirement 8)
 
 ### Requirement 6: Slow Track Data Persistence
 

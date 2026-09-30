@@ -138,15 +138,19 @@ test('halves XP, reputation, and currency on slow track', async ({ gmPage, form 
     await form.selectDefaultTaskLevel(id);
   }
   await form.memberField(valerosId, 'slowTrack').check();
-  await expect(form.member(valerosId).locator('.calculated-xp-label')).toHaveText('2 XP');
+  const valeros = form.member(valerosId);
+  await expect(valeros.locator('.calculated-xp-label')).toHaveText('2 XP');
+  // Half of 8 TB at level 3 (3.8 gp each), and income over half the
+  // downtime (4 days at 0.2 gp).
+  await expect(valeros.locator('.treasure-bundle-value')).toHaveText('15.20 gp');
+  await expect(valeros.locator('.earned-income-value')).toHaveText('0.80 gp');
 
   expect(await form.generate()).toContain('Successfully generated 3 chronicle(s)');
 
   const slow = (await readStoredChronicle(gmPage, valerosId)).data;
   expect(slow).toMatchObject({ xp_gained: 2, reputation: ['Grand Archive: +2'] });
-  // Per the slow-track spec, income is earned over halved downtime (4 days)
-  // and the treasure + income total is then halved again (requirements 4, 5).
-  expect(slow?.currency_gained).toBeCloseTo((8 * 3.8 + 4 * 0.2) / 2, 2);
+  // The chronicle adds up what the form shows; income is not halved twice.
+  expect(slow?.currency_gained).toBeCloseTo(15.2 + 0.8, 2);
   expect((await readStoredChronicle(gmPage, amiriId)).data).toMatchObject({ xp_gained: 4 });
 });
 

@@ -115,7 +115,6 @@ const taskLevelArb = fc.integer({ min: 0, max: 20 });
 const successLevelArb = fc.constantFrom('critical_failure', 'failure', 'success', 'critical_success');
 const proficiencyRankArb = fc.constantFrom('trained', 'expert', 'master', 'legendary');
 
-
 // ---------------------------------------------------------------------------
 // Game system setup
 // ---------------------------------------------------------------------------
@@ -175,7 +174,7 @@ describe('Feature: slow-track, Property 1: XP halving in chronicle generation re
 
         expect(result.xp_gained).toBe(expectedXp);
       }),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 });
@@ -237,7 +236,7 @@ describe('Feature: slow-track, Property 2: Reputation halving in chronicle gener
         const expectedLines = calculateReputation(expectedShared, actor);
         expect(result.reputation).toEqual(expectedLines);
       }),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 });
@@ -252,8 +251,8 @@ describe('Feature: slow-track, Property 3: Currency halving in chronicle generat
    *
    * For any valid inputs the currency_gained field must equal:
    *   - overrideCurrencyValue                          when overrideCurrency is true
-   *   - (treasureBundleValue + earnedIncome) / 2       when slowTrack && !overrideCurrency
-   *     where earnedIncome uses downtimeDays / 2
+   *   - treasureBundleValue / 2 + earnedIncome         when slowTrack && !overrideCurrency
+   *     where earnedIncome uses downtimeDays / 2 (so it is halved only once)
    *   - treasureBundleValue + earnedIncome             when !slowTrack && !overrideCurrency
    */
   it('should produce the correct currency_gained for all slow track / override combinations', () => {
@@ -284,35 +283,29 @@ describe('Feature: slow-track, Property 3: Currency halving in chronicle generat
         if (unique.overrideCurrency) {
           expect(result.currency_gained).toBe(unique.overrideCurrencyValue);
         } else {
-          const effectiveDowntime = unique.slowTrack
-            ? shared.downtimeDays / 2
-            : shared.downtimeDays;
+          const effectiveDowntime = unique.slowTrack ? shared.downtimeDays / 2 : shared.downtimeDays;
 
           const earnedIncome = calculateEarnedIncome(
             unique.taskLevel,
             unique.successLevel,
             unique.proficiencyRank,
             effectiveDowntime,
-            'pf2e',
+            'pf2e'
           );
 
-          const treasureBundleValue = calculateTreasureBundleValue(
-            shared.treasureBundles,
-            unique.level,
-          );
+          const treasureBundleValue = calculateTreasureBundleValue(shared.treasureBundles, unique.level);
 
           const expectedCurrency = unique.slowTrack
-            ? Math.round((treasureBundleValue + earnedIncome) / 2 * 100) / 100
+            ? Math.round((treasureBundleValue / 2 + earnedIncome) * 100) / 100
             : calculateCurrencyGained(treasureBundleValue, earnedIncome, 'pf2e');
 
           expect(result.currency_gained).toBeCloseTo(expectedCurrency, 10);
         }
       }),
-      { numRuns: 100 },
+      { numRuns: 100 }
     );
   });
 });
-
 
 // ===========================================================================
 // Task 5.5 — Unit tests for slow track halving in mapToCharacterData()
@@ -398,10 +391,10 @@ describe('mapToCharacterData - slow track halving unit tests', () => {
 
   // --- Currency halving ---
 
-  it('should halve currency_gained (total, not components) when slowTrack is true and overrideCurrency is false', () => {
-    // Level 5: treasure bundle value = 2 × 10 = 20
+  it('should halve the treasure but not the already-halved earned income when slowTrack is true', () => {
+    // Level 5: treasure bundle value = 2 × 10 = 20, halved to 10
     // Level 3 trained success, 4 halved downtime days: 0.5 × 4 = 2 gp
-    // currency_gained = (20 + 2) / 2 = 11
+    // currency_gained = 20 / 2 + 2 = 12 (income is not halved a second time)
     const shared = createSharedFields({ treasureBundles: 2, downtimeDays: 8 });
     const unique = createUniqueFields({
       slowTrack: true,
@@ -412,7 +405,7 @@ describe('mapToCharacterData - slow track halving unit tests', () => {
       overrideCurrency: false,
     });
     const result = mapToCharacterData(shared, unique, actor);
-    expect(result.currency_gained).toBe(11);
+    expect(result.currency_gained).toBe(12);
   });
 
   it('should use override currency as-is when overrideCurrency is true regardless of slowTrack', () => {
@@ -462,7 +455,7 @@ describe('mapToCharacterData - slow track halving unit tests', () => {
 
     const expectedIncome = calculateEarnedIncome(3, 'success', 'trained', 3.5, 'pf2e');
     expect(result.income_earned).toBe(expectedIncome);
-    // 0.5 × 3.5 = 1.75 → halved total = (0 + 1.75) / 2 = 0.875 → rounded to 0.88
-    expect(result.currency_gained).toBe(0.88);
+    // 0.5 × 3.5 = 1.75, already halved through the downtime days → 0 / 2 + 1.75
+    expect(result.currency_gained).toBe(1.75);
   });
 });
