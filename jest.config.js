@@ -2,6 +2,8 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/tests'],
+  // Playwright specs run via `npx playwright test`, never jest.
+  testPathIgnorePatterns: ['<rootDir>/tests/integration/'],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
