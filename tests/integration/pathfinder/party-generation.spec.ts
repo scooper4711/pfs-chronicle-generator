@@ -138,15 +138,19 @@ test('halves XP, reputation, and currency on slow track', async ({ gmPage, form 
     await form.selectDefaultTaskLevel(id);
   }
   await form.memberField(valerosId, 'slowTrack').check();
-  await expect(form.member(valerosId).locator('.calculated-xp-label')).toHaveText('2 XP');
+  const valeros = form.member(valerosId);
+  await expect(valeros.locator('.calculated-xp-label')).toHaveText('2 XP');
+  // Half of 8 TB at level 3 (3.8 gp each), and income over half the
+  // downtime (4 days at 0.2 gp).
+  await expect(valeros.locator('.treasure-bundle-value')).toHaveText('15.20 gp');
+  await expect(valeros.locator('.earned-income-value')).toHaveText('0.80 gp');
 
   expect(await form.generate()).toContain('Successfully generated 3 chronicle(s)');
 
   const slow = (await readStoredChronicle(gmPage, valerosId)).data;
   expect(slow).toMatchObject({ xp_gained: 2, reputation: ['Grand Archive: +2'] });
-  // Per the slow-track spec, income is earned over halved downtime (4 days)
-  // and the treasure + income total is then halved again (requirements 4, 5).
-  expect(slow?.currency_gained).toBeCloseTo((8 * 3.8 + 4 * 0.2) / 2, 2);
+  // The chronicle adds up what the form shows; income is not halved twice.
+  expect(slow?.currency_gained).toBeCloseTo(15.2 + 0.8, 2);
   expect((await readStoredChronicle(gmPage, amiriId)).data).toMatchObject({ xp_gained: 4 });
 });
 
@@ -169,4 +173,21 @@ test('uses per-character XP and currency overrides', async ({ gmPage, form }) =>
   await form.memberField(kyraId, 'overrideCurrency').uncheck();
   await expect(form.member(kyraId).locator('.treasure-bundle-row')).toBeVisible();
   await expect(form.memberField(kyraId, 'overrideCurrencyValue')).toHaveValue('0');
+});
+
+test('pays 2.5 treasure bundles for a Series 1 Quest', async ({ gmPage, form }) => {
+  const [amiriId] = party.memberIds;
+  await form.open(party.partyId);
+  await form.fillEventDetails();
+  await form.chooseScenario('pfs2/quests', 'pfs2.q1');
+  await form.field('#xpEarned').selectOption('1');
+  await form.field('#treasureBundles').selectOption('2.5');
+  // Series 1 Quests grant 2 downtime days.
+  await expect(form.field('.downtime-days-value')).toHaveText('2');
+
+  expect(await form.generate()).toContain('Successfully generated 3 chronicle(s)');
+
+  const amiri = (await readStoredChronicle(gmPage, amiriId)).data;
+  expect(amiri).toMatchObject({ treasure_bundles: '2.5', xp_gained: 1 });
+  expect(amiri?.treasure_bundle_value).toBeCloseTo(2.5 * EXPECTED.amiri.bundleValue, 2);
 });

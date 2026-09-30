@@ -8,7 +8,7 @@ The Slow Track checkbox appears on the same line as the existing "Consume Replay
 
 Override interactions: when Override XP is checked, the override XP value is used as-is (not halved). When Override Currency is checked, the override currency value is used as-is (not halved). Only reputation and downtime days are still halved when overrides are active.
 
-Gold halving applies to the final `currency_gained` total (treasure bundle value + earned income), not to the individual components separately. Downtime days halving propagates through the earned income calculation, so earned income is naturally reduced when slow track is active.
+Gold halving halves the treasure bundle value; earned income is halved through its halved downtime days, so `currency_gained = treasureBundleValue / 2 + earnedIncome`. Earned income is never halved twice.
 
 The design follows the existing hybrid ApplicationV2 pattern: the `slowTrack` boolean is added to `UniqueFields`, extracted from the DOM in `form-data-extraction.ts`, and consumed by `party-chronicle-mapper.ts` (for PDF generation) and `session-report-builder.ts` (for session reporting). Display updates are handled by extending the existing change handlers.
 
@@ -29,6 +29,7 @@ graph TD
         FG -->|wrapped in| UNLESS["{{#unless (eq gameSystem 'sf2e')}}"]
     end
 ```
+
 ```mermaid
 graph TD
     subgraph "Chronicle Generation"
@@ -42,10 +43,11 @@ graph TD
         HALF -->|always| HREP["Halve all reputation values"]
         HALF -->|check overrideCurrency| OC{"overrideCurrency?"}
         OC -->|yes| ASC["Use overrideCurrencyValue as-is"]
-        OC -->|no| HCG["currency_gained = (tbValue + income) / 2"]
+        OC -->|no| HCG["currency_gained = tbValue / 2 + income"]
         HALF -->|always| HDT["downtimeDays / 2 → earned income calc"]
     end
 ```
+
 ```mermaid
 graph TD
     subgraph "Session Reporting"
@@ -70,9 +72,9 @@ graph TD
 
 2. **Halving applied in `mapToCharacterData` and `calculateCharacterRewards`.** The mapper is the single point where chronicle data is assembled for PDF generation, and `calculateCharacterRewards` is the single point for session report reward calculation. Applying halving in these two locations keeps the logic centralized rather than scattered across display handlers.
 
-3. **Downtime days halved before earned income calculation.** Rather than halving earned income directly, the halved downtime days value is passed to `calculateEarnedIncome()`. This naturally produces the correct reduced earned income because earned income is a function of downtime days. The final `currency_gained` (treasure bundle value + earned income) is then halved as a whole, per the rules.
+3. **Downtime days halved before earned income calculation.** Rather than halving earned income directly, the halved downtime days value is passed to `calculateEarnedIncome()`. This naturally produces the correct reduced earned income because earned income is a function of downtime days.
 
-4. **Gold halving applies to the total, not components.** Per the requirements, `currency_gained = (treasureBundleValue + earnedIncome) / 2`. The earned income is calculated with halved downtime days, but the treasure bundle value is not halved individually — only the final sum is halved. This matches the Lorespire rule: "half the rewards."
+4. **Earned income is halved once.** `currency_gained = treasureBundleValue / 2 + earnedIncome`, where earned income already comes from halved downtime days. An earlier version halved the whole sum, which halved earned income twice and made the chronicle disagree with the form's displays (e.g. 41 gp on the chronicle vs 42 gp on the form for a level 5 character). This matches the Lorespire rule: "half the rewards."
 
 5. **Checkbox placement on the same line as Consume Replay.** Both checkboxes share a single `form-group` element. This is a template-only change — the `name` attribute pattern (`characters.{id}.slowTrack`) follows the existing convention and integrates with the existing form data extraction loop.
 
@@ -119,7 +121,7 @@ Extended to apply slow track halving when `unique.slowTrack` is `true`:
 - **XP**: When `slowTrack && !overrideXp`: `xp_gained = shared.xpEarned / 2`. When `overrideXp`: use `overrideXpValue` as-is.
 - **Reputation**: When `slowTrack`: halve `shared.chosenFactionReputation` and each value in `shared.reputationValues` before passing to `calculateReputation()`. This requires creating a modified copy of `shared` with halved reputation values.
 - **Downtime / Earned Income**: When `slowTrack`: pass `shared.downtimeDays / 2` to `calculateEarnedIncome()` instead of `shared.downtimeDays`.
-- **Currency**: When `slowTrack && !overrideCurrency`: `currency_gained = (treasureBundleValue + earnedIncome) / 2`. When `overrideCurrency`: use `overrideCurrencyValue` as-is.
+- **Currency**: When `slowTrack && !overrideCurrency`: `currency_gained = treasureBundleValue / 2 + earnedIncome` (earned income from halved downtime days). When `overrideCurrency`: use `overrideCurrencyValue` as-is.
 
 #### `calculateCharacterRewards()` (session-report-builder.ts)
 
@@ -131,6 +133,7 @@ Extended to accept `slowTrack` from `UniqueFields` and apply the same halving lo
 #### `buildSignUp()` and `buildGmSignUp()` (session-report-builder.ts)
 
 Extended to:
+
 - Include `slowTrack` boolean in the returned `SignUp` object.
 - Halve `repEarned` when `slowTrack` is true: `repEarned = shared.chosenFactionReputation / 2`.
 
@@ -267,7 +270,7 @@ flowchart TD
 
     HALVE --> CHECK_OC{"unique.overrideCurrency?"}
     CHECK_OC -->|true| CUR_OVERRIDE["currency_gained = overrideCurrencyValue"]
-    CHECK_OC -->|false| CUR_HALF["currency_gained = (tbValue + earnedIncome) / 2"]
+    CHECK_OC -->|false| CUR_HALF["currency_gained = tbValue / 2 + earnedIncome"]
 
     STANDARD --> RESULT["Return ChronicleData"]
     XP_OVERRIDE --> RESULT
@@ -303,14 +306,14 @@ flowchart TD
     CUR_H --> RESULT
 ```
 
-
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: XP halving in chronicle generation respects slow track and override states
 
-*For any* valid `SharedFields` with `xpEarned` and any valid `UniqueFields` with `slowTrack`, `overrideXp`, and `overrideXpValue`, the `xp_gained` field in the `ChronicleData` returned by `mapToCharacterData` should equal:
+_For any_ valid `SharedFields` with `xpEarned` and any valid `UniqueFields` with `slowTrack`, `overrideXp`, and `overrideXpValue`, the `xp_gained` field in the `ChronicleData` returned by `mapToCharacterData` should equal:
+
 - `overrideXpValue` when `overrideXp` is true (regardless of `slowTrack`)
 - `xpEarned / 2` when `slowTrack` is true and `overrideXp` is false
 - `xpEarned` when `slowTrack` is false and `overrideXp` is false
@@ -319,13 +322,14 @@ flowchart TD
 
 ### Property 2: Reputation halving in chronicle generation
 
-*For any* valid `SharedFields` with `chosenFactionReputation` and `reputationValues`, and any valid `UniqueFields` with `slowTrack`, the reputation lines produced by `mapToCharacterData` should reflect halved reputation values when `slowTrack` is true, and standard reputation values when `slowTrack` is false. Specifically, each faction's contribution to the reputation output should be halved (not rounded) when slow track is active.
+_For any_ valid `SharedFields` with `chosenFactionReputation` and `reputationValues`, and any valid `UniqueFields` with `slowTrack`, the reputation lines produced by `mapToCharacterData` should reflect halved reputation values when `slowTrack` is true, and standard reputation values when `slowTrack` is false. Specifically, each faction's contribution to the reputation output should be halved (not rounded) when slow track is active.
 
 **Validates: Requirements 3.1, 3.2, 3.3**
 
 ### Property 3: Currency halving in chronicle generation respects slow track, downtime, and override states
 
-*For any* valid `SharedFields` with `treasureBundles`, `downtimeDays`, and any valid `UniqueFields` with `slowTrack`, `overrideCurrency`, `overrideCurrencyValue`, `taskLevel`, `successLevel`, and `proficiencyRank`, the `currency_gained` field in the `ChronicleData` returned by `mapToCharacterData` should equal:
+_For any_ valid `SharedFields` with `treasureBundles`, `downtimeDays`, and any valid `UniqueFields` with `slowTrack`, `overrideCurrency`, `overrideCurrencyValue`, `taskLevel`, `successLevel`, and `proficiencyRank`, the `currency_gained` field in the `ChronicleData` returned by `mapToCharacterData` should equal:
+
 - `overrideCurrencyValue` when `overrideCurrency` is true (regardless of `slowTrack`)
 - `(treasureBundleValue + earnedIncome) / 2` when `slowTrack` is true and `overrideCurrency` is false, where `earnedIncome` is calculated using `downtimeDays / 2`
 - `treasureBundleValue + earnedIncome` when `slowTrack` is false and `overrideCurrency` is false
@@ -334,19 +338,20 @@ flowchart TD
 
 ### Property 4: Slow track persistence round-trip
 
-*For any* valid `PartyChronicleData` structure containing characters with any combination of `slowTrack` boolean values, saving the data and then loading it should produce identical `slowTrack` values for each character.
+_For any_ valid `PartyChronicleData` structure containing characters with any combination of `slowTrack` boolean values, saving the data and then loading it should produce identical `slowTrack` values for each character.
 
 **Validates: Requirements 6.1, 6.2**
 
 ### Property 5: Clear resets all slow track states
 
-*For any* `PartyChronicleData` structure with any combination of `slowTrack` states across any number of characters, after applying the clear-data defaults, every character's `slowTrack` should be `false`.
+_For any_ `PartyChronicleData` structure with any combination of `slowTrack` states across any number of characters, after applying the clear-data defaults, every character's `slowTrack` should be `false`.
 
 **Validates: Requirements 6.3**
 
 ### Property 6: Session report reward halving respects slow track and override states
 
-*For any* valid `SharedFields` and `UniqueFields` with `slowTrack`, `overrideXp`, `overrideXpValue`, `overrideCurrency`, and `overrideCurrencyValue`, the `SignUp` entry produced by `buildSignUp` (or `buildGmSignUp`) should have:
+_For any_ valid `SharedFields` and `UniqueFields` with `slowTrack`, `overrideXp`, `overrideXpValue`, `overrideCurrency`, and `overrideCurrencyValue`, the `SignUp` entry produced by `buildSignUp` (or `buildGmSignUp`) should have:
+
 - `xpEarned` equal to `overrideXpValue` when `overrideXp` is true, `xpEarned / 2` when `slowTrack && !overrideXp`, or `xpEarned` when `!slowTrack && !overrideXp`
 - `repEarned` equal to `chosenFactionReputation / 2` when `slowTrack` is true, or `chosenFactionReputation` when `slowTrack` is false
 - `currencyGained` equal to `overrideCurrencyValue` when `overrideCurrency` is true, halved calculated value when `slowTrack && !overrideCurrency`, or standard calculated value when `!slowTrack && !overrideCurrency`
@@ -355,28 +360,28 @@ flowchart TD
 
 ### Property 7: Session report includes slowTrack flag
 
-*For any* character with `slowTrack` set to true or false, the `SignUp` entry in the session report should include a `slowTrack` field matching the character's `slowTrack` value.
+_For any_ character with `slowTrack` set to true or false, the `SignUp` entry in the session report should include a `slowTrack` field matching the character's `slowTrack` value.
 
 **Validates: Requirements 7.1**
 
 ### Property 8: Per-character slow track independence
 
-*For any* set of two or more characters with different `slowTrack` states, the `ChronicleData` produced by `mapToCharacterData` for each character should reflect only that character's `slowTrack` state. Enabling slow track for one character should not affect the rewards calculated for any other character.
+_For any_ set of two or more characters with different `slowTrack` states, the `ChronicleData` produced by `mapToCharacterData` for each character should reflect only that character's `slowTrack` state. Enabling slow track for one character should not affect the rewards calculated for any other character.
 
 **Validates: Requirements 9.1, 9.2, 9.4**
 
 ## Error Handling
 
-| Scenario | Handling |
-|---|---|
-| Saved data missing `slowTrack` field (migration from older version) | When loading saved data that predates this feature, `slowTrack` will be `undefined`. The form data extraction uses `|| false` for checkboxes, and `Boolean(undefined)` returns `false`. No migration script needed — the checkbox defaults to unchecked. |
-| `slowTrack` is `true` but game system is `sf2e` | The template does not render the checkbox for `sf2e`, so `slowTrack` cannot be checked via the UI. If stale saved data has `slowTrack: true` for an `sf2e` game, the extraction returns `false` because the checkbox element does not exist in the DOM. The generation code uses `Boolean(uniqueFields.slowTrack)` which safely handles this. |
-| Halving produces fractional XP (e.g., 1 XP → 0.5 XP) | Per the Lorespire rules, fractional values are preserved — no rounding. The `xp_gained` field in `ChronicleData` is typed as `number` and supports fractional values. The PDF generator writes the numeric value as-is. |
-| Halving produces fractional reputation (e.g., 3 → 1.5) | Fractional reputation values are preserved in the reputation string (e.g., "Envoy's Alliance: +1.5"). The reputation calculator formats the value using string interpolation, which handles decimals. |
-| Halving produces fractional downtime days (e.g., 7 → 3.5) | The halved downtime days value is passed to `calculateEarnedIncome()` which accepts `number` and handles fractional days. The earned income table lookup uses the integer portion for the daily rate, and the fractional day produces a proportional income. |
-| Halving produces fractional currency (e.g., 15.6 → 7.8) | Currency values are already stored as `number` with decimal precision. The `currency_gained` field supports fractional values. The PDF generator formats currency with 2 decimal places. |
-| Override active with slow track — both checked simultaneously | By design, overrides bypass slow track halving. The override value is used as-is. This is the correct behavior per requirements 2.2 and 5.2. |
-| Slow track checkbox change fails to auto-save | Handled by existing `saveFormData()` error handling: logs error, shows `ui.notifications.warn()`. The slow track state in the DOM remains correct even if persistence fails. |
+| Scenario                                                            | Handling                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Saved data missing `slowTrack` field (migration from older version) | When loading saved data that predates this feature, `slowTrack` will be `undefined`. The form data extraction uses `                                                                                                                                                                                                                          |     | false`for checkboxes, and`Boolean(undefined)`returns`false`. No migration script needed — the checkbox defaults to unchecked. |
+| `slowTrack` is `true` but game system is `sf2e`                     | The template does not render the checkbox for `sf2e`, so `slowTrack` cannot be checked via the UI. If stale saved data has `slowTrack: true` for an `sf2e` game, the extraction returns `false` because the checkbox element does not exist in the DOM. The generation code uses `Boolean(uniqueFields.slowTrack)` which safely handles this. |
+| Halving produces fractional XP (e.g., 1 XP → 0.5 XP)                | Per the Lorespire rules, fractional values are preserved — no rounding. The `xp_gained` field in `ChronicleData` is typed as `number` and supports fractional values. The PDF generator writes the numeric value as-is.                                                                                                                       |
+| Halving produces fractional reputation (e.g., 3 → 1.5)              | Fractional reputation values are preserved in the reputation string (e.g., "Envoy's Alliance: +1.5"). The reputation calculator formats the value using string interpolation, which handles decimals.                                                                                                                                         |
+| Halving produces fractional downtime days (e.g., 7 → 3.5)           | The halved downtime days value is passed to `calculateEarnedIncome()` which accepts `number` and handles fractional days. The earned income table lookup uses the integer portion for the daily rate, and the fractional day produces a proportional income.                                                                                  |
+| Halving produces fractional currency (e.g., 15.6 → 7.8)             | Currency values are already stored as `number` with decimal precision. The `currency_gained` field supports fractional values. The PDF generator formats currency with 2 decimal places.                                                                                                                                                      |
+| Override active with slow track — both checked simultaneously       | By design, overrides bypass slow track halving. The override value is used as-is. This is the correct behavior per requirements 2.2 and 5.2.                                                                                                                                                                                                  |
+| Slow track checkbox change fails to auto-save                       | Handled by existing `saveFormData()` error handling: logs error, shows `ui.notifications.warn()`. The slow track state in the DOM remains correct even if persistence fails.                                                                                                                                                                  |
 
 ## Testing Strategy
 
@@ -411,6 +416,7 @@ Tests target the pure logic functions that can be exercised without the Foundry 
   - Tag: `Feature: slow-track, Property 8: Per-character slow track independence`
 
 Configuration:
+
 - Library: `fast-check`
 - Minimum iterations: 100 per property
 - Tag format: `Feature: slow-track, Property {N}: {title}`

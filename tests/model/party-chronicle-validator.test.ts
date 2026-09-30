@@ -3,7 +3,11 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { validateSharedFields, validateUniqueFields, validateAllFields } from '../../scripts/model/party-chronicle-validator';
+import {
+  validateSharedFields,
+  validateUniqueFields,
+  validateAllFields,
+} from '../../scripts/model/party-chronicle-validator';
 import { SharedFields, UniqueFields } from '../../scripts/model/party-chronicle-types';
 import { createSharedFields, createUniqueFields } from './test-helpers';
 
@@ -29,8 +33,8 @@ describe('validateSharedFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     });
 
     const result = validateSharedFields(shared);
@@ -48,7 +52,7 @@ describe('validateSharedFields', () => {
       xpEarned: 4,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
     };
 
     const result = validateSharedFields(shared);
@@ -66,7 +70,7 @@ describe('validateSharedFields', () => {
       xpEarned: 4,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
     };
 
     const result = validateSharedFields(shared);
@@ -84,7 +88,7 @@ describe('validateSharedFields', () => {
       xpEarned: 4,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
     };
 
     const result = validateSharedFields(shared);
@@ -102,7 +106,7 @@ describe('validateSharedFields', () => {
       xpEarned: 4,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
     };
 
     const result = validateSharedFields(shared);
@@ -120,7 +124,7 @@ describe('validateSharedFields', () => {
       xpEarned: 4,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
     };
 
     const result = validateSharedFields(shared);
@@ -138,7 +142,7 @@ describe('validateSharedFields', () => {
       xpEarned: 4,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
     };
 
     const result = validateSharedFields(shared);
@@ -155,7 +159,7 @@ describe('validateSharedFields', () => {
       eventDate: '2024-01-15',
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
     };
 
     const result = validateSharedFields(shared);
@@ -173,7 +177,7 @@ describe('validateSharedFields', () => {
       xpEarned: -1,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
     };
 
     const result = validateSharedFields(shared);
@@ -191,7 +195,7 @@ describe('validateSharedFields', () => {
       xpEarned: 4,
       layoutId: '',
       seasonId: 'season-5',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
     };
 
     const result = validateSharedFields(shared);
@@ -209,7 +213,7 @@ describe('validateSharedFields', () => {
       xpEarned: 4,
       layoutId: 'layout-1',
       seasonId: '',
-      blankChroniclePath: '/path/to/chronicle.pdf'
+      blankChroniclePath: '/path/to/chronicle.pdf',
     };
 
     const result = validateSharedFields(shared);
@@ -227,7 +231,7 @@ describe('validateSharedFields', () => {
       xpEarned: 4,
       layoutId: 'layout-1',
       seasonId: 'season-5',
-      blankChroniclePath: ''
+      blankChroniclePath: '',
     };
 
     const result = validateSharedFields(shared);
@@ -255,8 +259,8 @@ describe('validateSharedFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -286,8 +290,8 @@ describe('validateSharedFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -304,7 +308,7 @@ describe('validateSharedFields', () => {
       eventDate: '',
       layoutId: '',
       seasonId: '',
-      blankChroniclePath: ''
+      blankChroniclePath: '',
     };
 
     const result = validateSharedFields(shared);
@@ -331,8 +335,8 @@ describe('validateSharedFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -360,8 +364,8 @@ describe('validateSharedFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -389,8 +393,8 @@ describe('validateSharedFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result1 = validateSharedFields(shared1);
@@ -415,8 +419,8 @@ describe('validateSharedFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result2 = validateSharedFields(shared2);
@@ -443,8 +447,8 @@ describe('validateSharedFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -472,8 +476,8 @@ describe('validateSharedFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -501,8 +505,8 @@ describe('validateSharedFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -530,8 +534,8 @@ describe('validateSharedFields', () => {
         HH: 9,
         VS: 1,
         RO: 0,
-        VW: 5
-      }
+        VW: 5,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -549,7 +553,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -560,8 +564,8 @@ describe('validateSharedFields', () => {
           HH: 0,
           VS: 0,
           RO: 0,
-          VW: 0
-        }
+          VW: 0,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -578,7 +582,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -589,8 +593,8 @@ describe('validateSharedFields', () => {
           HH: 9,
           VS: 9,
           RO: 9,
-          VW: 9
-        }
+          VW: 9,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -607,7 +611,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -618,8 +622,8 @@ describe('validateSharedFields', () => {
           HH: 0,
           VS: 0,
           RO: 0,
-          VW: 0
-        }
+          VW: 0,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -636,7 +640,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -647,8 +651,8 @@ describe('validateSharedFields', () => {
           HH: 10,
           VS: 0,
           RO: 0,
-          VW: 0
-        }
+          VW: 0,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -665,7 +669,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -676,8 +680,8 @@ describe('validateSharedFields', () => {
           HH: 0,
           VS: 0,
           RO: 0,
-          VW: 0
-        }
+          VW: 0,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -694,7 +698,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -705,8 +709,8 @@ describe('validateSharedFields', () => {
           HH: 0,
           VS: -1,
           RO: 0,
-          VW: 0
-        }
+          VW: 0,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -725,7 +729,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -735,8 +739,8 @@ describe('validateSharedFields', () => {
           HH: 0,
           VS: 0,
           RO: 0,
-          VW: 0
-        }
+          VW: 0,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -753,7 +757,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -764,8 +768,8 @@ describe('validateSharedFields', () => {
           HH: 0,
           VS: 0,
           RO: 0,
-          VW: 0
-        }
+          VW: 0,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -782,7 +786,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -793,8 +797,8 @@ describe('validateSharedFields', () => {
           HH: 0,
           VS: 0,
           RO: 0,
-          VW: 0
-        }
+          VW: 0,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -811,7 +815,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -822,8 +826,8 @@ describe('validateSharedFields', () => {
           HH: 0,
           VS: 0,
           RO: 0,
-          VW: 0
-        }
+          VW: 0,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -839,7 +843,7 @@ describe('validateSharedFields', () => {
         { code: 'HH', name: 'Horizon Hunters' },
         { code: 'VS', name: 'Vigilant Seal' },
         { code: 'RO', name: 'Radiant Oath' },
-        { code: 'VW', name: 'Verdant Wheel' }
+        { code: 'VW', name: 'Verdant Wheel' },
       ];
 
       for (const testCase of testCases) {
@@ -850,7 +854,7 @@ describe('validateSharedFields', () => {
           eventDate: '2024-01-15',
           xpEarned: 4,
           treasureBundles: 0,
-      downtimeDays: 0,
+          downtimeDays: 0,
           layoutId: 'layout-1',
           seasonId: 'season-5',
           blankChroniclePath: '/path/to/chronicle.pdf',
@@ -861,8 +865,8 @@ describe('validateSharedFields', () => {
             HH: testCase.code === 'HH' ? 10 : 0,
             VS: testCase.code === 'VS' ? 10 : 0,
             RO: testCase.code === 'RO' ? 10 : 0,
-            VW: testCase.code === 'VW' ? 10 : 0
-          }
+            VW: testCase.code === 'VW' ? 10 : 0,
+          },
         };
 
         const result = validateSharedFields(shared);
@@ -880,7 +884,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -891,8 +895,8 @@ describe('validateSharedFields', () => {
           HH: 0,
           VS: 0,
           RO: 3.7,
-          VW: 0
-        }
+          VW: 0,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -911,7 +915,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -922,8 +926,8 @@ describe('validateSharedFields', () => {
           HH: 2.5,
           VS: 0,
           RO: 0,
-          VW: 0
-        }
+          VW: 0,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -944,7 +948,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -955,8 +959,8 @@ describe('validateSharedFields', () => {
           HH: 12,
           VS: 13,
           RO: 14,
-          VW: 15
-        }
+          VW: 15,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -979,7 +983,7 @@ describe('validateSharedFields', () => {
         eventDate: '2024-01-15',
         xpEarned: 4,
         treasureBundles: 0,
-      downtimeDays: 0,
+        downtimeDays: 0,
         layoutId: 'layout-1',
         seasonId: 'season-5',
         blankChroniclePath: '/path/to/chronicle.pdf',
@@ -990,8 +994,8 @@ describe('validateSharedFields', () => {
           HH: 0,
           VS: 0,
           RO: 0,
-          VW: 0
-        }
+          VW: 0,
+        },
       };
 
       const result = validateSharedFields(shared);
@@ -1010,14 +1014,15 @@ describe('validateUniqueFields', () => {
   it('should pass validation for valid unique fields', () => {
     const unique: UniqueFields = createUniqueFields({
       characterName: 'Valeros',
-      playerNumber: '12345', characterNumber: '01',
+      playerNumber: '12345',
+      characterNumber: '01',
       level: 3,
       currencySpent: 10,
       notes: 'Saved the village',
       taskLevel: 1,
       successLevel: 'success',
       proficiencyRank: 'trained',
-      earnedIncome: 0.8
+      earnedIncome: 0.8,
     });
 
     const result = validateUniqueFields(unique);
@@ -1029,10 +1034,11 @@ describe('validateUniqueFields', () => {
   it('should fail validation when Character Name is missing', () => {
     const unique: Partial<UniqueFields> = {
       characterName: '',
-      playerNumber: '12345', characterNumber: '01',
+      playerNumber: '12345',
+      characterNumber: '01',
       level: 3,
       currencySpent: 10,
-      notes: ''
+      notes: '',
     };
 
     const result = validateUniqueFields(unique);
@@ -1044,10 +1050,11 @@ describe('validateUniqueFields', () => {
   it('should fail validation when Player Number is missing', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      playerNumber: '', characterNumber: '',
+      playerNumber: '',
+      characterNumber: '',
       level: 3,
       currencySpent: 10,
-      notes: ''
+      notes: '',
     };
 
     const result = validateUniqueFields(unique);
@@ -1059,10 +1066,11 @@ describe('validateUniqueFields', () => {
   it('should fail validation when Character Number is missing', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      playerNumber: '12345', characterNumber: '',
+      playerNumber: '12345',
+      characterNumber: '',
       level: 3,
       currencySpent: 10,
-      notes: ''
+      notes: '',
     };
 
     const result = validateUniqueFields(unique);
@@ -1074,9 +1082,10 @@ describe('validateUniqueFields', () => {
   it('should fail validation when Level is missing', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      playerNumber: '12345', characterNumber: '01',
+      playerNumber: '12345',
+      characterNumber: '01',
       currencySpent: 10,
-      notes: ''
+      notes: '',
     };
 
     const result = validateUniqueFields(unique);
@@ -1088,10 +1097,11 @@ describe('validateUniqueFields', () => {
   it('should fail validation when Level is out of range', () => {
     const unique1: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      playerNumber: '12345', characterNumber: '01',
+      playerNumber: '12345',
+      characterNumber: '01',
       level: 0,
       currencySpent: 10,
-      notes: ''
+      notes: '',
     };
 
     const result1 = validateUniqueFields(unique1);
@@ -1100,10 +1110,11 @@ describe('validateUniqueFields', () => {
 
     const unique2: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      playerNumber: '12345', characterNumber: '01',
+      playerNumber: '12345',
+      characterNumber: '01',
       level: 21,
       currencySpent: 10,
-      notes: ''
+      notes: '',
     };
 
     const result2 = validateUniqueFields(unique2);
@@ -1114,10 +1125,11 @@ describe('validateUniqueFields', () => {
   it('should fail validation when Level is not an integer', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      playerNumber: '12345', characterNumber: '01',
+      playerNumber: '12345',
+      characterNumber: '01',
       level: 3.5,
       currencySpent: 10,
-      notes: ''
+      notes: '',
     };
 
     const result = validateUniqueFields(unique);
@@ -1132,9 +1144,10 @@ describe('validateUniqueFields', () => {
   it('should fail validation when Gold Spent is missing', () => {
     const unique: Partial<UniqueFields> = {
       characterName: 'Valeros',
-      playerNumber: '12345', characterNumber: '01',
+      playerNumber: '12345',
+      characterNumber: '01',
       level: 3,
-      notes: ''
+      notes: '',
     };
 
     const result = validateUniqueFields(unique);
@@ -1146,14 +1159,15 @@ describe('validateUniqueFields', () => {
   it('should accept zero values for numeric fields', () => {
     const unique: UniqueFields = createUniqueFields({
       characterName: 'Valeros',
-      playerNumber: '12345', characterNumber: '01',
+      playerNumber: '12345',
+      characterNumber: '01',
       level: 1,
       currencySpent: 0,
       notes: '',
       taskLevel: '-',
       successLevel: 'success',
       proficiencyRank: 'trained',
-      earnedIncome: 0
+      earnedIncome: 0,
     });
 
     const result = validateUniqueFields(unique);
@@ -1165,14 +1179,15 @@ describe('validateUniqueFields', () => {
   it('should accept empty strings for optional fields', () => {
     const unique: UniqueFields = createUniqueFields({
       characterName: 'Valeros',
-      playerNumber: '12345', characterNumber: '01',
+      playerNumber: '12345',
+      characterNumber: '01',
       level: 3,
       currencySpent: 10,
       notes: '',
       taskLevel: 1,
       successLevel: 'success',
       proficiencyRank: 'trained',
-      earnedIncome: 0.8
+      earnedIncome: 0.8,
     });
 
     const result = validateUniqueFields(unique);
@@ -1184,23 +1199,25 @@ describe('validateUniqueFields', () => {
   it('should prefix errors with character name when provided', () => {
     const unique: Partial<UniqueFields> = {
       characterName: '',
-      playerNumber: '', characterNumber: '',
+      playerNumber: '',
+      characterNumber: '',
       level: 3,
       currencySpent: 10,
-      notes: ''
+      notes: '',
     };
 
     const result = validateUniqueFields(unique, 'Valeros');
 
     expect(result.valid).toBe(false);
-    expect(result.errors.some(e => e.startsWith('Valeros:'))).toBe(true);
+    expect(result.errors.some((e) => e.startsWith('Valeros:'))).toBe(true);
   });
 
   it('should collect multiple errors', () => {
     const unique: Partial<UniqueFields> = {
       characterName: '',
-      playerNumber: '', characterNumber: '',
-      notes: ''
+      playerNumber: '',
+      characterNumber: '',
+      notes: '',
     };
 
     const result = validateUniqueFields(unique);
@@ -1232,29 +1249,31 @@ describe('validateAllFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     });
 
     const characters = {
       'actor-1': {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
         proficiencyRank: 'trained',
-        earnedIncome: 0.8
+        earnedIncome: 0.8,
       } as UniqueFields,
       'actor-2': {
         characterName: 'Seoni',
-        playerNumber: '67890', characterNumber: '02',
+        playerNumber: '67890',
+        characterNumber: '02',
         level: 5,
         currencySpent: 0,
-        notes: ''
-      } as UniqueFields
+        notes: '',
+      } as UniqueFields,
     };
 
     const result = validateAllFields(shared, characters);
@@ -1280,25 +1299,26 @@ describe('validateAllFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const characters = {
       'actor-1': {
         characterName: 'Valeros',
-        playerNumber: '', characterNumber: '',
+        playerNumber: '',
+        characterNumber: '',
         level: 3,
         currencySpent: 10,
-        notes: ''
-      } as Partial<UniqueFields>
+        notes: '',
+      } as Partial<UniqueFields>,
     };
 
     const result = validateAllFields(shared, characters);
 
     expect(result.valid).toBe(false);
-    expect(result.errors.some(e => e.includes('GM PFS Number'))).toBe(true);
-    expect(result.errors.some(e => e.includes('Player Number'))).toBe(true);
+    expect(result.errors.some((e) => e.includes('GM PFS Number'))).toBe(true);
+    expect(result.errors.some((e) => e.includes('Player Number'))).toBe(true);
   });
 
   it('should validate multiple characters', () => {
@@ -1322,31 +1342,33 @@ describe('validateAllFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     });
 
     const characters = {
       'actor-1': {
         characterName: 'Valeros',
-        playerNumber: '', characterNumber: '',
+        playerNumber: '',
+        characterNumber: '',
         level: 3,
         currencySpent: 10,
-        notes: ''
+        notes: '',
       } as Partial<UniqueFields>,
       'actor-2': {
         characterName: 'Seoni',
-        playerNumber: '', characterNumber: '',
+        playerNumber: '',
+        characterNumber: '',
         level: 5,
         currencySpent: 0,
-        notes: ''
-      } as Partial<UniqueFields>
+        notes: '',
+      } as Partial<UniqueFields>,
     };
 
     const result = validateAllFields(shared, characters);
 
     expect(result.valid).toBe(false);
-    expect(result.errors.filter(e => e.includes('Player Number')).length).toBe(2);
+    expect(result.errors.filter((e) => e.includes('Player Number')).length).toBe(2);
   });
 
   it('should use character names from map when provided', () => {
@@ -1370,28 +1392,29 @@ describe('validateAllFields', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     });
 
     const characters = {
       'actor-1': {
         characterName: 'Valeros',
-        playerNumber: '', characterNumber: '',
+        playerNumber: '',
+        characterNumber: '',
         level: 3,
         currencySpent: 10,
-        notes: ''
-      } as Partial<UniqueFields>
+        notes: '',
+      } as Partial<UniqueFields>,
     };
 
     const names = {
-      'actor-1': 'Valeros the Brave'
+      'actor-1': 'Valeros the Brave',
     };
 
     const result = validateAllFields(shared, characters, names);
 
     expect(result.valid).toBe(false);
-    expect(result.errors.some(e => e.includes('Valeros the Brave:'))).toBe(true);
+    expect(result.errors.some((e) => e.includes('Valeros the Brave:'))).toBe(true);
   });
 });
 
@@ -1420,8 +1443,8 @@ describe('validateSharedFields - XP Earned', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -1449,8 +1472,8 @@ describe('validateSharedFields - XP Earned', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -1478,8 +1501,8 @@ describe('validateSharedFields - XP Earned', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -1507,8 +1530,8 @@ describe('validateSharedFields - XP Earned', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -1536,8 +1559,8 @@ describe('validateSharedFields - XP Earned', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -1565,8 +1588,8 @@ describe('validateSharedFields - XP Earned', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -1593,8 +1616,8 @@ describe('validateSharedFields - XP Earned', () => {
         HH: 0,
         VS: 0,
         RO: 0,
-        VW: 0
-      }
+        VW: 0,
+      },
     };
 
     const result = validateSharedFields(shared);
@@ -1603,7 +1626,6 @@ describe('validateSharedFields - XP Earned', () => {
     expect(result.errors).toContain('XP Earned is required');
   });
 });
-
 
 describe('validateUniqueFields - Earned Income', () => {
   /**
@@ -1615,11 +1637,12 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept task level "-" (opt-out)', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
-        taskLevel: '-'
+        taskLevel: '-',
       };
 
       const result = validateUniqueFields(unique);
@@ -1631,13 +1654,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept task level 0', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 0,
         successLevel: 'success',
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -1649,13 +1673,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept task level 20', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 20,
         currencySpent: 10,
         notes: '',
         taskLevel: 20,
         successLevel: 'success',
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -1668,13 +1693,14 @@ describe('validateUniqueFields - Earned Income', () => {
       for (let level = 0; level <= 20; level++) {
         const unique: Partial<UniqueFields> = {
           characterName: 'Valeros',
-          playerNumber: '12345', characterNumber: '01',
+          playerNumber: '12345',
+          characterNumber: '01',
           level: Math.max(level, 1),
           currencySpent: 10,
           notes: '',
           taskLevel: level,
           successLevel: 'success',
-          proficiencyRank: 'trained'
+          proficiencyRank: 'trained',
         };
 
         const result = validateUniqueFields(unique);
@@ -1687,13 +1713,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should reject task level less than 0', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: -1,
         successLevel: 'success',
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -1705,13 +1732,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should reject task level greater than 20', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 21,
         successLevel: 'success',
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -1723,13 +1751,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should reject invalid task level string', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 'invalid' as any,
         successLevel: 'success',
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -1743,13 +1772,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept success level "critical_failure"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'critical_failure',
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -1761,13 +1791,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept success level "failure"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'failure',
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -1779,13 +1810,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept success level "success"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -1797,13 +1829,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept success level "critical_success"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'critical_success',
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -1815,13 +1848,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should reject invalid success level', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'invalid',
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -1835,13 +1869,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept proficiency rank "trained"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -1853,13 +1888,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept proficiency rank "expert"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
-        proficiencyRank: 'expert'
+        proficiencyRank: 'expert',
       };
 
       const result = validateUniqueFields(unique);
@@ -1871,13 +1907,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept proficiency rank "master"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
-        proficiencyRank: 'master'
+        proficiencyRank: 'master',
       };
 
       const result = validateUniqueFields(unique);
@@ -1889,13 +1926,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept proficiency rank "legendary"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
-        proficiencyRank: 'legendary'
+        proficiencyRank: 'legendary',
       };
 
       const result = validateUniqueFields(unique);
@@ -1907,13 +1945,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should reject invalid proficiency rank', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
         successLevel: 'success',
-        proficiencyRank: 'invalid'
+        proficiencyRank: 'invalid',
       };
 
       const result = validateUniqueFields(unique);
@@ -1927,12 +1966,13 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should require success level when task level is not "-"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
         // successLevel is missing
       };
 
@@ -1945,12 +1985,13 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should require proficiency rank when task level is not "-"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
-        successLevel: 'success'
+        successLevel: 'success',
         // proficiencyRank is missing
       };
 
@@ -1963,11 +2004,12 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should require both success level and proficiency rank when task level is not "-"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
-        taskLevel: 1
+        taskLevel: 1,
         // both successLevel and proficiencyRank are missing
       };
 
@@ -1981,11 +2023,12 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should not require success level when task level is "-"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
-        taskLevel: '-'
+        taskLevel: '-',
         // successLevel and proficiencyRank are missing, but that's OK
       };
 
@@ -1998,11 +2041,12 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should not require proficiency rank when task level is "-"', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
-        taskLevel: '-'
+        taskLevel: '-',
         // successLevel and proficiencyRank are missing, but that's OK
       };
 
@@ -2015,13 +2059,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should accept success level and proficiency rank when task level is "-" (optional)', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: '-',
         successLevel: 'success',
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -2033,11 +2078,12 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should prefix conditional validation errors with character name', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
-        taskLevel: 1
+        taskLevel: 1,
         // both successLevel and proficiencyRank are missing
       };
 
@@ -2053,14 +2099,15 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should pass validation with all earned income fields valid', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 5,
         currencySpent: 10,
         notes: '',
         taskLevel: 3,
         successLevel: 'success',
         proficiencyRank: 'expert',
-        earnedIncome: 2.5
+        earnedIncome: 2.5,
       };
 
       const result = validateUniqueFields(unique);
@@ -2072,13 +2119,14 @@ describe('validateUniqueFields - Earned Income', () => {
     it('should collect multiple earned income validation errors', () => {
       const unique: Partial<UniqueFields> = {
         characterName: 'Valeros',
-        playerNumber: '12345', characterNumber: '01',
+        playerNumber: '12345',
+        characterNumber: '01',
         level: 3,
         currencySpent: 10,
         notes: '',
-        taskLevel: 25,  // Invalid
-        successLevel: 'invalid',  // Invalid
-        proficiencyRank: 'invalid'  // Invalid
+        taskLevel: 25, // Invalid
+        successLevel: 'invalid', // Invalid
+        proficiencyRank: 'invalid', // Invalid
       };
 
       const result = validateUniqueFields(unique);
@@ -2092,14 +2140,15 @@ describe('validateUniqueFields - Earned Income', () => {
 
     it('should validate earned income fields alongside other unique fields', () => {
       const unique: Partial<UniqueFields> = {
-        characterName: '',  // Invalid
-        playerNumber: '', characterNumber: '',  // Invalid
+        characterName: '', // Invalid
+        playerNumber: '',
+        characterNumber: '', // Invalid
         level: 3,
         currencySpent: 10,
         notes: '',
         taskLevel: 1,
         // successLevel missing - Invalid
-        proficiencyRank: 'trained'
+        proficiencyRank: 'trained',
       };
 
       const result = validateUniqueFields(unique);
@@ -2110,5 +2159,17 @@ describe('validateUniqueFields - Earned Income', () => {
       expect(result.errors).toContain('Player Number is required');
       expect(result.errors).toContain('Success Level is required when Task Level is not "-"');
     });
+  });
+});
+
+describe('validateSharedFields - Treasure Bundles', () => {
+  it('accepts 2.5 treasure bundles for a Series 1 Quest', () => {
+    const result = validateSharedFields(createSharedFields({ xpEarned: 1, treasureBundles: 2.5 }));
+    expect(result.errors.filter((message) => message.includes('Treasure Bundles'))).toEqual([]);
+  });
+
+  it('rejects more than 10 treasure bundles', () => {
+    const result = validateSharedFields(createSharedFields({ treasureBundles: 11 }));
+    expect(result.errors).toContain('Treasure Bundles must be between 0 and 10');
   });
 });

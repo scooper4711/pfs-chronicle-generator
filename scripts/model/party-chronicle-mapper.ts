@@ -1,15 +1,19 @@
 /**
  * Data mapping functions for Party Chronicle Filling feature
- * 
+ *
  * This module provides functions to map party chronicle data structures
  * to the format expected by PdfGenerator for individual chronicle generation.
- * 
+ *
  * Requirements: party-chronicle-filling 4.3, 5.2
  */
 
 import { SharedFields, UniqueFields } from './party-chronicle-types.js';
 import { calculateReputation } from './reputation-calculator.js';
-import { calculateTreasureBundleValue, calculateCurrencyGained, getCreditsAwarded } from '../utils/treasure-bundle-calculator.js';
+import {
+  calculateTreasureBundleValue,
+  calculateCurrencyGained,
+  getCreditsAwarded,
+} from '../utils/treasure-bundle-calculator.js';
 import { calculateEarnedIncome } from '../utils/earned-income-calculator.js';
 import { getGameSystem } from '../utils/game-system-detector.js';
 import { PartyActor } from '../handlers/event-listener-helpers.js';
@@ -25,31 +29,31 @@ export interface ChronicleData {
   char_number: string;
   char_number_short: string;
   level: number;
-  
+
   // Event details
   gmid: string;
   event: string;
   eventcode: string;
   date: string;
-  
+
   // Rewards
   xp_gained: number;
   income_earned: number;
   treasure_bundle_value: number;
   currency_gained: number;
   currency_spent: number;
-  
+
   // Notes and reputation
   notes: string;
   reputation: string[];
-  
+
   // Layout-dependent selections
   summary_checkbox: string[];
   strikeout_item_lines: string[];
 
   // Fill-in blank values keyed by field name (spread into PDF data)
   fillIns: Record<string, string>;
-  
+
   // Treasure bundles
   treasure_bundles: string;
 }
@@ -57,16 +61,16 @@ export interface ChronicleData {
 /**
  * Maps party chronicle data (shared + unique fields) to the ChronicleData format
  * expected by PdfGenerator for a single character.
- * 
+ *
  * This function combines shared fields that apply to all party members with
  * character-specific unique fields to create a complete chronicle data object
  * for PDF generation.
- * 
+ *
  * @param shared - Shared fields that apply to all party members
  * @param unique - Character-specific unique fields
  * @param actor - Actor object to read chosen faction from
  * @returns ChronicleData object ready for PdfGenerator
- * 
+ *
  * @example
  * ```typescript
  * const shared: SharedFields = {
@@ -84,7 +88,7 @@ export interface ChronicleData {
  *   chosenFactionReputation: 2,
  *   reputationValues: { EA: 2, GA: 1, HH: 0, VS: 0, RO: 0, VW: 0 }
  * };
- * 
+ *
  * const unique: UniqueFields = {
  *   characterName: 'Valeros',
  *   playerNumber: '12345',
@@ -94,23 +98,19 @@ export interface ChronicleData {
  *   currencySpent: 10,
  *   notes: 'Saved the village'
  * };
- * 
+ *
  * const actor = { system: { pfs: { currentFaction: 'EA' } } };
- * 
+ *
  * const chronicleData = mapToCharacterData(shared, unique, actor);
  * // chronicleData.treasure_bundle_value is calculated as 2 × 3.8 = 7.6
  * // chronicleData.currency_gained is calculated as 7.6 + 8 = 15.6
  * // chronicleData.reputation is ["Envoy's Alliance: +4", "Grand Archive: +1"]
  * ```
- * 
+ *
  * Validates: Requirements party-chronicle-filling 5.1, 5.2, 5.3, 5.5, treasure-bundle-calculation 8.1, 8.2, 8.3, 8.4, 8.5, multi-line-reputation-tracking 5.1, 5.2, earned-income-calculation 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 12.1, 12.2, 12.3
  * Validates: Requirements slow-track 2.1, 2.2, 2.3, 3.1, 3.2, 3.3, 4.1, 4.2, 4.3, 5.1, 5.2, 5.3, 5.4
  */
-export function mapToCharacterData(
-  shared: SharedFields,
-  unique: UniqueFields,
-  actor: PartyActor
-): ChronicleData {
+export function mapToCharacterData(shared: SharedFields, unique: UniqueFields, actor: PartyActor): ChronicleData {
   const gameSystem = getGameSystem();
   const isSlowTrack = unique.slowTrack === true;
 
@@ -125,33 +125,35 @@ export function mapToCharacterData(
     effectiveDowntimeDays,
     gameSystem
   );
-  
+
   // Calculate treasure bundle gold or credits awarded based on game system
-  const treasureBundleValue = gameSystem === 'sf2e'
-    ? getCreditsAwarded(unique.level)
-    : calculateTreasureBundleValue(shared.treasureBundles, unique.level);
-  
+  const treasureBundleValue =
+    gameSystem === 'sf2e'
+      ? getCreditsAwarded(unique.level)
+      : calculateTreasureBundleValue(shared.treasureBundles, unique.level);
+
   // Calculate total currency gained
   const currencyGained = calculateCurrencyGained(treasureBundleValue, incomeEarned, gameSystem);
-  
+
   // Slow track: halve reputation values before passing to calculator (slow-track 3.1, 3.2, 3.3)
   const reputationShared = isSlowTrack ? halveReputationValues(shared) : shared;
   const reputationLines = calculateReputation(reputationShared, actor);
-  
+
   // Apply XP: override > slow track halving > standard (slow-track 2.1, 2.2, 2.3)
-  const xpGained = unique.overrideXp === true
-    ? unique.overrideXpValue
-    : isSlowTrack ? shared.xpEarned / 2 : shared.xpEarned;
+  const xpGained =
+    unique.overrideXp === true ? unique.overrideXpValue : isSlowTrack ? shared.xpEarned / 2 : shared.xpEarned;
 
   // Apply currency: override > slow track halving > standard (slow-track 5.1, 5.2, 5.3, 5.4)
-  // Slow track division can produce floating-point artifacts (e.g. 5.69999... instead of 5.7),
-  // so round the computed result to 2 decimal places. Override values are user-entered and
-  // passed through as-is.
-  const finalCurrencyGained = unique.overrideCurrency === true
-    ? unique.overrideCurrencyValue
-    : isSlowTrack
-      ? Math.round((treasureBundleValue + incomeEarned) / 2 * 100) / 100
-      : currencyGained;
+  // On slow track, earned income is already halved through its halved downtime days, so
+  // only the treasure is halved here. Halving can produce floating-point artifacts
+  // (e.g. 5.69999... instead of 5.7), so round to 2 decimal places. Override values are
+  // user-entered and passed through as-is.
+  const finalCurrencyGained =
+    unique.overrideCurrency === true
+      ? unique.overrideCurrencyValue
+      : isSlowTrack
+        ? Math.round((treasureBundleValue / 2 + incomeEarned) * 100) / 100
+        : currencyGained;
 
   const chronicleData: ChronicleData = {
     // Character identification from unique fields
@@ -160,37 +162,37 @@ export function mapToCharacterData(
     char_number: unique.characterNumber,
     char_number_short: unique.characterNumber.length > 1 ? unique.characterNumber.substring(1) : unique.characterNumber,
     level: unique.level,
-    
+
     // Event details from shared fields
     gmid: shared.gmPfsNumber,
     event: shared.scenarioName,
     eventcode: shared.eventCode,
     date: shared.eventDate,
-    
+
     // XP - uses override value when active, otherwise shared xpEarned
     xp_gained: xpGained,
-    
+
     // Character-specific rewards - calculated values (currency uses override when active)
     income_earned: incomeEarned,
     treasure_bundle_value: treasureBundleValue,
     currency_gained: finalCurrencyGained,
     currency_spent: unique.currencySpent,
-    
+
     // Character-specific notes from unique fields
     notes: unique.notes,
     reputation: reputationLines,
-    
+
     // Layout-dependent selections from shared fields
     summary_checkbox: shared.adventureSummaryCheckboxes,
     strikeout_item_lines: shared.strikeoutItems,
 
     // Fill-in blanks pass through for param: resolution on the PDF
     fillIns: { ...shared.fillIns },
-    
+
     // Treasure bundles from shared fields (convert number to string)
     treasure_bundles: shared.treasureBundles.toString(),
   };
-  
+
   return chronicleData;
 }
 

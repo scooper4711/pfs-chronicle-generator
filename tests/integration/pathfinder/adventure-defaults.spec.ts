@@ -18,9 +18,6 @@ const BOUNTY: AdventureDefaults = { xp: '1', treasureBundles: '2', downtimeDays:
 const QUEST: AdventureDefaults = { xp: '2', treasureBundles: '4', downtimeDays: '4', reputation: '2' };
 const SCENARIO: AdventureDefaults = { xp: '4', treasureBundles: '8', downtimeDays: '8', reputation: '4' };
 
-const KNOWN_BUG_BOUNTY_TREASURE =
-  'Bounties default to 2 treasure bundles, but the Treasure dropdown has no 2 TB option (only -, 2.5, 3-10)';
-
 let party: TestParty;
 
 test.beforeAll(async ({ browser, gamemasterSession }) => {
@@ -58,26 +55,25 @@ test.describe('choosing a season', () => {
     await expectSharedRewards(form, SCENARIO);
   });
 
-  test('Bounties set 1 XP and no downtime', async ({ form }) => {
+  test('Bounties set 1 XP, 2 treasure bundles, and no downtime', async ({ form }) => {
     await form.chooseSeason('pfs2/season3');
     await form.chooseSeason('pfs2/bounties');
-    await expect(form.field('#xpEarned')).toHaveValue(BOUNTY.xp);
-    await expect(form.field('.downtime-days-value')).toHaveText(BOUNTY.downtimeDays);
-  });
-
-  test('Bounties select 2 treasure bundles', async ({ form }) => {
-    test.fail(true, KNOWN_BUG_BOUNTY_TREASURE);
-    await form.chooseSeason('pfs2/season3');
-    await form.chooseSeason('pfs2/bounties');
-    await expect(form.field('#treasureBundles')).toHaveValue(BOUNTY.treasureBundles, { timeout: 2000 });
+    await expectSharedRewards(form, BOUNTY);
   });
 
   test("character cards show the season's XP", async ({ form }) => {
-    test.fail(true, 'Season defaults set #xpEarned without a change event, so character XP labels keep the old value');
     await form.chooseSeason('pfs2/season3');
     await form.chooseSeason('pfs2/quests');
     const label = form.member(party.memberIds[0]).locator('.calculated-xp-label');
-    await expect(label).toHaveText(`${QUEST.xp} XP`, { timeout: 2000 });
+    await expect(label).toHaveText(`${QUEST.xp} XP`);
+  });
+
+  test("slow track character cards show half the season's XP", async ({ form }) => {
+    const [seelahId] = party.memberIds;
+    await form.chooseSeason('pfs2/season3');
+    await form.memberField(seelahId, 'slowTrack').check();
+    await form.chooseSeason('pfs2/quests');
+    await expect(form.member(seelahId).locator('.calculated-xp-label')).toHaveText('1 XP');
   });
 });
 
@@ -107,17 +103,10 @@ test.describe('clearing the form', () => {
     await expect(form.field('#chosenFactionReputation')).toHaveValue(SCENARIO.reputation);
   });
 
-  test('uses Bounty XP, downtime, and reputation for an event named "B<number> ..."', async ({ form }) => {
+  test('uses Bounty defaults for an event named "B<number> ..."', async ({ form }) => {
     await clearWithEventName(form, 'B12 The Stolen Shadow');
-    await expect(form.field('#xpEarned')).toHaveValue(BOUNTY.xp);
-    await expect(form.field('.downtime-days-value')).toHaveText(BOUNTY.downtimeDays);
+    await expectSharedRewards(form, BOUNTY);
     await expect(form.field('#chosenFactionReputation')).toHaveValue(BOUNTY.reputation);
-  });
-
-  test('uses 2 treasure bundles for an event named "B<number> ..."', async ({ form }) => {
-    test.fail(true, KNOWN_BUG_BOUNTY_TREASURE);
-    await clearWithEventName(form, 'B12 The Stolen Shadow');
-    await expect(form.field('#treasureBundles')).toHaveValue(BOUNTY.treasureBundles, { timeout: 2000 });
   });
 
   test("selects each character's PFS default task level", async ({ form }) => {

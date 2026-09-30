@@ -24,7 +24,7 @@ describe('updateXpForSeason - Composite Key Handling', () => {
     (global as any).game = {
       system: { id: 'pf2e' },
       modules: { get: () => undefined },
-      settings: { set: jest.fn().mockResolvedValue(undefined) }
+      settings: { set: jest.fn().mockResolvedValue(undefined) },
     };
 
     // Create XP earned select with standard options
@@ -101,5 +101,70 @@ describe('updateXpForSeason - Composite Key Handling', () => {
 
     const xpSelect = container.querySelector<HTMLSelectElement>('#xpEarned');
     expect(xpSelect?.value).toBe('2');
+  });
+});
+
+describe('updateXpForSeason - character XP labels', () => {
+  let container: HTMLElement;
+
+  /** Builds a character card with the fields the XP label logic reads. */
+  function addCharacterCard(id: string, options: { slowTrack?: boolean; overrideXp?: boolean } = {}): void {
+    const card = document.createElement('section');
+    card.className = 'member-activity';
+    card.dataset.characterId = id;
+    card.innerHTML = `
+      <input type="checkbox" name="characters.${id}.slowTrack" ${options.slowTrack ? 'checked' : ''}>
+      <input type="checkbox" name="characters.${id}.overrideXp" ${options.overrideXp ? 'checked' : ''}>
+      <div class="calculated-xp-label">4 XP</div>
+    `;
+    container.appendChild(card);
+  }
+
+  function xpLabel(id: string): string | null | undefined {
+    return container.querySelector(`.member-activity[data-character-id="${id}"] .calculated-xp-label`)?.textContent;
+  }
+
+  beforeEach(() => {
+    (global as any).game = {
+      system: { id: 'pf2e' },
+      modules: { get: () => undefined },
+      settings: { set: jest.fn().mockResolvedValue(undefined) },
+    };
+    container = document.createElement('div');
+    container.innerHTML = `
+      <select id="xpEarned"><option value="1"></option><option value="2"></option><option value="4" selected></option></select>
+      <div class="downtime-days-value">8</div>
+      <input type="hidden" id="downtimeDays" value="8">
+    `;
+  });
+
+  afterEach(() => {
+    delete (global as any).game;
+  });
+
+  it("shows the season's XP on each character card", () => {
+    addCharacterCard('a');
+    addCharacterCard('b');
+
+    updateXpForSeason('pfs2/quests', container);
+
+    expect(xpLabel('a')).toBe('2 XP');
+    expect(xpLabel('b')).toBe('2 XP');
+  });
+
+  it('shows half the XP for a slow track character', () => {
+    addCharacterCard('slow', { slowTrack: true });
+
+    updateXpForSeason('pfs2/quests', container);
+
+    expect(xpLabel('slow')).toBe('1 XP');
+  });
+
+  it('leaves an XP override label alone', () => {
+    addCharacterCard('override', { overrideXp: true });
+
+    updateXpForSeason('pfs2/bounties', container);
+
+    expect(xpLabel('override')).toBe('4 XP');
   });
 });
