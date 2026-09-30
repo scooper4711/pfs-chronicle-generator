@@ -12,7 +12,11 @@
  */
 
 import { debug, warn } from '../utils/logger.js';
-import { calculateTreasureBundleValue, formatCurrencyValue, getCreditsAwarded } from '../utils/treasure-bundle-calculator.js';
+import {
+  calculateTreasureBundleValue,
+  formatCurrencyValue,
+  getCreditsAwarded,
+} from '../utils/treasure-bundle-calculator.js';
 import { calculateDowntimeDays, calculateEarnedIncome, formatIncomeValue } from '../utils/earned-income-calculator.js';
 import { getGameSystem } from '../utils/game-system-detector.js';
 import { formatCurrency } from '../utils/currency-formatter.js';
@@ -31,13 +35,8 @@ interface EarnedIncomeSelects {
  *
  * @returns The select values, or null if the card or any select is missing.
  */
-export function extractEarnedIncomeSelects(
-  characterId: string,
-  container: HTMLElement
-): EarnedIncomeSelects | null {
-  const memberActivity = container.querySelector(
-    `.member-activity[data-character-id="${characterId}"]`
-  );
+export function extractEarnedIncomeSelects(characterId: string, container: HTMLElement): EarnedIncomeSelects | null {
+  const memberActivity = container.querySelector(`.member-activity[data-character-id="${characterId}"]`);
   if (!memberActivity) return null;
 
   const taskLevelSelect = memberActivity.querySelector<HTMLSelectElement>('select[name$=".taskLevel"]');
@@ -93,10 +92,7 @@ export function updateTreasureBundleDisplay(
  *
  * Requirements: treasure-bundle-calculation 5.1, 5.2, 5.3, 5.4
  */
-export function updateAllTreasureBundleDisplays(
-  treasureBundles: number,
-  container: HTMLElement
-): void {
+export function updateAllTreasureBundleDisplays(treasureBundles: number, container: HTMLElement): void {
   const memberActivities = container.querySelectorAll('.member-activity');
 
   memberActivities.forEach((activity) => {
@@ -164,7 +160,7 @@ export function updateEarnedIncomeDisplay(
     taskLevel,
     successLevel,
     proficiencyRank,
-    downtimeDays
+    downtimeDays,
   });
 
   const displayElement = container.querySelector(
@@ -208,10 +204,7 @@ export function updateEarnedIncomeDisplay(
  *
  * Requirements: earned-income-calculation 2.5, 7.3
  */
-export function updateAllEarnedIncomeDisplays(
-  downtimeDays: number,
-  container: HTMLElement
-): void {
+export function updateAllEarnedIncomeDisplays(downtimeDays: number, container: HTMLElement): void {
   debug('updateAllEarnedIncomeDisplays called with downtimeDays:', downtimeDays);
   const memberActivities = container.querySelectorAll('.member-activity');
   debug('Found member activities:', memberActivities.length);
@@ -228,7 +221,7 @@ export function updateAllEarnedIncomeDisplays(
       hasProficiencyRank: !!proficiencyRankSelect,
       taskLevelValue: taskLevelSelect?.value,
       successLevelValue: successLevelSelect?.value,
-      proficiencyRankValue: proficiencyRankSelect?.value
+      proficiencyRankValue: proficiencyRankSelect?.value,
     });
 
     if (characterId && taskLevelSelect && successLevelSelect && proficiencyRankSelect) {
@@ -256,10 +249,7 @@ export function updateAllEarnedIncomeDisplays(
  *
  * Requirements: earned-income-calculation 2.4, 2.5, 7.3
  */
-export function updateDowntimeDaysDisplay(
-  xpEarned: number,
-  container: HTMLElement
-): void {
+export function updateDowntimeDaysDisplay(xpEarned: number, container: HTMLElement): void {
   const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
   const treasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
 
@@ -345,7 +335,26 @@ export function updateXpForSeason(seasonId: string, container: HTMLElement): voi
 
   updateTreasureBundlesForXp(defaultXp, container);
   updateDowntimeDaysDisplay(defaultXp, container);
+  updateAllCalculatedXpLabels(container);
   updateSectionSummary('shared-rewards', container);
+}
+
+/**
+ * Refreshes every character's calculated XP label from the shared XP,
+ * halved for slow track characters and left alone under an XP override.
+ *
+ * @param container - Container element for the form
+ */
+export function updateAllCalculatedXpLabels(container: HTMLElement): void {
+  const members = container.querySelectorAll<HTMLElement>('.member-activity[data-character-id]');
+  for (const member of members) {
+    const characterId = member.dataset.characterId;
+    if (!characterId) continue;
+    const slowTrackCheckbox = container.querySelector<HTMLInputElement>(
+      `input[name="characters.${characterId}.slowTrack"]`
+    );
+    updateSlowTrackXpLabel(characterId, slowTrackCheckbox?.checked ?? false, container);
+  }
 }
 
 /**
@@ -363,10 +372,7 @@ export function updateXpForSeason(seasonId: string, container: HTMLElement): voi
  *
  * Requirements: slow-track 8.1, 8.2, 8.3, 8.4, 8.5, 8.6
  */
-export function updateSlowTrackDisplays(
-  characterId: string,
-  container: HTMLElement
-): void {
+export function updateSlowTrackDisplays(characterId: string, container: HTMLElement): void {
   const slowTrackCheckbox = container.querySelector<HTMLInputElement>(
     `input[name="characters.${characterId}.slowTrack"]`
   );
@@ -386,11 +392,7 @@ export function updateSlowTrackDisplays(
  *
  * Requirements: slow-track 8.1, 8.2
  */
-function updateSlowTrackXpLabel(
-  characterId: string,
-  isSlowTrack: boolean,
-  container: HTMLElement
-): void {
+function updateSlowTrackXpLabel(characterId: string, isSlowTrack: boolean, container: HTMLElement): void {
   const overrideXpCheckbox = container.querySelector<HTMLInputElement>(
     CHARACTER_FIELD_SELECTORS.OVERRIDE_XP(characterId)
   );
@@ -404,9 +406,7 @@ function updateSlowTrackXpLabel(
 
   const displayXp = isSlowTrack ? xpEarned / 2 : xpEarned;
 
-  const xpLabel = container.querySelector<HTMLElement>(
-    CHARACTER_FIELD_SELECTORS.CALCULATED_XP_LABEL(characterId)
-  );
+  const xpLabel = container.querySelector<HTMLElement>(CHARACTER_FIELD_SELECTORS.CALCULATED_XP_LABEL(characterId));
   if (xpLabel) {
     xpLabel.textContent = `${displayXp} XP`;
   }
@@ -420,11 +420,7 @@ function updateSlowTrackXpLabel(
  *
  * Requirements: slow-track 8.3, 8.4
  */
-function updateSlowTrackEarnedIncome(
-  characterId: string,
-  isSlowTrack: boolean,
-  container: HTMLElement
-): void {
+function updateSlowTrackEarnedIncome(characterId: string, isSlowTrack: boolean, container: HTMLElement): void {
   const downtimeDaysInput = container.querySelector<HTMLInputElement>('#downtimeDays');
   const downtimeDays = Number.parseInt(downtimeDaysInput?.value || '0', 10);
   const effectiveDays = isSlowTrack ? downtimeDays / 2 : downtimeDays;
@@ -451,11 +447,7 @@ function updateSlowTrackEarnedIncome(
  *
  * Requirements: slow-track 8.5, 8.6
  */
-function updateSlowTrackTreasureBundleGold(
-  characterId: string,
-  isSlowTrack: boolean,
-  container: HTMLElement
-): void {
+function updateSlowTrackTreasureBundleGold(characterId: string, isSlowTrack: boolean, container: HTMLElement): void {
   const overrideCurrencyCheckbox = container.querySelector<HTMLInputElement>(
     CHARACTER_FIELD_SELECTORS.OVERRIDE_CURRENCY(characterId)
   );
@@ -467,9 +459,7 @@ function updateSlowTrackTreasureBundleGold(
   const treasureBundlesSelect = container.querySelector<HTMLSelectElement>('#treasureBundles');
   const treasureBundles = Number.parseFloat(treasureBundlesSelect?.value || '0');
 
-  const memberActivity = container.querySelector(
-    `.member-activity[data-character-id="${characterId}"]`
-  );
+  const memberActivity = container.querySelector(`.member-activity[data-character-id="${characterId}"]`);
   if (!memberActivity) return;
 
   const levelInput = memberActivity.querySelector<HTMLInputElement>('input[name$=".level"]');
@@ -498,11 +488,7 @@ const SLOW_ADVANCEMENT_NOTE = 'Slow Advancement';
  * @param isSlowTrack - Whether slow track is currently active
  * @param container - Container element for the form
  */
-function updateSlowTrackNotesAnnotation(
-  characterId: string,
-  isSlowTrack: boolean,
-  container: HTMLElement
-): void {
+function updateSlowTrackNotesAnnotation(characterId: string, isSlowTrack: boolean, container: HTMLElement): void {
   const notesTextarea = container.querySelector<HTMLTextAreaElement>(
     `textarea[name="characters.${characterId}.notes"]`
   );
@@ -511,9 +497,7 @@ function updateSlowTrackNotesAnnotation(
   const currentNotes = notesTextarea.value;
 
   if (isSlowTrack) {
-    const alreadyPresent = currentNotes
-      .split('\n')
-      .some((line) => line.trim() === SLOW_ADVANCEMENT_NOTE);
+    const alreadyPresent = currentNotes.split('\n').some((line) => line.trim() === SLOW_ADVANCEMENT_NOTE);
 
     if (!alreadyPresent) {
       const separator = currentNotes.length > 0 && !currentNotes.endsWith('\n') ? '\n' : '';

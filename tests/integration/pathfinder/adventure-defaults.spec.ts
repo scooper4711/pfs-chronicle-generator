@@ -62,11 +62,18 @@ test.describe('choosing a season', () => {
   });
 
   test("character cards show the season's XP", async ({ form }) => {
-    test.fail(true, 'Season defaults set #xpEarned without a change event, so character XP labels keep the old value');
     await form.chooseSeason('pfs2/season3');
     await form.chooseSeason('pfs2/quests');
     const label = form.member(party.memberIds[0]).locator('.calculated-xp-label');
-    await expect(label).toHaveText(`${QUEST.xp} XP`, { timeout: 2000 });
+    await expect(label).toHaveText(`${QUEST.xp} XP`);
+  });
+
+  test("slow track character cards show half the season's XP", async ({ form }) => {
+    const [seelahId] = party.memberIds;
+    await form.chooseSeason('pfs2/season3');
+    await form.memberField(seelahId, 'slowTrack').check();
+    await form.chooseSeason('pfs2/quests');
+    await expect(form.member(seelahId).locator('.calculated-xp-label')).toHaveText('1 XP');
   });
 });
 
