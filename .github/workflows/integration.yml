@@ -43,9 +43,9 @@ jobs:
         uses: actions/cache@v6
         with:
           path: |
-            playwright/cache
-            playwright/versions
-            playwright/Data-*
+            .foundry-test/cache
+            .foundry-test/versions
+            .foundry-test/Data-test-*
           key: foundry-${{ hashFiles('foundry-test.config.json') }}
 
       - name: Integration tests
