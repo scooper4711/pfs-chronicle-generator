@@ -212,23 +212,35 @@ npm run test:all     # Run tests + code quality checks
 
 ### Integration Tests
 
-Playwright drives the built module in a real Foundry server. Each game system
-has its own world and Playwright project: `pf2e` (world `integration-test`)
-and `sf2e` (world `sfs-test`). Worlds are seeded on first start, which needs
-`FOUNDRY_LICENSE_KEY` in `.env`.
+Playwright drives the built module in a real Foundry server, using
+[foundry-test-kit](https://github.com/scooper4711/foundry-test-kit). Each
+game system has its own world and Playwright project: `pf2e` (world
+`integration-test`) and `sf2e` (world `sfs-test`), configured in
+`foundry-test.config.json`.
+
+Put these in `.env` (plain, or encrypted with
+[dotenvx](https://dotenvx.com) — see the kit's README):
+
+- `FOUNDRY_LICENSE_KEY` — seeds the worlds on first start
+- `FOUNDRY_USERNAME` / `FOUNDRY_PASSWORD` — download the Foundry build from
+  foundryvtt.com when it is not cached in `playwright/cache`
 
 ```bash
 npm run build
-./scripts/foundry.sh test run --all-worlds   # both worlds, one after the other
-./scripts/foundry.sh test run                # just the default Pathfinder world
+npm run integration                          # both worlds, one after the other
+npx foundry-test test run --world sfs-test   # one world
 npm run coverage:e2e                         # coverage report for the last run
 ```
 
-Against an already-running server, run the matching project directly, e.g.
-`npx playwright test --project=pf2e`. Specs live in `tests/integration/`
-(`pathfinder/`, `starfinder/`), with shared page objects and world helpers
-in `tests/integration/support/`. Test actors are named `IT …` and are
-removed after each spec file.
+Against an already-running server (`npx foundry-test test start`), run the
+matching project directly, e.g. `npx playwright test --project=pf2e`. Specs
+live in `tests/integration/` (`pathfinder/`, `starfinder/`), with the
+module's page objects in `tests/integration/support/`. Test actors are named
+`IT …` and are removed after each spec file.
+
+The Integration workflow runs the same suite in GitHub Actions using the
+`FOUNDRY_LICENSE_KEY`, `FOUNDRY_USERNAME`, and `FOUNDRY_PASSWORD` repository
+secrets.
 
 ### Code Quality
 
