@@ -12,12 +12,15 @@
     "lint": "eslint scripts/**/*.ts tests/**/*.ts --max-warnings 5",
     "check:duplication": "node scripts-build/check-duplication.js",
     "check:quality": "npm run lint && npm run check:duplication",
-    "test:all": "npm run test && npm run check:quality"
+    "test:all": "npm run test && npm run check:quality",
+    "prepare": "husky",
+    "validate:mermaid": "node scripts-build/validate-mermaid.mjs"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@mermaid-js/mermaid-cli": "^12.0.0",
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
     "@typescript-eslint/eslint-plugin": "^8.67.0",
@@ -27,9 +30,12 @@
     "eslint": "^10.8.1",
     "fast-check": "^4.9.0",
     "fvtt-types": "npm:@league-of-foundry-developers/foundry-vtt-types@^13.346.0-beta.20251209192131",
+    "husky": "^9.1.7",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
     "jscpd": "^5.0.16",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.9",
     "sass": "^1.102.0",
     "ts-jest": "^29.4.12",
     "typescript": "^6.0.3",
@@ -40,5 +46,13 @@
     "file-saver": "^2.0.5",
     "js-yaml": "^5.2.2",
     "pdf-lib": "^1.17.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml}": "prettier --write"
+  },
+  "overrides": {
+    "fvtt-types": {
+      "typescript": "$typescript"
+    }
   }
 }

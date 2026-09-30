@@ -1,0 +1,7 @@
+npx lint-staged
+STAGED_MD=$(git diff --cached --name-only --diff-filter=ACMR -- '*.md')
+if [ -n "$STAGED_MD" ]; then
+  printf '%s\n' "$STAGED_MD" | tr '\n' '\0' | xargs -0 npm run -s validate:mermaid --
+fi
+npm run lint
+npm test -- --silent
