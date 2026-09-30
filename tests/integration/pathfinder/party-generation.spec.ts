@@ -174,3 +174,20 @@ test('uses per-character XP and currency overrides', async ({ gmPage, form }) =>
   await expect(form.member(kyraId).locator('.treasure-bundle-row')).toBeVisible();
   await expect(form.memberField(kyraId, 'overrideCurrencyValue')).toHaveValue('0');
 });
+
+test('pays 2.5 treasure bundles for a Series 1 Quest', async ({ gmPage, form }) => {
+  const [amiriId] = party.memberIds;
+  await form.open(party.partyId);
+  await form.fillEventDetails();
+  await form.chooseScenario('pfs2/quests', 'pfs2.q1');
+  await form.field('#xpEarned').selectOption('1');
+  await form.field('#treasureBundles').selectOption('2.5');
+  // Series 1 Quests grant 2 downtime days.
+  await expect(form.field('.downtime-days-value')).toHaveText('2');
+
+  expect(await form.generate()).toContain('Successfully generated 3 chronicle(s)');
+
+  const amiri = (await readStoredChronicle(gmPage, amiriId)).data;
+  expect(amiri).toMatchObject({ treasure_bundles: '2.5', xp_gained: 1 });
+  expect(amiri?.treasure_bundle_value).toBeCloseTo(2.5 * EXPECTED.amiri.bundleValue, 2);
+});
