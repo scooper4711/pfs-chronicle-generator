@@ -2,17 +2,9 @@
  * Per-spec party setup: imports pregenerated characters with Society IDs
  * into a fresh party, and tears everything down afterwards.
  */
-import type { Browser, Page } from '@playwright/test';
-import { disableSceneCanvas, suiteContextOptions } from './context-options.js';
-import { enterGameAsGamemaster } from './session.js';
-import {
-  createParty,
-  deleteChatMessages,
-  deleteTestActors,
-  importPregen,
-  resetChronicleForm,
-  type SocietyIdentity,
-} from './world.js';
+import type { Page } from '@playwright/test';
+import { deleteActorsByPrefix, deleteChatMessages, type SocietyIdentity } from '@scooper4711/foundry-test-kit';
+import { createParty, importPregen, resetChronicleForm, TEST_ACTOR_PREFIXES } from './world.js';
 
 export interface MemberSpec {
   /** Compendium entry name, e.g. "Amiri (Level 1)". */
@@ -26,23 +18,6 @@ export interface TestParty {
   partyId: string;
   /** Actor ids in the order the members were given. */
   memberIds: string[];
-}
-
-/** Runs `action` on a fresh Gamemaster page, closing it afterwards. */
-export async function withGamemaster<T>(
-  browser: Browser,
-  sessionPath: string,
-  action: (page: Page) => Promise<T>
-): Promise<T> {
-  const context = await browser.newContext(suiteContextOptions(sessionPath));
-  await disableSceneCanvas(context);
-  try {
-    const page = await context.newPage();
-    await enterGameAsGamemaster(page);
-    return await action(page);
-  } finally {
-    await context.close();
-  }
 }
 
 /** Imports the members from `packId` and groups them into a new party. */
@@ -62,7 +37,7 @@ export async function createTestParty(
 
 /** Removes suite actors, chat messages, and the saved form. */
 export async function cleanWorld(page: Page): Promise<void> {
-  await deleteTestActors(page);
+  await deleteActorsByPrefix(page, TEST_ACTOR_PREFIXES);
   await deleteChatMessages(page);
   await resetChronicleForm(page);
 }

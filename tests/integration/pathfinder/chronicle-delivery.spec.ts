@@ -5,17 +5,18 @@
 import { readFileSync } from 'fs';
 import { unzipSync } from 'fflate';
 import { test, expect } from '../support/test.js';
-import { cleanWorld, createTestParty, withGamemaster, type TestParty } from '../support/party.js';
+import { withGamemasterPage } from '@scooper4711/foundry-test-kit';
+import { cleanWorld, createTestParty, type TestParty } from '../support/party.js';
 import { CharacterSheet } from '../support/character-sheet.js';
-import { disableSceneCanvas, suiteContextOptions } from '../support/context-options.js';
-import { joinAsPlayer, TEST_PLAYER } from '../support/session.js';
-import { assignCharacterToUser, readStoredChronicle } from '../support/world.js';
+import { disableSceneCanvas, joinAsPlayer, suiteContextOptions } from '@scooper4711/foundry-test-kit';
+import { readStoredChronicle } from '../support/world.js';
+import { assignCharacterToUser } from '@scooper4711/foundry-test-kit';
 import { expectNotification, type SocietyForm } from '../support/society-form.js';
 
 let party: TestParty;
 
 test.beforeAll(async ({ browser, gamemasterSession }) => {
-  party = await withGamemaster(browser, gamemasterSession, async (page) => {
+  party = await withGamemasterPage(browser, gamemasterSession, async (page) => {
     await cleanWorld(page);
     const created = await createTestParty(page, 'pf2e.iconics', 'Delivery Party', [
       {
@@ -29,13 +30,13 @@ test.beforeAll(async ({ browser, gamemasterSession }) => {
         society: { playerNumber: 760002, characterNumber: 2002, faction: 'EA' },
       },
     ]);
-    await assignCharacterToUser(page, created.memberIds[0], TEST_PLAYER);
+    await assignCharacterToUser(page, created.memberIds[0], 'TestPlayer');
     return created;
   });
 });
 
 test.afterAll(async ({ browser, gamemasterSession }) => {
-  await withGamemaster(browser, gamemasterSession, cleanWorld);
+  await withGamemasterPage(browser, gamemasterSession, cleanWorld);
 });
 
 test.describe.configure({ mode: 'serial' });
@@ -72,7 +73,7 @@ test('an assigned player downloads their own chronicle', async ({ browser }) => 
   await disableSceneCanvas(context);
   try {
     const page = await context.newPage();
-    await joinAsPlayer(page, TEST_PLAYER);
+    await joinAsPlayer(page, 'TestPlayer');
     const sheet = new CharacterSheet(page, party.memberIds[0]);
     await sheet.openPfsTab();
 

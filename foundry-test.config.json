@@ -1,0 +1,11 @@
+{
+  "moduleId": "pfs-chronicle-generator",
+  "foundryVersion": "latest",
+  "testWorlds": [
+    { "id": "integration-test", "system": "pf2e", "title": "Integration Test" },
+    { "id": "sfs-test", "system": "sf2e", "title": "SFS Test" }
+  ],
+  "devWorld": { "id": "pfs-test", "system": "pf2e", "title": "PFS Test" },
+  "systems": ["pf2e", "sf2e"],
+  "coverage": { "bundle": "dist/main.js" }
+}
