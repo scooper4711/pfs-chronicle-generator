@@ -44,16 +44,23 @@ jobs:
         id: foundry
         run: echo "version=$(npx foundry-test resolve ${{ matrix.foundry }})" >> "$GITHUB_OUTPUT"
 
-      # The Foundry build, the unpacked server, and the seeded worlds (with
-      # PF2e and SF2e installed) are slow to produce; reuse them per version.
-      - name: Cache Foundry build and seeded worlds
+      # The Foundry build depends only on the version: cache it on its own
+      # so it is downloaded from foundryvtt.com once per version (several
+      # downloads at once get rate limited). The seeded worlds, with PF2e and
+      # SF2e installed, are cached by version and config.
+      - name: Cache Foundry build
         uses: actions/cache@v6
         with:
           path: |
             .foundry-test/cache/FoundryVTT-Node-${{ steps.foundry.outputs.version }}.zip
             .foundry-test/versions/${{ steps.foundry.outputs.version }}
-            .foundry-test/Data-test-${{ steps.foundry.outputs.version }}
-          key: foundry-${{ steps.foundry.outputs.version }}-${{ hashFiles('foundry-test.config.json') }}
+          key: foundry-build-${{ steps.foundry.outputs.version }}
+
+      - name: Cache seeded worlds
+        uses: actions/cache@v6
+        with:
+          path: .foundry-test/Data-test-${{ steps.foundry.outputs.version }}
+          key: foundry-data-${{ steps.foundry.outputs.version }}-${{ hashFiles('foundry-test.config.json') }}
 
       - name: Integration tests
         run: npx foundry-test test run --all-worlds --version ${{ steps.foundry.outputs.version }}
@@ -73,3 +80,10 @@ jobs:
           name: playwright-results-${{ steps.foundry.outputs.version }}
           path: test-results/
           retention-days: 7
+
+      # Caches are saved after the last step. The license is tied to this
+      # runner, so a restored copy is useless (the kit re-licenses), and
+      # leaving it out keeps it from anyone who can read the cache.
+      - name: Remove license before caching
+        if: always()
+        run: rm -f .foundry-test/Data-test-*/Config/license.json
