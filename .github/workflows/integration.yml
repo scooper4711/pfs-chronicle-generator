@@ -1,0 +1,68 @@
+name: Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  integration:
+    # Secrets are not available to pull requests from forks.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24.x'
+
+      # package-lock.json records the foundry-test-kit git dependency with an
+      # SSH URL; the runner has no SSH key, so fetch it over HTTPS.
+      - name: Fetch GitHub dependencies over HTTPS
+        run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build module
+        run: npm run build
+
+      # The Foundry build, the unpacked server, and the seeded worlds (with
+      # PF2e and SF2e installed) are slow to produce; reuse them across runs.
+      - name: Cache Foundry builds and seeded worlds
+        uses: actions/cache@v6
+        with:
+          path: |
+            playwright/cache
+            playwright/versions
+            playwright/Data-*
+          key: foundry-${{ hashFiles('foundry-test.config.json') }}
+
+      - name: Integration tests
+        run: npx foundry-test test run --all-worlds
+        env:
+          FOUNDRY_LICENSE_KEY: ${{ secrets.FOUNDRY_LICENSE_KEY }}
+          FOUNDRY_USERNAME: ${{ secrets.FOUNDRY_USERNAME }}
+          FOUNDRY_PASSWORD: ${{ secrets.FOUNDRY_PASSWORD }}
+
+      - name: Integration coverage
+        if: always()
+        run: npx foundry-test-coverage
+
+      - name: Upload Playwright results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
