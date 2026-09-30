@@ -3,7 +3,8 @@
  * Download Chronicle (everyone) and Delete Chronicle (GM only) buttons.
  */
 import { expect, type Download, type Locator, type Page } from '@playwright/test';
-import { renderActorSheet } from './world.js';
+
+import { renderActorSheet } from '@scooper4711/foundry-test-kit';
 
 export class CharacterSheet {
   readonly window: Locator;

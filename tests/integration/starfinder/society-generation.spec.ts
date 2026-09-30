@@ -4,7 +4,8 @@
  * GM credit character, and an SFS2E session report.
  */
 import { test, expect } from '../support/test.js';
-import { cleanWorld, createTestParty, withGamemaster, type TestParty } from '../support/party.js';
+import { withGamemasterPage } from '@scooper4711/foundry-test-kit';
+import { cleanWorld, createTestParty, type TestParty } from '../support/party.js';
 import { decodeSessionReport, pdfText } from '../support/chronicle-output.js';
 import { importPregen, readStoredChronicle, resetChronicleForm } from '../support/world.js';
 import { DEFAULT_EVENT, expectNotification } from '../support/society-form.js';
@@ -25,7 +26,7 @@ let party: TestParty;
 let gmCharacterId: string;
 
 test.beforeAll(async ({ browser, gamemasterSession }) => {
-  await withGamemaster(browser, gamemasterSession, async (page) => {
+  await withGamemasterPage(browser, gamemasterSession, async (page) => {
     await cleanWorld(page);
     party = await createTestParty(page, ICONICS, 'Starfinder Party', [
       { entryName: 'Navasi (Level 1)', name: 'Navasi', society: { playerNumber: 810001, characterNumber: 7001 } },
@@ -42,7 +43,7 @@ test.beforeAll(async ({ browser, gamemasterSession }) => {
 });
 
 test.afterAll(async ({ browser, gamemasterSession }) => {
-  await withGamemaster(browser, gamemasterSession, cleanWorld);
+  await withGamemasterPage(browser, gamemasterSession, cleanWorld);
 });
 
 test.beforeEach(async ({ gmPage, form }) => {

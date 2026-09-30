@@ -3,7 +3,8 @@
  * against the GM PFS number, and included in generation.
  */
 import { test, expect } from '../support/test.js';
-import { cleanWorld, createTestParty, withGamemaster, type TestParty } from '../support/party.js';
+import { withGamemasterPage } from '@scooper4711/foundry-test-kit';
+import { cleanWorld, createTestParty, type TestParty } from '../support/party.js';
 import { importPregen, readStoredChronicle, resetChronicleForm } from '../support/world.js';
 import { DEFAULT_EVENT, expectNotification } from '../support/society-form.js';
 
@@ -14,7 +15,7 @@ let gmCharacterId: string;
 let npcId: string;
 
 test.beforeAll(async ({ browser, gamemasterSession }) => {
-  await withGamemaster(browser, gamemasterSession, async (page) => {
+  await withGamemasterPage(browser, gamemasterSession, async (page) => {
     await cleanWorld(page);
     party = await createTestParty(page, ICONICS, 'GM Credit Party', [
       {
@@ -44,7 +45,7 @@ test.beforeAll(async ({ browser, gamemasterSession }) => {
 });
 
 test.afterAll(async ({ browser, gamemasterSession }) => {
-  await withGamemaster(browser, gamemasterSession, cleanWorld);
+  await withGamemasterPage(browser, gamemasterSession, cleanWorld);
 });
 
 test.beforeEach(async ({ gmPage, form }) => {

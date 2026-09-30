@@ -3,7 +3,8 @@
  * when the GM picks a season and when the form is cleared.
  */
 import { test, expect } from '../support/test.js';
-import { cleanWorld, createTestParty, withGamemaster, type TestParty } from '../support/party.js';
+import { withGamemasterPage } from '@scooper4711/foundry-test-kit';
+import { cleanWorld, createTestParty, type TestParty } from '../support/party.js';
 import { resetChronicleForm } from '../support/world.js';
 import { DEFAULT_EVENT, type SocietyForm } from '../support/society-form.js';
 
@@ -21,7 +22,7 @@ const SCENARIO: AdventureDefaults = { xp: '4', treasureBundles: '8', downtimeDay
 let party: TestParty;
 
 test.beforeAll(async ({ browser, gamemasterSession }) => {
-  party = await withGamemaster(browser, gamemasterSession, async (page) => {
+  party = await withGamemasterPage(browser, gamemasterSession, async (page) => {
     await cleanWorld(page);
     return createTestParty(page, 'pf2e.iconics', 'Defaults Party', [
       {
@@ -34,7 +35,7 @@ test.beforeAll(async ({ browser, gamemasterSession }) => {
 });
 
 test.afterAll(async ({ browser, gamemasterSession }) => {
-  await withGamemaster(browser, gamemasterSession, cleanWorld);
+  await withGamemasterPage(browser, gamemasterSession, cleanWorld);
 });
 
 test.beforeEach(async ({ gmPage, form }) => {

@@ -6,7 +6,8 @@
  */
 import { expect, type Locator, type Page } from '@playwright/test';
 import { layoutInfo } from './layout-catalog.js';
-import { renderActorSheet } from './world.js';
+
+import { renderActorSheet } from '@scooper4711/foundry-test-kit';
 
 export interface EventDetails {
   gmPfsNumber: string;

@@ -4,9 +4,11 @@
  */
 import type { Page } from '@playwright/test';
 import { test, expect } from '../support/test.js';
-import { cleanWorld, createTestParty, withGamemaster, type TestParty } from '../support/party.js';
+import { withGamemasterPage } from '@scooper4711/foundry-test-kit';
+import { cleanWorld, createTestParty, type TestParty } from '../support/party.js';
 import { decodeSessionReport, type SessionReport } from '../support/chronicle-output.js';
-import { importPregen, resetChronicleForm, updateActor } from '../support/world.js';
+import { importPregen, resetChronicleForm } from '../support/world.js';
+import { updateActor } from '@scooper4711/foundry-test-kit';
 import { DEFAULT_EVENT, expectNotification, type SocietyForm } from '../support/society-form.js';
 
 const ICONICS = 'pf2e.iconics';
@@ -17,7 +19,7 @@ let party: TestParty;
 let gmCharacterId: string;
 
 test.beforeAll(async ({ browser, gamemasterSession }) => {
-  await withGamemaster(browser, gamemasterSession, async (page) => {
+  await withGamemasterPage(browser, gamemasterSession, async (page) => {
     await cleanWorld(page);
     party = await createTestParty(page, ICONICS, 'Report Party', [
       {
@@ -41,7 +43,7 @@ test.beforeAll(async ({ browser, gamemasterSession }) => {
 });
 
 test.afterAll(async ({ browser, gamemasterSession }) => {
-  await withGamemaster(browser, gamemasterSession, cleanWorld);
+  await withGamemasterPage(browser, gamemasterSession, cleanWorld);
 });
 
 test.beforeEach(async ({ gmPage, form }) => {
