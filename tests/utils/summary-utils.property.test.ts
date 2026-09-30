@@ -10,6 +10,11 @@ import {
   generateSharedRewardsSummary
 } from '../../scripts/utils/summary-utils';
 
+/** Escapes text for innerHTML; `&` first, or names like "&gt" decode to ">". */
+function escapeHtml(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 describe('summary-utils property tests', () => {
   describe('generateEventDetailsSummary', () => {
     // Feature: collapsible-shared-sections, Property 5: Session Reporting summary contains scenario name
@@ -24,7 +29,7 @@ describe('summary-utils property tests', () => {
             const container = document.createElement('div');
             container.innerHTML = `
               <select id="layout">
-                <option value="1" selected>${layoutName.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</option>
+                <option value="1" selected>${escapeHtml(layoutName)}</option>
               </select>
             `;
             
