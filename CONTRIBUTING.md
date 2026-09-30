@@ -9,6 +9,7 @@ We welcome contributions to the Pathfinder Society Chronicle Generator! Whether 
 - Node.js and npm for the TypeScript tools
 
 Install Python dependencies:
+
 ```bash
 pip install PyMuPDF
 ```
@@ -22,11 +23,13 @@ Layouts are now stored as JSON files (not YAML) and are generated automatically 
 To regenerate layout files for entire seasons, use `generate_layouts.py`:
 
 #### Generate all seasons:
+
 ```bash
 python chronicle2layout/src/generate_layouts.py
 ```
 
 #### Generate specific season(s):
+
 ```bash
 # Single season
 python chronicle2layout/src/generate_layouts.py --season 6
@@ -36,6 +39,7 @@ python chronicle2layout/src/generate_layouts.py --season 5 6 7
 ```
 
 The script will:
+
 - Find chronicle PDFs in `modules/pf2e-pfs0X-year-of-*/assets/chronicles-1/` and `chronicles-2/`
 - Extract items and checkboxes using text and position analysis
 - Generate layout JSON files in `layouts/pfs2/sX/`
@@ -57,6 +61,7 @@ python chronicle2layout/src/chronicle2layout.py \
 ```
 
 Parameters:
+
 - `--layout-dir`: Base layouts directory (e.g., `layouts`)
 - `--parent`: Parent layout ID (e.g., `pfs2.season6`)
 - `--id`: Layout ID for this scenario (e.g., `pfs2.s6-06`)
@@ -70,7 +75,7 @@ Parameters:
 
 1. **Text Extraction**: Uses PyMuPDF to extract words with coordinates from the PDF
 2. **Y-Coordinate Grouping**: Groups words by vertical position (not relying on PyMuPDF's line numbers)
-3. **Item Detection**: 
+3. **Item Detection**:
    - Identifies item lines in the "items" canvas region
    - Merges multi-line items by tracking unbalanced parentheses
    - Splits when two complete parenthesis groups are detected
@@ -80,6 +85,7 @@ Parameters:
 ### Layout File Structure
 
 Generated layouts follow this structure:
+
 ```json
 {
   "id": "pfs2.s6-06",
@@ -109,6 +115,7 @@ To help you define or verify coordinates for canvas areas and common fields, use
 4. Click **Layout Design** to open the designer
 
 The Layout Designer allows you to:
+
 - **View the blank chronicle PDF** with overlay grids
 - **Define canvas regions** (items, summary, rewards, etc.) with visual feedback
 - **Set common parameters** that apply to all scenarios in a season
@@ -118,6 +125,7 @@ The Layout Designer allows you to:
 ### Canvas Types
 
 Common canvases in PFS chronicles:
+
 - `items`: Region where purchasable items are listed
 - `summary`: Region with checkboxes for adventure decisions
 - `rewards`: Region for XP and gold tracking
@@ -126,11 +134,13 @@ Common canvases in PFS chronicles:
 ### Using the Designer for Parent Layouts
 
 The Layout Designer is ideal for creating or modifying **parent layouts** (e.g., `Season 5.json`, `Season 6.json`) that define:
+
 - Canvas boundaries shared by all scenarios in that season
 - Common text fields (character name, player name, event info)
 - Standard preset definitions
 
 **Individual scenario layouts** (e.g., `6-06-RottenApples.json`) should be generated using the Python scripts (see above) to automatically extract:
+
 - Specific strikeout item choices for that scenario
 - Checkbox labels in the adventure summary
 - Scenario-specific coordinates derived from the PDF
@@ -138,6 +148,7 @@ The Layout Designer is ideal for creating or modifying **parent layouts** (e.g.,
 ## Manual Layout Adjustments
 
 After automatic generation, you may need to manually edit layout JSON files for:
+
 - Edge cases like items without balanced parentheses
 - Items with special formatting (e.g., "limit 1" annotations)
 - Adjusting y-coordinates for better visual alignment
@@ -147,6 +158,7 @@ After automatic generation, you may need to manually edit layout JSON files for:
 After generating or modifying layouts:
 
 1. **Check item extraction quality**:
+
 ```bash
 # View extracted items
 jq '.parameters.Items.strikeout_item_lines.choices' layouts/pfs2/s6/6-06-RottenApples.json
@@ -156,6 +168,7 @@ jq '.parameters.Items.strikeout_item_lines.choices | length' layouts/pfs2/s6/6-0
 ```
 
 2. **Find longest items** (potential parsing issues):
+
 ```bash
 for file in layouts/pfs2/s6/*.json; do
   jq -r --arg file "$(basename "$file")" '.parameters.Items.strikeout_item_lines.choices[]? | "\(length)|\($file)|\(.)"' "$file"
@@ -197,6 +210,26 @@ npm test             # Run unit tests
 npm run test:all     # Run tests + code quality checks
 ```
 
+### Integration Tests
+
+Playwright drives the built module in a real Foundry server. Each game system
+has its own world and Playwright project: `pf2e` (world `integration-test`)
+and `sf2e` (world `sfs-test`). Worlds are seeded on first start, which needs
+`FOUNDRY_LICENSE_KEY` in `.env`.
+
+```bash
+npm run build
+./scripts/foundry.sh test run --all-worlds   # both worlds, one after the other
+./scripts/foundry.sh test run                # just the default Pathfinder world
+npm run coverage:e2e                         # coverage report for the last run
+```
+
+Against an already-running server, run the matching project directly, e.g.
+`npx playwright test --project=pf2e`. Specs live in `tests/integration/`
+(`pathfinder/`, `starfinder/`), with shared page objects and world helpers
+in `tests/integration/support/`. Test actors are named `IT …` and are
+removed after each spec file.
+
 ### Code Quality
 
 This project enforces code quality standards for maintainability:
@@ -208,6 +241,7 @@ npm run lint                 # Run ESLint (includes complexity and file size che
 ```
 
 Complexity and file size limits are enforced via ESLint rules in `eslint.config.mjs`:
+
 - **Cyclomatic Complexity**: Functions must have CCN < 15 (ESLint `complexity` rule)
 - **File Size**: Files must be < 500 lines (ESLint `max-lines` rule)
 - **Code Duplication**: Must be < 20% (jscpd via `check:duplication`)
