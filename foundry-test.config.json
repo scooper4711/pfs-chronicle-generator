@@ -1,6 +1,6 @@
 {
   "moduleId": "pfs-chronicle-generator",
-  "foundryVersion": "14.367",
+  "foundryVersion": "latest",
   "testWorlds": [
     { "id": "integration-test", "system": "pf2e", "title": "Integration Test" },
     { "id": "sfs-test", "system": "sf2e", "title": "SFS Test" }

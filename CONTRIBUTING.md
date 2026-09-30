@@ -223,14 +223,20 @@ Put these in `.env` (plain, or encrypted with
 
 - `FOUNDRY_LICENSE_KEY` — seeds the worlds on first start
 - `FOUNDRY_USERNAME` / `FOUNDRY_PASSWORD` — download the Foundry build from
-  foundryvtt.com when it is not cached in `playwright/cache`
+  foundryvtt.com when it is not cached in `.foundry-test/cache`
 
 ```bash
 npm run build
 npm run integration                          # both worlds, one after the other
 npx foundry-test test run --world sfs-test   # one world
+npm run integration:v13                      # both worlds on the newest Foundry 13
 npm run coverage:e2e                         # coverage report for the last run
 ```
+
+The module supports Foundry 13 and 14. `foundryVersion` in
+`foundry-test.config.json` is `latest` (the newest stable release);
+`integration:v13` runs the newest 13.x instead, and `--version` takes any
+version or `latest-<major>`.
 
 Against an already-running server (`npx foundry-test test start`), run the
 matching project directly, e.g. `npx playwright test --project=pf2e`. Specs
@@ -238,9 +244,10 @@ live in `tests/integration/` (`pathfinder/`, `starfinder/`), with the
 module's page objects in `tests/integration/support/`. Test actors are named
 `IT …` and are removed after each spec file.
 
-The Integration workflow runs the same suite in GitHub Actions using the
-`FOUNDRY_LICENSE_KEY`, `FOUNDRY_USERNAME`, and `FOUNDRY_PASSWORD` repository
-secrets.
+The Integration workflow runs the same suite in GitHub Actions on the
+newest Foundry 13 and 14 whenever a release is published (not on pushes or
+pull requests), using the `FOUNDRY_LICENSE_KEY`, `FOUNDRY_USERNAME`, and
+`FOUNDRY_PASSWORD` repository secrets.
 
 ### Code Quality
 

@@ -1,18 +1,21 @@
 name: Integration
 
+# Runs only when a (draft) release is published: the suite needs a live
+# Foundry server per version and takes several minutes, so it checks what
+# ships rather than every push.
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   integration:
-    # Secrets are not available to pull requests from forks.
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        # module.json supports Foundry 13 and 14: test the newest of each.
+        foundry: [latest-13, latest-14]
 
     steps:
       - name: Checkout
@@ -23,8 +26,8 @@ jobs:
         with:
           node-version: '24.x'
 
-      # package-lock.json records the foundry-test-kit git dependency with an
-      # SSH URL; the runner has no SSH key, so fetch it over HTTPS.
+      # package-lock.json records the Foundry type definitions' pixi git
+      # dependencies with SSH URLs; the runner has no SSH key, so use HTTPS.
       - name: Fetch GitHub dependencies over HTTPS
         run: git config --global url."https://github.com/".insteadOf ssh://git@github.com/
 
@@ -37,19 +40,23 @@ jobs:
       - name: Build module
         run: npm run build
 
+      - name: Resolve Foundry version
+        id: foundry
+        run: echo "version=$(npx foundry-test resolve ${{ matrix.foundry }})" >> "$GITHUB_OUTPUT"
+
       # The Foundry build, the unpacked server, and the seeded worlds (with
-      # PF2e and SF2e installed) are slow to produce; reuse them across runs.
-      - name: Cache Foundry builds and seeded worlds
+      # PF2e and SF2e installed) are slow to produce; reuse them per version.
+      - name: Cache Foundry build and seeded worlds
         uses: actions/cache@v6
         with:
           path: |
-            .foundry-test/cache
-            .foundry-test/versions
-            .foundry-test/Data-test-*
-          key: foundry-${{ hashFiles('foundry-test.config.json') }}
+            .foundry-test/cache/FoundryVTT-Node-${{ steps.foundry.outputs.version }}.zip
+            .foundry-test/versions/${{ steps.foundry.outputs.version }}
+            .foundry-test/Data-test-${{ steps.foundry.outputs.version }}
+          key: foundry-${{ steps.foundry.outputs.version }}-${{ hashFiles('foundry-test.config.json') }}
 
       - name: Integration tests
-        run: npx foundry-test test run --all-worlds
+        run: npx foundry-test test run --all-worlds --version ${{ steps.foundry.outputs.version }}
         env:
           FOUNDRY_LICENSE_KEY: ${{ secrets.FOUNDRY_LICENSE_KEY }}
           FOUNDRY_USERNAME: ${{ secrets.FOUNDRY_USERNAME }}
@@ -63,6 +70,6 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-results
+          name: playwright-results-${{ steps.foundry.outputs.version }}
           path: test-results/
           retention-days: 7
