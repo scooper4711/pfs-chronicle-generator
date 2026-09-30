@@ -1,11 +1,15 @@
 name: Integration
 
-# Runs only when a (draft) release is published: the suite needs a live
-# Foundry server per version and takes several minutes, so it checks what
-# ships rather than every push.
+# Runs when a (draft) release is published, and by hand: the suite needs a
+# live Foundry server per version and takes several minutes, so it checks
+# what ships rather than every push. A release runs under its tag and can
+# only restore caches saved under that tag or on main, so after a new
+# Foundry release run this once by hand on main: it downloads each build
+# once and fills the caches later release runs restore.
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   integration:

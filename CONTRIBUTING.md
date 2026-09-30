@@ -249,6 +249,16 @@ newest Foundry 13 and 14 whenever a release is published (not on pushes or
 pull requests), using the `FOUNDRY_LICENSE_KEY`, `FOUNDRY_USERNAME`, and
 `FOUNDRY_PASSWORD` repository secrets.
 
+**After a new Foundry release, run the Integration workflow once by hand on
+`main`** (Actions → Integration → Run workflow). GitHub scopes caches to the
+branch or tag that saved them, and a release runs under its own tag, so it can
+only restore caches saved on `main`. That manual run downloads each Foundry
+build once and caches it on `main` for every later release. Without it, each
+release downloads both builds from foundryvtt.com again, which costs Foundry
+Gaming money; see the kit's README on continuous integration. Run it again if a
+release's log shows `Downloading Foundry VTT` (unused caches expire after 7
+days).
+
 ### Code Quality
 
 This project enforces code quality standards for maintainability:
