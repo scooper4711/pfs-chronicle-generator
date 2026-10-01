@@ -4,13 +4,18 @@
  */
 import { readFileSync } from 'fs';
 import { unzipSync } from 'fflate';
+import {
+  assignCharacterToUser,
+  disableSceneCanvas,
+  joinAsPlayer,
+  suiteContextOptions,
+  testUser,
+  withGamemasterPage,
+} from '@scooper4711/foundry-test-kit';
 import { test, expect } from '../support/test.js';
-import { withGamemasterPage } from '@scooper4711/foundry-test-kit';
 import { cleanWorld, createTestParty, type TestParty } from '../support/party.js';
 import { CharacterSheet } from '../support/character-sheet.js';
-import { disableSceneCanvas, joinAsPlayer, suiteContextOptions } from '@scooper4711/foundry-test-kit';
 import { readStoredChronicle } from '../support/world.js';
-import { assignCharacterToUser } from '@scooper4711/foundry-test-kit';
 import { expectNotification, type SocietyForm } from '../support/society-form.js';
 
 let party: TestParty;
@@ -30,7 +35,7 @@ test.beforeAll(async ({ browser, gamemasterSession }) => {
         society: { playerNumber: 760002, characterNumber: 2002, faction: 'EA' },
       },
     ]);
-    await assignCharacterToUser(page, created.memberIds[0], 'TestPlayer');
+    await assignCharacterToUser(page, created.memberIds[0], testUser().name);
     return created;
   });
 });
@@ -73,7 +78,7 @@ test('an assigned player downloads their own chronicle', async ({ browser }) => 
   await disableSceneCanvas(context);
   try {
     const page = await context.newPage();
-    await joinAsPlayer(page, 'TestPlayer');
+    await joinAsPlayer(page);
     const sheet = new CharacterSheet(page, party.memberIds[0]);
     await sheet.openPfsTab();
 
