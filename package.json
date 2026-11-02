@@ -30,11 +30,11 @@
     "@scooper4711/foundry-test-kit": "^0.3.0",
     "@types/jest": "^30.0.0",
     "@types/js-yaml": "^4.0.9",
-    "@typescript-eslint/eslint-plugin": "^8.72.0",
-    "@typescript-eslint/parser": "^8.72.0",
+    "@typescript-eslint/eslint-plugin": "^8.72.1",
+    "@typescript-eslint/parser": "^8.72.1",
     "concurrently": "^10.0.6",
     "esbuild": "^0.28.2",
-    "eslint": "^10.13.0",
+    "eslint": "^10.14.0",
     "fast-check": "^4.10.2",
     "fvtt-types": "npm:@league-of-foundry-developers/foundry-vtt-types@^13.346.0-beta.20251209192131",
     "husky": "^9.1.7",
@@ -44,10 +44,10 @@
     "lint-staged": "^17.6.0",
     "pdfjs-dist": "^6.4.299",
     "prettier": "^3.9.10",
-    "sass": "^1.106.1",
+    "sass": "^1.107.0",
     "ts-jest": "^29.4.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.72.0"
+    "typescript-eslint": "^8.72.1"
   },
   "dependencies": {
     "fflate": "^0.8.3",
