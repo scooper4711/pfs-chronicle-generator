@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2026-11-09
+
+### Added
+
+- add support for SFS 2-08
+
+### Changed
+
+- bump lodash-es
+- bump the dev-minor-patch group across 1 directory with 8 updates
+- bump js-yaml
+- bump the security group across 1 directory with 2 updates
+- Group Dependabot security updates
+- bump prosemirror-view from 1.40.1 to 1.42.6
+- bump source-map-js from 1.2.1 to 1.2.2
+
+[1.11.0]: https://github.com/scooper4711/pfs-chronicle-generator/releases/tag/v1.11.0
+
 ## [1.10.0] - 2026-10-18
 
 ### Added
