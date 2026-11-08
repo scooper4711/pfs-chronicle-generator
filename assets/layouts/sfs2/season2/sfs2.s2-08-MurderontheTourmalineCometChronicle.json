@@ -1,0 +1,80 @@
+{
+  "id": "sfs2.s2-08",
+  "parent": "sfs2.season2-layout-s2-00",
+  "description": "2-08 Murder on the Tourmaline Comet",
+  "defaultChronicleLocation": "modules/pfs-chronicle-generator/assets/chronicles/sfs2/season2/2-08-MurderontheTourmalineCometChronicle.pdf",
+  "parameters": {
+    "Checkboxes": {
+      "summary_checkbox": {
+        "type": "choice",
+        "description": "Checkboxes in the adventure summary that should be selected",
+        "choices": [
+          "identified Ubiat as the killer before the final confrontation and",
+          "saved Liall from being poisoned",
+          "didn\u2019t arrive at the scene in time to stop Liall from drinking the poisoned wine"
+        ],
+        "example": "identified Ubiat as the killer before the final confrontation and"
+      }
+    }
+  },
+  "presets": {
+    "checkbox": {
+      "canvas": "summary",
+      "color": "black",
+      "size": 1
+    },
+    "checkbox.identified_Ubiat_as_the_killer_before_the_final_co": {
+      "x": 32.767,
+      "y": 21.077,
+      "x2": 34.897,
+      "y2": 30.379
+    },
+    "checkbox.saved_Liall_from_being_poisoned": {
+      "x": 89.684,
+      "y": 21.077,
+      "x2": 91.814,
+      "y2": 30.379
+    },
+    "checkbox.didn\u2019t_arrive_at_the_scene_in_time_to_stop_Liall_f": {
+      "x": 27.362,
+      "y": 31.185,
+      "x2": 29.493,
+      "y2": 40.488
+    }
+  },
+  "content": [
+    {
+      "type": "choice",
+      "choices": "param:summary_checkbox",
+      "content": {
+        "identified Ubiat as the killer before the final confrontation and": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.identified_Ubiat_as_the_killer_before_the_final_co"
+            ]
+          }
+        ],
+        "saved Liall from being poisoned": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.saved_Liall_from_being_poisoned"
+            ]
+          }
+        ],
+        "didn\u2019t arrive at the scene in time to stop Liall from drinking the poisoned wine": [
+          {
+            "type": "checkbox",
+            "presets": [
+              "checkbox",
+              "checkbox.didn\u2019t_arrive_at_the_scene_in_time_to_stop_Liall_f"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
